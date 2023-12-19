@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/config"
 	"go.uber.org/fx"
 )
@@ -8,6 +9,7 @@ import (
 func provider() fx.Option {
 	return fx.Provide(
 		config.NewConfig,
+		client.NewEntClient,
 		NewApp,
 	)
 }
