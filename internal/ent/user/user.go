@@ -22,6 +22,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// EdgeAuthentications holds the string denoting the authentications edge name in mutations.
 	EdgeAuthentications = "authentications"
+	// EdgeTradingAccounts holds the string denoting the trading_accounts edge name in mutations.
+	EdgeTradingAccounts = "trading_accounts"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// AuthenticationsTable is the table that holds the authentications relation/edge.
@@ -31,6 +33,13 @@ const (
 	AuthenticationsInverseTable = "authentications"
 	// AuthenticationsColumn is the table column denoting the authentications relation/edge.
 	AuthenticationsColumn = "user_authentications"
+	// TradingAccountsTable is the table that holds the trading_accounts relation/edge.
+	TradingAccountsTable = "trading_accounts"
+	// TradingAccountsInverseTable is the table name for the TradingAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "tradingaccount" package.
+	TradingAccountsInverseTable = "trading_accounts"
+	// TradingAccountsColumn is the table column denoting the trading_accounts relation/edge.
+	TradingAccountsColumn = "user_trading_accounts"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -98,10 +107,31 @@ func ByAuthentications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newAuthenticationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByTradingAccountsCount orders the results by trading_accounts count.
+func ByTradingAccountsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTradingAccountsStep(), opts...)
+	}
+}
+
+// ByTradingAccounts orders the results by trading_accounts terms.
+func ByTradingAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTradingAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newAuthenticationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AuthenticationsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AuthenticationsTable, AuthenticationsColumn),
+	)
+}
+func newTradingAccountsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TradingAccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TradingAccountsTable, TradingAccountsColumn),
 	)
 }

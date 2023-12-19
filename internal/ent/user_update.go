@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ugabiga/falcon/internal/ent/authentication"
 	"github.com/ugabiga/falcon/internal/ent/predicate"
+	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
@@ -70,6 +71,21 @@ func (uu *UserUpdate) AddAuthentications(a ...*Authentication) *UserUpdate {
 	return uu.AddAuthenticationIDs(ids...)
 }
 
+// AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by IDs.
+func (uu *UserUpdate) AddTradingAccountIDs(ids ...uint64) *UserUpdate {
+	uu.mutation.AddTradingAccountIDs(ids...)
+	return uu
+}
+
+// AddTradingAccounts adds the "trading_accounts" edges to the TradingAccount entity.
+func (uu *UserUpdate) AddTradingAccounts(t ...*TradingAccount) *UserUpdate {
+	ids := make([]uint64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddTradingAccountIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -94,6 +110,27 @@ func (uu *UserUpdate) RemoveAuthentications(a ...*Authentication) *UserUpdate {
 		ids[i] = a[i].ID
 	}
 	return uu.RemoveAuthenticationIDs(ids...)
+}
+
+// ClearTradingAccounts clears all "trading_accounts" edges to the TradingAccount entity.
+func (uu *UserUpdate) ClearTradingAccounts() *UserUpdate {
+	uu.mutation.ClearTradingAccounts()
+	return uu
+}
+
+// RemoveTradingAccountIDs removes the "trading_accounts" edge to TradingAccount entities by IDs.
+func (uu *UserUpdate) RemoveTradingAccountIDs(ids ...uint64) *UserUpdate {
+	uu.mutation.RemoveTradingAccountIDs(ids...)
+	return uu
+}
+
+// RemoveTradingAccounts removes "trading_accounts" edges to TradingAccount entities.
+func (uu *UserUpdate) RemoveTradingAccounts(t ...*TradingAccount) *UserUpdate {
+	ids := make([]uint64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveTradingAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -195,6 +232,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.TradingAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedTradingAccountsIDs(); len(nodes) > 0 && !uu.mutation.TradingAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TradingAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -256,6 +338,21 @@ func (uuo *UserUpdateOne) AddAuthentications(a ...*Authentication) *UserUpdateOn
 	return uuo.AddAuthenticationIDs(ids...)
 }
 
+// AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by IDs.
+func (uuo *UserUpdateOne) AddTradingAccountIDs(ids ...uint64) *UserUpdateOne {
+	uuo.mutation.AddTradingAccountIDs(ids...)
+	return uuo
+}
+
+// AddTradingAccounts adds the "trading_accounts" edges to the TradingAccount entity.
+func (uuo *UserUpdateOne) AddTradingAccounts(t ...*TradingAccount) *UserUpdateOne {
+	ids := make([]uint64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddTradingAccountIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -280,6 +377,27 @@ func (uuo *UserUpdateOne) RemoveAuthentications(a ...*Authentication) *UserUpdat
 		ids[i] = a[i].ID
 	}
 	return uuo.RemoveAuthenticationIDs(ids...)
+}
+
+// ClearTradingAccounts clears all "trading_accounts" edges to the TradingAccount entity.
+func (uuo *UserUpdateOne) ClearTradingAccounts() *UserUpdateOne {
+	uuo.mutation.ClearTradingAccounts()
+	return uuo
+}
+
+// RemoveTradingAccountIDs removes the "trading_accounts" edge to TradingAccount entities by IDs.
+func (uuo *UserUpdateOne) RemoveTradingAccountIDs(ids ...uint64) *UserUpdateOne {
+	uuo.mutation.RemoveTradingAccountIDs(ids...)
+	return uuo
+}
+
+// RemoveTradingAccounts removes "trading_accounts" edges to TradingAccount entities.
+func (uuo *UserUpdateOne) RemoveTradingAccounts(t ...*TradingAccount) *UserUpdateOne {
+	ids := make([]uint64, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveTradingAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -404,6 +522,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TradingAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedTradingAccountsIDs(); len(nodes) > 0 && !uuo.mutation.TradingAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TradingAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.TradingAccountsTable,
+			Columns: []string{user.TradingAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {

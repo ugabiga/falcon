@@ -13,6 +13,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ugabiga/falcon/internal/ent/authentication"
+	"github.com/ugabiga/falcon/internal/ent/task"
+	"github.com/ugabiga/falcon/internal/ent/taskhistory"
+	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
@@ -75,6 +78,9 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			authentication.Table: authentication.ValidColumn,
+			task.Table:           task.ValidColumn,
+			taskhistory.Table:    taskhistory.ValidColumn,
+			tradingaccount.Table: tradingaccount.ValidColumn,
 			user.Table:           user.ValidColumn,
 		})
 	})

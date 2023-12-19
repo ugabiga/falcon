@@ -33,9 +33,11 @@ type User struct {
 type UserEdges struct {
 	// Authentications holds the value of the authentications edge.
 	Authentications []*Authentication `json:"authentications,omitempty"`
+	// TradingAccounts holds the value of the trading_accounts edge.
+	TradingAccounts []*TradingAccount `json:"trading_accounts,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // AuthenticationsOrErr returns the Authentications value or an error if the edge
@@ -45,6 +47,15 @@ func (e UserEdges) AuthenticationsOrErr() ([]*Authentication, error) {
 		return e.Authentications, nil
 	}
 	return nil, &NotLoadedError{edge: "authentications"}
+}
+
+// TradingAccountsOrErr returns the TradingAccounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) TradingAccountsOrErr() ([]*TradingAccount, error) {
+	if e.loadedTypes[1] {
+		return e.TradingAccounts, nil
+	}
+	return nil, &NotLoadedError{edge: "trading_accounts"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -113,6 +124,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryAuthentications queries the "authentications" edge of the User entity.
 func (u *User) QueryAuthentications() *AuthenticationQuery {
 	return NewUserClient(u.config).QueryAuthentications(u)
+}
+
+// QueryTradingAccounts queries the "trading_accounts" edge of the User entity.
+func (u *User) QueryTradingAccounts() *TradingAccountQuery {
+	return NewUserClient(u.config).QueryTradingAccounts(u)
 }
 
 // Update returns a builder for updating this User.

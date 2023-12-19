@@ -16,6 +16,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/ugabiga/falcon/internal/ent/authentication"
+	"github.com/ugabiga/falcon/internal/ent/task"
+	"github.com/ugabiga/falcon/internal/ent/taskhistory"
+	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
@@ -26,6 +29,12 @@ type Client struct {
 	Schema *migrate.Schema
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Task is the client for interacting with the Task builders.
+	Task *TaskClient
+	// TaskHistory is the client for interacting with the TaskHistory builders.
+	TaskHistory *TaskHistoryClient
+	// TradingAccount is the client for interacting with the TradingAccount builders.
+	TradingAccount *TradingAccountClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -40,6 +49,9 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Authentication = NewAuthenticationClient(c.config)
+	c.Task = NewTaskClient(c.config)
+	c.TaskHistory = NewTaskHistoryClient(c.config)
+	c.TradingAccount = NewTradingAccountClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -134,6 +146,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:            ctx,
 		config:         cfg,
 		Authentication: NewAuthenticationClient(cfg),
+		Task:           NewTaskClient(cfg),
+		TaskHistory:    NewTaskHistoryClient(cfg),
+		TradingAccount: NewTradingAccountClient(cfg),
 		User:           NewUserClient(cfg),
 	}, nil
 }
@@ -155,6 +170,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:            ctx,
 		config:         cfg,
 		Authentication: NewAuthenticationClient(cfg),
+		Task:           NewTaskClient(cfg),
+		TaskHistory:    NewTaskHistoryClient(cfg),
+		TradingAccount: NewTradingAccountClient(cfg),
 		User:           NewUserClient(cfg),
 	}, nil
 }
@@ -185,6 +203,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Authentication.Use(hooks...)
+	c.Task.Use(hooks...)
+	c.TaskHistory.Use(hooks...)
+	c.TradingAccount.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -192,6 +213,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Authentication.Intercept(interceptors...)
+	c.Task.Intercept(interceptors...)
+	c.TaskHistory.Intercept(interceptors...)
+	c.TradingAccount.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
 }
 
@@ -200,6 +224,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AuthenticationMutation:
 		return c.Authentication.mutate(ctx, m)
+	case *TaskMutation:
+		return c.Task.mutate(ctx, m)
+	case *TaskHistoryMutation:
+		return c.TaskHistory.mutate(ctx, m)
+	case *TradingAccountMutation:
+		return c.TradingAccount.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
@@ -356,6 +386,485 @@ func (c *AuthenticationClient) mutate(ctx context.Context, m *AuthenticationMuta
 	}
 }
 
+// TaskClient is a client for the Task schema.
+type TaskClient struct {
+	config
+}
+
+// NewTaskClient returns a client for the Task from the given config.
+func NewTaskClient(c config) *TaskClient {
+	return &TaskClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `task.Hooks(f(g(h())))`.
+func (c *TaskClient) Use(hooks ...Hook) {
+	c.hooks.Task = append(c.hooks.Task, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `task.Intercept(f(g(h())))`.
+func (c *TaskClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Task = append(c.inters.Task, interceptors...)
+}
+
+// Create returns a builder for creating a Task entity.
+func (c *TaskClient) Create() *TaskCreate {
+	mutation := newTaskMutation(c.config, OpCreate)
+	return &TaskCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Task entities.
+func (c *TaskClient) CreateBulk(builders ...*TaskCreate) *TaskCreateBulk {
+	return &TaskCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TaskClient) MapCreateBulk(slice any, setFunc func(*TaskCreate, int)) *TaskCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TaskCreateBulk{err: fmt.Errorf("calling to TaskClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TaskCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TaskCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Task.
+func (c *TaskClient) Update() *TaskUpdate {
+	mutation := newTaskMutation(c.config, OpUpdate)
+	return &TaskUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TaskClient) UpdateOne(t *Task) *TaskUpdateOne {
+	mutation := newTaskMutation(c.config, OpUpdateOne, withTask(t))
+	return &TaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TaskClient) UpdateOneID(id uint64) *TaskUpdateOne {
+	mutation := newTaskMutation(c.config, OpUpdateOne, withTaskID(id))
+	return &TaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Task.
+func (c *TaskClient) Delete() *TaskDelete {
+	mutation := newTaskMutation(c.config, OpDelete)
+	return &TaskDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TaskClient) DeleteOne(t *Task) *TaskDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TaskClient) DeleteOneID(id uint64) *TaskDeleteOne {
+	builder := c.Delete().Where(task.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TaskDeleteOne{builder}
+}
+
+// Query returns a query builder for Task.
+func (c *TaskClient) Query() *TaskQuery {
+	return &TaskQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTask},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Task entity by its id.
+func (c *TaskClient) Get(ctx context.Context, id uint64) (*Task, error) {
+	return c.Query().Where(task.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TaskClient) GetX(ctx context.Context, id uint64) *Task {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTradingAccount queries the trading_account edge of a Task.
+func (c *TaskClient) QueryTradingAccount(t *Task) *TradingAccountQuery {
+	query := (&TradingAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, id),
+			sqlgraph.To(tradingaccount.Table, tradingaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.TradingAccountTable, task.TradingAccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTaskHistories queries the task_histories edge of a Task.
+func (c *TaskClient) QueryTaskHistories(t *Task) *TaskHistoryQuery {
+	query := (&TaskHistoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(task.Table, task.FieldID, id),
+			sqlgraph.To(taskhistory.Table, taskhistory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, task.TaskHistoriesTable, task.TaskHistoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TaskClient) Hooks() []Hook {
+	return c.hooks.Task
+}
+
+// Interceptors returns the client interceptors.
+func (c *TaskClient) Interceptors() []Interceptor {
+	return c.inters.Task
+}
+
+func (c *TaskClient) mutate(ctx context.Context, m *TaskMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TaskCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TaskUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TaskUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TaskDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Task mutation op: %q", m.Op())
+	}
+}
+
+// TaskHistoryClient is a client for the TaskHistory schema.
+type TaskHistoryClient struct {
+	config
+}
+
+// NewTaskHistoryClient returns a client for the TaskHistory from the given config.
+func NewTaskHistoryClient(c config) *TaskHistoryClient {
+	return &TaskHistoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `taskhistory.Hooks(f(g(h())))`.
+func (c *TaskHistoryClient) Use(hooks ...Hook) {
+	c.hooks.TaskHistory = append(c.hooks.TaskHistory, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `taskhistory.Intercept(f(g(h())))`.
+func (c *TaskHistoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TaskHistory = append(c.inters.TaskHistory, interceptors...)
+}
+
+// Create returns a builder for creating a TaskHistory entity.
+func (c *TaskHistoryClient) Create() *TaskHistoryCreate {
+	mutation := newTaskHistoryMutation(c.config, OpCreate)
+	return &TaskHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TaskHistory entities.
+func (c *TaskHistoryClient) CreateBulk(builders ...*TaskHistoryCreate) *TaskHistoryCreateBulk {
+	return &TaskHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TaskHistoryClient) MapCreateBulk(slice any, setFunc func(*TaskHistoryCreate, int)) *TaskHistoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TaskHistoryCreateBulk{err: fmt.Errorf("calling to TaskHistoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TaskHistoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TaskHistoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TaskHistory.
+func (c *TaskHistoryClient) Update() *TaskHistoryUpdate {
+	mutation := newTaskHistoryMutation(c.config, OpUpdate)
+	return &TaskHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TaskHistoryClient) UpdateOne(th *TaskHistory) *TaskHistoryUpdateOne {
+	mutation := newTaskHistoryMutation(c.config, OpUpdateOne, withTaskHistory(th))
+	return &TaskHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TaskHistoryClient) UpdateOneID(id uint64) *TaskHistoryUpdateOne {
+	mutation := newTaskHistoryMutation(c.config, OpUpdateOne, withTaskHistoryID(id))
+	return &TaskHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TaskHistory.
+func (c *TaskHistoryClient) Delete() *TaskHistoryDelete {
+	mutation := newTaskHistoryMutation(c.config, OpDelete)
+	return &TaskHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TaskHistoryClient) DeleteOne(th *TaskHistory) *TaskHistoryDeleteOne {
+	return c.DeleteOneID(th.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TaskHistoryClient) DeleteOneID(id uint64) *TaskHistoryDeleteOne {
+	builder := c.Delete().Where(taskhistory.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TaskHistoryDeleteOne{builder}
+}
+
+// Query returns a query builder for TaskHistory.
+func (c *TaskHistoryClient) Query() *TaskHistoryQuery {
+	return &TaskHistoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTaskHistory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TaskHistory entity by its id.
+func (c *TaskHistoryClient) Get(ctx context.Context, id uint64) (*TaskHistory, error) {
+	return c.Query().Where(taskhistory.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TaskHistoryClient) GetX(ctx context.Context, id uint64) *TaskHistory {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTask queries the task edge of a TaskHistory.
+func (c *TaskHistoryClient) QueryTask(th *TaskHistory) *TaskQuery {
+	query := (&TaskClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := th.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(taskhistory.Table, taskhistory.FieldID, id),
+			sqlgraph.To(task.Table, task.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, taskhistory.TaskTable, taskhistory.TaskColumn),
+		)
+		fromV = sqlgraph.Neighbors(th.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TaskHistoryClient) Hooks() []Hook {
+	return c.hooks.TaskHistory
+}
+
+// Interceptors returns the client interceptors.
+func (c *TaskHistoryClient) Interceptors() []Interceptor {
+	return c.inters.TaskHistory
+}
+
+func (c *TaskHistoryClient) mutate(ctx context.Context, m *TaskHistoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TaskHistoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TaskHistoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TaskHistoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TaskHistoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TaskHistory mutation op: %q", m.Op())
+	}
+}
+
+// TradingAccountClient is a client for the TradingAccount schema.
+type TradingAccountClient struct {
+	config
+}
+
+// NewTradingAccountClient returns a client for the TradingAccount from the given config.
+func NewTradingAccountClient(c config) *TradingAccountClient {
+	return &TradingAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tradingaccount.Hooks(f(g(h())))`.
+func (c *TradingAccountClient) Use(hooks ...Hook) {
+	c.hooks.TradingAccount = append(c.hooks.TradingAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tradingaccount.Intercept(f(g(h())))`.
+func (c *TradingAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TradingAccount = append(c.inters.TradingAccount, interceptors...)
+}
+
+// Create returns a builder for creating a TradingAccount entity.
+func (c *TradingAccountClient) Create() *TradingAccountCreate {
+	mutation := newTradingAccountMutation(c.config, OpCreate)
+	return &TradingAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TradingAccount entities.
+func (c *TradingAccountClient) CreateBulk(builders ...*TradingAccountCreate) *TradingAccountCreateBulk {
+	return &TradingAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TradingAccountClient) MapCreateBulk(slice any, setFunc func(*TradingAccountCreate, int)) *TradingAccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TradingAccountCreateBulk{err: fmt.Errorf("calling to TradingAccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TradingAccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TradingAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TradingAccount.
+func (c *TradingAccountClient) Update() *TradingAccountUpdate {
+	mutation := newTradingAccountMutation(c.config, OpUpdate)
+	return &TradingAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TradingAccountClient) UpdateOne(ta *TradingAccount) *TradingAccountUpdateOne {
+	mutation := newTradingAccountMutation(c.config, OpUpdateOne, withTradingAccount(ta))
+	return &TradingAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TradingAccountClient) UpdateOneID(id uint64) *TradingAccountUpdateOne {
+	mutation := newTradingAccountMutation(c.config, OpUpdateOne, withTradingAccountID(id))
+	return &TradingAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TradingAccount.
+func (c *TradingAccountClient) Delete() *TradingAccountDelete {
+	mutation := newTradingAccountMutation(c.config, OpDelete)
+	return &TradingAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TradingAccountClient) DeleteOne(ta *TradingAccount) *TradingAccountDeleteOne {
+	return c.DeleteOneID(ta.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TradingAccountClient) DeleteOneID(id uint64) *TradingAccountDeleteOne {
+	builder := c.Delete().Where(tradingaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TradingAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for TradingAccount.
+func (c *TradingAccountClient) Query() *TradingAccountQuery {
+	return &TradingAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTradingAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TradingAccount entity by its id.
+func (c *TradingAccountClient) Get(ctx context.Context, id uint64) (*TradingAccount, error) {
+	return c.Query().Where(tradingaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TradingAccountClient) GetX(ctx context.Context, id uint64) *TradingAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a TradingAccount.
+func (c *TradingAccountClient) QueryUser(ta *TradingAccount) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ta.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingaccount.Table, tradingaccount.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, tradingaccount.UserTable, tradingaccount.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(ta.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTasks queries the tasks edge of a TradingAccount.
+func (c *TradingAccountClient) QueryTasks(ta *TradingAccount) *TaskQuery {
+	query := (&TaskClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ta.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(tradingaccount.Table, tradingaccount.FieldID, id),
+			sqlgraph.To(task.Table, task.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, tradingaccount.TasksTable, tradingaccount.TasksColumn),
+		)
+		fromV = sqlgraph.Neighbors(ta.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TradingAccountClient) Hooks() []Hook {
+	return c.hooks.TradingAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *TradingAccountClient) Interceptors() []Interceptor {
+	return c.inters.TradingAccount
+}
+
+func (c *TradingAccountClient) mutate(ctx context.Context, m *TradingAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TradingAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TradingAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TradingAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TradingAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TradingAccount mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -480,6 +989,22 @@ func (c *UserClient) QueryAuthentications(u *User) *AuthenticationQuery {
 	return query
 }
 
+// QueryTradingAccounts queries the trading_accounts edge of a User.
+func (c *UserClient) QueryTradingAccounts(u *User) *TradingAccountQuery {
+	query := (&TradingAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(tradingaccount.Table, tradingaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.TradingAccountsTable, user.TradingAccountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -508,9 +1033,9 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Authentication, User []ent.Hook
+		Authentication, Task, TaskHistory, TradingAccount, User []ent.Hook
 	}
 	inters struct {
-		Authentication, User []ent.Interceptor
+		Authentication, Task, TaskHistory, TradingAccount, User []ent.Interceptor
 	}
 )

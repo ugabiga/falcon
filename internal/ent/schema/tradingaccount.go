@@ -1,0 +1,45 @@
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+	"time"
+)
+
+// TradingAccount holds the schema definition for the TradingAccount entity.
+type TradingAccount struct {
+	ent.Schema
+}
+
+// Fields of the TradingAccount.
+func (TradingAccount) Fields() []ent.Field {
+	return []ent.Field{
+		field.Uint64("id").Positive(),
+		field.String("exchange"),
+		field.String("currency"),
+		field.String("ip"),
+		field.String("identifier").
+			Unique(),
+		field.String("credential").
+			Sensitive(),
+		field.String("phrase").
+			Sensitive(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+	}
+}
+
+// Edges of the TradingAccount.
+func (TradingAccount) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.From("user", User.Type).
+			Ref("trading_accounts").
+			Unique(),
+		edge.To("tasks", Task.Type),
+	}
+}

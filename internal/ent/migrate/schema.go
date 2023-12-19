@@ -32,6 +32,80 @@ var (
 			},
 		},
 	}
+	// TasksColumns holds the columns for the "tasks" table.
+	TasksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "cron", Type: field.TypeString},
+		{Name: "next_execution_time", Type: field.TypeTime},
+		{Name: "is_active", Type: field.TypeBool},
+		{Name: "type", Type: field.TypeString},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "trading_account_tasks", Type: field.TypeUint64, Nullable: true},
+	}
+	// TasksTable holds the schema information for the "tasks" table.
+	TasksTable = &schema.Table{
+		Name:       "tasks",
+		Columns:    TasksColumns,
+		PrimaryKey: []*schema.Column{TasksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tasks_trading_accounts_tasks",
+				Columns:    []*schema.Column{TasksColumns[7]},
+				RefColumns: []*schema.Column{TradingAccountsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TaskHistoriesColumns holds the columns for the "task_histories" table.
+	TaskHistoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "is_success", Type: field.TypeBool},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "task_task_histories", Type: field.TypeUint64, Nullable: true},
+	}
+	// TaskHistoriesTable holds the schema information for the "task_histories" table.
+	TaskHistoriesTable = &schema.Table{
+		Name:       "task_histories",
+		Columns:    TaskHistoriesColumns,
+		PrimaryKey: []*schema.Column{TaskHistoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "task_histories_tasks_task_histories",
+				Columns:    []*schema.Column{TaskHistoriesColumns[4]},
+				RefColumns: []*schema.Column{TasksColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TradingAccountsColumns holds the columns for the "trading_accounts" table.
+	TradingAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "exchange", Type: field.TypeString},
+		{Name: "currency", Type: field.TypeString},
+		{Name: "ip", Type: field.TypeString},
+		{Name: "identifier", Type: field.TypeString, Unique: true},
+		{Name: "credential", Type: field.TypeString},
+		{Name: "phrase", Type: field.TypeString},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_trading_accounts", Type: field.TypeUint64, Nullable: true},
+	}
+	// TradingAccountsTable holds the schema information for the "trading_accounts" table.
+	TradingAccountsTable = &schema.Table{
+		Name:       "trading_accounts",
+		Columns:    TradingAccountsColumns,
+		PrimaryKey: []*schema.Column{TradingAccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "trading_accounts_users_trading_accounts",
+				Columns:    []*schema.Column{TradingAccountsColumns[9]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
@@ -48,10 +122,16 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AuthenticationsTable,
+		TasksTable,
+		TaskHistoriesTable,
+		TradingAccountsTable,
 		UsersTable,
 	}
 )
 
 func init() {
 	AuthenticationsTable.ForeignKeys[0].RefTable = UsersTable
+	TasksTable.ForeignKeys[0].RefTable = TradingAccountsTable
+	TaskHistoriesTable.ForeignKeys[0].RefTable = TasksTable
+	TradingAccountsTable.ForeignKeys[0].RefTable = UsersTable
 }

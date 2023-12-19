@@ -7,16 +7,16 @@ import (
 	"time"
 )
 
-// User holds the schema definition for the User entity.
-type User struct {
+// TaskHistory holds the schema definition for the TaskHistory entity.
+type TaskHistory struct {
 	ent.Schema
 }
 
-// Fields of the User.
-func (User) Fields() []ent.Field {
+// Fields of the TaskHistory.
+func (TaskHistory) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint64("id").Positive(),
-		field.String("name").Optional(),
+		field.Bool("is_success"),
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),
@@ -26,10 +26,11 @@ func (User) Fields() []ent.Field {
 	}
 }
 
-// Edges of the User.
-func (User) Edges() []ent.Edge {
+// Edges of the TaskHistory.
+func (TaskHistory) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("authentications", Authentication.Type),
-		edge.To("trading_accounts", TradingAccount.Type),
+		edge.From("task", Task.Type).
+			Ref("task_histories").
+			Unique(),
 	}
 }

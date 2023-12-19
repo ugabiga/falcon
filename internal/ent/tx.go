@@ -14,6 +14,12 @@ type Tx struct {
 	config
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// Task is the client for interacting with the Task builders.
+	Task *TaskClient
+	// TaskHistory is the client for interacting with the TaskHistory builders.
+	TaskHistory *TaskHistoryClient
+	// TradingAccount is the client for interacting with the TradingAccount builders.
+	TradingAccount *TradingAccountClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -148,6 +154,9 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Authentication = NewAuthenticationClient(tx.config)
+	tx.Task = NewTaskClient(tx.config)
+	tx.TaskHistory = NewTaskHistoryClient(tx.config)
+	tx.TradingAccount = NewTradingAccountClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
