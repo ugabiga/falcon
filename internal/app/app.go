@@ -3,34 +3,33 @@ package app
 import (
 	"context"
 	"github.com/ugabiga/falcon/internal/config"
-	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/service"
 	"log"
 )
 
 type App struct {
-	cfg       *config.Config
-	entClient *ent.Client
+	cfg     *config.Config
+	userSrv *service.UserService
 }
 
 func NewApp(
 	cfg *config.Config,
-	entClient *ent.Client,
+	userSrv *service.UserService,
 ) App {
 	return App{
-		cfg:       cfg,
-		entClient: entClient,
+		cfg:     cfg,
+		userSrv: userSrv,
 	}
 }
 
 func (a App) RunServer() error {
 	log.Printf("Run server")
+
 	ctx := context.Background()
-	u, err := a.entClient.User.Query().First(ctx)
-	if err != nil {
+
+	if err := a.userSrv.GetUser(ctx); err != nil {
 		return err
 	}
-
-	log.Printf("User: %v", u.Name)
 
 	return nil
 }
