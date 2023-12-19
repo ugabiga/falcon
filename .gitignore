@@ -21,3 +21,8 @@
 # Go workspace file
 go.work
 
+/.idea/falcon.iml
+/.idea/git_toolbox_prj.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
