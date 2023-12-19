@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ugabiga/falcon/internal/ent/authentication"
 	"github.com/ugabiga/falcon/internal/ent/predicate"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
@@ -54,9 +55,45 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
+// AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
+func (uu *UserUpdate) AddAuthenticationIDs(ids ...uint64) *UserUpdate {
+	uu.mutation.AddAuthenticationIDs(ids...)
+	return uu
+}
+
+// AddAuthentications adds the "authentications" edges to the Authentication entity.
+func (uu *UserUpdate) AddAuthentications(a ...*Authentication) *UserUpdate {
+	ids := make([]uint64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAuthenticationIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAuthentications clears all "authentications" edges to the Authentication entity.
+func (uu *UserUpdate) ClearAuthentications() *UserUpdate {
+	uu.mutation.ClearAuthentications()
+	return uu
+}
+
+// RemoveAuthenticationIDs removes the "authentications" edge to Authentication entities by IDs.
+func (uu *UserUpdate) RemoveAuthenticationIDs(ids ...uint64) *UserUpdate {
+	uu.mutation.RemoveAuthenticationIDs(ids...)
+	return uu
+}
+
+// RemoveAuthentications removes "authentications" edges to Authentication entities.
+func (uu *UserUpdate) RemoveAuthentications(a ...*Authentication) *UserUpdate {
+	ids := make([]uint64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAuthenticationIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -113,6 +150,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if uu.mutation.AuthenticationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAuthenticationsIDs(); len(nodes) > 0 && !uu.mutation.AuthenticationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AuthenticationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -159,9 +241,45 @@ func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
+func (uuo *UserUpdateOne) AddAuthenticationIDs(ids ...uint64) *UserUpdateOne {
+	uuo.mutation.AddAuthenticationIDs(ids...)
+	return uuo
+}
+
+// AddAuthentications adds the "authentications" edges to the Authentication entity.
+func (uuo *UserUpdateOne) AddAuthentications(a ...*Authentication) *UserUpdateOne {
+	ids := make([]uint64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAuthenticationIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAuthentications clears all "authentications" edges to the Authentication entity.
+func (uuo *UserUpdateOne) ClearAuthentications() *UserUpdateOne {
+	uuo.mutation.ClearAuthentications()
+	return uuo
+}
+
+// RemoveAuthenticationIDs removes the "authentications" edge to Authentication entities by IDs.
+func (uuo *UserUpdateOne) RemoveAuthenticationIDs(ids ...uint64) *UserUpdateOne {
+	uuo.mutation.RemoveAuthenticationIDs(ids...)
+	return uuo
+}
+
+// RemoveAuthentications removes "authentications" edges to Authentication entities.
+func (uuo *UserUpdateOne) RemoveAuthentications(a ...*Authentication) *UserUpdateOne {
+	ids := make([]uint64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAuthenticationIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -247,6 +365,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.AuthenticationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAuthenticationsIDs(); len(nodes) > 0 && !uuo.mutation.AuthenticationsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AuthenticationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

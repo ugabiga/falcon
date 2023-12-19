@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/ugabiga/falcon/internal/ent/authentication"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
@@ -66,6 +67,21 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 func (uc *UserCreate) SetID(u uint64) *UserCreate {
 	uc.mutation.SetID(u)
 	return uc
+}
+
+// AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
+func (uc *UserCreate) AddAuthenticationIDs(ids ...uint64) *UserCreate {
+	uc.mutation.AddAuthenticationIDs(ids...)
+	return uc
+}
+
+// AddAuthentications adds the "authentications" edges to the Authentication entity.
+func (uc *UserCreate) AddAuthentications(a ...*Authentication) *UserCreate {
+	ids := make([]uint64, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAuthenticationIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -169,6 +185,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if nodes := uc.mutation.AuthenticationsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthenticationsTable,
+			Columns: []string{user.AuthenticationsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

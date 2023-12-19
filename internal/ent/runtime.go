@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/ugabiga/falcon/internal/ent/authentication"
 	"github.com/ugabiga/falcon/internal/ent/schema"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
@@ -13,6 +14,22 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	authenticationFields := schema.Authentication{}.Fields()
+	_ = authenticationFields
+	// authenticationDescUpdatedAt is the schema descriptor for updated_at field.
+	authenticationDescUpdatedAt := authenticationFields[4].Descriptor()
+	// authentication.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	authentication.DefaultUpdatedAt = authenticationDescUpdatedAt.Default.(func() time.Time)
+	// authentication.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	authentication.UpdateDefaultUpdatedAt = authenticationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// authenticationDescCreatedAt is the schema descriptor for created_at field.
+	authenticationDescCreatedAt := authenticationFields[5].Descriptor()
+	// authentication.DefaultCreatedAt holds the default value on creation for the created_at field.
+	authentication.DefaultCreatedAt = authenticationDescCreatedAt.Default.(func() time.Time)
+	// authenticationDescID is the schema descriptor for id field.
+	authenticationDescID := authenticationFields[0].Descriptor()
+	// authentication.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	authentication.IDValidator = authenticationDescID.Validators[0].(func(uint64) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescUpdatedAt is the schema descriptor for updated_at field.

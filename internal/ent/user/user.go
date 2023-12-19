@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -19,8 +20,17 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// EdgeAuthentications holds the string denoting the authentications edge name in mutations.
+	EdgeAuthentications = "authentications"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AuthenticationsTable is the table that holds the authentications relation/edge.
+	AuthenticationsTable = "authentications"
+	// AuthenticationsInverseTable is the table name for the Authentication entity.
+	// It exists in this package in order to avoid circular dependency with the "authentication" package.
+	AuthenticationsInverseTable = "authentications"
+	// AuthenticationsColumn is the table column denoting the authentications relation/edge.
+	AuthenticationsColumn = "user_authentications"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -73,4 +83,25 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByAuthenticationsCount orders the results by authentications count.
+func ByAuthenticationsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAuthenticationsStep(), opts...)
+	}
+}
+
+// ByAuthentications orders the results by authentications terms.
+func ByAuthentications(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAuthenticationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newAuthenticationsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AuthenticationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AuthenticationsTable, AuthenticationsColumn),
+	)
 }

@@ -8,6 +8,30 @@ import (
 )
 
 var (
+	// AuthenticationsColumns holds the columns for the "authentications" table.
+	AuthenticationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "provider", Type: field.TypeEnum, Enums: []string{"google", "facebook"}},
+		{Name: "identifier", Type: field.TypeString, Unique: true},
+		{Name: "credential", Type: field.TypeString},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_authentications", Type: field.TypeUint64, Nullable: true},
+	}
+	// AuthenticationsTable holds the schema information for the "authentications" table.
+	AuthenticationsTable = &schema.Table{
+		Name:       "authentications",
+		Columns:    AuthenticationsColumns,
+		PrimaryKey: []*schema.Column{AuthenticationsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "authentications_users_authentications",
+				Columns:    []*schema.Column{AuthenticationsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
@@ -23,9 +47,11 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AuthenticationsTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	AuthenticationsTable.ForeignKeys[0].RefTable = UsersTable
 }
