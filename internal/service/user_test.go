@@ -2,6 +2,7 @@ package service_test
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/ent"
@@ -21,10 +22,12 @@ func initUserService() *service.UserService {
 
 func prepareUser(t *testing.T) *ent.User {
 	authenticationSrv := initAuthenticationService()
+	id := uuid.New().String()
+
 	a, err := authenticationSrv.SignUp(
 		context.Background(),
 		"google",
-		"",
+		id,
 		"",
 	)
 	if err != nil {

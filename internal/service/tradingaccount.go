@@ -75,43 +75,6 @@ func (s TradingAccountService) Create(
 
 }
 
-func (s TradingAccountService) validateExchange(exchange string) error {
-	switch exchange {
-	case "binance":
-		return nil
-	case "upbit":
-		return nil
-	default:
-		return ErrWrongExchange
-	}
-}
-
-func (s TradingAccountService) validateCurrency(currency string) error {
-	// currency code ISO 4217
-	switch currency {
-	case "KRW":
-		return nil
-	case "USD":
-		return nil
-	default:
-		return ErrWrongCurrency
-	}
-}
-
-func (s TradingAccountService) encrypt(credential string) (string, error) {
-	password, err := bcrypt.GenerateFromPassword([]byte(credential), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(password), nil
-}
-
-func (s TradingAccountService) availableIP() (string, error) {
-	// TODO : implement
-	return "", nil
-}
-
 func (s TradingAccountService) Get(ctx context.Context, userID uint64) ([]*ent.TradingAccount, error) {
 	return s.db.TradingAccount.Query().Where(
 		tradingaccount.UserIDEQ(userID),
@@ -176,4 +139,57 @@ func (s TradingAccountService) Update(
 	}
 
 	return nil
+}
+
+func (s TradingAccountService) Delete(ctx context.Context, userID, tradingAccountID uint64) error {
+	deleteCount, err := s.db.TradingAccount.Delete().Where(
+		tradingaccount.IDEQ(tradingAccountID),
+		tradingaccount.UserIDEQ(userID),
+	).Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	if deleteCount <= 0 {
+		return ErrorNoRows
+	}
+
+	return nil
+}
+
+func (s TradingAccountService) validateExchange(exchange string) error {
+	switch exchange {
+	case "binance":
+		return nil
+	case "upbit":
+		return nil
+	default:
+		return ErrWrongExchange
+	}
+}
+
+func (s TradingAccountService) validateCurrency(currency string) error {
+	// currency code ISO 4217
+	switch currency {
+	case "KRW":
+		return nil
+	case "USD":
+		return nil
+	default:
+		return ErrWrongCurrency
+	}
+}
+
+func (s TradingAccountService) encrypt(credential string) (string, error) {
+	password, err := bcrypt.GenerateFromPassword([]byte(credential), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(password), nil
+}
+
+func (s TradingAccountService) availableIP() (string, error) {
+	// TODO : implement
+	return "", nil
 }

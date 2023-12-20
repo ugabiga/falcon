@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/service"
@@ -32,7 +33,7 @@ func TestTradingAccountService_Create(t *testing.T) {
 			user.ID,
 			"binance",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -57,7 +58,7 @@ func TestTradingAccountService_Create(t *testing.T) {
 			user.ID,
 			"wrong_exchange",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -78,7 +79,7 @@ func TestTradingAccountService_Create(t *testing.T) {
 			user.ID,
 			"binance",
 			"wrong_currency",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -105,7 +106,7 @@ func TestTradingAccountService_GetByID(t *testing.T) {
 			user.ID,
 			"binance",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -149,7 +150,7 @@ func TestTradingAccountService_Get(t *testing.T) {
 			user.ID,
 			"binance",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -189,7 +190,7 @@ func TestTradingAccountService_Update(t *testing.T) {
 			user.ID,
 			"binance",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -211,7 +212,7 @@ func TestTradingAccountService_Update(t *testing.T) {
 			user.ID,
 			"binance",
 			"USD",
-			"identifier",
+			uuid.New().String(),
 			"credential",
 			"",
 		)
@@ -225,6 +226,42 @@ func TestTradingAccountService_Update(t *testing.T) {
 
 		if a.ID == 0 {
 			t.Fatal("a.ID is 0")
+		}
+	})
+}
+
+func TestTradingAccountService_Delete(t *testing.T) {
+	ctx := context.Background()
+	user := prepareUser(t)
+	srv := initTradingAccountService()
+
+	t.Run("should delete a trading account", func(t *testing.T) {
+		t.Parallel()
+
+		a, err := srv.Create(
+			ctx,
+			user.ID,
+			"binance",
+			"USD",
+			uuid.New().String(),
+			"credential",
+			"",
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a == nil {
+			t.Fatal("a is nil")
+		}
+
+		if a.ID == 0 {
+			t.Fatal("a.ID is 0")
+		}
+
+		err = srv.Delete(ctx, user.ID, a.ID)
+		if err != nil {
+			t.Fatal(err)
 		}
 	})
 }
