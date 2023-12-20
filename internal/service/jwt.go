@@ -43,18 +43,20 @@ func (s *JWTService) GenerateToken() (string, error) {
 	return t, nil
 }
 
-func (s *JWTService) Middleware() echo.MiddlewareFunc {
+func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(jwtCustomClaims)
 		},
-		SigningKey: []byte(SecretKey),
+		SigningKey:  []byte(SecretKey),
+		TokenLookup: "header:Authorization:Bearer ,cookie:falcon.access_token",
 		Skipper: func(c echo.Context) bool {
-			if strings.HasPrefix(c.Request().RequestURI, "/auth") {
-				return true
-			} else {
-				return false
+			for _, v := range whiteList {
+				if strings.HasPrefix(c.Request().RequestURI, v) {
+					return true
+				}
 			}
+			return false
 		},
 	})
 }

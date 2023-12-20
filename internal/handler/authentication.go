@@ -18,14 +18,16 @@ func NewAuthenticationHandler(
 	}
 }
 
-func (h *AuthenticationHandler) SetRoute(e *echo.Echo) {
+func (h *AuthenticationHandler) SetRoute(e *echo.Group) {
 	e.GET("/auth", h.Get)
 	e.POST("/auth", h.Post)
 	e.GET("/protected", h.Protected)
 }
 
 func (h *AuthenticationHandler) Get(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Hello World!",
+	})
 }
 
 func (h *AuthenticationHandler) Post(c echo.Context) error {
@@ -41,5 +43,7 @@ func (h *AuthenticationHandler) Post(c echo.Context) error {
 
 func (h *AuthenticationHandler) Protected(c echo.Context) error {
 	name := h.jwtService.CustomClaimsName(c)
-	return c.String(http.StatusOK, "Welcome "+name+"!")
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "Hello " + name + "!",
+	})
 }

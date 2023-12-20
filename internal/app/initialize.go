@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/config"
+	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
 	"go.uber.org/fx"
@@ -11,10 +12,22 @@ import (
 func provider() fx.Option {
 	return fx.Provide(
 		config.NewConfig,
-		service.NewUserService,
-		service.NewJWTService,
-		server.NewServer,
+
+		// Client
 		client.NewEntClient,
+
+		// Service
+		service.NewUserService,
+		service.NewAuthenticationService,
+		service.NewJWTService,
+
+		// Handler
+		handler.NewAuthenticationHandler,
+
+		// Server
+		server.NewServer,
+
+		// App
 		NewApp,
 	)
 }
