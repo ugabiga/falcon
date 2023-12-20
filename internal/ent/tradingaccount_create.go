@@ -23,8 +23,8 @@ type TradingAccountCreate struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (tac *TradingAccountCreate) SetUserID(u uint64) *TradingAccountCreate {
-	tac.mutation.SetUserID(u)
+func (tac *TradingAccountCreate) SetUserID(i int) *TradingAccountCreate {
+	tac.mutation.SetUserID(i)
 	return tac
 }
 
@@ -101,8 +101,8 @@ func (tac *TradingAccountCreate) SetNillableCreatedAt(t *time.Time) *TradingAcco
 }
 
 // SetID sets the "id" field.
-func (tac *TradingAccountCreate) SetID(u uint64) *TradingAccountCreate {
-	tac.mutation.SetID(u)
+func (tac *TradingAccountCreate) SetID(i int) *TradingAccountCreate {
+	tac.mutation.SetID(i)
 	return tac
 }
 
@@ -112,14 +112,14 @@ func (tac *TradingAccountCreate) SetUser(u *User) *TradingAccountCreate {
 }
 
 // AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
-func (tac *TradingAccountCreate) AddTaskIDs(ids ...uint64) *TradingAccountCreate {
+func (tac *TradingAccountCreate) AddTaskIDs(ids ...int) *TradingAccountCreate {
 	tac.mutation.AddTaskIDs(ids...)
 	return tac
 }
 
 // AddTasks adds the "tasks" edges to the Task entity.
 func (tac *TradingAccountCreate) AddTasks(t ...*Task) *TradingAccountCreate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -177,7 +177,7 @@ func (tac *TradingAccountCreate) check() error {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "TradingAccount.user_id"`)}
 	}
 	if v, ok := tac.mutation.UserID(); ok {
-		if err := tradingaccount.UserIDValidator(v); err != nil {
+		if err := tradingaccount.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
 		}
 	}
@@ -203,7 +203,7 @@ func (tac *TradingAccountCreate) check() error {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TradingAccount.created_at"`)}
 	}
 	if v, ok := tac.mutation.ID(); ok {
-		if err := tradingaccount.IDValidator(v); err != nil {
+		if err := tradingaccount.IDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.id": %w`, err)}
 		}
 	}
@@ -226,7 +226,7 @@ func (tac *TradingAccountCreate) sqlSave(ctx context.Context) (*TradingAccount, 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int(id)
 	}
 	tac.mutation.id = &_node.ID
 	tac.mutation.done = true
@@ -236,7 +236,7 @@ func (tac *TradingAccountCreate) sqlSave(ctx context.Context) (*TradingAccount, 
 func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TradingAccount{config: tac.config}
-		_spec = sqlgraph.NewCreateSpec(tradingaccount.Table, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(tradingaccount.Table, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt))
 	)
 	if id, ok := tac.mutation.ID(); ok {
 		_node.ID = id
@@ -282,7 +282,7 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 			Columns: []string{tradingaccount.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -299,7 +299,7 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -357,7 +357,7 @@ func (tacb *TradingAccountCreateBulk) Save(ctx context.Context) ([]*TradingAccou
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

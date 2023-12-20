@@ -4,6 +4,8 @@ package authentication
 
 import (
 	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -63,7 +65,7 @@ func ValidColumn(column string) bool {
 
 var (
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
-	UserIDValidator func(uint64) error
+	UserIDValidator func(int) error
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -71,7 +73,7 @@ var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int) error
 )
 
 // Provider defines the type for the "provider" enum field.
@@ -147,4 +149,22 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Provider) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Provider) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Provider(str)
+	if err := ProviderValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Provider", str)
+	}
+	return nil
 }

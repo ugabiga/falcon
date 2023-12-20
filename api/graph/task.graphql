@@ -1,0 +1,13 @@
+type Task {
+    id: ID!
+    tradingAccountID: ID!
+    cron: String!
+    nextExecutionTime: Time!
+    isActive: Boolean!
+    type: String!
+    updatedAt: Time!
+    createdAt: Time!
+    tradingAccount: TradingAccount!
+    taskHistories: [TaskHistory!]
+}
+

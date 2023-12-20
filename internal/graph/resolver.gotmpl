@@ -1,0 +1,64 @@
+package resolvers
+
+import (
+	"context"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/graph/generated"
+	"github.com/ugabiga/falcon/internal/graph/helper"
+)
+
+// This file will not be regenerated automatically.
+//
+// It serves as dependency injection for your app, add any dependencies you require here.
+
+type Resolver struct {
+	client       *ent.Client
+	nodeResolver *helper.NodeResolver
+}
+
+func NewResolver(
+	client *ent.Client, nodeResolver *helper.NodeResolver,
+) *handler.Server {
+	graphSrv := handler.NewDefaultServer(
+		generated.NewExecutableSchema(
+			generated.Config{
+				Resolvers:  newResolver(client, nodeResolver),
+				Directives: generated.DirectiveRoot{},
+				Complexity: generated.ComplexityRoot{},
+			},
+		),
+	)
+	return graphSrv
+}
+func newResolver(client *ent.Client, nodeResolver *helper.NodeResolver) *Resolver {
+	return &Resolver{
+		client:       client,
+		nodeResolver: nodeResolver,
+	}
+}
+
+func (r *Resolver) Noder(ctx context.Context, qr *queryResolver, id string) (ent.Noder, error) {
+	decodedNode, err := r.nodeResolver.Decode(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.Noder(ctx, decodedNode.NodeID, ent.WithFixedNodeType(decodedNode.TableName))
+}
+
+func (r *Resolver) Noders(ctx context.Context, qr *queryResolver, ids []string) ([]ent.Noder, error) {
+	var decodedIds []int
+	var tableName string
+
+	for _, id := range ids {
+		decodedNode, err := r.nodeResolver.Decode(id)
+		if err != nil {
+			return nil, err
+		}
+		tableName = decodedNode.TableName
+		decodedIds = append(decodedIds, decodedNode.NodeID)
+	}
+
+	return r.client.Noders(ctx, decodedIds, ent.WithFixedNodeType(tableName))
+}

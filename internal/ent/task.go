@@ -17,9 +17,9 @@ import (
 type Task struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uint64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// TradingAccountID holds the value of the "trading_account_id" field.
-	TradingAccountID uint64 `json:"trading_account_id,omitempty"`
+	TradingAccountID int `json:"trading_account_id,omitempty"`
 	// Cron holds the value of the "cron" field.
 	Cron string `json:"cron,omitempty"`
 	// NextExecutionTime holds the value of the "next_execution_time" field.
@@ -47,6 +47,10 @@ type TaskEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedTaskHistories map[string][]*TaskHistory
 }
 
 // TradingAccountOrErr returns the TradingAccount value or an error if the edge
@@ -100,16 +104,16 @@ func (t *Task) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case task.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				t.ID = int(value.Int64)
 			}
-			t.ID = uint64(value.Int64)
 		case task.FieldTradingAccountID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field trading_account_id", values[i])
 			} else if value.Valid {
-				t.TradingAccountID = uint64(value.Int64)
+				t.TradingAccountID = int(value.Int64)
 			}
 		case task.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -215,6 +219,30 @@ func (t *Task) String() string {
 	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTaskHistories returns the TaskHistories named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (t *Task) NamedTaskHistories(name string) ([]*TaskHistory, error) {
+	if t.Edges.namedTaskHistories == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := t.Edges.namedTaskHistories[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (t *Task) appendNamedTaskHistories(name string, edges ...*TaskHistory) {
+	if t.Edges.namedTaskHistories == nil {
+		t.Edges.namedTaskHistories = make(map[string][]*TaskHistory)
+	}
+	if len(edges) == 0 {
+		t.Edges.namedTaskHistories[name] = []*TaskHistory{}
+	} else {
+		t.Edges.namedTaskHistories[name] = append(t.Edges.namedTaskHistories[name], edges...)
+	}
 }
 
 // Tasks is a parsable slice of Task.

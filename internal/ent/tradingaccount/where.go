@@ -11,53 +11,54 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.TradingAccount {
+func ID(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.TradingAccount {
+func IDEQ(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.TradingAccount {
+func IDNEQ(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.TradingAccount {
+func IDIn(ids ...int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.TradingAccount {
+func IDNotIn(ids ...int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.TradingAccount {
+func IDGT(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.TradingAccount {
+func IDGTE(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.TradingAccount {
+func IDLT(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.TradingAccount {
+func IDLTE(id int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldLTE(FieldID, id))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, v))
+func UserID(v int) predicate.TradingAccount {
+	vc := int(v)
+	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, vc))
 }
 
 // Exchange applies equality check predicate on the "exchange" field. It's identical to ExchangeEQ.
@@ -101,23 +102,33 @@ func CreatedAt(v time.Time) predicate.TradingAccount {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, v))
+func UserIDEQ(v int) predicate.TradingAccount {
+	vc := int(v)
+	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, vc))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNEQ(FieldUserID, v))
+func UserIDNEQ(v int) predicate.TradingAccount {
+	vc := int(v)
+	return predicate.TradingAccount(sql.FieldNEQ(FieldUserID, vc))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldIn(FieldUserID, vs...))
+func UserIDIn(vs ...int) predicate.TradingAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.TradingAccount(sql.FieldIn(FieldUserID, v...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNotIn(FieldUserID, vs...))
+func UserIDNotIn(vs ...int) predicate.TradingAccount {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.TradingAccount(sql.FieldNotIn(FieldUserID, v...))
 }
 
 // ExchangeEQ applies the EQ predicate on the "exchange" field.

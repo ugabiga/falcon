@@ -56,7 +56,7 @@ func ValidColumn(column string) bool {
 
 var (
 	// TaskIDValidator is a validator for the "task_id" field. It is called by the builders before save.
-	TaskIDValidator func(uint64) error
+	TaskIDValidator func(int) error
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -64,7 +64,7 @@ var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the TaskHistory queries.

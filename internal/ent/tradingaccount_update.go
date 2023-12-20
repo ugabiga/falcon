@@ -31,15 +31,15 @@ func (tau *TradingAccountUpdate) Where(ps ...predicate.TradingAccount) *TradingA
 }
 
 // SetUserID sets the "user_id" field.
-func (tau *TradingAccountUpdate) SetUserID(u uint64) *TradingAccountUpdate {
-	tau.mutation.SetUserID(u)
+func (tau *TradingAccountUpdate) SetUserID(i int) *TradingAccountUpdate {
+	tau.mutation.SetUserID(i)
 	return tau
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (tau *TradingAccountUpdate) SetNillableUserID(u *uint64) *TradingAccountUpdate {
-	if u != nil {
-		tau.SetUserID(*u)
+func (tau *TradingAccountUpdate) SetNillableUserID(i *int) *TradingAccountUpdate {
+	if i != nil {
+		tau.SetUserID(*i)
 	}
 	return tau
 }
@@ -146,14 +146,14 @@ func (tau *TradingAccountUpdate) SetUser(u *User) *TradingAccountUpdate {
 }
 
 // AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
-func (tau *TradingAccountUpdate) AddTaskIDs(ids ...uint64) *TradingAccountUpdate {
+func (tau *TradingAccountUpdate) AddTaskIDs(ids ...int) *TradingAccountUpdate {
 	tau.mutation.AddTaskIDs(ids...)
 	return tau
 }
 
 // AddTasks adds the "tasks" edges to the Task entity.
 func (tau *TradingAccountUpdate) AddTasks(t ...*Task) *TradingAccountUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -178,14 +178,14 @@ func (tau *TradingAccountUpdate) ClearTasks() *TradingAccountUpdate {
 }
 
 // RemoveTaskIDs removes the "tasks" edge to Task entities by IDs.
-func (tau *TradingAccountUpdate) RemoveTaskIDs(ids ...uint64) *TradingAccountUpdate {
+func (tau *TradingAccountUpdate) RemoveTaskIDs(ids ...int) *TradingAccountUpdate {
 	tau.mutation.RemoveTaskIDs(ids...)
 	return tau
 }
 
 // RemoveTasks removes "tasks" edges to Task entities.
 func (tau *TradingAccountUpdate) RemoveTasks(t ...*Task) *TradingAccountUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -231,7 +231,7 @@ func (tau *TradingAccountUpdate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (tau *TradingAccountUpdate) check() error {
 	if v, ok := tau.mutation.UserID(); ok {
-		if err := tradingaccount.UserIDValidator(v); err != nil {
+		if err := tradingaccount.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
 		}
 	}
@@ -245,7 +245,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if err := tau.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt))
 	if ps := tau.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -285,7 +285,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{tradingaccount.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -298,7 +298,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{tradingaccount.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -314,7 +314,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -327,7 +327,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -343,7 +343,7 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -372,15 +372,15 @@ type TradingAccountUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (tauo *TradingAccountUpdateOne) SetUserID(u uint64) *TradingAccountUpdateOne {
-	tauo.mutation.SetUserID(u)
+func (tauo *TradingAccountUpdateOne) SetUserID(i int) *TradingAccountUpdateOne {
+	tauo.mutation.SetUserID(i)
 	return tauo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (tauo *TradingAccountUpdateOne) SetNillableUserID(u *uint64) *TradingAccountUpdateOne {
-	if u != nil {
-		tauo.SetUserID(*u)
+func (tauo *TradingAccountUpdateOne) SetNillableUserID(i *int) *TradingAccountUpdateOne {
+	if i != nil {
+		tauo.SetUserID(*i)
 	}
 	return tauo
 }
@@ -487,14 +487,14 @@ func (tauo *TradingAccountUpdateOne) SetUser(u *User) *TradingAccountUpdateOne {
 }
 
 // AddTaskIDs adds the "tasks" edge to the Task entity by IDs.
-func (tauo *TradingAccountUpdateOne) AddTaskIDs(ids ...uint64) *TradingAccountUpdateOne {
+func (tauo *TradingAccountUpdateOne) AddTaskIDs(ids ...int) *TradingAccountUpdateOne {
 	tauo.mutation.AddTaskIDs(ids...)
 	return tauo
 }
 
 // AddTasks adds the "tasks" edges to the Task entity.
 func (tauo *TradingAccountUpdateOne) AddTasks(t ...*Task) *TradingAccountUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -519,14 +519,14 @@ func (tauo *TradingAccountUpdateOne) ClearTasks() *TradingAccountUpdateOne {
 }
 
 // RemoveTaskIDs removes the "tasks" edge to Task entities by IDs.
-func (tauo *TradingAccountUpdateOne) RemoveTaskIDs(ids ...uint64) *TradingAccountUpdateOne {
+func (tauo *TradingAccountUpdateOne) RemoveTaskIDs(ids ...int) *TradingAccountUpdateOne {
 	tauo.mutation.RemoveTaskIDs(ids...)
 	return tauo
 }
 
 // RemoveTasks removes "tasks" edges to Task entities.
 func (tauo *TradingAccountUpdateOne) RemoveTasks(t ...*Task) *TradingAccountUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -585,7 +585,7 @@ func (tauo *TradingAccountUpdateOne) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (tauo *TradingAccountUpdateOne) check() error {
 	if v, ok := tauo.mutation.UserID(); ok {
-		if err := tradingaccount.UserIDValidator(v); err != nil {
+		if err := tradingaccount.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
 		}
 	}
@@ -599,7 +599,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 	if err := tauo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt))
 	id, ok := tauo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TradingAccount.id" for update`)}
@@ -656,7 +656,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 			Columns: []string{tradingaccount.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -669,7 +669,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 			Columns: []string{tradingaccount.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -685,7 +685,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -698,7 +698,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -714,7 +714,7 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 			Columns: []string{tradingaccount.TasksColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

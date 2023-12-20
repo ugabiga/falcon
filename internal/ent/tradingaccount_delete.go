@@ -40,7 +40,7 @@ func (tad *TradingAccountDelete) ExecX(ctx context.Context) int {
 }
 
 func (tad *TradingAccountDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(tradingaccount.Table, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(tradingaccount.Table, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt))
 	if ps := tad.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

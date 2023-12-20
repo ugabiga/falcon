@@ -16,7 +16,7 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uint64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Timezone holds the value of the "timezone" field.
@@ -40,6 +40,11 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedAuthentications map[string][]*Authentication
+	namedTradingAccounts map[string][]*TradingAccount
 }
 
 // AuthenticationsOrErr returns the Authentications value or an error if the edge
@@ -87,11 +92,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case user.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				u.ID = int(value.Int64)
 			}
-			u.ID = uint64(value.Int64)
 		case user.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -175,6 +180,54 @@ func (u *User) String() string {
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedAuthentications returns the Authentications named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedAuthentications(name string) ([]*Authentication, error) {
+	if u.Edges.namedAuthentications == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedAuthentications[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedAuthentications(name string, edges ...*Authentication) {
+	if u.Edges.namedAuthentications == nil {
+		u.Edges.namedAuthentications = make(map[string][]*Authentication)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedAuthentications[name] = []*Authentication{}
+	} else {
+		u.Edges.namedAuthentications[name] = append(u.Edges.namedAuthentications[name], edges...)
+	}
+}
+
+// NamedTradingAccounts returns the TradingAccounts named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedTradingAccounts(name string) ([]*TradingAccount, error) {
+	if u.Edges.namedTradingAccounts == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedTradingAccounts[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedTradingAccounts(name string, edges ...*TradingAccount) {
+	if u.Edges.namedTradingAccounts == nil {
+		u.Edges.namedTradingAccounts = make(map[string][]*TradingAccount)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedTradingAccounts[name] = []*TradingAccount{}
+	} else {
+		u.Edges.namedTradingAccounts[name] = append(u.Edges.namedTradingAccounts[name], edges...)
+	}
 }
 
 // Users is a parsable slice of User.

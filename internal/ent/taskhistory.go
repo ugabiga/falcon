@@ -17,9 +17,9 @@ import (
 type TaskHistory struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uint64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// TaskID holds the value of the "task_id" field.
-	TaskID uint64 `json:"task_id,omitempty"`
+	TaskID int `json:"task_id,omitempty"`
 	// IsSuccess holds the value of the "is_success" field.
 	IsSuccess bool `json:"is_success,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -39,6 +39,8 @@ type TaskHistoryEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
 }
 
 // TaskOrErr returns the Task value or an error if the edge
@@ -81,16 +83,16 @@ func (th *TaskHistory) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case taskhistory.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				th.ID = int(value.Int64)
 			}
-			th.ID = uint64(value.Int64)
 		case taskhistory.FieldTaskID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field task_id", values[i])
 			} else if value.Valid {
-				th.TaskID = uint64(value.Int64)
+				th.TaskID = int(value.Int64)
 			}
 		case taskhistory.FieldIsSuccess:
 			if value, ok := values[i].(*sql.NullBool); !ok {

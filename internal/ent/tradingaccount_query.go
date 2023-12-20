@@ -20,12 +20,15 @@ import (
 // TradingAccountQuery is the builder for querying TradingAccount entities.
 type TradingAccountQuery struct {
 	config
-	ctx        *QueryContext
-	order      []tradingaccount.OrderOption
-	inters     []Interceptor
-	predicates []predicate.TradingAccount
-	withUser   *UserQuery
-	withTasks  *TaskQuery
+	ctx            *QueryContext
+	order          []tradingaccount.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.TradingAccount
+	withUser       *UserQuery
+	withTasks      *TaskQuery
+	modifiers      []func(*sql.Selector)
+	loadTotal      []func(context.Context, []*TradingAccount) error
+	withNamedTasks map[string]*TaskQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -130,8 +133,8 @@ func (taq *TradingAccountQuery) FirstX(ctx context.Context) *TradingAccount {
 
 // FirstID returns the first TradingAccount ID from the query.
 // Returns a *NotFoundError when no TradingAccount ID was found.
-func (taq *TradingAccountQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (taq *TradingAccountQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = taq.Limit(1).IDs(setContextOp(ctx, taq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -143,7 +146,7 @@ func (taq *TradingAccountQuery) FirstID(ctx context.Context) (id uint64, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (taq *TradingAccountQuery) FirstIDX(ctx context.Context) uint64 {
+func (taq *TradingAccountQuery) FirstIDX(ctx context.Context) int {
 	id, err := taq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -181,8 +184,8 @@ func (taq *TradingAccountQuery) OnlyX(ctx context.Context) *TradingAccount {
 // OnlyID is like Only, but returns the only TradingAccount ID in the query.
 // Returns a *NotSingularError when more than one TradingAccount ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (taq *TradingAccountQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (taq *TradingAccountQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = taq.Limit(2).IDs(setContextOp(ctx, taq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -198,7 +201,7 @@ func (taq *TradingAccountQuery) OnlyID(ctx context.Context) (id uint64, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (taq *TradingAccountQuery) OnlyIDX(ctx context.Context) uint64 {
+func (taq *TradingAccountQuery) OnlyIDX(ctx context.Context) int {
 	id, err := taq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -226,7 +229,7 @@ func (taq *TradingAccountQuery) AllX(ctx context.Context) []*TradingAccount {
 }
 
 // IDs executes the query and returns a list of TradingAccount IDs.
-func (taq *TradingAccountQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (taq *TradingAccountQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if taq.ctx.Unique == nil && taq.path != nil {
 		taq.Unique(true)
 	}
@@ -238,7 +241,7 @@ func (taq *TradingAccountQuery) IDs(ctx context.Context) (ids []uint64, err erro
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (taq *TradingAccountQuery) IDsX(ctx context.Context) []uint64 {
+func (taq *TradingAccountQuery) IDsX(ctx context.Context) []int {
 	ids, err := taq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -334,7 +337,7 @@ func (taq *TradingAccountQuery) WithTasks(opts ...func(*TaskQuery)) *TradingAcco
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +360,7 @@ func (taq *TradingAccountQuery) GroupBy(field string, fields ...string) *Trading
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.TradingAccount.Query().
@@ -420,6 +423,9 @@ func (taq *TradingAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(taq.modifiers) > 0 {
+		_spec.Modifiers = taq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -442,12 +448,24 @@ func (taq *TradingAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 			return nil, err
 		}
 	}
+	for name, query := range taq.withNamedTasks {
+		if err := taq.loadTasks(ctx, query, nodes,
+			func(n *TradingAccount) { n.appendNamedTasks(name) },
+			func(n *TradingAccount, e *Task) { n.appendNamedTasks(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range taq.loadTotal {
+		if err := taq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (taq *TradingAccountQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*TradingAccount, init func(*TradingAccount), assign func(*TradingAccount, *User)) error {
-	ids := make([]uint64, 0, len(nodes))
-	nodeids := make(map[uint64][]*TradingAccount)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*TradingAccount)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -476,7 +494,7 @@ func (taq *TradingAccountQuery) loadUser(ctx context.Context, query *UserQuery, 
 }
 func (taq *TradingAccountQuery) loadTasks(ctx context.Context, query *TaskQuery, nodes []*TradingAccount, init func(*TradingAccount), assign func(*TradingAccount, *Task)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint64]*TradingAccount)
+	nodeids := make(map[int]*TradingAccount)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -507,6 +525,9 @@ func (taq *TradingAccountQuery) loadTasks(ctx context.Context, query *TaskQuery,
 
 func (taq *TradingAccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := taq.querySpec()
+	if len(taq.modifiers) > 0 {
+		_spec.Modifiers = taq.modifiers
+	}
 	_spec.Node.Columns = taq.ctx.Fields
 	if len(taq.ctx.Fields) > 0 {
 		_spec.Unique = taq.ctx.Unique != nil && *taq.ctx.Unique
@@ -515,7 +536,7 @@ func (taq *TradingAccountQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (taq *TradingAccountQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt))
 	_spec.From = taq.sql
 	if unique := taq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -587,6 +608,20 @@ func (taq *TradingAccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedTasks tells the query-builder to eager-load the nodes that are connected to the "tasks"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (taq *TradingAccountQuery) WithNamedTasks(name string, opts ...func(*TaskQuery)) *TradingAccountQuery {
+	query := (&TaskClient{config: taq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if taq.withNamedTasks == nil {
+		taq.withNamedTasks = make(map[string]*TaskQuery)
+	}
+	taq.withNamedTasks[name] = query
+	return taq
 }
 
 // TradingAccountGroupBy is the group-by builder for TradingAccount entities.

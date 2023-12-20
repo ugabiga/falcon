@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
@@ -15,10 +17,12 @@ type TaskHistory struct {
 // Fields of the TaskHistory.
 func (TaskHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").
-			Positive(),
-		field.Uint64("task_id").
-			Positive(),
+		field.Int("id").
+			Positive().
+			GoType(int(0)),
+		field.Int("task_id").
+			Positive().
+			GoType(int(0)),
 		field.Bool("is_success"),
 		field.Time("updated_at").
 			Default(time.Now).
@@ -37,5 +41,12 @@ func (TaskHistory) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Field("task_id"),
+	}
+}
+
+func (TaskHistory) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
 	}
 }

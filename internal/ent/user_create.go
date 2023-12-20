@@ -79,20 +79,20 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 }
 
 // SetID sets the "id" field.
-func (uc *UserCreate) SetID(u uint64) *UserCreate {
-	uc.mutation.SetID(u)
+func (uc *UserCreate) SetID(i int) *UserCreate {
+	uc.mutation.SetID(i)
 	return uc
 }
 
 // AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
-func (uc *UserCreate) AddAuthenticationIDs(ids ...uint64) *UserCreate {
+func (uc *UserCreate) AddAuthenticationIDs(ids ...int) *UserCreate {
 	uc.mutation.AddAuthenticationIDs(ids...)
 	return uc
 }
 
 // AddAuthentications adds the "authentications" edges to the Authentication entity.
 func (uc *UserCreate) AddAuthentications(a ...*Authentication) *UserCreate {
-	ids := make([]uint64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -100,14 +100,14 @@ func (uc *UserCreate) AddAuthentications(a ...*Authentication) *UserCreate {
 }
 
 // AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by IDs.
-func (uc *UserCreate) AddTradingAccountIDs(ids ...uint64) *UserCreate {
+func (uc *UserCreate) AddTradingAccountIDs(ids ...int) *UserCreate {
 	uc.mutation.AddTradingAccountIDs(ids...)
 	return uc
 }
 
 // AddTradingAccounts adds the "trading_accounts" edges to the TradingAccount entity.
 func (uc *UserCreate) AddTradingAccounts(t ...*TradingAccount) *UserCreate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -168,7 +168,7 @@ func (uc *UserCreate) check() error {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
 	}
 	if v, ok := uc.mutation.ID(); ok {
-		if err := user.IDValidator(v); err != nil {
+		if err := user.IDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "User.id": %w`, err)}
 		}
 	}
@@ -188,7 +188,7 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int(id)
 	}
 	uc.mutation.id = &_node.ID
 	uc.mutation.done = true
@@ -198,7 +198,7 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	var (
 		_node = &User{config: uc.config}
-		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
 	if id, ok := uc.mutation.ID(); ok {
 		_node.ID = id
@@ -228,7 +228,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -244,7 +244,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -302,7 +302,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

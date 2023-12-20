@@ -11,53 +11,54 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.TaskHistory {
+func ID(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.TaskHistory {
+func IDEQ(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.TaskHistory {
+func IDNEQ(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.TaskHistory {
+func IDIn(ids ...int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.TaskHistory {
+func IDNotIn(ids ...int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.TaskHistory {
+func IDGT(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.TaskHistory {
+func IDGTE(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.TaskHistory {
+func IDLT(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.TaskHistory {
+func IDLTE(id int) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldLTE(FieldID, id))
 }
 
 // TaskID applies equality check predicate on the "task_id" field. It's identical to TaskIDEQ.
-func TaskID(v uint64) predicate.TaskHistory {
-	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, v))
+func TaskID(v int) predicate.TaskHistory {
+	vc := int(v)
+	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, vc))
 }
 
 // IsSuccess applies equality check predicate on the "is_success" field. It's identical to IsSuccessEQ.
@@ -76,23 +77,33 @@ func CreatedAt(v time.Time) predicate.TaskHistory {
 }
 
 // TaskIDEQ applies the EQ predicate on the "task_id" field.
-func TaskIDEQ(v uint64) predicate.TaskHistory {
-	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, v))
+func TaskIDEQ(v int) predicate.TaskHistory {
+	vc := int(v)
+	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, vc))
 }
 
 // TaskIDNEQ applies the NEQ predicate on the "task_id" field.
-func TaskIDNEQ(v uint64) predicate.TaskHistory {
-	return predicate.TaskHistory(sql.FieldNEQ(FieldTaskID, v))
+func TaskIDNEQ(v int) predicate.TaskHistory {
+	vc := int(v)
+	return predicate.TaskHistory(sql.FieldNEQ(FieldTaskID, vc))
 }
 
 // TaskIDIn applies the In predicate on the "task_id" field.
-func TaskIDIn(vs ...uint64) predicate.TaskHistory {
-	return predicate.TaskHistory(sql.FieldIn(FieldTaskID, vs...))
+func TaskIDIn(vs ...int) predicate.TaskHistory {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.TaskHistory(sql.FieldIn(FieldTaskID, v...))
 }
 
 // TaskIDNotIn applies the NotIn predicate on the "task_id" field.
-func TaskIDNotIn(vs ...uint64) predicate.TaskHistory {
-	return predicate.TaskHistory(sql.FieldNotIn(FieldTaskID, vs...))
+func TaskIDNotIn(vs ...int) predicate.TaskHistory {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.TaskHistory(sql.FieldNotIn(FieldTaskID, v...))
 }
 
 // IsSuccessEQ applies the EQ predicate on the "is_success" field.

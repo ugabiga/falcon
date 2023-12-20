@@ -1,0 +1,12 @@
+type TradingAccount {
+    id: ID!
+    userID: ID!
+    exchange: String!
+    currency: String!
+    ip: String!
+    identifier: String!
+    updatedAt: Time!
+    createdAt: Time!
+    user: User!
+    tasks: [Task!]
+}

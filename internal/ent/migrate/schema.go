@@ -10,13 +10,13 @@ import (
 var (
 	// AuthenticationsColumns holds the columns for the "authentications" table.
 	AuthenticationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "provider", Type: field.TypeEnum, Enums: []string{"google", "facebook"}},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "credential", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeUint64},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// AuthenticationsTable holds the schema information for the "authentications" table.
 	AuthenticationsTable = &schema.Table{
@@ -34,14 +34,14 @@ var (
 	}
 	// TasksColumns holds the columns for the "tasks" table.
 	TasksColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "cron", Type: field.TypeString},
 		{Name: "next_execution_time", Type: field.TypeTime},
 		{Name: "is_active", Type: field.TypeBool},
 		{Name: "type", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "trading_account_id", Type: field.TypeUint64},
+		{Name: "trading_account_id", Type: field.TypeInt},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
 	TasksTable = &schema.Table{
@@ -59,11 +59,11 @@ var (
 	}
 	// TaskHistoriesColumns holds the columns for the "task_histories" table.
 	TaskHistoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "is_success", Type: field.TypeBool},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "task_id", Type: field.TypeUint64},
+		{Name: "task_id", Type: field.TypeInt},
 	}
 	// TaskHistoriesTable holds the schema information for the "task_histories" table.
 	TaskHistoriesTable = &schema.Table{
@@ -81,7 +81,7 @@ var (
 	}
 	// TradingAccountsColumns holds the columns for the "trading_accounts" table.
 	TradingAccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "exchange", Type: field.TypeString},
 		{Name: "currency", Type: field.TypeString},
 		{Name: "ip", Type: field.TypeString},
@@ -90,7 +90,7 @@ var (
 		{Name: "phrase", Type: field.TypeString, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_id", Type: field.TypeUint64},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// TradingAccountsTable holds the schema information for the "trading_accounts" table.
 	TradingAccountsTable = &schema.Table{
@@ -108,7 +108,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint64, Increment: true},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "timezone", Type: field.TypeString, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime},

@@ -77,14 +77,14 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 }
 
 // AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
-func (uu *UserUpdate) AddAuthenticationIDs(ids ...uint64) *UserUpdate {
+func (uu *UserUpdate) AddAuthenticationIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddAuthenticationIDs(ids...)
 	return uu
 }
 
 // AddAuthentications adds the "authentications" edges to the Authentication entity.
 func (uu *UserUpdate) AddAuthentications(a ...*Authentication) *UserUpdate {
-	ids := make([]uint64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -92,14 +92,14 @@ func (uu *UserUpdate) AddAuthentications(a ...*Authentication) *UserUpdate {
 }
 
 // AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by IDs.
-func (uu *UserUpdate) AddTradingAccountIDs(ids ...uint64) *UserUpdate {
+func (uu *UserUpdate) AddTradingAccountIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddTradingAccountIDs(ids...)
 	return uu
 }
 
 // AddTradingAccounts adds the "trading_accounts" edges to the TradingAccount entity.
 func (uu *UserUpdate) AddTradingAccounts(t ...*TradingAccount) *UserUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -118,14 +118,14 @@ func (uu *UserUpdate) ClearAuthentications() *UserUpdate {
 }
 
 // RemoveAuthenticationIDs removes the "authentications" edge to Authentication entities by IDs.
-func (uu *UserUpdate) RemoveAuthenticationIDs(ids ...uint64) *UserUpdate {
+func (uu *UserUpdate) RemoveAuthenticationIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveAuthenticationIDs(ids...)
 	return uu
 }
 
 // RemoveAuthentications removes "authentications" edges to Authentication entities.
 func (uu *UserUpdate) RemoveAuthentications(a ...*Authentication) *UserUpdate {
-	ids := make([]uint64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -139,14 +139,14 @@ func (uu *UserUpdate) ClearTradingAccounts() *UserUpdate {
 }
 
 // RemoveTradingAccountIDs removes the "trading_accounts" edge to TradingAccount entities by IDs.
-func (uu *UserUpdate) RemoveTradingAccountIDs(ids ...uint64) *UserUpdate {
+func (uu *UserUpdate) RemoveTradingAccountIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveTradingAccountIDs(ids...)
 	return uu
 }
 
 // RemoveTradingAccounts removes "trading_accounts" edges to TradingAccount entities.
 func (uu *UserUpdate) RemoveTradingAccounts(t ...*TradingAccount) *UserUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -190,7 +190,7 @@ func (uu *UserUpdate) defaults() {
 }
 
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -221,7 +221,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -234,7 +234,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -250,7 +250,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -266,7 +266,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -279,7 +279,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -295,7 +295,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -370,14 +370,14 @@ func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 }
 
 // AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by IDs.
-func (uuo *UserUpdateOne) AddAuthenticationIDs(ids ...uint64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddAuthenticationIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddAuthenticationIDs(ids...)
 	return uuo
 }
 
 // AddAuthentications adds the "authentications" edges to the Authentication entity.
 func (uuo *UserUpdateOne) AddAuthentications(a ...*Authentication) *UserUpdateOne {
-	ids := make([]uint64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -385,14 +385,14 @@ func (uuo *UserUpdateOne) AddAuthentications(a ...*Authentication) *UserUpdateOn
 }
 
 // AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by IDs.
-func (uuo *UserUpdateOne) AddTradingAccountIDs(ids ...uint64) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddTradingAccountIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddTradingAccountIDs(ids...)
 	return uuo
 }
 
 // AddTradingAccounts adds the "trading_accounts" edges to the TradingAccount entity.
 func (uuo *UserUpdateOne) AddTradingAccounts(t ...*TradingAccount) *UserUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -411,14 +411,14 @@ func (uuo *UserUpdateOne) ClearAuthentications() *UserUpdateOne {
 }
 
 // RemoveAuthenticationIDs removes the "authentications" edge to Authentication entities by IDs.
-func (uuo *UserUpdateOne) RemoveAuthenticationIDs(ids ...uint64) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveAuthenticationIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveAuthenticationIDs(ids...)
 	return uuo
 }
 
 // RemoveAuthentications removes "authentications" edges to Authentication entities.
 func (uuo *UserUpdateOne) RemoveAuthentications(a ...*Authentication) *UserUpdateOne {
-	ids := make([]uint64, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -432,14 +432,14 @@ func (uuo *UserUpdateOne) ClearTradingAccounts() *UserUpdateOne {
 }
 
 // RemoveTradingAccountIDs removes the "trading_accounts" edge to TradingAccount entities by IDs.
-func (uuo *UserUpdateOne) RemoveTradingAccountIDs(ids ...uint64) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveTradingAccountIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveTradingAccountIDs(ids...)
 	return uuo
 }
 
 // RemoveTradingAccounts removes "trading_accounts" edges to TradingAccount entities.
 func (uuo *UserUpdateOne) RemoveTradingAccounts(t ...*TradingAccount) *UserUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -496,7 +496,7 @@ func (uuo *UserUpdateOne) defaults() {
 }
 
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
-	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	id, ok := uuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "User.id" for update`)}
@@ -544,7 +544,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -557,7 +557,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -573,7 +573,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.AuthenticationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -589,7 +589,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -602,7 +602,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -618,7 +618,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.TradingAccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

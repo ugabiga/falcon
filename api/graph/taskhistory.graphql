@@ -1,0 +1,8 @@
+type TaskHistory {
+    id: ID!
+    taskID: ID!
+    isSuccess: Boolean!
+    updatedAt: Time!
+    createdAt: Time!
+    task: Task!
+}

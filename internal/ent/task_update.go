@@ -31,15 +31,15 @@ func (tu *TaskUpdate) Where(ps ...predicate.Task) *TaskUpdate {
 }
 
 // SetTradingAccountID sets the "trading_account_id" field.
-func (tu *TaskUpdate) SetTradingAccountID(u uint64) *TaskUpdate {
-	tu.mutation.SetTradingAccountID(u)
+func (tu *TaskUpdate) SetTradingAccountID(i int) *TaskUpdate {
+	tu.mutation.SetTradingAccountID(i)
 	return tu
 }
 
 // SetNillableTradingAccountID sets the "trading_account_id" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableTradingAccountID(u *uint64) *TaskUpdate {
-	if u != nil {
-		tu.SetTradingAccountID(*u)
+func (tu *TaskUpdate) SetNillableTradingAccountID(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetTradingAccountID(*i)
 	}
 	return tu
 }
@@ -112,14 +112,14 @@ func (tu *TaskUpdate) SetTradingAccount(t *TradingAccount) *TaskUpdate {
 }
 
 // AddTaskHistoryIDs adds the "task_histories" edge to the TaskHistory entity by IDs.
-func (tu *TaskUpdate) AddTaskHistoryIDs(ids ...uint64) *TaskUpdate {
+func (tu *TaskUpdate) AddTaskHistoryIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTaskHistoryIDs(ids...)
 	return tu
 }
 
 // AddTaskHistories adds the "task_histories" edges to the TaskHistory entity.
 func (tu *TaskUpdate) AddTaskHistories(t ...*TaskHistory) *TaskUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -144,14 +144,14 @@ func (tu *TaskUpdate) ClearTaskHistories() *TaskUpdate {
 }
 
 // RemoveTaskHistoryIDs removes the "task_histories" edge to TaskHistory entities by IDs.
-func (tu *TaskUpdate) RemoveTaskHistoryIDs(ids ...uint64) *TaskUpdate {
+func (tu *TaskUpdate) RemoveTaskHistoryIDs(ids ...int) *TaskUpdate {
 	tu.mutation.RemoveTaskHistoryIDs(ids...)
 	return tu
 }
 
 // RemoveTaskHistories removes "task_histories" edges to TaskHistory entities.
 func (tu *TaskUpdate) RemoveTaskHistories(t ...*TaskHistory) *TaskUpdate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -197,7 +197,7 @@ func (tu *TaskUpdate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (tu *TaskUpdate) check() error {
 	if v, ok := tu.mutation.TradingAccountID(); ok {
-		if err := task.TradingAccountIDValidator(v); err != nil {
+		if err := task.TradingAccountIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
 		}
 	}
@@ -211,7 +211,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -242,7 +242,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TradingAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -255,7 +255,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TradingAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -271,7 +271,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -284,7 +284,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -300,7 +300,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -329,15 +329,15 @@ type TaskUpdateOne struct {
 }
 
 // SetTradingAccountID sets the "trading_account_id" field.
-func (tuo *TaskUpdateOne) SetTradingAccountID(u uint64) *TaskUpdateOne {
-	tuo.mutation.SetTradingAccountID(u)
+func (tuo *TaskUpdateOne) SetTradingAccountID(i int) *TaskUpdateOne {
+	tuo.mutation.SetTradingAccountID(i)
 	return tuo
 }
 
 // SetNillableTradingAccountID sets the "trading_account_id" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableTradingAccountID(u *uint64) *TaskUpdateOne {
-	if u != nil {
-		tuo.SetTradingAccountID(*u)
+func (tuo *TaskUpdateOne) SetNillableTradingAccountID(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetTradingAccountID(*i)
 	}
 	return tuo
 }
@@ -410,14 +410,14 @@ func (tuo *TaskUpdateOne) SetTradingAccount(t *TradingAccount) *TaskUpdateOne {
 }
 
 // AddTaskHistoryIDs adds the "task_histories" edge to the TaskHistory entity by IDs.
-func (tuo *TaskUpdateOne) AddTaskHistoryIDs(ids ...uint64) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) AddTaskHistoryIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTaskHistoryIDs(ids...)
 	return tuo
 }
 
 // AddTaskHistories adds the "task_histories" edges to the TaskHistory entity.
 func (tuo *TaskUpdateOne) AddTaskHistories(t ...*TaskHistory) *TaskUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -442,14 +442,14 @@ func (tuo *TaskUpdateOne) ClearTaskHistories() *TaskUpdateOne {
 }
 
 // RemoveTaskHistoryIDs removes the "task_histories" edge to TaskHistory entities by IDs.
-func (tuo *TaskUpdateOne) RemoveTaskHistoryIDs(ids ...uint64) *TaskUpdateOne {
+func (tuo *TaskUpdateOne) RemoveTaskHistoryIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.RemoveTaskHistoryIDs(ids...)
 	return tuo
 }
 
 // RemoveTaskHistories removes "task_histories" edges to TaskHistory entities.
 func (tuo *TaskUpdateOne) RemoveTaskHistories(t ...*TaskHistory) *TaskUpdateOne {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -508,7 +508,7 @@ func (tuo *TaskUpdateOne) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (tuo *TaskUpdateOne) check() error {
 	if v, ok := tuo.mutation.TradingAccountID(); ok {
-		if err := task.TradingAccountIDValidator(v); err != nil {
+		if err := task.TradingAccountIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
 		}
 	}
@@ -522,7 +522,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if err := tuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
 	id, ok := tuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Task.id" for update`)}
@@ -570,7 +570,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TradingAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -583,7 +583,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TradingAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -599,7 +599,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -612,7 +612,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -628,7 +628,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

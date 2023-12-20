@@ -20,12 +20,16 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                 *QueryContext
-	order               []user.OrderOption
-	inters              []Interceptor
-	predicates          []predicate.User
-	withAuthentications *AuthenticationQuery
-	withTradingAccounts *TradingAccountQuery
+	ctx                      *QueryContext
+	order                    []user.OrderOption
+	inters                   []Interceptor
+	predicates               []predicate.User
+	withAuthentications      *AuthenticationQuery
+	withTradingAccounts      *TradingAccountQuery
+	modifiers                []func(*sql.Selector)
+	loadTotal                []func(context.Context, []*User) error
+	withNamedAuthentications map[string]*AuthenticationQuery
+	withNamedTradingAccounts map[string]*TradingAccountQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -130,8 +134,8 @@ func (uq *UserQuery) FirstX(ctx context.Context) *User {
 
 // FirstID returns the first User ID from the query.
 // Returns a *NotFoundError when no User ID was found.
-func (uq *UserQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (uq *UserQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = uq.Limit(1).IDs(setContextOp(ctx, uq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -143,7 +147,7 @@ func (uq *UserQuery) FirstID(ctx context.Context) (id uint64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (uq *UserQuery) FirstIDX(ctx context.Context) uint64 {
+func (uq *UserQuery) FirstIDX(ctx context.Context) int {
 	id, err := uq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -181,8 +185,8 @@ func (uq *UserQuery) OnlyX(ctx context.Context) *User {
 // OnlyID is like Only, but returns the only User ID in the query.
 // Returns a *NotSingularError when more than one User ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (uq *UserQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (uq *UserQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = uq.Limit(2).IDs(setContextOp(ctx, uq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -198,7 +202,7 @@ func (uq *UserQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (uq *UserQuery) OnlyIDX(ctx context.Context) uint64 {
+func (uq *UserQuery) OnlyIDX(ctx context.Context) int {
 	id, err := uq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -226,7 +230,7 @@ func (uq *UserQuery) AllX(ctx context.Context) []*User {
 }
 
 // IDs executes the query and returns a list of User IDs.
-func (uq *UserQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (uq *UserQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if uq.ctx.Unique == nil && uq.path != nil {
 		uq.Unique(true)
 	}
@@ -238,7 +242,7 @@ func (uq *UserQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (uq *UserQuery) IDsX(ctx context.Context) []uint64 {
+func (uq *UserQuery) IDsX(ctx context.Context) []int {
 	ids, err := uq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -420,6 +424,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(uq.modifiers) > 0 {
+		_spec.Modifiers = uq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -443,12 +450,31 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	for name, query := range uq.withNamedAuthentications {
+		if err := uq.loadAuthentications(ctx, query, nodes,
+			func(n *User) { n.appendNamedAuthentications(name) },
+			func(n *User, e *Authentication) { n.appendNamedAuthentications(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedTradingAccounts {
+		if err := uq.loadTradingAccounts(ctx, query, nodes,
+			func(n *User) { n.appendNamedTradingAccounts(name) },
+			func(n *User, e *TradingAccount) { n.appendNamedTradingAccounts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range uq.loadTotal {
+		if err := uq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (uq *UserQuery) loadAuthentications(ctx context.Context, query *AuthenticationQuery, nodes []*User, init func(*User), assign func(*User, *Authentication)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint64]*User)
+	nodeids := make(map[int]*User)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -478,7 +504,7 @@ func (uq *UserQuery) loadAuthentications(ctx context.Context, query *Authenticat
 }
 func (uq *UserQuery) loadTradingAccounts(ctx context.Context, query *TradingAccountQuery, nodes []*User, init func(*User), assign func(*User, *TradingAccount)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint64]*User)
+	nodeids := make(map[int]*User)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -509,6 +535,9 @@ func (uq *UserQuery) loadTradingAccounts(ctx context.Context, query *TradingAcco
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
+	if len(uq.modifiers) > 0 {
+		_spec.Modifiers = uq.modifiers
+	}
 	_spec.Node.Columns = uq.ctx.Fields
 	if len(uq.ctx.Fields) > 0 {
 		_spec.Unique = uq.ctx.Unique != nil && *uq.ctx.Unique
@@ -517,7 +546,7 @@ func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (uq *UserQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	_spec.From = uq.sql
 	if unique := uq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -586,6 +615,34 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedAuthentications tells the query-builder to eager-load the nodes that are connected to the "authentications"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedAuthentications(name string, opts ...func(*AuthenticationQuery)) *UserQuery {
+	query := (&AuthenticationClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedAuthentications == nil {
+		uq.withNamedAuthentications = make(map[string]*AuthenticationQuery)
+	}
+	uq.withNamedAuthentications[name] = query
+	return uq
+}
+
+// WithNamedTradingAccounts tells the query-builder to eager-load the nodes that are connected to the "trading_accounts"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedTradingAccounts(name string, opts ...func(*TradingAccountQuery)) *UserQuery {
+	query := (&TradingAccountClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedTradingAccounts == nil {
+		uq.withNamedTradingAccounts = make(map[string]*TradingAccountQuery)
+	}
+	uq.withNamedTradingAccounts[name] = query
+	return uq
 }
 
 // UserGroupBy is the group-by builder for User entities.

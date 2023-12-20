@@ -17,9 +17,9 @@ import (
 type TradingAccount struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uint64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
-	UserID uint64 `json:"user_id,omitempty"`
+	UserID int `json:"user_id,omitempty"`
 	// Exchange holds the value of the "exchange" field.
 	Exchange string `json:"exchange,omitempty"`
 	// Currency holds the value of the "currency" field.
@@ -51,6 +51,10 @@ type TradingAccountEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedTasks map[string][]*Task
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -102,16 +106,16 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case tradingaccount.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				ta.ID = int(value.Int64)
 			}
-			ta.ID = uint64(value.Int64)
 		case tradingaccount.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				ta.UserID = uint64(value.Int64)
+				ta.UserID = int(value.Int64)
 			}
 		case tradingaccount.FieldExchange:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -233,6 +237,30 @@ func (ta *TradingAccount) String() string {
 	builder.WriteString(ta.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTasks returns the Tasks named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (ta *TradingAccount) NamedTasks(name string) ([]*Task, error) {
+	if ta.Edges.namedTasks == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := ta.Edges.namedTasks[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (ta *TradingAccount) appendNamedTasks(name string, edges ...*Task) {
+	if ta.Edges.namedTasks == nil {
+		ta.Edges.namedTasks = make(map[string][]*Task)
+	}
+	if len(edges) == 0 {
+		ta.Edges.namedTasks[name] = []*Task{}
+	} else {
+		ta.Edges.namedTasks[name] = append(ta.Edges.namedTasks[name], edges...)
+	}
 }
 
 // TradingAccounts is a parsable slice of TradingAccount.

@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
@@ -15,10 +17,12 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").
-			Positive(),
-		field.Uint64("trading_account_id").
-			Positive(),
+		field.Int("id").
+			Positive().
+			GoType(int(0)),
+		field.Int("trading_account_id").
+			Positive().
+			GoType(int(0)),
 		field.String("cron"),
 		field.Time("next_execution_time"),
 		field.Bool("is_active"),
@@ -41,5 +45,12 @@ func (Task) Edges() []ent.Edge {
 			Field("trading_account_id").
 			Required(),
 		edge.To("task_histories", TaskHistory.Type),
+	}
+}
+
+func (Task) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
 	}
 }

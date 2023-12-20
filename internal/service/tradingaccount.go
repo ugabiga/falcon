@@ -24,7 +24,7 @@ func NewTradingAccountService(db *ent.Client) *TradingAccountService {
 
 func (s TradingAccountService) Create(
 	ctx context.Context,
-	userID uint64,
+	userID int,
 	exchange string,
 	currency string,
 	Identifier string,
@@ -75,13 +75,13 @@ func (s TradingAccountService) Create(
 
 }
 
-func (s TradingAccountService) Get(ctx context.Context, userID uint64) ([]*ent.TradingAccount, error) {
+func (s TradingAccountService) Get(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
 	return s.db.TradingAccount.Query().Where(
 		tradingaccount.UserIDEQ(userID),
 	).All(ctx)
 }
 
-func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID uint64) (*ent.TradingAccount, error) {
+func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID int) (*ent.TradingAccount, error) {
 	return s.db.TradingAccount.Query().Where(
 		tradingaccount.UserIDEQ(userID),
 		tradingaccount.IDEQ(tradingAccountID),
@@ -90,8 +90,8 @@ func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccou
 
 func (s TradingAccountService) Update(
 	ctx context.Context,
-	tradingAccountID uint64,
-	userID uint64,
+	tradingAccountID int,
+	userID int,
 	exchange string,
 	currency string,
 	Identifier string,
@@ -141,7 +141,7 @@ func (s TradingAccountService) Update(
 	return nil
 }
 
-func (s TradingAccountService) Delete(ctx context.Context, userID, tradingAccountID uint64) error {
+func (s TradingAccountService) Delete(ctx context.Context, userID, tradingAccountID int) error {
 	deleteCount, err := s.db.TradingAccount.Delete().Where(
 		tradingaccount.IDEQ(tradingAccountID),
 		tradingaccount.UserIDEQ(userID),

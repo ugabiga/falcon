@@ -20,12 +20,15 @@ import (
 // TaskQuery is the builder for querying Task entities.
 type TaskQuery struct {
 	config
-	ctx                *QueryContext
-	order              []task.OrderOption
-	inters             []Interceptor
-	predicates         []predicate.Task
-	withTradingAccount *TradingAccountQuery
-	withTaskHistories  *TaskHistoryQuery
+	ctx                    *QueryContext
+	order                  []task.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Task
+	withTradingAccount     *TradingAccountQuery
+	withTaskHistories      *TaskHistoryQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*Task) error
+	withNamedTaskHistories map[string]*TaskHistoryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -130,8 +133,8 @@ func (tq *TaskQuery) FirstX(ctx context.Context) *Task {
 
 // FirstID returns the first Task ID from the query.
 // Returns a *NotFoundError when no Task ID was found.
-func (tq *TaskQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (tq *TaskQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -143,7 +146,7 @@ func (tq *TaskQuery) FirstID(ctx context.Context) (id uint64, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (tq *TaskQuery) FirstIDX(ctx context.Context) uint64 {
+func (tq *TaskQuery) FirstIDX(ctx context.Context) int {
 	id, err := tq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -181,8 +184,8 @@ func (tq *TaskQuery) OnlyX(ctx context.Context) *Task {
 // OnlyID is like Only, but returns the only Task ID in the query.
 // Returns a *NotSingularError when more than one Task ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (tq *TaskQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (tq *TaskQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -198,7 +201,7 @@ func (tq *TaskQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (tq *TaskQuery) OnlyIDX(ctx context.Context) uint64 {
+func (tq *TaskQuery) OnlyIDX(ctx context.Context) int {
 	id, err := tq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -226,7 +229,7 @@ func (tq *TaskQuery) AllX(ctx context.Context) []*Task {
 }
 
 // IDs executes the query and returns a list of Task IDs.
-func (tq *TaskQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (tq *TaskQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if tq.ctx.Unique == nil && tq.path != nil {
 		tq.Unique(true)
 	}
@@ -238,7 +241,7 @@ func (tq *TaskQuery) IDs(ctx context.Context) (ids []uint64, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (tq *TaskQuery) IDsX(ctx context.Context) []uint64 {
+func (tq *TaskQuery) IDsX(ctx context.Context) []int {
 	ids, err := tq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -334,7 +337,7 @@ func (tq *TaskQuery) WithTaskHistories(opts ...func(*TaskHistoryQuery)) *TaskQue
 // Example:
 //
 //	var v []struct {
-//		TradingAccountID uint64 `json:"trading_account_id,omitempty"`
+//		TradingAccountID int `json:"trading_account_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -357,7 +360,7 @@ func (tq *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		TradingAccountID uint64 `json:"trading_account_id,omitempty"`
+//		TradingAccountID int `json:"trading_account_id,omitempty"`
 //	}
 //
 //	client.Task.Query().
@@ -420,6 +423,9 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(tq.modifiers) > 0 {
+		_spec.Modifiers = tq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -442,12 +448,24 @@ func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, e
 			return nil, err
 		}
 	}
+	for name, query := range tq.withNamedTaskHistories {
+		if err := tq.loadTaskHistories(ctx, query, nodes,
+			func(n *Task) { n.appendNamedTaskHistories(name) },
+			func(n *Task, e *TaskHistory) { n.appendNamedTaskHistories(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range tq.loadTotal {
+		if err := tq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (tq *TaskQuery) loadTradingAccount(ctx context.Context, query *TradingAccountQuery, nodes []*Task, init func(*Task), assign func(*Task, *TradingAccount)) error {
-	ids := make([]uint64, 0, len(nodes))
-	nodeids := make(map[uint64][]*Task)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Task)
 	for i := range nodes {
 		fk := nodes[i].TradingAccountID
 		if _, ok := nodeids[fk]; !ok {
@@ -476,7 +494,7 @@ func (tq *TaskQuery) loadTradingAccount(ctx context.Context, query *TradingAccou
 }
 func (tq *TaskQuery) loadTaskHistories(ctx context.Context, query *TaskHistoryQuery, nodes []*Task, init func(*Task), assign func(*Task, *TaskHistory)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uint64]*Task)
+	nodeids := make(map[int]*Task)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -507,6 +525,9 @@ func (tq *TaskQuery) loadTaskHistories(ctx context.Context, query *TaskHistoryQu
 
 func (tq *TaskQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := tq.querySpec()
+	if len(tq.modifiers) > 0 {
+		_spec.Modifiers = tq.modifiers
+	}
 	_spec.Node.Columns = tq.ctx.Fields
 	if len(tq.ctx.Fields) > 0 {
 		_spec.Unique = tq.ctx.Unique != nil && *tq.ctx.Unique
@@ -515,7 +536,7 @@ func (tq *TaskQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (tq *TaskQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
 	_spec.From = tq.sql
 	if unique := tq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -587,6 +608,20 @@ func (tq *TaskQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedTaskHistories tells the query-builder to eager-load the nodes that are connected to the "task_histories"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (tq *TaskQuery) WithNamedTaskHistories(name string, opts ...func(*TaskHistoryQuery)) *TaskQuery {
+	query := (&TaskHistoryClient{config: tq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if tq.withNamedTaskHistories == nil {
+		tq.withNamedTaskHistories = make(map[string]*TaskHistoryQuery)
+	}
+	tq.withNamedTaskHistories[name] = query
+	return tq
 }
 
 // TaskGroupBy is the group-by builder for Task entities.

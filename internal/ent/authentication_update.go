@@ -30,15 +30,15 @@ func (au *AuthenticationUpdate) Where(ps ...predicate.Authentication) *Authentic
 }
 
 // SetUserID sets the "user_id" field.
-func (au *AuthenticationUpdate) SetUserID(u uint64) *AuthenticationUpdate {
-	au.mutation.SetUserID(u)
+func (au *AuthenticationUpdate) SetUserID(i int) *AuthenticationUpdate {
+	au.mutation.SetUserID(i)
 	return au
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (au *AuthenticationUpdate) SetNillableUserID(u *uint64) *AuthenticationUpdate {
-	if u != nil {
-		au.SetUserID(*u)
+func (au *AuthenticationUpdate) SetNillableUserID(i *int) *AuthenticationUpdate {
+	if i != nil {
+		au.SetUserID(*i)
 	}
 	return au
 }
@@ -146,7 +146,7 @@ func (au *AuthenticationUpdate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (au *AuthenticationUpdate) check() error {
 	if v, ok := au.mutation.UserID(); ok {
-		if err := authentication.UserIDValidator(v); err != nil {
+		if err := authentication.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
 		}
 	}
@@ -165,7 +165,7 @@ func (au *AuthenticationUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if err := au.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt))
 	if ps := au.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -193,7 +193,7 @@ func (au *AuthenticationUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{authentication.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -206,7 +206,7 @@ func (au *AuthenticationUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{authentication.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -235,15 +235,15 @@ type AuthenticationUpdateOne struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (auo *AuthenticationUpdateOne) SetUserID(u uint64) *AuthenticationUpdateOne {
-	auo.mutation.SetUserID(u)
+func (auo *AuthenticationUpdateOne) SetUserID(i int) *AuthenticationUpdateOne {
+	auo.mutation.SetUserID(i)
 	return auo
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (auo *AuthenticationUpdateOne) SetNillableUserID(u *uint64) *AuthenticationUpdateOne {
-	if u != nil {
-		auo.SetUserID(*u)
+func (auo *AuthenticationUpdateOne) SetNillableUserID(i *int) *AuthenticationUpdateOne {
+	if i != nil {
+		auo.SetUserID(*i)
 	}
 	return auo
 }
@@ -364,7 +364,7 @@ func (auo *AuthenticationUpdateOne) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (auo *AuthenticationUpdateOne) check() error {
 	if v, ok := auo.mutation.UserID(); ok {
-		if err := authentication.UserIDValidator(v); err != nil {
+		if err := authentication.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
 		}
 	}
@@ -383,7 +383,7 @@ func (auo *AuthenticationUpdateOne) sqlSave(ctx context.Context) (_node *Authent
 	if err := auo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt))
 	id, ok := auo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Authentication.id" for update`)}
@@ -428,7 +428,7 @@ func (auo *AuthenticationUpdateOne) sqlSave(ctx context.Context) (_node *Authent
 			Columns: []string{authentication.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -441,7 +441,7 @@ func (auo *AuthenticationUpdateOne) sqlSave(ctx context.Context) (_node *Authent
 			Columns: []string{authentication.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

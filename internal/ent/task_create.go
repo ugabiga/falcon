@@ -23,8 +23,8 @@ type TaskCreate struct {
 }
 
 // SetTradingAccountID sets the "trading_account_id" field.
-func (tc *TaskCreate) SetTradingAccountID(u uint64) *TaskCreate {
-	tc.mutation.SetTradingAccountID(u)
+func (tc *TaskCreate) SetTradingAccountID(i int) *TaskCreate {
+	tc.mutation.SetTradingAccountID(i)
 	return tc
 }
 
@@ -81,8 +81,8 @@ func (tc *TaskCreate) SetNillableCreatedAt(t *time.Time) *TaskCreate {
 }
 
 // SetID sets the "id" field.
-func (tc *TaskCreate) SetID(u uint64) *TaskCreate {
-	tc.mutation.SetID(u)
+func (tc *TaskCreate) SetID(i int) *TaskCreate {
+	tc.mutation.SetID(i)
 	return tc
 }
 
@@ -92,14 +92,14 @@ func (tc *TaskCreate) SetTradingAccount(t *TradingAccount) *TaskCreate {
 }
 
 // AddTaskHistoryIDs adds the "task_histories" edge to the TaskHistory entity by IDs.
-func (tc *TaskCreate) AddTaskHistoryIDs(ids ...uint64) *TaskCreate {
+func (tc *TaskCreate) AddTaskHistoryIDs(ids ...int) *TaskCreate {
 	tc.mutation.AddTaskHistoryIDs(ids...)
 	return tc
 }
 
 // AddTaskHistories adds the "task_histories" edges to the TaskHistory entity.
 func (tc *TaskCreate) AddTaskHistories(t ...*TaskHistory) *TaskCreate {
-	ids := make([]uint64, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -157,7 +157,7 @@ func (tc *TaskCreate) check() error {
 		return &ValidationError{Name: "trading_account_id", err: errors.New(`ent: missing required field "Task.trading_account_id"`)}
 	}
 	if v, ok := tc.mutation.TradingAccountID(); ok {
-		if err := task.TradingAccountIDValidator(v); err != nil {
+		if err := task.TradingAccountIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
 		}
 	}
@@ -180,7 +180,7 @@ func (tc *TaskCreate) check() error {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Task.created_at"`)}
 	}
 	if v, ok := tc.mutation.ID(); ok {
-		if err := task.IDValidator(v); err != nil {
+		if err := task.IDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Task.id": %w`, err)}
 		}
 	}
@@ -203,7 +203,7 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int(id)
 	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
@@ -213,7 +213,7 @@ func (tc *TaskCreate) sqlSave(ctx context.Context) (*Task, error) {
 func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Task{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt))
 	)
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
@@ -251,7 +251,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			Columns: []string{task.TradingAccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -268,7 +268,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 			Columns: []string{task.TaskHistoriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -326,7 +326,7 @@ func (tcb *TaskCreateBulk) Save(ctx context.Context) ([]*Task, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

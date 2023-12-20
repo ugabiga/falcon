@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/ent/authentication"
 	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
@@ -18,7 +20,56 @@ func NewUserService(
 	}
 }
 
-func (s UserService) GetByID(ctx context.Context, userID uint64) (*ent.User, error) {
+type UserWithOptions struct {
+	WithAuthentications bool
+	WithTradingAccounts bool
+}
+
+func (s UserService) CreateDummy(
+	ctx context.Context, userID int, withOptions UserWithOptions,
+) (
+	*ent.User, error,
+) {
+	u, err := s.db.User.Create().
+		SetName("dummy").
+		SetTimezone("UTC").
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if withOptions.WithAuthentications {
+		a, err := s.db.Authentication.Create().
+			SetUserID(u.ID).
+			SetIdentifier(uuid.New().String()).
+			SetCredential(uuid.New().String()).
+			SetProvider(authentication.ProviderGoogle).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+		u.Edges.Authentications = append(u.Edges.Authentications, a)
+	}
+
+	if withOptions.WithTradingAccounts {
+		ta, err := s.db.TradingAccount.Create().
+			SetUserID(u.ID).
+			SetExchange("binance").
+			SetCurrency("KRW").
+			SetIdentifier(uuid.New().String()).
+			SetCredential(uuid.New().String()).
+			SetIP("127.0.0.1").
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+		u.Edges.TradingAccounts = append(u.Edges.TradingAccounts, ta)
+	}
+
+	return u, nil
+}
+
+func (s UserService) GetByID(ctx context.Context, userID int) (*ent.User, error) {
 	u, err := s.db.User.Query().
 		Where(
 			user.IDEQ(userID),
@@ -30,7 +81,7 @@ func (s UserService) GetByID(ctx context.Context, userID uint64) (*ent.User, err
 
 	return u, nil
 }
-func (s UserService) Update(ctx context.Context, userID uint64, user *ent.User) (*ent.User, error) {
+func (s UserService) Update(ctx context.Context, userID int, user *ent.User) (*ent.User, error) {
 	u, err := s.db.User.UpdateOneID(userID).
 		SetName(user.Name).
 		SetTimezone(user.Timezone).

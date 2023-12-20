@@ -22,8 +22,8 @@ type TaskHistoryCreate struct {
 }
 
 // SetTaskID sets the "task_id" field.
-func (thc *TaskHistoryCreate) SetTaskID(u uint64) *TaskHistoryCreate {
-	thc.mutation.SetTaskID(u)
+func (thc *TaskHistoryCreate) SetTaskID(i int) *TaskHistoryCreate {
+	thc.mutation.SetTaskID(i)
 	return thc
 }
 
@@ -62,8 +62,8 @@ func (thc *TaskHistoryCreate) SetNillableCreatedAt(t *time.Time) *TaskHistoryCre
 }
 
 // SetID sets the "id" field.
-func (thc *TaskHistoryCreate) SetID(u uint64) *TaskHistoryCreate {
-	thc.mutation.SetID(u)
+func (thc *TaskHistoryCreate) SetID(i int) *TaskHistoryCreate {
+	thc.mutation.SetID(i)
 	return thc
 }
 
@@ -123,7 +123,7 @@ func (thc *TaskHistoryCreate) check() error {
 		return &ValidationError{Name: "task_id", err: errors.New(`ent: missing required field "TaskHistory.task_id"`)}
 	}
 	if v, ok := thc.mutation.TaskID(); ok {
-		if err := taskhistory.TaskIDValidator(v); err != nil {
+		if err := taskhistory.TaskIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
 		}
 	}
@@ -137,7 +137,7 @@ func (thc *TaskHistoryCreate) check() error {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "TaskHistory.created_at"`)}
 	}
 	if v, ok := thc.mutation.ID(); ok {
-		if err := taskhistory.IDValidator(v); err != nil {
+		if err := taskhistory.IDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.id": %w`, err)}
 		}
 	}
@@ -160,7 +160,7 @@ func (thc *TaskHistoryCreate) sqlSave(ctx context.Context) (*TaskHistory, error)
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int(id)
 	}
 	thc.mutation.id = &_node.ID
 	thc.mutation.done = true
@@ -170,7 +170,7 @@ func (thc *TaskHistoryCreate) sqlSave(ctx context.Context) (*TaskHistory, error)
 func (thc *TaskHistoryCreate) createSpec() (*TaskHistory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TaskHistory{config: thc.config}
-		_spec = sqlgraph.NewCreateSpec(taskhistory.Table, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(taskhistory.Table, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt))
 	)
 	if id, ok := thc.mutation.ID(); ok {
 		_node.ID = id
@@ -196,7 +196,7 @@ func (thc *TaskHistoryCreate) createSpec() (*TaskHistory, *sqlgraph.CreateSpec) 
 			Columns: []string{taskhistory.TaskColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -255,7 +255,7 @@ func (thcb *TaskHistoryCreateBulk) Save(ctx context.Context) ([]*TaskHistory, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

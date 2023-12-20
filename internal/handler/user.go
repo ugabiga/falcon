@@ -23,7 +23,7 @@ func (h UserHandler) SetRoutes(e *echo.Group) {
 }
 
 func (h UserHandler) Get(c echo.Context) error {
-	var userID uint64 = 1
+	var userID int = 1
 	user, err := h.userService.GetByID(c.Request().Context(), userID)
 	if err != nil {
 		return err

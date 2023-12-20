@@ -1,7 +1,7 @@
 import {ApolloClient, ApolloLink, HttpLink, InMemoryCache} from "@apollo/client";
 
 
-const GQL_ENDPOINT = 'http://localhost:8080/api/graph';
+const GQL_ENDPOINT = 'http://localhost:8080/graph';
 
 function getCookie(name: string) {
     let cookieValue = "";

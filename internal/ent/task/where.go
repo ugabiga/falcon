@@ -11,53 +11,54 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Task {
+func ID(id int) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Task {
+func IDEQ(id int) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Task {
+func IDNEQ(id int) predicate.Task {
 	return predicate.Task(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Task {
+func IDIn(ids ...int) predicate.Task {
 	return predicate.Task(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Task {
+func IDNotIn(ids ...int) predicate.Task {
 	return predicate.Task(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Task {
+func IDGT(id int) predicate.Task {
 	return predicate.Task(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Task {
+func IDGTE(id int) predicate.Task {
 	return predicate.Task(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Task {
+func IDLT(id int) predicate.Task {
 	return predicate.Task(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Task {
+func IDLTE(id int) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldID, id))
 }
 
 // TradingAccountID applies equality check predicate on the "trading_account_id" field. It's identical to TradingAccountIDEQ.
-func TradingAccountID(v uint64) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, v))
+func TradingAccountID(v int) predicate.Task {
+	vc := int(v)
+	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, vc))
 }
 
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
@@ -91,23 +92,33 @@ func CreatedAt(v time.Time) predicate.Task {
 }
 
 // TradingAccountIDEQ applies the EQ predicate on the "trading_account_id" field.
-func TradingAccountIDEQ(v uint64) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, v))
+func TradingAccountIDEQ(v int) predicate.Task {
+	vc := int(v)
+	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, vc))
 }
 
 // TradingAccountIDNEQ applies the NEQ predicate on the "trading_account_id" field.
-func TradingAccountIDNEQ(v uint64) predicate.Task {
-	return predicate.Task(sql.FieldNEQ(FieldTradingAccountID, v))
+func TradingAccountIDNEQ(v int) predicate.Task {
+	vc := int(v)
+	return predicate.Task(sql.FieldNEQ(FieldTradingAccountID, vc))
 }
 
 // TradingAccountIDIn applies the In predicate on the "trading_account_id" field.
-func TradingAccountIDIn(vs ...uint64) predicate.Task {
-	return predicate.Task(sql.FieldIn(FieldTradingAccountID, vs...))
+func TradingAccountIDIn(vs ...int) predicate.Task {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.Task(sql.FieldIn(FieldTradingAccountID, v...))
 }
 
 // TradingAccountIDNotIn applies the NotIn predicate on the "trading_account_id" field.
-func TradingAccountIDNotIn(vs ...uint64) predicate.Task {
-	return predicate.Task(sql.FieldNotIn(FieldTradingAccountID, vs...))
+func TradingAccountIDNotIn(vs ...int) predicate.Task {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.Task(sql.FieldNotIn(FieldTradingAccountID, v...))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.

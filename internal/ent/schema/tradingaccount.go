@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
@@ -15,10 +17,12 @@ type TradingAccount struct {
 // Fields of the TradingAccount.
 func (TradingAccount) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").
-			Positive(),
-		field.Uint64("user_id").
-			Positive(),
+		field.Int("id").
+			Positive().
+			GoType(int(0)),
+		field.Int("user_id").
+			Positive().
+			GoType(int(0)),
 		field.String("exchange"),
 		field.String("currency"),
 		field.String("ip"),
@@ -47,5 +51,11 @@ func (TradingAccount) Edges() []ent.Edge {
 			Field("user_id").
 			Required(),
 		edge.To("tasks", Task.Type),
+	}
+}
+func (TradingAccount) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
 	}
 }

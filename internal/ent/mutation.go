@@ -40,14 +40,14 @@ type AuthenticationMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uint64
+	id            *int
 	provider      *authentication.Provider
 	identifier    *string
 	credential    *string
 	updated_at    *time.Time
 	created_at    *time.Time
 	clearedFields map[string]struct{}
-	user          *uint64
+	user          *int
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Authentication, error)
@@ -74,7 +74,7 @@ func newAuthenticationMutation(c config, op Op, opts ...authenticationOption) *A
 }
 
 // withAuthenticationID sets the ID field of the mutation.
-func withAuthenticationID(id uint64) authenticationOption {
+func withAuthenticationID(id int) authenticationOption {
 	return func(m *AuthenticationMutation) {
 		var (
 			err   error
@@ -126,13 +126,13 @@ func (m AuthenticationMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Authentication entities.
-func (m *AuthenticationMutation) SetID(id uint64) {
+func (m *AuthenticationMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AuthenticationMutation) ID() (id uint64, exists bool) {
+func (m *AuthenticationMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -143,12 +143,12 @@ func (m *AuthenticationMutation) ID() (id uint64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AuthenticationMutation) IDs(ctx context.Context) ([]uint64, error) {
+func (m *AuthenticationMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uint64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -159,12 +159,12 @@ func (m *AuthenticationMutation) IDs(ctx context.Context) ([]uint64, error) {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *AuthenticationMutation) SetUserID(u uint64) {
-	m.user = &u
+func (m *AuthenticationMutation) SetUserID(i int) {
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *AuthenticationMutation) UserID() (r uint64, exists bool) {
+func (m *AuthenticationMutation) UserID() (r int, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -175,7 +175,7 @@ func (m *AuthenticationMutation) UserID() (r uint64, exists bool) {
 // OldUserID returns the old "user_id" field's value of the Authentication entity.
 // If the Authentication object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AuthenticationMutation) OldUserID(ctx context.Context) (v uint64, err error) {
+func (m *AuthenticationMutation) OldUserID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -388,7 +388,7 @@ func (m *AuthenticationMutation) UserCleared() bool {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *AuthenticationMutation) UserIDs() (ids []uint64) {
+func (m *AuthenticationMutation) UserIDs() (ids []int) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -505,7 +505,7 @@ func (m *AuthenticationMutation) OldField(ctx context.Context, name string) (ent
 func (m *AuthenticationMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case authentication.FieldUserID:
-		v, ok := value.(uint64)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -699,7 +699,7 @@ type TaskMutation struct {
 	config
 	op                     Op
 	typ                    string
-	id                     *uint64
+	id                     *int
 	cron                   *string
 	next_execution_time    *time.Time
 	is_active              *bool
@@ -707,10 +707,10 @@ type TaskMutation struct {
 	updated_at             *time.Time
 	created_at             *time.Time
 	clearedFields          map[string]struct{}
-	trading_account        *uint64
+	trading_account        *int
 	clearedtrading_account bool
-	task_histories         map[uint64]struct{}
-	removedtask_histories  map[uint64]struct{}
+	task_histories         map[int]struct{}
+	removedtask_histories  map[int]struct{}
 	clearedtask_histories  bool
 	done                   bool
 	oldValue               func(context.Context) (*Task, error)
@@ -737,7 +737,7 @@ func newTaskMutation(c config, op Op, opts ...taskOption) *TaskMutation {
 }
 
 // withTaskID sets the ID field of the mutation.
-func withTaskID(id uint64) taskOption {
+func withTaskID(id int) taskOption {
 	return func(m *TaskMutation) {
 		var (
 			err   error
@@ -789,13 +789,13 @@ func (m TaskMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Task entities.
-func (m *TaskMutation) SetID(id uint64) {
+func (m *TaskMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TaskMutation) ID() (id uint64, exists bool) {
+func (m *TaskMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -806,12 +806,12 @@ func (m *TaskMutation) ID() (id uint64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TaskMutation) IDs(ctx context.Context) ([]uint64, error) {
+func (m *TaskMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uint64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -822,12 +822,12 @@ func (m *TaskMutation) IDs(ctx context.Context) ([]uint64, error) {
 }
 
 // SetTradingAccountID sets the "trading_account_id" field.
-func (m *TaskMutation) SetTradingAccountID(u uint64) {
-	m.trading_account = &u
+func (m *TaskMutation) SetTradingAccountID(i int) {
+	m.trading_account = &i
 }
 
 // TradingAccountID returns the value of the "trading_account_id" field in the mutation.
-func (m *TaskMutation) TradingAccountID() (r uint64, exists bool) {
+func (m *TaskMutation) TradingAccountID() (r int, exists bool) {
 	v := m.trading_account
 	if v == nil {
 		return
@@ -838,7 +838,7 @@ func (m *TaskMutation) TradingAccountID() (r uint64, exists bool) {
 // OldTradingAccountID returns the old "trading_account_id" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldTradingAccountID(ctx context.Context) (v uint64, err error) {
+func (m *TaskMutation) OldTradingAccountID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTradingAccountID is only allowed on UpdateOne operations")
 	}
@@ -1087,7 +1087,7 @@ func (m *TaskMutation) TradingAccountCleared() bool {
 // TradingAccountIDs returns the "trading_account" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // TradingAccountID instead. It exists only for internal usage by the builders.
-func (m *TaskMutation) TradingAccountIDs() (ids []uint64) {
+func (m *TaskMutation) TradingAccountIDs() (ids []int) {
 	if id := m.trading_account; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1101,9 +1101,9 @@ func (m *TaskMutation) ResetTradingAccount() {
 }
 
 // AddTaskHistoryIDs adds the "task_histories" edge to the TaskHistory entity by ids.
-func (m *TaskMutation) AddTaskHistoryIDs(ids ...uint64) {
+func (m *TaskMutation) AddTaskHistoryIDs(ids ...int) {
 	if m.task_histories == nil {
-		m.task_histories = make(map[uint64]struct{})
+		m.task_histories = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.task_histories[ids[i]] = struct{}{}
@@ -1121,9 +1121,9 @@ func (m *TaskMutation) TaskHistoriesCleared() bool {
 }
 
 // RemoveTaskHistoryIDs removes the "task_histories" edge to the TaskHistory entity by IDs.
-func (m *TaskMutation) RemoveTaskHistoryIDs(ids ...uint64) {
+func (m *TaskMutation) RemoveTaskHistoryIDs(ids ...int) {
 	if m.removedtask_histories == nil {
-		m.removedtask_histories = make(map[uint64]struct{})
+		m.removedtask_histories = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.task_histories, ids[i])
@@ -1132,7 +1132,7 @@ func (m *TaskMutation) RemoveTaskHistoryIDs(ids ...uint64) {
 }
 
 // RemovedTaskHistories returns the removed IDs of the "task_histories" edge to the TaskHistory entity.
-func (m *TaskMutation) RemovedTaskHistoriesIDs() (ids []uint64) {
+func (m *TaskMutation) RemovedTaskHistoriesIDs() (ids []int) {
 	for id := range m.removedtask_histories {
 		ids = append(ids, id)
 	}
@@ -1140,7 +1140,7 @@ func (m *TaskMutation) RemovedTaskHistoriesIDs() (ids []uint64) {
 }
 
 // TaskHistoriesIDs returns the "task_histories" edge IDs in the mutation.
-func (m *TaskMutation) TaskHistoriesIDs() (ids []uint64) {
+func (m *TaskMutation) TaskHistoriesIDs() (ids []int) {
 	for id := range m.task_histories {
 		ids = append(ids, id)
 	}
@@ -1265,7 +1265,7 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 func (m *TaskMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case task.FieldTradingAccountID:
-		v, ok := value.(uint64)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1497,12 +1497,12 @@ type TaskHistoryMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uint64
+	id            *int
 	is_success    *bool
 	updated_at    *time.Time
 	created_at    *time.Time
 	clearedFields map[string]struct{}
-	task          *uint64
+	task          *int
 	clearedtask   bool
 	done          bool
 	oldValue      func(context.Context) (*TaskHistory, error)
@@ -1529,7 +1529,7 @@ func newTaskHistoryMutation(c config, op Op, opts ...taskhistoryOption) *TaskHis
 }
 
 // withTaskHistoryID sets the ID field of the mutation.
-func withTaskHistoryID(id uint64) taskhistoryOption {
+func withTaskHistoryID(id int) taskhistoryOption {
 	return func(m *TaskHistoryMutation) {
 		var (
 			err   error
@@ -1581,13 +1581,13 @@ func (m TaskHistoryMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of TaskHistory entities.
-func (m *TaskHistoryMutation) SetID(id uint64) {
+func (m *TaskHistoryMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TaskHistoryMutation) ID() (id uint64, exists bool) {
+func (m *TaskHistoryMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1598,12 +1598,12 @@ func (m *TaskHistoryMutation) ID() (id uint64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TaskHistoryMutation) IDs(ctx context.Context) ([]uint64, error) {
+func (m *TaskHistoryMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uint64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1614,12 +1614,12 @@ func (m *TaskHistoryMutation) IDs(ctx context.Context) ([]uint64, error) {
 }
 
 // SetTaskID sets the "task_id" field.
-func (m *TaskHistoryMutation) SetTaskID(u uint64) {
-	m.task = &u
+func (m *TaskHistoryMutation) SetTaskID(i int) {
+	m.task = &i
 }
 
 // TaskID returns the value of the "task_id" field in the mutation.
-func (m *TaskHistoryMutation) TaskID() (r uint64, exists bool) {
+func (m *TaskHistoryMutation) TaskID() (r int, exists bool) {
 	v := m.task
 	if v == nil {
 		return
@@ -1630,7 +1630,7 @@ func (m *TaskHistoryMutation) TaskID() (r uint64, exists bool) {
 // OldTaskID returns the old "task_id" field's value of the TaskHistory entity.
 // If the TaskHistory object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskHistoryMutation) OldTaskID(ctx context.Context) (v uint64, err error) {
+func (m *TaskHistoryMutation) OldTaskID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTaskID is only allowed on UpdateOne operations")
 	}
@@ -1771,7 +1771,7 @@ func (m *TaskHistoryMutation) TaskCleared() bool {
 // TaskIDs returns the "task" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // TaskID instead. It exists only for internal usage by the builders.
-func (m *TaskHistoryMutation) TaskIDs() (ids []uint64) {
+func (m *TaskHistoryMutation) TaskIDs() (ids []int) {
 	if id := m.task; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1874,7 +1874,7 @@ func (m *TaskHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 func (m *TaskHistoryMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case taskhistory.FieldTaskID:
-		v, ok := value.(uint64)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2048,7 +2048,7 @@ type TradingAccountMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uint64
+	id            *int
 	exchange      *string
 	currency      *string
 	ip            *string
@@ -2058,10 +2058,10 @@ type TradingAccountMutation struct {
 	updated_at    *time.Time
 	created_at    *time.Time
 	clearedFields map[string]struct{}
-	user          *uint64
+	user          *int
 	cleareduser   bool
-	tasks         map[uint64]struct{}
-	removedtasks  map[uint64]struct{}
+	tasks         map[int]struct{}
+	removedtasks  map[int]struct{}
 	clearedtasks  bool
 	done          bool
 	oldValue      func(context.Context) (*TradingAccount, error)
@@ -2088,7 +2088,7 @@ func newTradingAccountMutation(c config, op Op, opts ...tradingaccountOption) *T
 }
 
 // withTradingAccountID sets the ID field of the mutation.
-func withTradingAccountID(id uint64) tradingaccountOption {
+func withTradingAccountID(id int) tradingaccountOption {
 	return func(m *TradingAccountMutation) {
 		var (
 			err   error
@@ -2140,13 +2140,13 @@ func (m TradingAccountMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of TradingAccount entities.
-func (m *TradingAccountMutation) SetID(id uint64) {
+func (m *TradingAccountMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TradingAccountMutation) ID() (id uint64, exists bool) {
+func (m *TradingAccountMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2157,12 +2157,12 @@ func (m *TradingAccountMutation) ID() (id uint64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TradingAccountMutation) IDs(ctx context.Context) ([]uint64, error) {
+func (m *TradingAccountMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uint64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2173,12 +2173,12 @@ func (m *TradingAccountMutation) IDs(ctx context.Context) ([]uint64, error) {
 }
 
 // SetUserID sets the "user_id" field.
-func (m *TradingAccountMutation) SetUserID(u uint64) {
-	m.user = &u
+func (m *TradingAccountMutation) SetUserID(i int) {
+	m.user = &i
 }
 
 // UserID returns the value of the "user_id" field in the mutation.
-func (m *TradingAccountMutation) UserID() (r uint64, exists bool) {
+func (m *TradingAccountMutation) UserID() (r int, exists bool) {
 	v := m.user
 	if v == nil {
 		return
@@ -2189,7 +2189,7 @@ func (m *TradingAccountMutation) UserID() (r uint64, exists bool) {
 // OldUserID returns the old "user_id" field's value of the TradingAccount entity.
 // If the TradingAccount object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingAccountMutation) OldUserID(ctx context.Context) (v uint64, err error) {
+func (m *TradingAccountMutation) OldUserID(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
 	}
@@ -2523,7 +2523,7 @@ func (m *TradingAccountMutation) UserCleared() bool {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *TradingAccountMutation) UserIDs() (ids []uint64) {
+func (m *TradingAccountMutation) UserIDs() (ids []int) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2537,9 +2537,9 @@ func (m *TradingAccountMutation) ResetUser() {
 }
 
 // AddTaskIDs adds the "tasks" edge to the Task entity by ids.
-func (m *TradingAccountMutation) AddTaskIDs(ids ...uint64) {
+func (m *TradingAccountMutation) AddTaskIDs(ids ...int) {
 	if m.tasks == nil {
-		m.tasks = make(map[uint64]struct{})
+		m.tasks = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.tasks[ids[i]] = struct{}{}
@@ -2557,9 +2557,9 @@ func (m *TradingAccountMutation) TasksCleared() bool {
 }
 
 // RemoveTaskIDs removes the "tasks" edge to the Task entity by IDs.
-func (m *TradingAccountMutation) RemoveTaskIDs(ids ...uint64) {
+func (m *TradingAccountMutation) RemoveTaskIDs(ids ...int) {
 	if m.removedtasks == nil {
-		m.removedtasks = make(map[uint64]struct{})
+		m.removedtasks = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.tasks, ids[i])
@@ -2568,7 +2568,7 @@ func (m *TradingAccountMutation) RemoveTaskIDs(ids ...uint64) {
 }
 
 // RemovedTasks returns the removed IDs of the "tasks" edge to the Task entity.
-func (m *TradingAccountMutation) RemovedTasksIDs() (ids []uint64) {
+func (m *TradingAccountMutation) RemovedTasksIDs() (ids []int) {
 	for id := range m.removedtasks {
 		ids = append(ids, id)
 	}
@@ -2576,7 +2576,7 @@ func (m *TradingAccountMutation) RemovedTasksIDs() (ids []uint64) {
 }
 
 // TasksIDs returns the "tasks" edge IDs in the mutation.
-func (m *TradingAccountMutation) TasksIDs() (ids []uint64) {
+func (m *TradingAccountMutation) TasksIDs() (ids []int) {
 	for id := range m.tasks {
 		ids = append(ids, id)
 	}
@@ -2715,7 +2715,7 @@ func (m *TradingAccountMutation) OldField(ctx context.Context, name string) (ent
 func (m *TradingAccountMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case tradingaccount.FieldUserID:
-		v, ok := value.(uint64)
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2976,17 +2976,17 @@ type UserMutation struct {
 	config
 	op                      Op
 	typ                     string
-	id                      *uint64
+	id                      *int
 	name                    *string
 	timezone                *string
 	updated_at              *time.Time
 	created_at              *time.Time
 	clearedFields           map[string]struct{}
-	authentications         map[uint64]struct{}
-	removedauthentications  map[uint64]struct{}
+	authentications         map[int]struct{}
+	removedauthentications  map[int]struct{}
 	clearedauthentications  bool
-	trading_accounts        map[uint64]struct{}
-	removedtrading_accounts map[uint64]struct{}
+	trading_accounts        map[int]struct{}
+	removedtrading_accounts map[int]struct{}
 	clearedtrading_accounts bool
 	done                    bool
 	oldValue                func(context.Context) (*User, error)
@@ -3013,7 +3013,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id uint64) userOption {
+func withUserID(id int) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -3065,13 +3065,13 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of User entities.
-func (m *UserMutation) SetID(id uint64) {
+func (m *UserMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id uint64, exists bool) {
+func (m *UserMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -3082,12 +3082,12 @@ func (m *UserMutation) ID() (id uint64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]uint64, error) {
+func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uint64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -3268,9 +3268,9 @@ func (m *UserMutation) ResetCreatedAt() {
 }
 
 // AddAuthenticationIDs adds the "authentications" edge to the Authentication entity by ids.
-func (m *UserMutation) AddAuthenticationIDs(ids ...uint64) {
+func (m *UserMutation) AddAuthenticationIDs(ids ...int) {
 	if m.authentications == nil {
-		m.authentications = make(map[uint64]struct{})
+		m.authentications = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.authentications[ids[i]] = struct{}{}
@@ -3288,9 +3288,9 @@ func (m *UserMutation) AuthenticationsCleared() bool {
 }
 
 // RemoveAuthenticationIDs removes the "authentications" edge to the Authentication entity by IDs.
-func (m *UserMutation) RemoveAuthenticationIDs(ids ...uint64) {
+func (m *UserMutation) RemoveAuthenticationIDs(ids ...int) {
 	if m.removedauthentications == nil {
-		m.removedauthentications = make(map[uint64]struct{})
+		m.removedauthentications = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.authentications, ids[i])
@@ -3299,7 +3299,7 @@ func (m *UserMutation) RemoveAuthenticationIDs(ids ...uint64) {
 }
 
 // RemovedAuthentications returns the removed IDs of the "authentications" edge to the Authentication entity.
-func (m *UserMutation) RemovedAuthenticationsIDs() (ids []uint64) {
+func (m *UserMutation) RemovedAuthenticationsIDs() (ids []int) {
 	for id := range m.removedauthentications {
 		ids = append(ids, id)
 	}
@@ -3307,7 +3307,7 @@ func (m *UserMutation) RemovedAuthenticationsIDs() (ids []uint64) {
 }
 
 // AuthenticationsIDs returns the "authentications" edge IDs in the mutation.
-func (m *UserMutation) AuthenticationsIDs() (ids []uint64) {
+func (m *UserMutation) AuthenticationsIDs() (ids []int) {
 	for id := range m.authentications {
 		ids = append(ids, id)
 	}
@@ -3322,9 +3322,9 @@ func (m *UserMutation) ResetAuthentications() {
 }
 
 // AddTradingAccountIDs adds the "trading_accounts" edge to the TradingAccount entity by ids.
-func (m *UserMutation) AddTradingAccountIDs(ids ...uint64) {
+func (m *UserMutation) AddTradingAccountIDs(ids ...int) {
 	if m.trading_accounts == nil {
-		m.trading_accounts = make(map[uint64]struct{})
+		m.trading_accounts = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.trading_accounts[ids[i]] = struct{}{}
@@ -3342,9 +3342,9 @@ func (m *UserMutation) TradingAccountsCleared() bool {
 }
 
 // RemoveTradingAccountIDs removes the "trading_accounts" edge to the TradingAccount entity by IDs.
-func (m *UserMutation) RemoveTradingAccountIDs(ids ...uint64) {
+func (m *UserMutation) RemoveTradingAccountIDs(ids ...int) {
 	if m.removedtrading_accounts == nil {
-		m.removedtrading_accounts = make(map[uint64]struct{})
+		m.removedtrading_accounts = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.trading_accounts, ids[i])
@@ -3353,7 +3353,7 @@ func (m *UserMutation) RemoveTradingAccountIDs(ids ...uint64) {
 }
 
 // RemovedTradingAccounts returns the removed IDs of the "trading_accounts" edge to the TradingAccount entity.
-func (m *UserMutation) RemovedTradingAccountsIDs() (ids []uint64) {
+func (m *UserMutation) RemovedTradingAccountsIDs() (ids []int) {
 	for id := range m.removedtrading_accounts {
 		ids = append(ids, id)
 	}
@@ -3361,7 +3361,7 @@ func (m *UserMutation) RemovedTradingAccountsIDs() (ids []uint64) {
 }
 
 // TradingAccountsIDs returns the "trading_accounts" edge IDs in the mutation.
-func (m *UserMutation) TradingAccountsIDs() (ids []uint64) {
+func (m *UserMutation) TradingAccountsIDs() (ids []int) {
 	for id := range m.trading_accounts {
 		ids = append(ids, id)
 	}

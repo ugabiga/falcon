@@ -1,6 +1,9 @@
-query GetUser($where: UserWhereInput){
-    user(where: $where){
-        id,
+query GetUser($id: ID!) {
+    user(id: $id, withOptions:{
+        withTradingAccounts: false
+        withAuthentications: false
+    }){
+        id
         name
     }
 }

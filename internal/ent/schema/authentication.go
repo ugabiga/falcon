@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"time"
@@ -15,10 +17,12 @@ type Authentication struct {
 // Fields of the Authentication.
 func (Authentication) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").
-			Positive(),
-		field.Uint64("user_id").
-			Positive(),
+		field.Int("id").
+			Positive().
+			GoType(int(0)),
+		field.Int("user_id").
+			Positive().
+			GoType(int(0)),
 		field.Enum("provider").
 			Values("google", "facebook"),
 		field.String("identifier").
@@ -42,5 +46,12 @@ func (Authentication) Edges() []ent.Edge {
 			Unique().
 			Field("user_id").
 			Required(),
+	}
+}
+
+func (Authentication) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
 	}
 }

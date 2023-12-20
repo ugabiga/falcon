@@ -23,6 +23,8 @@ type AuthenticationQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Authentication
 	withUser   *UserQuery
+	modifiers  []func(*sql.Selector)
+	loadTotal  []func(context.Context, []*Authentication) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -105,8 +107,8 @@ func (aq *AuthenticationQuery) FirstX(ctx context.Context) *Authentication {
 
 // FirstID returns the first Authentication ID from the query.
 // Returns a *NotFoundError when no Authentication ID was found.
-func (aq *AuthenticationQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (aq *AuthenticationQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = aq.Limit(1).IDs(setContextOp(ctx, aq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -118,7 +120,7 @@ func (aq *AuthenticationQuery) FirstID(ctx context.Context) (id uint64, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (aq *AuthenticationQuery) FirstIDX(ctx context.Context) uint64 {
+func (aq *AuthenticationQuery) FirstIDX(ctx context.Context) int {
 	id, err := aq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -156,8 +158,8 @@ func (aq *AuthenticationQuery) OnlyX(ctx context.Context) *Authentication {
 // OnlyID is like Only, but returns the only Authentication ID in the query.
 // Returns a *NotSingularError when more than one Authentication ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (aq *AuthenticationQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (aq *AuthenticationQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = aq.Limit(2).IDs(setContextOp(ctx, aq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -173,7 +175,7 @@ func (aq *AuthenticationQuery) OnlyID(ctx context.Context) (id uint64, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (aq *AuthenticationQuery) OnlyIDX(ctx context.Context) uint64 {
+func (aq *AuthenticationQuery) OnlyIDX(ctx context.Context) int {
 	id, err := aq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -201,7 +203,7 @@ func (aq *AuthenticationQuery) AllX(ctx context.Context) []*Authentication {
 }
 
 // IDs executes the query and returns a list of Authentication IDs.
-func (aq *AuthenticationQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (aq *AuthenticationQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if aq.ctx.Unique == nil && aq.path != nil {
 		aq.Unique(true)
 	}
@@ -213,7 +215,7 @@ func (aq *AuthenticationQuery) IDs(ctx context.Context) (ids []uint64, err error
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (aq *AuthenticationQuery) IDsX(ctx context.Context) []uint64 {
+func (aq *AuthenticationQuery) IDsX(ctx context.Context) []int {
 	ids, err := aq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -297,7 +299,7 @@ func (aq *AuthenticationQuery) WithUser(opts ...func(*UserQuery)) *Authenticatio
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -320,7 +322,7 @@ func (aq *AuthenticationQuery) GroupBy(field string, fields ...string) *Authenti
 // Example:
 //
 //	var v []struct {
-//		UserID uint64 `json:"user_id,omitempty"`
+//		UserID int `json:"user_id,omitempty"`
 //	}
 //
 //	client.Authentication.Query().
@@ -382,6 +384,9 @@ func (aq *AuthenticationQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -397,12 +402,17 @@ func (aq *AuthenticationQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 			return nil, err
 		}
 	}
+	for i := range aq.loadTotal {
+		if err := aq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (aq *AuthenticationQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Authentication, init func(*Authentication), assign func(*Authentication, *User)) error {
-	ids := make([]uint64, 0, len(nodes))
-	nodeids := make(map[uint64][]*Authentication)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Authentication)
 	for i := range nodes {
 		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
@@ -432,6 +442,9 @@ func (aq *AuthenticationQuery) loadUser(ctx context.Context, query *UserQuery, n
 
 func (aq *AuthenticationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := aq.querySpec()
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	_spec.Node.Columns = aq.ctx.Fields
 	if len(aq.ctx.Fields) > 0 {
 		_spec.Unique = aq.ctx.Unique != nil && *aq.ctx.Unique
@@ -440,7 +453,7 @@ func (aq *AuthenticationQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (aq *AuthenticationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(authentication.Table, authentication.Columns, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt))
 	_spec.From = aq.sql
 	if unique := aq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

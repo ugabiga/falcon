@@ -30,15 +30,15 @@ func (thu *TaskHistoryUpdate) Where(ps ...predicate.TaskHistory) *TaskHistoryUpd
 }
 
 // SetTaskID sets the "task_id" field.
-func (thu *TaskHistoryUpdate) SetTaskID(u uint64) *TaskHistoryUpdate {
-	thu.mutation.SetTaskID(u)
+func (thu *TaskHistoryUpdate) SetTaskID(i int) *TaskHistoryUpdate {
+	thu.mutation.SetTaskID(i)
 	return thu
 }
 
 // SetNillableTaskID sets the "task_id" field if the given value is not nil.
-func (thu *TaskHistoryUpdate) SetNillableTaskID(u *uint64) *TaskHistoryUpdate {
-	if u != nil {
-		thu.SetTaskID(*u)
+func (thu *TaskHistoryUpdate) SetNillableTaskID(i *int) *TaskHistoryUpdate {
+	if i != nil {
+		thu.SetTaskID(*i)
 	}
 	return thu
 }
@@ -118,7 +118,7 @@ func (thu *TaskHistoryUpdate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (thu *TaskHistoryUpdate) check() error {
 	if v, ok := thu.mutation.TaskID(); ok {
-		if err := taskhistory.TaskIDValidator(v); err != nil {
+		if err := taskhistory.TaskIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
 		}
 	}
@@ -132,7 +132,7 @@ func (thu *TaskHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := thu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt))
 	if ps := thu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -154,7 +154,7 @@ func (thu *TaskHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{taskhistory.TaskColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -167,7 +167,7 @@ func (thu *TaskHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{taskhistory.TaskColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -196,15 +196,15 @@ type TaskHistoryUpdateOne struct {
 }
 
 // SetTaskID sets the "task_id" field.
-func (thuo *TaskHistoryUpdateOne) SetTaskID(u uint64) *TaskHistoryUpdateOne {
-	thuo.mutation.SetTaskID(u)
+func (thuo *TaskHistoryUpdateOne) SetTaskID(i int) *TaskHistoryUpdateOne {
+	thuo.mutation.SetTaskID(i)
 	return thuo
 }
 
 // SetNillableTaskID sets the "task_id" field if the given value is not nil.
-func (thuo *TaskHistoryUpdateOne) SetNillableTaskID(u *uint64) *TaskHistoryUpdateOne {
-	if u != nil {
-		thuo.SetTaskID(*u)
+func (thuo *TaskHistoryUpdateOne) SetNillableTaskID(i *int) *TaskHistoryUpdateOne {
+	if i != nil {
+		thuo.SetTaskID(*i)
 	}
 	return thuo
 }
@@ -297,7 +297,7 @@ func (thuo *TaskHistoryUpdateOne) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (thuo *TaskHistoryUpdateOne) check() error {
 	if v, ok := thuo.mutation.TaskID(); ok {
-		if err := taskhistory.TaskIDValidator(v); err != nil {
+		if err := taskhistory.TaskIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
 		}
 	}
@@ -311,7 +311,7 @@ func (thuo *TaskHistoryUpdateOne) sqlSave(ctx context.Context) (_node *TaskHisto
 	if err := thuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt))
 	id, ok := thuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TaskHistory.id" for update`)}
@@ -350,7 +350,7 @@ func (thuo *TaskHistoryUpdateOne) sqlSave(ctx context.Context) (_node *TaskHisto
 			Columns: []string{taskhistory.TaskColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -363,7 +363,7 @@ func (thuo *TaskHistoryUpdateOne) sqlSave(ctx context.Context) (_node *TaskHisto
 			Columns: []string{taskhistory.TaskColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(task.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

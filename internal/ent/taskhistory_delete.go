@@ -40,7 +40,7 @@ func (thd *TaskHistoryDelete) ExecX(ctx context.Context) int {
 }
 
 func (thd *TaskHistoryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(taskhistory.Table, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(taskhistory.Table, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeInt))
 	if ps := thd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

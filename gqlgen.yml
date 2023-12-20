@@ -1,0 +1,40 @@
+# Where are all the schema files located? globs are supported eg  src/**/*.graphqls
+schema:
+  - api/graph/*.graphql
+
+# Where should the generated server code go?
+exec:
+  layout: follow-schema
+  dir: internal/graph/generated
+  package: generated
+
+# Where should any generated models go?
+model:
+  filename: internal/graph/generated/models_gen.go
+  package: generated
+
+# Where should the resolver implementations go?
+resolver:
+  layout: follow-schema
+  dir: internal/graph/resolvers
+  package: resolvers
+  filename_template: "{name}.resolvers.go"
+
+#autobind:
+#  - "github.com/ugabiga/falcon/internal/ent"
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+#  Node:
+#    model:
+#      - github.com/ugabiga/falcon/internal/ent.Noder

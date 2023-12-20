@@ -11,53 +11,54 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Authentication {
+func ID(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Authentication {
+func IDEQ(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Authentication {
+func IDNEQ(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Authentication {
+func IDIn(ids ...int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Authentication {
+func IDNotIn(ids ...int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Authentication {
+func IDGT(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Authentication {
+func IDGTE(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Authentication {
+func IDLT(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Authentication {
+func IDLTE(id int) predicate.Authentication {
 	return predicate.Authentication(sql.FieldLTE(FieldID, id))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.Authentication {
-	return predicate.Authentication(sql.FieldEQ(FieldUserID, v))
+func UserID(v int) predicate.Authentication {
+	vc := int(v)
+	return predicate.Authentication(sql.FieldEQ(FieldUserID, vc))
 }
 
 // Identifier applies equality check predicate on the "identifier" field. It's identical to IdentifierEQ.
@@ -81,23 +82,33 @@ func CreatedAt(v time.Time) predicate.Authentication {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.Authentication {
-	return predicate.Authentication(sql.FieldEQ(FieldUserID, v))
+func UserIDEQ(v int) predicate.Authentication {
+	vc := int(v)
+	return predicate.Authentication(sql.FieldEQ(FieldUserID, vc))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.Authentication {
-	return predicate.Authentication(sql.FieldNEQ(FieldUserID, v))
+func UserIDNEQ(v int) predicate.Authentication {
+	vc := int(v)
+	return predicate.Authentication(sql.FieldNEQ(FieldUserID, vc))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.Authentication {
-	return predicate.Authentication(sql.FieldIn(FieldUserID, vs...))
+func UserIDIn(vs ...int) predicate.Authentication {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.Authentication(sql.FieldIn(FieldUserID, v...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.Authentication {
-	return predicate.Authentication(sql.FieldNotIn(FieldUserID, vs...))
+func UserIDNotIn(vs ...int) predicate.Authentication {
+	v := make([]any, len(vs))
+	for i := range v {
+		v[i] = int(vs[i])
+	}
+	return predicate.Authentication(sql.FieldNotIn(FieldUserID, v...))
 }
 
 // ProviderEQ applies the EQ predicate on the "provider" field.

@@ -1,0 +1,14 @@
+type Authentication {
+    id: ID!
+    userID: ID!
+    provider: AuthenticationProvider!
+    identifier: String!
+    updatedAt: Time!
+    createdAt: Time!
+    user: User!
+}
+
+enum AuthenticationProvider {
+    google
+    facebook
+}

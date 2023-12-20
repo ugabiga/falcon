@@ -3,6 +3,8 @@ package app
 import (
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/config"
+	"github.com/ugabiga/falcon/internal/graph/helper"
+	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
@@ -25,6 +27,11 @@ func provider() fx.Option {
 		// Handler
 		handler.NewAuthenticationHandler,
 		handler.NewUserHandler,
+		handler.NewGraphHandler,
+
+		// GraphQL
+		helper.NewNodeResolver,
+		resolvers.NewResolver,
 
 		// Server
 		server.NewServer,
@@ -38,7 +45,7 @@ func InitializeApplication() App {
 	var newApp App
 
 	fx.New(
-		fx.NopLogger,
+		//fx.NopLogger,
 		provider(),
 		fx.Invoke(func(lifecycle fx.Lifecycle, app App) {
 			newApp = app

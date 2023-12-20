@@ -22,8 +22,8 @@ type AuthenticationCreate struct {
 }
 
 // SetUserID sets the "user_id" field.
-func (ac *AuthenticationCreate) SetUserID(u uint64) *AuthenticationCreate {
-	ac.mutation.SetUserID(u)
+func (ac *AuthenticationCreate) SetUserID(i int) *AuthenticationCreate {
+	ac.mutation.SetUserID(i)
 	return ac
 }
 
@@ -74,8 +74,8 @@ func (ac *AuthenticationCreate) SetNillableCreatedAt(t *time.Time) *Authenticati
 }
 
 // SetID sets the "id" field.
-func (ac *AuthenticationCreate) SetID(u uint64) *AuthenticationCreate {
-	ac.mutation.SetID(u)
+func (ac *AuthenticationCreate) SetID(i int) *AuthenticationCreate {
+	ac.mutation.SetID(i)
 	return ac
 }
 
@@ -135,7 +135,7 @@ func (ac *AuthenticationCreate) check() error {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Authentication.user_id"`)}
 	}
 	if v, ok := ac.mutation.UserID(); ok {
-		if err := authentication.UserIDValidator(v); err != nil {
+		if err := authentication.UserIDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
 		}
 	}
@@ -160,7 +160,7 @@ func (ac *AuthenticationCreate) check() error {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Authentication.created_at"`)}
 	}
 	if v, ok := ac.mutation.ID(); ok {
-		if err := authentication.IDValidator(v); err != nil {
+		if err := authentication.IDValidator(int(v)); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Authentication.id": %w`, err)}
 		}
 	}
@@ -183,7 +183,7 @@ func (ac *AuthenticationCreate) sqlSave(ctx context.Context) (*Authentication, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int(id)
 	}
 	ac.mutation.id = &_node.ID
 	ac.mutation.done = true
@@ -193,7 +193,7 @@ func (ac *AuthenticationCreate) sqlSave(ctx context.Context) (*Authentication, e
 func (ac *AuthenticationCreate) createSpec() (*Authentication, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Authentication{config: ac.config}
-		_spec = sqlgraph.NewCreateSpec(authentication.Table, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(authentication.Table, sqlgraph.NewFieldSpec(authentication.FieldID, field.TypeInt))
 	)
 	if id, ok := ac.mutation.ID(); ok {
 		_node.ID = id
@@ -227,7 +227,7 @@ func (ac *AuthenticationCreate) createSpec() (*Authentication, *sqlgraph.CreateS
 			Columns: []string{authentication.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -286,7 +286,7 @@ func (acb *AuthenticationCreateBulk) Save(ctx context.Context) ([]*Authenticatio
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
