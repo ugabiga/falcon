@@ -44,22 +44,30 @@ func (s AuthenticationService) SignUp(
 ) (
 	*ent.Authentication, error,
 ) {
-	a, err := s.db.Authentication.Create().
-		SetProvider(authentication.Provider(authenticationProvider)).
-		SetIdentifier(identifier).
-		SetCredential(credential).
-		Save(ctx)
+	tx, err := s.db.Tx(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	u, err := s.db.User.Create().
-		AddAuthentications(a).
 		Save(ctx)
+	if err != nil {
+		return nil, dbRollback(tx, err)
+	}
+
+	a, err := s.db.Authentication.Create().
+		SetProvider(authentication.Provider(authenticationProvider)).
+		SetIdentifier(identifier).
+		SetCredential(credential).
+		SetUserID(u.ID).
+		Save(ctx)
+	if err != nil {
+		return nil, dbRollback(tx, err)
+	}
 
 	a.Edges.User = u
 
-	if err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
 
