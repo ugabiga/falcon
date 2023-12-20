@@ -47,14 +47,3 @@ func ToUsers(inputUsers []*ent.User) ([]*generated.User, error) {
 	}
 	return users, nil
 }
-
-func ToUserWhereInput(input generated.UserWhereInput) ent.UserWhereInput {
-	var newUserWhereInput ent.UserWhereInput
-	if err := deepcopy.CopyEx(&newUserWhereInput, input); err != nil {
-		return ent.UserWhereInput{}
-	}
-
-	convertWhereIds(&input, &newUserWhereInput)
-
-	return newUserWhereInput
-}

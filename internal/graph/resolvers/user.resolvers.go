@@ -5,6 +5,7 @@ package resolvers
 
 import (
 	"context"
+	"github.com/ugabiga/falcon/internal/ent"
 	"os"
 	"time"
 
@@ -40,7 +41,9 @@ func (r *queryResolver) User(ctx context.Context, id string, withOptions generat
 }
 
 func (r *queryResolver) Users(ctx context.Context, where generated.UserWhereInput) ([]*generated.User, error) {
-	whereInput := converter.ToUserWhereInput(where)
+	var whereInput ent.UserWhereInput
+	converter.BindWhereInput(&where, &whereInput)
+
 	users, err := r.userSrv.Query(ctx, whereInput)
 	if err != nil {
 		return nil, err

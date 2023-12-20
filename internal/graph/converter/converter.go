@@ -2,58 +2,55 @@ package converter
 
 import (
 	"github.com/AlekSi/pointer"
+	"github.com/antlabs/deepcopy"
 	"reflect"
 	"strconv"
 )
 
-func convertWhereIds(input interface{}, target interface{}) {
+func BindWhereInput(input, target interface{}) interface{} {
+	if err := deepcopy.CopyEx(target, input); err != nil {
+		return target
+	}
+
+	convertWhereIDs(input, target)
+
+	return target
+}
+
+func IntToString(iid int) string {
+	return strconv.Itoa(iid)
+}
+
+func StringToInt(sid string) int {
+	atoi, err := strconv.Atoi(sid)
+	if err != nil {
+		return 0
+	}
+	return atoi
+}
+
+func convertWhereIDs(input interface{}, target interface{}) {
 	val := reflect.ValueOf(input).Elem()
 	targetVal := reflect.ValueOf(target).Elem()
+
+	idPair := map[string]string{
+		"ID":      "ID",
+		"IDNeq":   "IDNEQ",
+		"IDGt":    "IDGT",
+		"IDGte":   "IDGTE",
+		"IDLt":    "IDLT",
+		"IDLte":   "IDLTE",
+		"IDIn":    "IDIn",
+		"IDNotIn": "IDNotIn",
+	}
 
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldName := val.Type().Field(i).Name
 
-		if fieldName == "ID" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("ID")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
-		}
-
-		if fieldName == "IDNeq" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("IDNEQ")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
-		}
-
-		if fieldName == "IDGt" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("IDGT")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
-		}
-
-		if fieldName == "IDGte" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("IDGTE")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
-		}
-
-		if fieldName == "IDLt" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("IDLT")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
-		}
-
-		if fieldName == "IDLte" {
-			if !field.IsNil() {
-				targetField := targetVal.FieldByName("IDLTE")
-				targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
-			}
+		if targetFieldName, ok := idPair[fieldName]; ok {
+			convertWhereID(field, targetVal, targetFieldName)
+			continue
 		}
 
 		if fieldName == "IDIn" || fieldName == "IDNotIn" {
@@ -70,14 +67,9 @@ func convertWhereIds(input interface{}, target interface{}) {
 	}
 }
 
-func IntToString(iid int) string {
-	return strconv.Itoa(iid)
-}
-
-func StringToInt(sid string) int {
-	atoi, err := strconv.Atoi(sid)
-	if err != nil {
-		return 0
+func convertWhereID(field, targetVal reflect.Value, targetFieldName string) {
+	if !field.IsNil() {
+		targetField := targetVal.FieldByName(targetFieldName)
+		targetField.Set(reflect.ValueOf(pointer.ToInt(StringToInt(field.Elem().String()))))
 	}
-	return atoi
 }
