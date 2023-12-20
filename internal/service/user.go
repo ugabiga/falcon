@@ -18,7 +18,7 @@ func NewUserService(
 	}
 }
 
-func (s UserService) GetUser(ctx context.Context, userID uint64) (*ent.User, error) {
+func (s UserService) GetByID(ctx context.Context, userID uint64) (*ent.User, error) {
 	u, err := s.db.User.Query().
 		Where(
 			user.IDEQ(userID),
@@ -30,7 +30,7 @@ func (s UserService) GetUser(ctx context.Context, userID uint64) (*ent.User, err
 
 	return u, nil
 }
-func (s UserService) EditUser(ctx context.Context, userID uint64, user *ent.User) (*ent.User, error) {
+func (s UserService) Update(ctx context.Context, userID uint64, user *ent.User) (*ent.User, error) {
 	u, err := s.db.User.UpdateOneID(userID).
 		SetName(user.Name).
 		SetTimezone(user.Timezone).

@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	ErrWrongExchange = errors.New("wrong_exchange")
 	ErrWrongCurrency = errors.New("wrong_currency")
+	ErrorNoRows      = errors.New("no_rows")
 )
 
 type TradingAccountService struct {
@@ -39,7 +41,7 @@ func (s TradingAccountService) Create(
 		return nil, err
 	}
 
-	encryptedCredential, err := s.encryptCredential(credential)
+	encryptedCredential, err := s.encrypt(credential)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +60,11 @@ func (s TradingAccountService) Create(
 		SetCredential(encryptedCredential)
 
 	if phrase != "" {
-		createQuery.SetPhrase(phrase)
+		encryptedPhrase, err := s.encrypt(phrase)
+		if err != nil {
+			return nil, err
+		}
+		createQuery.SetPhrase(encryptedPhrase)
 	}
 
 	t, err := createQuery.Save(ctx)
@@ -92,7 +98,7 @@ func (s TradingAccountService) validateCurrency(currency string) error {
 	}
 }
 
-func (s TradingAccountService) encryptCredential(credential string) (string, error) {
+func (s TradingAccountService) encrypt(credential string) (string, error) {
 	password, err := bcrypt.GenerateFromPassword([]byte(credential), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -104,4 +110,70 @@ func (s TradingAccountService) encryptCredential(credential string) (string, err
 func (s TradingAccountService) availableIP() (string, error) {
 	// TODO : implement
 	return "", nil
+}
+
+func (s TradingAccountService) Get(ctx context.Context, userID uint64) ([]*ent.TradingAccount, error) {
+	return s.db.TradingAccount.Query().Where(
+		tradingaccount.UserIDEQ(userID),
+	).All(ctx)
+}
+
+func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID uint64) (*ent.TradingAccount, error) {
+	return s.db.TradingAccount.Query().Where(
+		tradingaccount.UserIDEQ(userID),
+		tradingaccount.IDEQ(tradingAccountID),
+	).First(ctx)
+}
+
+func (s TradingAccountService) Update(
+	ctx context.Context,
+	tradingAccountID uint64,
+	userID uint64,
+	exchange string,
+	currency string,
+	Identifier string,
+	credential string,
+	phrase string,
+) error {
+	if err := s.validateExchange(exchange); err != nil {
+		return err
+	}
+
+	if err := s.validateCurrency(currency); err != nil {
+		return err
+	}
+
+	encryptedCredential, err := s.encrypt(credential)
+	if err != nil {
+		return err
+	}
+
+	updateQuery := s.db.TradingAccount.Update().
+		Where(
+			tradingaccount.IDEQ(tradingAccountID),
+			tradingaccount.UserIDEQ(userID),
+		).
+		SetExchange(exchange).
+		SetCurrency(currency).
+		SetIdentifier(Identifier).
+		SetCredential(encryptedCredential)
+
+	if phrase != "" {
+		encryptedPhrase, err := s.encrypt(phrase)
+		if err != nil {
+			return err
+		}
+		updateQuery.SetPhrase(encryptedPhrase)
+	}
+
+	updateCount, err := updateQuery.Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	if updateCount <= 0 {
+		return ErrorNoRows
+	}
+
+	return nil
 }

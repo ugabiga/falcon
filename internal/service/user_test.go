@@ -43,7 +43,7 @@ func TestUserService_GetUser(t *testing.T) {
 	t.Run("should return a user", func(t *testing.T) {
 		t.Parallel()
 
-		u, err := srv.GetUser(
+		u, err := srv.GetByID(
 			ctx,
 			targetUser.ID,
 		)
@@ -70,7 +70,7 @@ func TestUserService_EditUser(t *testing.T) {
 	t.Run("should update a user", func(t *testing.T) {
 		t.Parallel()
 
-		u, err := srv.EditUser(
+		u, err := srv.Update(
 			ctx,
 			targetUser.ID,
 			&ent.User{
