@@ -1,0 +1,10 @@
+### Retrieve and save token.
+POST http://localhost:8080/auth
+Content-Type: application/json
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+### Bearer auth with token.
+GET http://localhost:8080/protected
+Authorization: Bearer {{auth_token}}
+

@@ -1,35 +1,25 @@
 package app
 
 import (
-	"context"
 	"github.com/ugabiga/falcon/internal/config"
-	"github.com/ugabiga/falcon/internal/service"
-	"log"
+	"github.com/ugabiga/falcon/internal/server"
 )
 
 type App struct {
-	cfg     *config.Config
-	userSrv *service.UserService
+	cfg    *config.Config
+	server *server.Server
 }
 
 func NewApp(
 	cfg *config.Config,
-	userSrv *service.UserService,
+	server *server.Server,
 ) App {
 	return App{
-		cfg:     cfg,
-		userSrv: userSrv,
+		cfg:    cfg,
+		server: server,
 	}
 }
 
 func (a App) RunServer() error {
-	log.Printf("Run server")
-
-	ctx := context.Background()
-
-	if err := a.userSrv.GetUser(ctx); err != nil {
-		return err
-	}
-
-	return nil
+	return a.server.Run()
 }
