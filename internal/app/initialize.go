@@ -17,12 +17,14 @@ func provider() fx.Option {
 		client.NewEntClient,
 
 		// Service
+		service.NewJWTService,
 		service.NewUserService,
 		service.NewAuthenticationService,
-		service.NewJWTService,
+		service.NewTradingAccountService,
 
 		// Handler
 		handler.NewAuthenticationHandler,
+		handler.NewUserHandler,
 
 		// Server
 		server.NewServer,
