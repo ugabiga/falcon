@@ -1,0 +1,6 @@
+query GetUser($where: UserWhereInput){
+    user(where: $where){
+        id,
+        name
+    }
+}

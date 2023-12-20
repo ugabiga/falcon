@@ -1,0 +1,15 @@
+type Query {
+    users: [User]
+    user(
+        where: UserWhereInput
+    ): User
+}
+
+input UserWhereInput {
+    id: Int
+}
+
+type User {
+    id: Int
+    name: String
+}
