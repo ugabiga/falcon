@@ -34,7 +34,7 @@ func entgqlExtensions() []entc.Extension {
 
 	ex, err := entgql.NewExtension(
 		entgql.WithConfigPath(configDir+"/gqlgen.yml"),
-		entgql.WithSchemaPath(graphqlDir+"/ent.graphql"),
+		entgql.WithSchemaPath(graphqlDir+"/ent.graphql.bak"),
 		entgql.WithSchemaGenerator(),
 		entgql.WithWhereInputs(true),
 	)

@@ -5,11 +5,11 @@ package resolvers
 
 import (
 	"context"
-	"github.com/ugabiga/falcon/internal/ent"
 	"os"
 	"time"
 
 	"github.com/rs/zerolog"
+	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/service"

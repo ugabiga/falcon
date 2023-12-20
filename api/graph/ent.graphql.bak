@@ -405,8 +405,6 @@ input TaskWhereInput {
   hasTaskHistories: Boolean
   hasTaskHistoriesWith: [TaskHistoryWhereInput!]
 }
-"""The builtin Time type"""
-scalar Time
 type TradingAccount implements Node {
   id: ID!
   userID: ID!
