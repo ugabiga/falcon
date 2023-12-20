@@ -87,7 +87,7 @@ var (
 		{Name: "ip", Type: field.TypeString},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "credential", Type: field.TypeString},
-		{Name: "phrase", Type: field.TypeString},
+		{Name: "phrase", Type: field.TypeString, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_id", Type: field.TypeUint64},

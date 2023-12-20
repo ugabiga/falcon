@@ -64,6 +64,14 @@ func (tac *TradingAccountCreate) SetPhrase(s string) *TradingAccountCreate {
 	return tac
 }
 
+// SetNillablePhrase sets the "phrase" field if the given value is not nil.
+func (tac *TradingAccountCreate) SetNillablePhrase(s *string) *TradingAccountCreate {
+	if s != nil {
+		tac.SetPhrase(*s)
+	}
+	return tac
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (tac *TradingAccountCreate) SetUpdatedAt(t time.Time) *TradingAccountCreate {
 	tac.mutation.SetUpdatedAt(t)
@@ -187,9 +195,6 @@ func (tac *TradingAccountCreate) check() error {
 	}
 	if _, ok := tac.mutation.Credential(); !ok {
 		return &ValidationError{Name: "credential", err: errors.New(`ent: missing required field "TradingAccount.credential"`)}
-	}
-	if _, ok := tac.mutation.Phrase(); !ok {
-		return &ValidationError{Name: "phrase", err: errors.New(`ent: missing required field "TradingAccount.phrase"`)}
 	}
 	if _, ok := tac.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "TradingAccount.updated_at"`)}

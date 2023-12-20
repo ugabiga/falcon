@@ -128,6 +128,12 @@ func (tau *TradingAccountUpdate) SetNillablePhrase(s *string) *TradingAccountUpd
 	return tau
 }
 
+// ClearPhrase clears the value of the "phrase" field.
+func (tau *TradingAccountUpdate) ClearPhrase() *TradingAccountUpdate {
+	tau.mutation.ClearPhrase()
+	return tau
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (tau *TradingAccountUpdate) SetUpdatedAt(t time.Time) *TradingAccountUpdate {
 	tau.mutation.SetUpdatedAt(t)
@@ -264,6 +270,9 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 	}
 	if value, ok := tau.mutation.Phrase(); ok {
 		_spec.SetField(tradingaccount.FieldPhrase, field.TypeString, value)
+	}
+	if tau.mutation.PhraseCleared() {
+		_spec.ClearField(tradingaccount.FieldPhrase, field.TypeString)
 	}
 	if value, ok := tau.mutation.UpdatedAt(); ok {
 		_spec.SetField(tradingaccount.FieldUpdatedAt, field.TypeTime, value)
@@ -460,6 +469,12 @@ func (tauo *TradingAccountUpdateOne) SetNillablePhrase(s *string) *TradingAccoun
 	return tauo
 }
 
+// ClearPhrase clears the value of the "phrase" field.
+func (tauo *TradingAccountUpdateOne) ClearPhrase() *TradingAccountUpdateOne {
+	tauo.mutation.ClearPhrase()
+	return tauo
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (tauo *TradingAccountUpdateOne) SetUpdatedAt(t time.Time) *TradingAccountUpdateOne {
 	tauo.mutation.SetUpdatedAt(t)
@@ -626,6 +641,9 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 	}
 	if value, ok := tauo.mutation.Phrase(); ok {
 		_spec.SetField(tradingaccount.FieldPhrase, field.TypeString, value)
+	}
+	if tauo.mutation.PhraseCleared() {
+		_spec.ClearField(tradingaccount.FieldPhrase, field.TypeString)
 	}
 	if value, ok := tauo.mutation.UpdatedAt(); ok {
 		_spec.SetField(tradingaccount.FieldUpdatedAt, field.TypeTime, value)

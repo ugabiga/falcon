@@ -27,7 +27,8 @@ func (TradingAccount) Fields() []ent.Field {
 		field.String("credential").
 			Sensitive(),
 		field.String("phrase").
-			Sensitive(),
+			Sensitive().
+			Optional(),
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),

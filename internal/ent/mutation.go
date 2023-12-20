@@ -2419,9 +2419,22 @@ func (m *TradingAccountMutation) OldPhrase(ctx context.Context) (v string, err e
 	return oldValue.Phrase, nil
 }
 
+// ClearPhrase clears the value of the "phrase" field.
+func (m *TradingAccountMutation) ClearPhrase() {
+	m.phrase = nil
+	m.clearedFields[tradingaccount.FieldPhrase] = struct{}{}
+}
+
+// PhraseCleared returns if the "phrase" field was cleared in this mutation.
+func (m *TradingAccountMutation) PhraseCleared() bool {
+	_, ok := m.clearedFields[tradingaccount.FieldPhrase]
+	return ok
+}
+
 // ResetPhrase resets all changes to the "phrase" field.
 func (m *TradingAccountMutation) ResetPhrase() {
 	m.phrase = nil
+	delete(m.clearedFields, tradingaccount.FieldPhrase)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -2796,7 +2809,11 @@ func (m *TradingAccountMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TradingAccountMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(tradingaccount.FieldPhrase) {
+		fields = append(fields, tradingaccount.FieldPhrase)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2809,6 +2826,11 @@ func (m *TradingAccountMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TradingAccountMutation) ClearField(name string) error {
+	switch name {
+	case tradingaccount.FieldPhrase:
+		m.ClearPhrase()
+		return nil
+	}
 	return fmt.Errorf("unknown TradingAccount nullable field %s", name)
 }
 

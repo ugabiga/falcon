@@ -500,6 +500,16 @@ func PhraseHasSuffix(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldHasSuffix(FieldPhrase, v))
 }
 
+// PhraseIsNil applies the IsNil predicate on the "phrase" field.
+func PhraseIsNil() predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldIsNull(FieldPhrase))
+}
+
+// PhraseNotNil applies the NotNil predicate on the "phrase" field.
+func PhraseNotNil() predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNotNull(FieldPhrase))
+}
+
 // PhraseEqualFold applies the EqualFold predicate on the "phrase" field.
 func PhraseEqualFold(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEqualFold(FieldPhrase, v))
