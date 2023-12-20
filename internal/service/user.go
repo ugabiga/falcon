@@ -25,6 +25,24 @@ type UserWithOptions struct {
 	WithTradingAccounts bool
 }
 
+func (s UserService) Query(ctx context.Context, where ent.UserWhereInput) ([]*ent.User, error) {
+	_, err := s.db.User.Create().
+		SetName("dummy").
+		SetTimezone("UTC").
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query, err := where.Filter(s.db.User.Query())
+	if err != nil {
+		return nil, err
+	}
+	users, err := query.All(ctx)
+
+	return users, nil
+}
+
 func (s UserService) CreateDummy(
 	ctx context.Context, userID int, withOptions UserWithOptions,
 ) (

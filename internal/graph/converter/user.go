@@ -4,7 +4,6 @@ import (
 	"github.com/antlabs/deepcopy"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/generated"
-	"strconv"
 )
 
 func ToUser(inputUser *ent.User) (*generated.User, error) {
@@ -37,14 +36,25 @@ func ToUser(inputUser *ent.User) (*generated.User, error) {
 	return &newUser, nil
 }
 
-func IntToString(iid int) string {
-	return strconv.Itoa(iid)
+func ToUsers(inputUsers []*ent.User) ([]*generated.User, error) {
+	users := make([]*generated.User, 0, len(inputUsers))
+	for _, v := range inputUsers {
+		user, err := ToUser(v)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }
 
-func StringToInt(sid string) int {
-	atoi, err := strconv.Atoi(sid)
-	if err != nil {
-		return 0
+func ToUserWhereInput(input generated.UserWhereInput) ent.UserWhereInput {
+	var newUserWhereInput ent.UserWhereInput
+	if err := deepcopy.CopyEx(&newUserWhereInput, input); err != nil {
+		return ent.UserWhereInput{}
 	}
-	return atoi
+
+	convertWhereIds(&input, &newUserWhereInput)
+
+	return newUserWhereInput
 }

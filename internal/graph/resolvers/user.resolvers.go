@@ -5,12 +5,13 @@ package resolvers
 
 import (
 	"context"
+	"os"
+	"time"
+
 	"github.com/rs/zerolog"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/service"
-	"os"
-	"time"
 )
 
 func (r *queryResolver) User(ctx context.Context, id string, withOptions generated.UserWithOptions) (*generated.User, error) {
@@ -36,6 +37,16 @@ func (r *queryResolver) User(ctx context.Context, id string, withOptions generat
 		return nil, err
 	}
 	return user, nil
+}
+
+func (r *queryResolver) Users(ctx context.Context, where generated.UserWhereInput) ([]*generated.User, error) {
+	whereInput := converter.ToUserWhereInput(where)
+	users, err := r.userSrv.Query(ctx, whereInput)
+	if err != nil {
+		return nil, err
+	}
+
+	return converter.ToUsers(users)
 }
 
 // Query returns generated.QueryResolver implementation.
