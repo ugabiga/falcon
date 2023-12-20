@@ -17,6 +17,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint64("id").Positive(),
 		field.String("name").Optional(),
+		field.String("timezone").Optional(),
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),

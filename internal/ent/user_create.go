@@ -36,6 +36,20 @@ func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
 	return uc
 }
 
+// SetTimezone sets the "timezone" field.
+func (uc *UserCreate) SetTimezone(s string) *UserCreate {
+	uc.mutation.SetTimezone(s)
+	return uc
+}
+
+// SetNillableTimezone sets the "timezone" field if the given value is not nil.
+func (uc *UserCreate) SetNillableTimezone(s *string) *UserCreate {
+	if s != nil {
+		uc.SetTimezone(*s)
+	}
+	return uc
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetUpdatedAt(t)
@@ -193,6 +207,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Name(); ok {
 		_spec.SetField(user.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := uc.mutation.Timezone(); ok {
+		_spec.SetField(user.FieldTimezone, field.TypeString, value)
+		_node.Timezone = value
 	}
 	if value, ok := uc.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)

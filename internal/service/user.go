@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/ugabiga/falcon/internal/ent"
-	"log"
+	"github.com/ugabiga/falcon/internal/ent/user"
 )
 
 type UserService struct {
@@ -18,13 +18,26 @@ func NewUserService(
 	}
 }
 
-func (s UserService) GetUser(ctx context.Context) error {
-	u, err := s.db.User.Query().First(ctx)
+func (s UserService) GetUser(ctx context.Context, userID uint64) (*ent.User, error) {
+	u, err := s.db.User.Query().
+		Where(
+			user.IDEQ(userID),
+		).
+		First(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	log.Printf("User: %v", u.Name)
+	return u, nil
+}
+func (s UserService) EditUser(ctx context.Context, userID uint64, user *ent.User) (*ent.User, error) {
+	u, err := s.db.User.UpdateOneID(userID).
+		SetName(user.Name).
+		SetTimezone(user.Timezone).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return u, nil
 }

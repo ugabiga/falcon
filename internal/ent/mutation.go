@@ -2956,6 +2956,7 @@ type UserMutation struct {
 	typ                     string
 	id                      *uint64
 	name                    *string
+	timezone                *string
 	updated_at              *time.Time
 	created_at              *time.Time
 	clearedFields           map[string]struct{}
@@ -3121,6 +3122,55 @@ func (m *UserMutation) NameCleared() bool {
 func (m *UserMutation) ResetName() {
 	m.name = nil
 	delete(m.clearedFields, user.FieldName)
+}
+
+// SetTimezone sets the "timezone" field.
+func (m *UserMutation) SetTimezone(s string) {
+	m.timezone = &s
+}
+
+// Timezone returns the value of the "timezone" field in the mutation.
+func (m *UserMutation) Timezone() (r string, exists bool) {
+	v := m.timezone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimezone returns the old "timezone" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTimezone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimezone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimezone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimezone: %w", err)
+	}
+	return oldValue.Timezone, nil
+}
+
+// ClearTimezone clears the value of the "timezone" field.
+func (m *UserMutation) ClearTimezone() {
+	m.timezone = nil
+	m.clearedFields[user.FieldTimezone] = struct{}{}
+}
+
+// TimezoneCleared returns if the "timezone" field was cleared in this mutation.
+func (m *UserMutation) TimezoneCleared() bool {
+	_, ok := m.clearedFields[user.FieldTimezone]
+	return ok
+}
+
+// ResetTimezone resets all changes to the "timezone" field.
+func (m *UserMutation) ResetTimezone() {
+	m.timezone = nil
+	delete(m.clearedFields, user.FieldTimezone)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -3337,9 +3387,12 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
+	}
+	if m.timezone != nil {
+		fields = append(fields, user.FieldTimezone)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, user.FieldUpdatedAt)
@@ -3357,6 +3410,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldName:
 		return m.Name()
+	case user.FieldTimezone:
+		return m.Timezone()
 	case user.FieldUpdatedAt:
 		return m.UpdatedAt()
 	case user.FieldCreatedAt:
@@ -3372,6 +3427,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldName:
 		return m.OldName(ctx)
+	case user.FieldTimezone:
+		return m.OldTimezone(ctx)
 	case user.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
 	case user.FieldCreatedAt:
@@ -3391,6 +3448,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case user.FieldTimezone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimezone(v)
 		return nil
 	case user.FieldUpdatedAt:
 		v, ok := value.(time.Time)
@@ -3439,6 +3503,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldName) {
 		fields = append(fields, user.FieldName)
 	}
+	if m.FieldCleared(user.FieldTimezone) {
+		fields = append(fields, user.FieldTimezone)
+	}
 	return fields
 }
 
@@ -3456,6 +3523,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldName:
 		m.ClearName()
 		return nil
+	case user.FieldTimezone:
+		m.ClearTimezone()
+		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
@@ -3466,6 +3536,9 @@ func (m *UserMutation) ResetField(name string) error {
 	switch name {
 	case user.FieldName:
 		m.ResetName()
+		return nil
+	case user.FieldTimezone:
+		m.ResetTimezone()
 		return nil
 	case user.FieldUpdatedAt:
 		m.ResetUpdatedAt()

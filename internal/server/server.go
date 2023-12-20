@@ -34,7 +34,7 @@ func (s *Server) middleware() {
 
 func (s *Server) router() {
 	v1 := s.e.Group("/api/v1")
-	s.authenticationHandler.SetRoute(v1)
+	s.authenticationHandler.SetRoutes(v1)
 }
 
 func (s *Server) Run() error {

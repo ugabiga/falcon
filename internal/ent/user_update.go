@@ -50,6 +50,26 @@ func (uu *UserUpdate) ClearName() *UserUpdate {
 	return uu
 }
 
+// SetTimezone sets the "timezone" field.
+func (uu *UserUpdate) SetTimezone(s string) *UserUpdate {
+	uu.mutation.SetTimezone(s)
+	return uu
+}
+
+// SetNillableTimezone sets the "timezone" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTimezone(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetTimezone(*s)
+	}
+	return uu
+}
+
+// ClearTimezone clears the value of the "timezone" field.
+func (uu *UserUpdate) ClearTimezone() *UserUpdate {
+	uu.mutation.ClearTimezone()
+	return uu
+}
+
 // SetUpdatedAt sets the "updated_at" field.
 func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetUpdatedAt(t)
@@ -184,6 +204,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.NameCleared() {
 		_spec.ClearField(user.FieldName, field.TypeString)
 	}
+	if value, ok := uu.mutation.Timezone(); ok {
+		_spec.SetField(user.FieldTimezone, field.TypeString, value)
+	}
+	if uu.mutation.TimezoneCleared() {
+		_spec.ClearField(user.FieldTimezone, field.TypeString)
+	}
 	if value, ok := uu.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
@@ -314,6 +340,26 @@ func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
 // ClearName clears the value of the "name" field.
 func (uuo *UserUpdateOne) ClearName() *UserUpdateOne {
 	uuo.mutation.ClearName()
+	return uuo
+}
+
+// SetTimezone sets the "timezone" field.
+func (uuo *UserUpdateOne) SetTimezone(s string) *UserUpdateOne {
+	uuo.mutation.SetTimezone(s)
+	return uuo
+}
+
+// SetNillableTimezone sets the "timezone" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTimezone(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetTimezone(*s)
+	}
+	return uuo
+}
+
+// ClearTimezone clears the value of the "timezone" field.
+func (uuo *UserUpdateOne) ClearTimezone() *UserUpdateOne {
+	uuo.mutation.ClearTimezone()
 	return uuo
 }
 
@@ -480,6 +526,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.NameCleared() {
 		_spec.ClearField(user.FieldName, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Timezone(); ok {
+		_spec.SetField(user.FieldTimezone, field.TypeString, value)
+	}
+	if uuo.mutation.TimezoneCleared() {
+		_spec.ClearField(user.FieldTimezone, field.TypeString)
 	}
 	if value, ok := uuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)

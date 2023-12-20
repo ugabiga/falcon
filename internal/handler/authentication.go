@@ -18,19 +18,19 @@ func NewAuthenticationHandler(
 	}
 }
 
-func (h *AuthenticationHandler) SetRoute(e *echo.Group) {
+func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
 	e.GET("/auth", h.Get)
 	e.POST("/auth", h.Post)
 	e.GET("/protected", h.Protected)
 }
 
-func (h *AuthenticationHandler) Get(c echo.Context) error {
+func (h AuthenticationHandler) Get(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Hello World!",
 	})
 }
 
-func (h *AuthenticationHandler) Post(c echo.Context) error {
+func (h AuthenticationHandler) Post(c echo.Context) error {
 	t, err := h.jwtService.GenerateToken()
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (h *AuthenticationHandler) Post(c echo.Context) error {
 	})
 }
 
-func (h *AuthenticationHandler) Protected(c echo.Context) error {
+func (h AuthenticationHandler) Protected(c echo.Context) error {
 	name := h.jwtService.CustomClaimsName(c)
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Hello " + name + "!",

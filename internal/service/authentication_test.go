@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func buildService() *service.AuthenticationService {
+func initAuthenticationService() *service.AuthenticationService {
 	cfg := &config.Config{
 		DBDriverName: "sqlite3",
 		DBSource:     "file:ent?mode=memory&cache=shared&_fk=1",
@@ -18,7 +18,7 @@ func buildService() *service.AuthenticationService {
 	return service.NewAuthenticationService(entClient)
 }
 func TestAuthenticationService_SignUp(t *testing.T) {
-	srv := buildService()
+	srv := initAuthenticationService()
 
 	t.Run("should create a new user", func(t *testing.T) {
 		t.Parallel()
@@ -49,7 +49,7 @@ func TestAuthenticationService_SignUp(t *testing.T) {
 }
 
 func TestAuthenticationService_SignInOrSignUp(t *testing.T) {
-	srv := buildService()
+	srv := initAuthenticationService()
 
 	t.Run("should create a new user", func(t *testing.T) {
 		t.Parallel()
