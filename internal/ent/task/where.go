@@ -55,6 +55,11 @@ func IDLTE(id uint64) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldID, id))
 }
 
+// TradingAccountID applies equality check predicate on the "trading_account_id" field. It's identical to TradingAccountIDEQ.
+func TradingAccountID(v uint64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, v))
+}
+
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
 func Cron(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCron, v))
@@ -83,6 +88,26 @@ func UpdatedAt(v time.Time) predicate.Task {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// TradingAccountIDEQ applies the EQ predicate on the "trading_account_id" field.
+func TradingAccountIDEQ(v uint64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTradingAccountID, v))
+}
+
+// TradingAccountIDNEQ applies the NEQ predicate on the "trading_account_id" field.
+func TradingAccountIDNEQ(v uint64) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldTradingAccountID, v))
+}
+
+// TradingAccountIDIn applies the In predicate on the "trading_account_id" field.
+func TradingAccountIDIn(vs ...uint64) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldTradingAccountID, vs...))
+}
+
+// TradingAccountIDNotIn applies the NotIn predicate on the "trading_account_id" field.
+func TradingAccountIDNotIn(vs ...uint64) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldTradingAccountID, vs...))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.

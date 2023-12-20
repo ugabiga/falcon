@@ -55,6 +55,11 @@ func IDLTE(id uint64) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldLTE(FieldID, id))
 }
 
+// TaskID applies equality check predicate on the "task_id" field. It's identical to TaskIDEQ.
+func TaskID(v uint64) predicate.TaskHistory {
+	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, v))
+}
+
 // IsSuccess applies equality check predicate on the "is_success" field. It's identical to IsSuccessEQ.
 func IsSuccess(v bool) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldEQ(FieldIsSuccess, v))
@@ -68,6 +73,26 @@ func UpdatedAt(v time.Time) predicate.TaskHistory {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.TaskHistory {
 	return predicate.TaskHistory(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// TaskIDEQ applies the EQ predicate on the "task_id" field.
+func TaskIDEQ(v uint64) predicate.TaskHistory {
+	return predicate.TaskHistory(sql.FieldEQ(FieldTaskID, v))
+}
+
+// TaskIDNEQ applies the NEQ predicate on the "task_id" field.
+func TaskIDNEQ(v uint64) predicate.TaskHistory {
+	return predicate.TaskHistory(sql.FieldNEQ(FieldTaskID, v))
+}
+
+// TaskIDIn applies the In predicate on the "task_id" field.
+func TaskIDIn(vs ...uint64) predicate.TaskHistory {
+	return predicate.TaskHistory(sql.FieldIn(FieldTaskID, vs...))
+}
+
+// TaskIDNotIn applies the NotIn predicate on the "task_id" field.
+func TaskIDNotIn(vs ...uint64) predicate.TaskHistory {
+	return predicate.TaskHistory(sql.FieldNotIn(FieldTaskID, vs...))
 }
 
 // IsSuccessEQ applies the EQ predicate on the "is_success" field.

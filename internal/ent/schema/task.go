@@ -15,7 +15,10 @@ type Task struct {
 // Fields of the Task.
 func (Task) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").Positive(),
+		field.Uint64("id").
+			Positive(),
+		field.Uint64("trading_account_id").
+			Positive(),
 		field.String("cron"),
 		field.Time("next_execution_time"),
 		field.Bool("is_active"),
@@ -34,7 +37,9 @@ func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("trading_account", TradingAccount.Type).
 			Ref("tasks").
-			Unique(),
+			Unique().
+			Field("trading_account_id").
+			Required(),
 		edge.To("task_histories", TaskHistory.Type),
 	}
 }

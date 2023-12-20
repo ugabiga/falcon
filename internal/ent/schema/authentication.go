@@ -15,7 +15,10 @@ type Authentication struct {
 // Fields of the Authentication.
 func (Authentication) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").Positive(),
+		field.Uint64("id").
+			Positive(),
+		field.Uint64("user_id").
+			Positive(),
 		field.Enum("provider").
 			Values("google", "facebook"),
 		field.String("identifier").
@@ -36,6 +39,8 @@ func (Authentication) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
 			Ref("authentications").
-			Unique(),
+			Unique().
+			Field("user_id").
+			Required(),
 	}
 }

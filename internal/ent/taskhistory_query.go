@@ -23,7 +23,6 @@ type TaskHistoryQuery struct {
 	inters     []Interceptor
 	predicates []predicate.TaskHistory
 	withTask   *TaskQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -298,12 +297,12 @@ func (thq *TaskHistoryQuery) WithTask(opts ...func(*TaskQuery)) *TaskHistoryQuer
 // Example:
 //
 //	var v []struct {
-//		IsSuccess bool `json:"is_success,omitempty"`
+//		TaskID uint64 `json:"task_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.TaskHistory.Query().
-//		GroupBy(taskhistory.FieldIsSuccess).
+//		GroupBy(taskhistory.FieldTaskID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (thq *TaskHistoryQuery) GroupBy(field string, fields ...string) *TaskHistoryGroupBy {
@@ -321,11 +320,11 @@ func (thq *TaskHistoryQuery) GroupBy(field string, fields ...string) *TaskHistor
 // Example:
 //
 //	var v []struct {
-//		IsSuccess bool `json:"is_success,omitempty"`
+//		TaskID uint64 `json:"task_id,omitempty"`
 //	}
 //
 //	client.TaskHistory.Query().
-//		Select(taskhistory.FieldIsSuccess).
+//		Select(taskhistory.FieldTaskID).
 //		Scan(ctx, &v)
 func (thq *TaskHistoryQuery) Select(fields ...string) *TaskHistorySelect {
 	thq.ctx.Fields = append(thq.ctx.Fields, fields...)
@@ -369,18 +368,11 @@ func (thq *TaskHistoryQuery) prepareQuery(ctx context.Context) error {
 func (thq *TaskHistoryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TaskHistory, error) {
 	var (
 		nodes       = []*TaskHistory{}
-		withFKs     = thq.withFKs
 		_spec       = thq.querySpec()
 		loadedTypes = [1]bool{
 			thq.withTask != nil,
 		}
 	)
-	if thq.withTask != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, taskhistory.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*TaskHistory).scanValues(nil, columns)
 	}
@@ -412,10 +404,7 @@ func (thq *TaskHistoryQuery) loadTask(ctx context.Context, query *TaskQuery, nod
 	ids := make([]uint64, 0, len(nodes))
 	nodeids := make(map[uint64][]*TaskHistory)
 	for i := range nodes {
-		if nodes[i].task_task_histories == nil {
-			continue
-		}
-		fk := *nodes[i].task_task_histories
+		fk := nodes[i].TaskID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -432,7 +421,7 @@ func (thq *TaskHistoryQuery) loadTask(ctx context.Context, query *TaskQuery, nod
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "task_task_histories" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "task_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -465,6 +454,9 @@ func (thq *TaskHistoryQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != taskhistory.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if thq.withTask != nil {
+			_spec.Node.AddColumnOnce(taskhistory.FieldTaskID)
 		}
 	}
 	if ps := thq.predicates; len(ps) > 0 {

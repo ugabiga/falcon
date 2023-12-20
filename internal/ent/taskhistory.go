@@ -18,6 +18,8 @@ type TaskHistory struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
+	// TaskID holds the value of the "task_id" field.
+	TaskID uint64 `json:"task_id,omitempty"`
 	// IsSuccess holds the value of the "is_success" field.
 	IsSuccess bool `json:"is_success,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -26,9 +28,8 @@ type TaskHistory struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskHistoryQuery when eager-loading is set.
-	Edges               TaskHistoryEdges `json:"edges"`
-	task_task_histories *uint64
-	selectValues        sql.SelectValues
+	Edges        TaskHistoryEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // TaskHistoryEdges holds the relations/edges for other nodes in the graph.
@@ -60,12 +61,10 @@ func (*TaskHistory) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case taskhistory.FieldIsSuccess:
 			values[i] = new(sql.NullBool)
-		case taskhistory.FieldID:
+		case taskhistory.FieldID, taskhistory.FieldTaskID:
 			values[i] = new(sql.NullInt64)
 		case taskhistory.FieldUpdatedAt, taskhistory.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case taskhistory.ForeignKeys[0]: // task_task_histories
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -87,6 +86,12 @@ func (th *TaskHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			th.ID = uint64(value.Int64)
+		case taskhistory.FieldTaskID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field task_id", values[i])
+			} else if value.Valid {
+				th.TaskID = uint64(value.Int64)
+			}
 		case taskhistory.FieldIsSuccess:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_success", values[i])
@@ -104,13 +109,6 @@ func (th *TaskHistory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				th.CreatedAt = value.Time
-			}
-		case taskhistory.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field task_task_histories", value)
-			} else if value.Valid {
-				th.task_task_histories = new(uint64)
-				*th.task_task_histories = uint64(value.Int64)
 			}
 		default:
 			th.selectValues.Set(columns[i], values[i])
@@ -153,6 +151,9 @@ func (th *TaskHistory) String() string {
 	var builder strings.Builder
 	builder.WriteString("TaskHistory(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", th.ID))
+	builder.WriteString("task_id=")
+	builder.WriteString(fmt.Sprintf("%v", th.TaskID))
+	builder.WriteString(", ")
 	builder.WriteString("is_success=")
 	builder.WriteString(fmt.Sprintf("%v", th.IsSuccess))
 	builder.WriteString(", ")

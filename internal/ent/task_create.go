@@ -22,6 +22,12 @@ type TaskCreate struct {
 	hooks    []Hook
 }
 
+// SetTradingAccountID sets the "trading_account_id" field.
+func (tc *TaskCreate) SetTradingAccountID(u uint64) *TaskCreate {
+	tc.mutation.SetTradingAccountID(u)
+	return tc
+}
+
 // SetCron sets the "cron" field.
 func (tc *TaskCreate) SetCron(s string) *TaskCreate {
 	tc.mutation.SetCron(s)
@@ -77,20 +83,6 @@ func (tc *TaskCreate) SetNillableCreatedAt(t *time.Time) *TaskCreate {
 // SetID sets the "id" field.
 func (tc *TaskCreate) SetID(u uint64) *TaskCreate {
 	tc.mutation.SetID(u)
-	return tc
-}
-
-// SetTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID.
-func (tc *TaskCreate) SetTradingAccountID(id uint64) *TaskCreate {
-	tc.mutation.SetTradingAccountID(id)
-	return tc
-}
-
-// SetNillableTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID if the given value is not nil.
-func (tc *TaskCreate) SetNillableTradingAccountID(id *uint64) *TaskCreate {
-	if id != nil {
-		tc = tc.SetTradingAccountID(*id)
-	}
 	return tc
 }
 
@@ -161,6 +153,14 @@ func (tc *TaskCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TaskCreate) check() error {
+	if _, ok := tc.mutation.TradingAccountID(); !ok {
+		return &ValidationError{Name: "trading_account_id", err: errors.New(`ent: missing required field "Task.trading_account_id"`)}
+	}
+	if v, ok := tc.mutation.TradingAccountID(); ok {
+		if err := task.TradingAccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
+		}
+	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
 	}
@@ -183,6 +183,9 @@ func (tc *TaskCreate) check() error {
 		if err := task.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Task.id": %w`, err)}
 		}
+	}
+	if _, ok := tc.mutation.TradingAccountID(); !ok {
+		return &ValidationError{Name: "trading_account", err: errors.New(`ent: missing required edge "Task.trading_account"`)}
 	}
 	return nil
 }
@@ -254,7 +257,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.trading_account_tasks = &nodes[0]
+		_node.TradingAccountID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tc.mutation.TaskHistoriesIDs(); len(nodes) > 0 {

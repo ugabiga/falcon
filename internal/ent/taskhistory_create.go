@@ -21,6 +21,12 @@ type TaskHistoryCreate struct {
 	hooks    []Hook
 }
 
+// SetTaskID sets the "task_id" field.
+func (thc *TaskHistoryCreate) SetTaskID(u uint64) *TaskHistoryCreate {
+	thc.mutation.SetTaskID(u)
+	return thc
+}
+
 // SetIsSuccess sets the "is_success" field.
 func (thc *TaskHistoryCreate) SetIsSuccess(b bool) *TaskHistoryCreate {
 	thc.mutation.SetIsSuccess(b)
@@ -58,20 +64,6 @@ func (thc *TaskHistoryCreate) SetNillableCreatedAt(t *time.Time) *TaskHistoryCre
 // SetID sets the "id" field.
 func (thc *TaskHistoryCreate) SetID(u uint64) *TaskHistoryCreate {
 	thc.mutation.SetID(u)
-	return thc
-}
-
-// SetTaskID sets the "task" edge to the Task entity by ID.
-func (thc *TaskHistoryCreate) SetTaskID(id uint64) *TaskHistoryCreate {
-	thc.mutation.SetTaskID(id)
-	return thc
-}
-
-// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
-func (thc *TaskHistoryCreate) SetNillableTaskID(id *uint64) *TaskHistoryCreate {
-	if id != nil {
-		thc = thc.SetTaskID(*id)
-	}
 	return thc
 }
 
@@ -127,6 +119,14 @@ func (thc *TaskHistoryCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (thc *TaskHistoryCreate) check() error {
+	if _, ok := thc.mutation.TaskID(); !ok {
+		return &ValidationError{Name: "task_id", err: errors.New(`ent: missing required field "TaskHistory.task_id"`)}
+	}
+	if v, ok := thc.mutation.TaskID(); ok {
+		if err := taskhistory.TaskIDValidator(v); err != nil {
+			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
+		}
+	}
 	if _, ok := thc.mutation.IsSuccess(); !ok {
 		return &ValidationError{Name: "is_success", err: errors.New(`ent: missing required field "TaskHistory.is_success"`)}
 	}
@@ -140,6 +140,9 @@ func (thc *TaskHistoryCreate) check() error {
 		if err := taskhistory.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.id": %w`, err)}
 		}
+	}
+	if _, ok := thc.mutation.TaskID(); !ok {
+		return &ValidationError{Name: "task", err: errors.New(`ent: missing required edge "TaskHistory.task"`)}
 	}
 	return nil
 }
@@ -199,7 +202,7 @@ func (thc *TaskHistoryCreate) createSpec() (*TaskHistory, *sqlgraph.CreateSpec) 
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.task_task_histories = &nodes[0]
+		_node.TaskID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

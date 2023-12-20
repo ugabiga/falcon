@@ -456,7 +456,9 @@ func (uq *UserQuery) loadAuthentications(ctx context.Context, query *Authenticat
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(authentication.FieldUserID)
+	}
 	query.Where(predicate.Authentication(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.AuthenticationsColumn), fks...))
 	}))
@@ -465,13 +467,10 @@ func (uq *UserQuery) loadAuthentications(ctx context.Context, query *Authenticat
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_authentications
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_authentications" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.UserID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_authentications" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -487,7 +486,9 @@ func (uq *UserQuery) loadTradingAccounts(ctx context.Context, query *TradingAcco
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(tradingaccount.FieldUserID)
+	}
 	query.Where(predicate.TradingAccount(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.TradingAccountsColumn), fks...))
 	}))
@@ -496,13 +497,10 @@ func (uq *UserQuery) loadTradingAccounts(ctx context.Context, query *TradingAcco
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_trading_accounts
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_trading_accounts" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.UserID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_trading_accounts" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -18,6 +18,8 @@ type TradingAccount struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uint64 `json:"user_id,omitempty"`
 	// Exchange holds the value of the "exchange" field.
 	Exchange string `json:"exchange,omitempty"`
 	// Currency holds the value of the "currency" field.
@@ -36,9 +38,8 @@ type TradingAccount struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TradingAccountQuery when eager-loading is set.
-	Edges                 TradingAccountEdges `json:"edges"`
-	user_trading_accounts *uint64
-	selectValues          sql.SelectValues
+	Edges        TradingAccountEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // TradingAccountEdges holds the relations/edges for other nodes in the graph.
@@ -79,14 +80,12 @@ func (*TradingAccount) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case tradingaccount.FieldID:
+		case tradingaccount.FieldID, tradingaccount.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case tradingaccount.FieldExchange, tradingaccount.FieldCurrency, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
 			values[i] = new(sql.NullString)
 		case tradingaccount.FieldUpdatedAt, tradingaccount.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case tradingaccount.ForeignKeys[0]: // user_trading_accounts
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -108,6 +107,12 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			ta.ID = uint64(value.Int64)
+		case tradingaccount.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				ta.UserID = uint64(value.Int64)
+			}
 		case tradingaccount.FieldExchange:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field exchange", values[i])
@@ -156,13 +161,6 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ta.CreatedAt = value.Time
 			}
-		case tradingaccount.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_trading_accounts", value)
-			} else if value.Valid {
-				ta.user_trading_accounts = new(uint64)
-				*ta.user_trading_accounts = uint64(value.Int64)
-			}
 		default:
 			ta.selectValues.Set(columns[i], values[i])
 		}
@@ -209,6 +207,9 @@ func (ta *TradingAccount) String() string {
 	var builder strings.Builder
 	builder.WriteString("TradingAccount(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", ta.ID))
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", ta.UserID))
+	builder.WriteString(", ")
 	builder.WriteString("exchange=")
 	builder.WriteString(ta.Exchange)
 	builder.WriteString(", ")

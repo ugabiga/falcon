@@ -26,7 +26,6 @@ type TradingAccountQuery struct {
 	predicates []predicate.TradingAccount
 	withUser   *UserQuery
 	withTasks  *TaskQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -335,12 +334,12 @@ func (taq *TradingAccountQuery) WithTasks(opts ...func(*TaskQuery)) *TradingAcco
 // Example:
 //
 //	var v []struct {
-//		Exchange string `json:"exchange,omitempty"`
+//		UserID uint64 `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.TradingAccount.Query().
-//		GroupBy(tradingaccount.FieldExchange).
+//		GroupBy(tradingaccount.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (taq *TradingAccountQuery) GroupBy(field string, fields ...string) *TradingAccountGroupBy {
@@ -358,11 +357,11 @@ func (taq *TradingAccountQuery) GroupBy(field string, fields ...string) *Trading
 // Example:
 //
 //	var v []struct {
-//		Exchange string `json:"exchange,omitempty"`
+//		UserID uint64 `json:"user_id,omitempty"`
 //	}
 //
 //	client.TradingAccount.Query().
-//		Select(tradingaccount.FieldExchange).
+//		Select(tradingaccount.FieldUserID).
 //		Scan(ctx, &v)
 func (taq *TradingAccountQuery) Select(fields ...string) *TradingAccountSelect {
 	taq.ctx.Fields = append(taq.ctx.Fields, fields...)
@@ -406,19 +405,12 @@ func (taq *TradingAccountQuery) prepareQuery(ctx context.Context) error {
 func (taq *TradingAccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TradingAccount, error) {
 	var (
 		nodes       = []*TradingAccount{}
-		withFKs     = taq.withFKs
 		_spec       = taq.querySpec()
 		loadedTypes = [2]bool{
 			taq.withUser != nil,
 			taq.withTasks != nil,
 		}
 	)
-	if taq.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, tradingaccount.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*TradingAccount).scanValues(nil, columns)
 	}
@@ -457,10 +449,7 @@ func (taq *TradingAccountQuery) loadUser(ctx context.Context, query *UserQuery, 
 	ids := make([]uint64, 0, len(nodes))
 	nodeids := make(map[uint64][]*TradingAccount)
 	for i := range nodes {
-		if nodes[i].user_trading_accounts == nil {
-			continue
-		}
-		fk := *nodes[i].user_trading_accounts
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -477,7 +466,7 @@ func (taq *TradingAccountQuery) loadUser(ctx context.Context, query *UserQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_trading_accounts" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -495,7 +484,9 @@ func (taq *TradingAccountQuery) loadTasks(ctx context.Context, query *TaskQuery,
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(task.FieldTradingAccountID)
+	}
 	query.Where(predicate.Task(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(tradingaccount.TasksColumn), fks...))
 	}))
@@ -504,13 +495,10 @@ func (taq *TradingAccountQuery) loadTasks(ctx context.Context, query *TaskQuery,
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.trading_account_tasks
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "trading_account_tasks" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.TradingAccountID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "trading_account_tasks" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "trading_account_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -541,6 +529,9 @@ func (taq *TradingAccountQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != tradingaccount.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if taq.withUser != nil {
+			_spec.Node.AddColumnOnce(tradingaccount.FieldUserID)
 		}
 	}
 	if ps := taq.predicates; len(ps) > 0 {

@@ -23,7 +23,6 @@ type AuthenticationQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Authentication
 	withUser   *UserQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -298,12 +297,12 @@ func (aq *AuthenticationQuery) WithUser(opts ...func(*UserQuery)) *Authenticatio
 // Example:
 //
 //	var v []struct {
-//		Provider authentication.Provider `json:"provider,omitempty"`
+//		UserID uint64 `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Authentication.Query().
-//		GroupBy(authentication.FieldProvider).
+//		GroupBy(authentication.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (aq *AuthenticationQuery) GroupBy(field string, fields ...string) *AuthenticationGroupBy {
@@ -321,11 +320,11 @@ func (aq *AuthenticationQuery) GroupBy(field string, fields ...string) *Authenti
 // Example:
 //
 //	var v []struct {
-//		Provider authentication.Provider `json:"provider,omitempty"`
+//		UserID uint64 `json:"user_id,omitempty"`
 //	}
 //
 //	client.Authentication.Query().
-//		Select(authentication.FieldProvider).
+//		Select(authentication.FieldUserID).
 //		Scan(ctx, &v)
 func (aq *AuthenticationQuery) Select(fields ...string) *AuthenticationSelect {
 	aq.ctx.Fields = append(aq.ctx.Fields, fields...)
@@ -369,18 +368,11 @@ func (aq *AuthenticationQuery) prepareQuery(ctx context.Context) error {
 func (aq *AuthenticationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Authentication, error) {
 	var (
 		nodes       = []*Authentication{}
-		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
 		loadedTypes = [1]bool{
 			aq.withUser != nil,
 		}
 	)
-	if aq.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, authentication.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Authentication).scanValues(nil, columns)
 	}
@@ -412,10 +404,7 @@ func (aq *AuthenticationQuery) loadUser(ctx context.Context, query *UserQuery, n
 	ids := make([]uint64, 0, len(nodes))
 	nodeids := make(map[uint64][]*Authentication)
 	for i := range nodes {
-		if nodes[i].user_authentications == nil {
-			continue
-		}
-		fk := *nodes[i].user_authentications
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -432,7 +421,7 @@ func (aq *AuthenticationQuery) loadUser(ctx context.Context, query *UserQuery, n
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_authentications" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -465,6 +454,9 @@ func (aq *AuthenticationQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != authentication.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if aq.withUser != nil {
+			_spec.Node.AddColumnOnce(authentication.FieldUserID)
 		}
 	}
 	if ps := aq.predicates; len(ps) > 0 {

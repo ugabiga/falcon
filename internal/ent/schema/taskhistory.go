@@ -15,7 +15,10 @@ type TaskHistory struct {
 // Fields of the TaskHistory.
 func (TaskHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").Positive(),
+		field.Uint64("id").
+			Positive(),
+		field.Uint64("task_id").
+			Positive(),
 		field.Bool("is_success"),
 		field.Time("updated_at").
 			Default(time.Now).
@@ -31,6 +34,8 @@ func (TaskHistory) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("task", Task.Type).
 			Ref("task_histories").
-			Unique(),
+			Unique().
+			Required().
+			Field("task_id"),
 	}
 }

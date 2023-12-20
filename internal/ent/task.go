@@ -18,6 +18,8 @@ type Task struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
+	// TradingAccountID holds the value of the "trading_account_id" field.
+	TradingAccountID uint64 `json:"trading_account_id,omitempty"`
 	// Cron holds the value of the "cron" field.
 	Cron string `json:"cron,omitempty"`
 	// NextExecutionTime holds the value of the "next_execution_time" field.
@@ -32,9 +34,8 @@ type Task struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
-	Edges                 TaskEdges `json:"edges"`
-	trading_account_tasks *uint64
-	selectValues          sql.SelectValues
+	Edges        TaskEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // TaskEdges holds the relations/edges for other nodes in the graph.
@@ -77,14 +78,12 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case task.FieldIsActive:
 			values[i] = new(sql.NullBool)
-		case task.FieldID:
+		case task.FieldID, task.FieldTradingAccountID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldCron, task.FieldType:
 			values[i] = new(sql.NullString)
 		case task.FieldNextExecutionTime, task.FieldUpdatedAt, task.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case task.ForeignKeys[0]: // trading_account_tasks
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -106,6 +105,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = uint64(value.Int64)
+		case task.FieldTradingAccountID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field trading_account_id", values[i])
+			} else if value.Valid {
+				t.TradingAccountID = uint64(value.Int64)
+			}
 		case task.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field cron", values[i])
@@ -141,13 +146,6 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				t.CreatedAt = value.Time
-			}
-		case task.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field trading_account_tasks", value)
-			} else if value.Valid {
-				t.trading_account_tasks = new(uint64)
-				*t.trading_account_tasks = uint64(value.Int64)
 			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
@@ -195,6 +193,9 @@ func (t *Task) String() string {
 	var builder strings.Builder
 	builder.WriteString("Task(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("trading_account_id=")
+	builder.WriteString(fmt.Sprintf("%v", t.TradingAccountID))
+	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(t.Cron)
 	builder.WriteString(", ")

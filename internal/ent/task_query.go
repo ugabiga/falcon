@@ -26,7 +26,6 @@ type TaskQuery struct {
 	predicates         []predicate.Task
 	withTradingAccount *TradingAccountQuery
 	withTaskHistories  *TaskHistoryQuery
-	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -335,12 +334,12 @@ func (tq *TaskQuery) WithTaskHistories(opts ...func(*TaskHistoryQuery)) *TaskQue
 // Example:
 //
 //	var v []struct {
-//		Cron string `json:"cron,omitempty"`
+//		TradingAccountID uint64 `json:"trading_account_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		GroupBy(task.FieldCron).
+//		GroupBy(task.FieldTradingAccountID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (tq *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
@@ -358,11 +357,11 @@ func (tq *TaskQuery) GroupBy(field string, fields ...string) *TaskGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Cron string `json:"cron,omitempty"`
+//		TradingAccountID uint64 `json:"trading_account_id,omitempty"`
 //	}
 //
 //	client.Task.Query().
-//		Select(task.FieldCron).
+//		Select(task.FieldTradingAccountID).
 //		Scan(ctx, &v)
 func (tq *TaskQuery) Select(fields ...string) *TaskSelect {
 	tq.ctx.Fields = append(tq.ctx.Fields, fields...)
@@ -406,19 +405,12 @@ func (tq *TaskQuery) prepareQuery(ctx context.Context) error {
 func (tq *TaskQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task, error) {
 	var (
 		nodes       = []*Task{}
-		withFKs     = tq.withFKs
 		_spec       = tq.querySpec()
 		loadedTypes = [2]bool{
 			tq.withTradingAccount != nil,
 			tq.withTaskHistories != nil,
 		}
 	)
-	if tq.withTradingAccount != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, task.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Task).scanValues(nil, columns)
 	}
@@ -457,10 +449,7 @@ func (tq *TaskQuery) loadTradingAccount(ctx context.Context, query *TradingAccou
 	ids := make([]uint64, 0, len(nodes))
 	nodeids := make(map[uint64][]*Task)
 	for i := range nodes {
-		if nodes[i].trading_account_tasks == nil {
-			continue
-		}
-		fk := *nodes[i].trading_account_tasks
+		fk := nodes[i].TradingAccountID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -477,7 +466,7 @@ func (tq *TaskQuery) loadTradingAccount(ctx context.Context, query *TradingAccou
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "trading_account_tasks" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "trading_account_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -495,7 +484,9 @@ func (tq *TaskQuery) loadTaskHistories(ctx context.Context, query *TaskHistoryQu
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(taskhistory.FieldTaskID)
+	}
 	query.Where(predicate.TaskHistory(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(task.TaskHistoriesColumn), fks...))
 	}))
@@ -504,13 +495,10 @@ func (tq *TaskQuery) loadTaskHistories(ctx context.Context, query *TaskHistoryQu
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.task_task_histories
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "task_task_histories" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.TaskID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "task_task_histories" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "task_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -541,6 +529,9 @@ func (tq *TaskQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != task.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if tq.withTradingAccount != nil {
+			_spec.Node.AddColumnOnce(task.FieldTradingAccountID)
 		}
 	}
 	if ps := tq.predicates; len(ps) > 0 {

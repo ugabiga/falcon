@@ -30,6 +30,20 @@ func (tau *TradingAccountUpdate) Where(ps ...predicate.TradingAccount) *TradingA
 	return tau
 }
 
+// SetUserID sets the "user_id" field.
+func (tau *TradingAccountUpdate) SetUserID(u uint64) *TradingAccountUpdate {
+	tau.mutation.SetUserID(u)
+	return tau
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tau *TradingAccountUpdate) SetNillableUserID(u *uint64) *TradingAccountUpdate {
+	if u != nil {
+		tau.SetUserID(*u)
+	}
+	return tau
+}
+
 // SetExchange sets the "exchange" field.
 func (tau *TradingAccountUpdate) SetExchange(s string) *TradingAccountUpdate {
 	tau.mutation.SetExchange(s)
@@ -117,20 +131,6 @@ func (tau *TradingAccountUpdate) SetNillablePhrase(s *string) *TradingAccountUpd
 // SetUpdatedAt sets the "updated_at" field.
 func (tau *TradingAccountUpdate) SetUpdatedAt(t time.Time) *TradingAccountUpdate {
 	tau.mutation.SetUpdatedAt(t)
-	return tau
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (tau *TradingAccountUpdate) SetUserID(id uint64) *TradingAccountUpdate {
-	tau.mutation.SetUserID(id)
-	return tau
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (tau *TradingAccountUpdate) SetNillableUserID(id *uint64) *TradingAccountUpdate {
-	if id != nil {
-		tau = tau.SetUserID(*id)
-	}
 	return tau
 }
 
@@ -222,7 +222,23 @@ func (tau *TradingAccountUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tau *TradingAccountUpdate) check() error {
+	if v, ok := tau.mutation.UserID(); ok {
+		if err := tradingaccount.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
+		}
+	}
+	if _, ok := tau.mutation.UserID(); tau.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "TradingAccount.user"`)
+	}
+	return nil
+}
+
 func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tau.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
 	if ps := tau.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -346,6 +362,20 @@ type TradingAccountUpdateOne struct {
 	mutation *TradingAccountMutation
 }
 
+// SetUserID sets the "user_id" field.
+func (tauo *TradingAccountUpdateOne) SetUserID(u uint64) *TradingAccountUpdateOne {
+	tauo.mutation.SetUserID(u)
+	return tauo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tauo *TradingAccountUpdateOne) SetNillableUserID(u *uint64) *TradingAccountUpdateOne {
+	if u != nil {
+		tauo.SetUserID(*u)
+	}
+	return tauo
+}
+
 // SetExchange sets the "exchange" field.
 func (tauo *TradingAccountUpdateOne) SetExchange(s string) *TradingAccountUpdateOne {
 	tauo.mutation.SetExchange(s)
@@ -433,20 +463,6 @@ func (tauo *TradingAccountUpdateOne) SetNillablePhrase(s *string) *TradingAccoun
 // SetUpdatedAt sets the "updated_at" field.
 func (tauo *TradingAccountUpdateOne) SetUpdatedAt(t time.Time) *TradingAccountUpdateOne {
 	tauo.mutation.SetUpdatedAt(t)
-	return tauo
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (tauo *TradingAccountUpdateOne) SetUserID(id uint64) *TradingAccountUpdateOne {
-	tauo.mutation.SetUserID(id)
-	return tauo
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (tauo *TradingAccountUpdateOne) SetNillableUserID(id *uint64) *TradingAccountUpdateOne {
-	if id != nil {
-		tauo = tauo.SetUserID(*id)
-	}
 	return tauo
 }
 
@@ -551,7 +567,23 @@ func (tauo *TradingAccountUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tauo *TradingAccountUpdateOne) check() error {
+	if v, ok := tauo.mutation.UserID(); ok {
+		if err := tradingaccount.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
+		}
+	}
+	if _, ok := tauo.mutation.UserID(); tauo.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "TradingAccount.user"`)
+	}
+	return nil
+}
+
 func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *TradingAccount, err error) {
+	if err := tauo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(tradingaccount.Table, tradingaccount.Columns, sqlgraph.NewFieldSpec(tradingaccount.FieldID, field.TypeUint64))
 	id, ok := tauo.mutation.ID()
 	if !ok {

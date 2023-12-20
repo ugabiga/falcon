@@ -55,6 +55,11 @@ func IDLTE(id uint64) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldLTE(FieldID, id))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint64) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, v))
+}
+
 // Exchange applies equality check predicate on the "exchange" field. It's identical to ExchangeEQ.
 func Exchange(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldExchange, v))
@@ -93,6 +98,26 @@ func UpdatedAt(v time.Time) predicate.TradingAccount {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint64) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint64) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint64) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint64) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // ExchangeEQ applies the EQ predicate on the "exchange" field.

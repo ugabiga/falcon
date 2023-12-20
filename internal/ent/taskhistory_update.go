@@ -29,6 +29,20 @@ func (thu *TaskHistoryUpdate) Where(ps ...predicate.TaskHistory) *TaskHistoryUpd
 	return thu
 }
 
+// SetTaskID sets the "task_id" field.
+func (thu *TaskHistoryUpdate) SetTaskID(u uint64) *TaskHistoryUpdate {
+	thu.mutation.SetTaskID(u)
+	return thu
+}
+
+// SetNillableTaskID sets the "task_id" field if the given value is not nil.
+func (thu *TaskHistoryUpdate) SetNillableTaskID(u *uint64) *TaskHistoryUpdate {
+	if u != nil {
+		thu.SetTaskID(*u)
+	}
+	return thu
+}
+
 // SetIsSuccess sets the "is_success" field.
 func (thu *TaskHistoryUpdate) SetIsSuccess(b bool) *TaskHistoryUpdate {
 	thu.mutation.SetIsSuccess(b)
@@ -46,20 +60,6 @@ func (thu *TaskHistoryUpdate) SetNillableIsSuccess(b *bool) *TaskHistoryUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (thu *TaskHistoryUpdate) SetUpdatedAt(t time.Time) *TaskHistoryUpdate {
 	thu.mutation.SetUpdatedAt(t)
-	return thu
-}
-
-// SetTaskID sets the "task" edge to the Task entity by ID.
-func (thu *TaskHistoryUpdate) SetTaskID(id uint64) *TaskHistoryUpdate {
-	thu.mutation.SetTaskID(id)
-	return thu
-}
-
-// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
-func (thu *TaskHistoryUpdate) SetNillableTaskID(id *uint64) *TaskHistoryUpdate {
-	if id != nil {
-		thu = thu.SetTaskID(*id)
-	}
 	return thu
 }
 
@@ -115,7 +115,23 @@ func (thu *TaskHistoryUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (thu *TaskHistoryUpdate) check() error {
+	if v, ok := thu.mutation.TaskID(); ok {
+		if err := taskhistory.TaskIDValidator(v); err != nil {
+			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
+		}
+	}
+	if _, ok := thu.mutation.TaskID(); thu.mutation.TaskCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "TaskHistory.task"`)
+	}
+	return nil
+}
+
 func (thu *TaskHistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := thu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
 	if ps := thu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -179,6 +195,20 @@ type TaskHistoryUpdateOne struct {
 	mutation *TaskHistoryMutation
 }
 
+// SetTaskID sets the "task_id" field.
+func (thuo *TaskHistoryUpdateOne) SetTaskID(u uint64) *TaskHistoryUpdateOne {
+	thuo.mutation.SetTaskID(u)
+	return thuo
+}
+
+// SetNillableTaskID sets the "task_id" field if the given value is not nil.
+func (thuo *TaskHistoryUpdateOne) SetNillableTaskID(u *uint64) *TaskHistoryUpdateOne {
+	if u != nil {
+		thuo.SetTaskID(*u)
+	}
+	return thuo
+}
+
 // SetIsSuccess sets the "is_success" field.
 func (thuo *TaskHistoryUpdateOne) SetIsSuccess(b bool) *TaskHistoryUpdateOne {
 	thuo.mutation.SetIsSuccess(b)
@@ -196,20 +226,6 @@ func (thuo *TaskHistoryUpdateOne) SetNillableIsSuccess(b *bool) *TaskHistoryUpda
 // SetUpdatedAt sets the "updated_at" field.
 func (thuo *TaskHistoryUpdateOne) SetUpdatedAt(t time.Time) *TaskHistoryUpdateOne {
 	thuo.mutation.SetUpdatedAt(t)
-	return thuo
-}
-
-// SetTaskID sets the "task" edge to the Task entity by ID.
-func (thuo *TaskHistoryUpdateOne) SetTaskID(id uint64) *TaskHistoryUpdateOne {
-	thuo.mutation.SetTaskID(id)
-	return thuo
-}
-
-// SetNillableTaskID sets the "task" edge to the Task entity by ID if the given value is not nil.
-func (thuo *TaskHistoryUpdateOne) SetNillableTaskID(id *uint64) *TaskHistoryUpdateOne {
-	if id != nil {
-		thuo = thuo.SetTaskID(*id)
-	}
 	return thuo
 }
 
@@ -278,7 +294,23 @@ func (thuo *TaskHistoryUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (thuo *TaskHistoryUpdateOne) check() error {
+	if v, ok := thuo.mutation.TaskID(); ok {
+		if err := taskhistory.TaskIDValidator(v); err != nil {
+			return &ValidationError{Name: "task_id", err: fmt.Errorf(`ent: validator failed for field "TaskHistory.task_id": %w`, err)}
+		}
+	}
+	if _, ok := thuo.mutation.TaskID(); thuo.mutation.TaskCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "TaskHistory.task"`)
+	}
+	return nil
+}
+
 func (thuo *TaskHistoryUpdateOne) sqlSave(ctx context.Context) (_node *TaskHistory, err error) {
+	if err := thuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskhistory.Table, taskhistory.Columns, sqlgraph.NewFieldSpec(taskhistory.FieldID, field.TypeUint64))
 	id, ok := thuo.mutation.ID()
 	if !ok {

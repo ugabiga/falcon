@@ -158,6 +158,42 @@ func (m *AuthenticationMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
+// SetUserID sets the "user_id" field.
+func (m *AuthenticationMutation) SetUserID(u uint64) {
+	m.user = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *AuthenticationMutation) UserID() (r uint64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the Authentication entity.
+// If the Authentication object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthenticationMutation) OldUserID(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *AuthenticationMutation) ResetUserID() {
+	m.user = nil
+}
+
 // SetProvider sets the "provider" field.
 func (m *AuthenticationMutation) SetProvider(a authentication.Provider) {
 	m.provider = &a
@@ -338,27 +374,15 @@ func (m *AuthenticationMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *AuthenticationMutation) SetUserID(id uint64) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *AuthenticationMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[authentication.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *AuthenticationMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *AuthenticationMutation) UserID() (id uint64, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -411,7 +435,10 @@ func (m *AuthenticationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AuthenticationMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
+	if m.user != nil {
+		fields = append(fields, authentication.FieldUserID)
+	}
 	if m.provider != nil {
 		fields = append(fields, authentication.FieldProvider)
 	}
@@ -435,6 +462,8 @@ func (m *AuthenticationMutation) Fields() []string {
 // schema.
 func (m *AuthenticationMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case authentication.FieldUserID:
+		return m.UserID()
 	case authentication.FieldProvider:
 		return m.Provider()
 	case authentication.FieldIdentifier:
@@ -454,6 +483,8 @@ func (m *AuthenticationMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *AuthenticationMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case authentication.FieldUserID:
+		return m.OldUserID(ctx)
 	case authentication.FieldProvider:
 		return m.OldProvider(ctx)
 	case authentication.FieldIdentifier:
@@ -473,6 +504,13 @@ func (m *AuthenticationMutation) OldField(ctx context.Context, name string) (ent
 // type.
 func (m *AuthenticationMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case authentication.FieldUserID:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case authentication.FieldProvider:
 		v, ok := value.(authentication.Provider)
 		if !ok {
@@ -515,13 +553,16 @@ func (m *AuthenticationMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AuthenticationMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AuthenticationMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -557,6 +598,9 @@ func (m *AuthenticationMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *AuthenticationMutation) ResetField(name string) error {
 	switch name {
+	case authentication.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case authentication.FieldProvider:
 		m.ResetProvider()
 		return nil
@@ -777,6 +821,42 @@ func (m *TaskMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
+// SetTradingAccountID sets the "trading_account_id" field.
+func (m *TaskMutation) SetTradingAccountID(u uint64) {
+	m.trading_account = &u
+}
+
+// TradingAccountID returns the value of the "trading_account_id" field in the mutation.
+func (m *TaskMutation) TradingAccountID() (r uint64, exists bool) {
+	v := m.trading_account
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTradingAccountID returns the old "trading_account_id" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldTradingAccountID(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTradingAccountID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTradingAccountID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTradingAccountID: %w", err)
+	}
+	return oldValue.TradingAccountID, nil
+}
+
+// ResetTradingAccountID resets all changes to the "trading_account_id" field.
+func (m *TaskMutation) ResetTradingAccountID() {
+	m.trading_account = nil
+}
+
 // SetCron sets the "cron" field.
 func (m *TaskMutation) SetCron(s string) {
 	m.cron = &s
@@ -993,27 +1073,15 @@ func (m *TaskMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetTradingAccountID sets the "trading_account" edge to the TradingAccount entity by id.
-func (m *TaskMutation) SetTradingAccountID(id uint64) {
-	m.trading_account = &id
-}
-
 // ClearTradingAccount clears the "trading_account" edge to the TradingAccount entity.
 func (m *TaskMutation) ClearTradingAccount() {
 	m.clearedtrading_account = true
+	m.clearedFields[task.FieldTradingAccountID] = struct{}{}
 }
 
 // TradingAccountCleared reports if the "trading_account" edge to the TradingAccount entity was cleared.
 func (m *TaskMutation) TradingAccountCleared() bool {
 	return m.clearedtrading_account
-}
-
-// TradingAccountID returns the "trading_account" edge ID in the mutation.
-func (m *TaskMutation) TradingAccountID() (id uint64, exists bool) {
-	if m.trading_account != nil {
-		return *m.trading_account, true
-	}
-	return
 }
 
 // TradingAccountIDs returns the "trading_account" edge IDs in the mutation.
@@ -1120,7 +1188,10 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
+	if m.trading_account != nil {
+		fields = append(fields, task.FieldTradingAccountID)
+	}
 	if m.cron != nil {
 		fields = append(fields, task.FieldCron)
 	}
@@ -1147,6 +1218,8 @@ func (m *TaskMutation) Fields() []string {
 // schema.
 func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case task.FieldTradingAccountID:
+		return m.TradingAccountID()
 	case task.FieldCron:
 		return m.Cron()
 	case task.FieldNextExecutionTime:
@@ -1168,6 +1241,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case task.FieldTradingAccountID:
+		return m.OldTradingAccountID(ctx)
 	case task.FieldCron:
 		return m.OldCron(ctx)
 	case task.FieldNextExecutionTime:
@@ -1189,6 +1264,13 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *TaskMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case task.FieldTradingAccountID:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTradingAccountID(v)
+		return nil
 	case task.FieldCron:
 		v, ok := value.(string)
 		if !ok {
@@ -1238,13 +1320,16 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *TaskMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -1280,6 +1365,9 @@ func (m *TaskMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TaskMutation) ResetField(name string) error {
 	switch name {
+	case task.FieldTradingAccountID:
+		m.ResetTradingAccountID()
+		return nil
 	case task.FieldCron:
 		m.ResetCron()
 		return nil
@@ -1525,6 +1613,42 @@ func (m *TaskHistoryMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
+// SetTaskID sets the "task_id" field.
+func (m *TaskHistoryMutation) SetTaskID(u uint64) {
+	m.task = &u
+}
+
+// TaskID returns the value of the "task_id" field in the mutation.
+func (m *TaskHistoryMutation) TaskID() (r uint64, exists bool) {
+	v := m.task
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaskID returns the old "task_id" field's value of the TaskHistory entity.
+// If the TaskHistory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskHistoryMutation) OldTaskID(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaskID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaskID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaskID: %w", err)
+	}
+	return oldValue.TaskID, nil
+}
+
+// ResetTaskID resets all changes to the "task_id" field.
+func (m *TaskHistoryMutation) ResetTaskID() {
+	m.task = nil
+}
+
 // SetIsSuccess sets the "is_success" field.
 func (m *TaskHistoryMutation) SetIsSuccess(b bool) {
 	m.is_success = &b
@@ -1633,27 +1757,15 @@ func (m *TaskHistoryMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetTaskID sets the "task" edge to the Task entity by id.
-func (m *TaskHistoryMutation) SetTaskID(id uint64) {
-	m.task = &id
-}
-
 // ClearTask clears the "task" edge to the Task entity.
 func (m *TaskHistoryMutation) ClearTask() {
 	m.clearedtask = true
+	m.clearedFields[taskhistory.FieldTaskID] = struct{}{}
 }
 
 // TaskCleared reports if the "task" edge to the Task entity was cleared.
 func (m *TaskHistoryMutation) TaskCleared() bool {
 	return m.clearedtask
-}
-
-// TaskID returns the "task" edge ID in the mutation.
-func (m *TaskHistoryMutation) TaskID() (id uint64, exists bool) {
-	if m.task != nil {
-		return *m.task, true
-	}
-	return
 }
 
 // TaskIDs returns the "task" edge IDs in the mutation.
@@ -1706,7 +1818,10 @@ func (m *TaskHistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskHistoryMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
+	if m.task != nil {
+		fields = append(fields, taskhistory.FieldTaskID)
+	}
 	if m.is_success != nil {
 		fields = append(fields, taskhistory.FieldIsSuccess)
 	}
@@ -1724,6 +1839,8 @@ func (m *TaskHistoryMutation) Fields() []string {
 // schema.
 func (m *TaskHistoryMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case taskhistory.FieldTaskID:
+		return m.TaskID()
 	case taskhistory.FieldIsSuccess:
 		return m.IsSuccess()
 	case taskhistory.FieldUpdatedAt:
@@ -1739,6 +1856,8 @@ func (m *TaskHistoryMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TaskHistoryMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case taskhistory.FieldTaskID:
+		return m.OldTaskID(ctx)
 	case taskhistory.FieldIsSuccess:
 		return m.OldIsSuccess(ctx)
 	case taskhistory.FieldUpdatedAt:
@@ -1754,6 +1873,13 @@ func (m *TaskHistoryMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *TaskHistoryMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case taskhistory.FieldTaskID:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaskID(v)
+		return nil
 	case taskhistory.FieldIsSuccess:
 		v, ok := value.(bool)
 		if !ok {
@@ -1782,13 +1908,16 @@ func (m *TaskHistoryMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *TaskHistoryMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *TaskHistoryMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -1824,6 +1953,9 @@ func (m *TaskHistoryMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TaskHistoryMutation) ResetField(name string) error {
 	switch name {
+	case taskhistory.FieldTaskID:
+		m.ResetTaskID()
+		return nil
 	case taskhistory.FieldIsSuccess:
 		m.ResetIsSuccess()
 		return nil
@@ -2038,6 +2170,42 @@ func (m *TradingAccountMutation) IDs(ctx context.Context) ([]uint64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *TradingAccountMutation) SetUserID(u uint64) {
+	m.user = &u
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *TradingAccountMutation) UserID() (r uint64, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the TradingAccount entity.
+// If the TradingAccount object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TradingAccountMutation) OldUserID(ctx context.Context) (v uint64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *TradingAccountMutation) ResetUserID() {
+	m.user = nil
 }
 
 // SetExchange sets the "exchange" field.
@@ -2328,27 +2496,15 @@ func (m *TradingAccountMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *TradingAccountMutation) SetUserID(id uint64) {
-	m.user = &id
-}
-
 // ClearUser clears the "user" edge to the User entity.
 func (m *TradingAccountMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[tradingaccount.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *TradingAccountMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *TradingAccountMutation) UserID() (id uint64, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -2455,7 +2611,10 @@ func (m *TradingAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TradingAccountMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
+	if m.user != nil {
+		fields = append(fields, tradingaccount.FieldUserID)
+	}
 	if m.exchange != nil {
 		fields = append(fields, tradingaccount.FieldExchange)
 	}
@@ -2488,6 +2647,8 @@ func (m *TradingAccountMutation) Fields() []string {
 // schema.
 func (m *TradingAccountMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case tradingaccount.FieldUserID:
+		return m.UserID()
 	case tradingaccount.FieldExchange:
 		return m.Exchange()
 	case tradingaccount.FieldCurrency:
@@ -2513,6 +2674,8 @@ func (m *TradingAccountMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *TradingAccountMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case tradingaccount.FieldUserID:
+		return m.OldUserID(ctx)
 	case tradingaccount.FieldExchange:
 		return m.OldExchange(ctx)
 	case tradingaccount.FieldCurrency:
@@ -2538,6 +2701,13 @@ func (m *TradingAccountMutation) OldField(ctx context.Context, name string) (ent
 // type.
 func (m *TradingAccountMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case tradingaccount.FieldUserID:
+		v, ok := value.(uint64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case tradingaccount.FieldExchange:
 		v, ok := value.(string)
 		if !ok {
@@ -2601,13 +2771,16 @@ func (m *TradingAccountMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *TradingAccountMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *TradingAccountMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -2643,6 +2816,9 @@ func (m *TradingAccountMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *TradingAccountMutation) ResetField(name string) error {
 	switch name {
+	case tradingaccount.FieldUserID:
+		m.ResetUserID()
+		return nil
 	case tradingaccount.FieldExchange:
 		m.ResetExchange()
 		return nil

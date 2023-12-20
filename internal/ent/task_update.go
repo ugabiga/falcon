@@ -30,6 +30,20 @@ func (tu *TaskUpdate) Where(ps ...predicate.Task) *TaskUpdate {
 	return tu
 }
 
+// SetTradingAccountID sets the "trading_account_id" field.
+func (tu *TaskUpdate) SetTradingAccountID(u uint64) *TaskUpdate {
+	tu.mutation.SetTradingAccountID(u)
+	return tu
+}
+
+// SetNillableTradingAccountID sets the "trading_account_id" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableTradingAccountID(u *uint64) *TaskUpdate {
+	if u != nil {
+		tu.SetTradingAccountID(*u)
+	}
+	return tu
+}
+
 // SetCron sets the "cron" field.
 func (tu *TaskUpdate) SetCron(s string) *TaskUpdate {
 	tu.mutation.SetCron(s)
@@ -89,20 +103,6 @@ func (tu *TaskUpdate) SetNillableType(s *string) *TaskUpdate {
 // SetUpdatedAt sets the "updated_at" field.
 func (tu *TaskUpdate) SetUpdatedAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetUpdatedAt(t)
-	return tu
-}
-
-// SetTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID.
-func (tu *TaskUpdate) SetTradingAccountID(id uint64) *TaskUpdate {
-	tu.mutation.SetTradingAccountID(id)
-	return tu
-}
-
-// SetNillableTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID if the given value is not nil.
-func (tu *TaskUpdate) SetNillableTradingAccountID(id *uint64) *TaskUpdate {
-	if id != nil {
-		tu = tu.SetTradingAccountID(*id)
-	}
 	return tu
 }
 
@@ -194,7 +194,23 @@ func (tu *TaskUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tu *TaskUpdate) check() error {
+	if v, ok := tu.mutation.TradingAccountID(); ok {
+		if err := task.TradingAccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
+		}
+	}
+	if _, ok := tu.mutation.TradingAccountID(); tu.mutation.TradingAccountCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Task.trading_account"`)
+	}
+	return nil
+}
+
 func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tu.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -312,6 +328,20 @@ type TaskUpdateOne struct {
 	mutation *TaskMutation
 }
 
+// SetTradingAccountID sets the "trading_account_id" field.
+func (tuo *TaskUpdateOne) SetTradingAccountID(u uint64) *TaskUpdateOne {
+	tuo.mutation.SetTradingAccountID(u)
+	return tuo
+}
+
+// SetNillableTradingAccountID sets the "trading_account_id" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableTradingAccountID(u *uint64) *TaskUpdateOne {
+	if u != nil {
+		tuo.SetTradingAccountID(*u)
+	}
+	return tuo
+}
+
 // SetCron sets the "cron" field.
 func (tuo *TaskUpdateOne) SetCron(s string) *TaskUpdateOne {
 	tuo.mutation.SetCron(s)
@@ -371,20 +401,6 @@ func (tuo *TaskUpdateOne) SetNillableType(s *string) *TaskUpdateOne {
 // SetUpdatedAt sets the "updated_at" field.
 func (tuo *TaskUpdateOne) SetUpdatedAt(t time.Time) *TaskUpdateOne {
 	tuo.mutation.SetUpdatedAt(t)
-	return tuo
-}
-
-// SetTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID.
-func (tuo *TaskUpdateOne) SetTradingAccountID(id uint64) *TaskUpdateOne {
-	tuo.mutation.SetTradingAccountID(id)
-	return tuo
-}
-
-// SetNillableTradingAccountID sets the "trading_account" edge to the TradingAccount entity by ID if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableTradingAccountID(id *uint64) *TaskUpdateOne {
-	if id != nil {
-		tuo = tuo.SetTradingAccountID(*id)
-	}
 	return tuo
 }
 
@@ -489,7 +505,23 @@ func (tuo *TaskUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TaskUpdateOne) check() error {
+	if v, ok := tuo.mutation.TradingAccountID(); ok {
+		if err := task.TradingAccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
+		}
+	}
+	if _, ok := tuo.mutation.TradingAccountID(); tuo.mutation.TradingAccountCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Task.trading_account"`)
+	}
+	return nil
+}
+
 func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
+	if err := tuo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(task.Table, task.Columns, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
 	id, ok := tuo.mutation.ID()
 	if !ok {

@@ -19,14 +19,18 @@ import (
 func init() {
 	authenticationFields := schema.Authentication{}.Fields()
 	_ = authenticationFields
+	// authenticationDescUserID is the schema descriptor for user_id field.
+	authenticationDescUserID := authenticationFields[1].Descriptor()
+	// authentication.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	authentication.UserIDValidator = authenticationDescUserID.Validators[0].(func(uint64) error)
 	// authenticationDescUpdatedAt is the schema descriptor for updated_at field.
-	authenticationDescUpdatedAt := authenticationFields[4].Descriptor()
+	authenticationDescUpdatedAt := authenticationFields[5].Descriptor()
 	// authentication.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	authentication.DefaultUpdatedAt = authenticationDescUpdatedAt.Default.(func() time.Time)
 	// authentication.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	authentication.UpdateDefaultUpdatedAt = authenticationDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// authenticationDescCreatedAt is the schema descriptor for created_at field.
-	authenticationDescCreatedAt := authenticationFields[5].Descriptor()
+	authenticationDescCreatedAt := authenticationFields[6].Descriptor()
 	// authentication.DefaultCreatedAt holds the default value on creation for the created_at field.
 	authentication.DefaultCreatedAt = authenticationDescCreatedAt.Default.(func() time.Time)
 	// authenticationDescID is the schema descriptor for id field.
@@ -35,14 +39,18 @@ func init() {
 	authentication.IDValidator = authenticationDescID.Validators[0].(func(uint64) error)
 	taskFields := schema.Task{}.Fields()
 	_ = taskFields
+	// taskDescTradingAccountID is the schema descriptor for trading_account_id field.
+	taskDescTradingAccountID := taskFields[1].Descriptor()
+	// task.TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
+	task.TradingAccountIDValidator = taskDescTradingAccountID.Validators[0].(func(uint64) error)
 	// taskDescUpdatedAt is the schema descriptor for updated_at field.
-	taskDescUpdatedAt := taskFields[5].Descriptor()
+	taskDescUpdatedAt := taskFields[6].Descriptor()
 	// task.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	task.DefaultUpdatedAt = taskDescUpdatedAt.Default.(func() time.Time)
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// taskDescCreatedAt is the schema descriptor for created_at field.
-	taskDescCreatedAt := taskFields[6].Descriptor()
+	taskDescCreatedAt := taskFields[7].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescID is the schema descriptor for id field.
@@ -51,14 +59,18 @@ func init() {
 	task.IDValidator = taskDescID.Validators[0].(func(uint64) error)
 	taskhistoryFields := schema.TaskHistory{}.Fields()
 	_ = taskhistoryFields
+	// taskhistoryDescTaskID is the schema descriptor for task_id field.
+	taskhistoryDescTaskID := taskhistoryFields[1].Descriptor()
+	// taskhistory.TaskIDValidator is a validator for the "task_id" field. It is called by the builders before save.
+	taskhistory.TaskIDValidator = taskhistoryDescTaskID.Validators[0].(func(uint64) error)
 	// taskhistoryDescUpdatedAt is the schema descriptor for updated_at field.
-	taskhistoryDescUpdatedAt := taskhistoryFields[2].Descriptor()
+	taskhistoryDescUpdatedAt := taskhistoryFields[3].Descriptor()
 	// taskhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	taskhistory.DefaultUpdatedAt = taskhistoryDescUpdatedAt.Default.(func() time.Time)
 	// taskhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	taskhistory.UpdateDefaultUpdatedAt = taskhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// taskhistoryDescCreatedAt is the schema descriptor for created_at field.
-	taskhistoryDescCreatedAt := taskhistoryFields[3].Descriptor()
+	taskhistoryDescCreatedAt := taskhistoryFields[4].Descriptor()
 	// taskhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
 	taskhistory.DefaultCreatedAt = taskhistoryDescCreatedAt.Default.(func() time.Time)
 	// taskhistoryDescID is the schema descriptor for id field.
@@ -67,14 +79,18 @@ func init() {
 	taskhistory.IDValidator = taskhistoryDescID.Validators[0].(func(uint64) error)
 	tradingaccountFields := schema.TradingAccount{}.Fields()
 	_ = tradingaccountFields
+	// tradingaccountDescUserID is the schema descriptor for user_id field.
+	tradingaccountDescUserID := tradingaccountFields[1].Descriptor()
+	// tradingaccount.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	tradingaccount.UserIDValidator = tradingaccountDescUserID.Validators[0].(func(uint64) error)
 	// tradingaccountDescUpdatedAt is the schema descriptor for updated_at field.
-	tradingaccountDescUpdatedAt := tradingaccountFields[7].Descriptor()
+	tradingaccountDescUpdatedAt := tradingaccountFields[8].Descriptor()
 	// tradingaccount.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	tradingaccount.DefaultUpdatedAt = tradingaccountDescUpdatedAt.Default.(func() time.Time)
 	// tradingaccount.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tradingaccount.UpdateDefaultUpdatedAt = tradingaccountDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// tradingaccountDescCreatedAt is the schema descriptor for created_at field.
-	tradingaccountDescCreatedAt := tradingaccountFields[8].Descriptor()
+	tradingaccountDescCreatedAt := tradingaccountFields[9].Descriptor()
 	// tradingaccount.DefaultCreatedAt holds the default value on creation for the created_at field.
 	tradingaccount.DefaultCreatedAt = tradingaccountDescCreatedAt.Default.(func() time.Time)
 	// tradingaccountDescID is the schema descriptor for id field.

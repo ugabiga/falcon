@@ -22,6 +22,12 @@ type TradingAccountCreate struct {
 	hooks    []Hook
 }
 
+// SetUserID sets the "user_id" field.
+func (tac *TradingAccountCreate) SetUserID(u uint64) *TradingAccountCreate {
+	tac.mutation.SetUserID(u)
+	return tac
+}
+
 // SetExchange sets the "exchange" field.
 func (tac *TradingAccountCreate) SetExchange(s string) *TradingAccountCreate {
 	tac.mutation.SetExchange(s)
@@ -92,20 +98,6 @@ func (tac *TradingAccountCreate) SetID(u uint64) *TradingAccountCreate {
 	return tac
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (tac *TradingAccountCreate) SetUserID(id uint64) *TradingAccountCreate {
-	tac.mutation.SetUserID(id)
-	return tac
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (tac *TradingAccountCreate) SetNillableUserID(id *uint64) *TradingAccountCreate {
-	if id != nil {
-		tac = tac.SetUserID(*id)
-	}
-	return tac
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (tac *TradingAccountCreate) SetUser(u *User) *TradingAccountCreate {
 	return tac.SetUserID(u.ID)
@@ -173,6 +165,14 @@ func (tac *TradingAccountCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tac *TradingAccountCreate) check() error {
+	if _, ok := tac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "TradingAccount.user_id"`)}
+	}
+	if v, ok := tac.mutation.UserID(); ok {
+		if err := tradingaccount.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
+		}
+	}
 	if _, ok := tac.mutation.Exchange(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`ent: missing required field "TradingAccount.exchange"`)}
 	}
@@ -201,6 +201,9 @@ func (tac *TradingAccountCreate) check() error {
 		if err := tradingaccount.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.id": %w`, err)}
 		}
+	}
+	if _, ok := tac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "TradingAccount.user"`)}
 	}
 	return nil
 }
@@ -280,7 +283,7 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_trading_accounts = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tac.mutation.TasksIDs(); len(nodes) > 0 {

@@ -15,7 +15,10 @@ type TradingAccount struct {
 // Fields of the TradingAccount.
 func (TradingAccount) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("id").Positive(),
+		field.Uint64("id").
+			Positive(),
+		field.Uint64("user_id").
+			Positive(),
 		field.String("exchange"),
 		field.String("currency"),
 		field.String("ip"),
@@ -39,7 +42,9 @@ func (TradingAccount) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
 			Ref("trading_accounts").
-			Unique(),
+			Unique().
+			Field("user_id").
+			Required(),
 		edge.To("tasks", Task.Type),
 	}
 }

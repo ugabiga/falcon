@@ -14,6 +14,8 @@ const (
 	Label = "task"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldTradingAccountID holds the string denoting the trading_account_id field in the database.
+	FieldTradingAccountID = "trading_account_id"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldNextExecutionTime holds the string denoting the next_execution_time field in the database.
@@ -38,31 +40,26 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "tradingaccount" package.
 	TradingAccountInverseTable = "trading_accounts"
 	// TradingAccountColumn is the table column denoting the trading_account relation/edge.
-	TradingAccountColumn = "trading_account_tasks"
+	TradingAccountColumn = "trading_account_id"
 	// TaskHistoriesTable is the table that holds the task_histories relation/edge.
 	TaskHistoriesTable = "task_histories"
 	// TaskHistoriesInverseTable is the table name for the TaskHistory entity.
 	// It exists in this package in order to avoid circular dependency with the "taskhistory" package.
 	TaskHistoriesInverseTable = "task_histories"
 	// TaskHistoriesColumn is the table column denoting the task_histories relation/edge.
-	TaskHistoriesColumn = "task_task_histories"
+	TaskHistoriesColumn = "task_id"
 )
 
 // Columns holds all SQL columns for task fields.
 var Columns = []string{
 	FieldID,
+	FieldTradingAccountID,
 	FieldCron,
 	FieldNextExecutionTime,
 	FieldIsActive,
 	FieldType,
 	FieldUpdatedAt,
 	FieldCreatedAt,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"trading_account_tasks",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -72,15 +69,12 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
-			return true
-		}
-	}
 	return false
 }
 
 var (
+	// TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
+	TradingAccountIDValidator func(uint64) error
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -97,6 +91,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByTradingAccountID orders the results by the trading_account_id field.
+func ByTradingAccountID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTradingAccountID, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

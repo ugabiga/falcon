@@ -32,14 +32,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "authentication" package.
 	AuthenticationsInverseTable = "authentications"
 	// AuthenticationsColumn is the table column denoting the authentications relation/edge.
-	AuthenticationsColumn = "user_authentications"
+	AuthenticationsColumn = "user_id"
 	// TradingAccountsTable is the table that holds the trading_accounts relation/edge.
 	TradingAccountsTable = "trading_accounts"
 	// TradingAccountsInverseTable is the table name for the TradingAccount entity.
 	// It exists in this package in order to avoid circular dependency with the "tradingaccount" package.
 	TradingAccountsInverseTable = "trading_accounts"
 	// TradingAccountsColumn is the table column denoting the trading_accounts relation/edge.
-	TradingAccountsColumn = "user_trading_accounts"
+	TradingAccountsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.

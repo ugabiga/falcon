@@ -29,6 +29,20 @@ func (au *AuthenticationUpdate) Where(ps ...predicate.Authentication) *Authentic
 	return au
 }
 
+// SetUserID sets the "user_id" field.
+func (au *AuthenticationUpdate) SetUserID(u uint64) *AuthenticationUpdate {
+	au.mutation.SetUserID(u)
+	return au
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (au *AuthenticationUpdate) SetNillableUserID(u *uint64) *AuthenticationUpdate {
+	if u != nil {
+		au.SetUserID(*u)
+	}
+	return au
+}
+
 // SetProvider sets the "provider" field.
 func (au *AuthenticationUpdate) SetProvider(a authentication.Provider) *AuthenticationUpdate {
 	au.mutation.SetProvider(a)
@@ -74,20 +88,6 @@ func (au *AuthenticationUpdate) SetNillableCredential(s *string) *Authentication
 // SetUpdatedAt sets the "updated_at" field.
 func (au *AuthenticationUpdate) SetUpdatedAt(t time.Time) *AuthenticationUpdate {
 	au.mutation.SetUpdatedAt(t)
-	return au
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (au *AuthenticationUpdate) SetUserID(id uint64) *AuthenticationUpdate {
-	au.mutation.SetUserID(id)
-	return au
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (au *AuthenticationUpdate) SetNillableUserID(id *uint64) *AuthenticationUpdate {
-	if id != nil {
-		au = au.SetUserID(*id)
-	}
 	return au
 }
 
@@ -145,10 +145,18 @@ func (au *AuthenticationUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (au *AuthenticationUpdate) check() error {
+	if v, ok := au.mutation.UserID(); ok {
+		if err := authentication.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
+		}
+	}
 	if v, ok := au.mutation.Provider(); ok {
 		if err := authentication.ProviderValidator(v); err != nil {
 			return &ValidationError{Name: "provider", err: fmt.Errorf(`ent: validator failed for field "Authentication.provider": %w`, err)}
 		}
+	}
+	if _, ok := au.mutation.UserID(); au.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Authentication.user"`)
 	}
 	return nil
 }
@@ -226,6 +234,20 @@ type AuthenticationUpdateOne struct {
 	mutation *AuthenticationMutation
 }
 
+// SetUserID sets the "user_id" field.
+func (auo *AuthenticationUpdateOne) SetUserID(u uint64) *AuthenticationUpdateOne {
+	auo.mutation.SetUserID(u)
+	return auo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (auo *AuthenticationUpdateOne) SetNillableUserID(u *uint64) *AuthenticationUpdateOne {
+	if u != nil {
+		auo.SetUserID(*u)
+	}
+	return auo
+}
+
 // SetProvider sets the "provider" field.
 func (auo *AuthenticationUpdateOne) SetProvider(a authentication.Provider) *AuthenticationUpdateOne {
 	auo.mutation.SetProvider(a)
@@ -271,20 +293,6 @@ func (auo *AuthenticationUpdateOne) SetNillableCredential(s *string) *Authentica
 // SetUpdatedAt sets the "updated_at" field.
 func (auo *AuthenticationUpdateOne) SetUpdatedAt(t time.Time) *AuthenticationUpdateOne {
 	auo.mutation.SetUpdatedAt(t)
-	return auo
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (auo *AuthenticationUpdateOne) SetUserID(id uint64) *AuthenticationUpdateOne {
-	auo.mutation.SetUserID(id)
-	return auo
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (auo *AuthenticationUpdateOne) SetNillableUserID(id *uint64) *AuthenticationUpdateOne {
-	if id != nil {
-		auo = auo.SetUserID(*id)
-	}
 	return auo
 }
 
@@ -355,10 +363,18 @@ func (auo *AuthenticationUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (auo *AuthenticationUpdateOne) check() error {
+	if v, ok := auo.mutation.UserID(); ok {
+		if err := authentication.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
+		}
+	}
 	if v, ok := auo.mutation.Provider(); ok {
 		if err := authentication.ProviderValidator(v); err != nil {
 			return &ValidationError{Name: "provider", err: fmt.Errorf(`ent: validator failed for field "Authentication.provider": %w`, err)}
 		}
+	}
+	if _, ok := auo.mutation.UserID(); auo.mutation.UserCleared() && !ok {
+		return errors.New(`ent: clearing a required unique edge "Authentication.user"`)
 	}
 	return nil
 }

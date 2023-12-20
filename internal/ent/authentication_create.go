@@ -21,6 +21,12 @@ type AuthenticationCreate struct {
 	hooks    []Hook
 }
 
+// SetUserID sets the "user_id" field.
+func (ac *AuthenticationCreate) SetUserID(u uint64) *AuthenticationCreate {
+	ac.mutation.SetUserID(u)
+	return ac
+}
+
 // SetProvider sets the "provider" field.
 func (ac *AuthenticationCreate) SetProvider(a authentication.Provider) *AuthenticationCreate {
 	ac.mutation.SetProvider(a)
@@ -70,20 +76,6 @@ func (ac *AuthenticationCreate) SetNillableCreatedAt(t *time.Time) *Authenticati
 // SetID sets the "id" field.
 func (ac *AuthenticationCreate) SetID(u uint64) *AuthenticationCreate {
 	ac.mutation.SetID(u)
-	return ac
-}
-
-// SetUserID sets the "user" edge to the User entity by ID.
-func (ac *AuthenticationCreate) SetUserID(id uint64) *AuthenticationCreate {
-	ac.mutation.SetUserID(id)
-	return ac
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ac *AuthenticationCreate) SetNillableUserID(id *uint64) *AuthenticationCreate {
-	if id != nil {
-		ac = ac.SetUserID(*id)
-	}
 	return ac
 }
 
@@ -139,6 +131,14 @@ func (ac *AuthenticationCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ac *AuthenticationCreate) check() error {
+	if _, ok := ac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Authentication.user_id"`)}
+	}
+	if v, ok := ac.mutation.UserID(); ok {
+		if err := authentication.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Authentication.user_id": %w`, err)}
+		}
+	}
 	if _, ok := ac.mutation.Provider(); !ok {
 		return &ValidationError{Name: "provider", err: errors.New(`ent: missing required field "Authentication.provider"`)}
 	}
@@ -163,6 +163,9 @@ func (ac *AuthenticationCreate) check() error {
 		if err := authentication.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Authentication.id": %w`, err)}
 		}
+	}
+	if _, ok := ac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Authentication.user"`)}
 	}
 	return nil
 }
@@ -230,7 +233,7 @@ func (ac *AuthenticationCreate) createSpec() (*Authentication, *sqlgraph.CreateS
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_authentications = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

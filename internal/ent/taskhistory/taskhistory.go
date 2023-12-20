@@ -14,6 +14,8 @@ const (
 	Label = "task_history"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldTaskID holds the string denoting the task_id field in the database.
+	FieldTaskID = "task_id"
 	// FieldIsSuccess holds the string denoting the is_success field in the database.
 	FieldIsSuccess = "is_success"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -30,21 +32,16 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "task" package.
 	TaskInverseTable = "tasks"
 	// TaskColumn is the table column denoting the task relation/edge.
-	TaskColumn = "task_task_histories"
+	TaskColumn = "task_id"
 )
 
 // Columns holds all SQL columns for taskhistory fields.
 var Columns = []string{
 	FieldID,
+	FieldTaskID,
 	FieldIsSuccess,
 	FieldUpdatedAt,
 	FieldCreatedAt,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "task_histories"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"task_task_histories",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -54,15 +51,12 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
-			return true
-		}
-	}
 	return false
 }
 
 var (
+	// TaskIDValidator is a validator for the "task_id" field. It is called by the builders before save.
+	TaskIDValidator func(uint64) error
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
@@ -79,6 +73,11 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByTaskID orders the results by the task_id field.
+func ByTaskID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTaskID, opts...).ToFunc()
 }
 
 // ByIsSuccess orders the results by the is_success field.

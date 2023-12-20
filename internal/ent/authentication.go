@@ -18,6 +18,8 @@ type Authentication struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID uint64 `json:"user_id,omitempty"`
 	// Provider holds the value of the "provider" field.
 	Provider authentication.Provider `json:"provider,omitempty"`
 	// Identifier holds the value of the "identifier" field.
@@ -30,9 +32,8 @@ type Authentication struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AuthenticationQuery when eager-loading is set.
-	Edges                AuthenticationEdges `json:"edges"`
-	user_authentications *uint64
-	selectValues         sql.SelectValues
+	Edges        AuthenticationEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // AuthenticationEdges holds the relations/edges for other nodes in the graph.
@@ -62,14 +63,12 @@ func (*Authentication) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case authentication.FieldID:
+		case authentication.FieldID, authentication.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case authentication.FieldProvider, authentication.FieldIdentifier, authentication.FieldCredential:
 			values[i] = new(sql.NullString)
 		case authentication.FieldUpdatedAt, authentication.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case authentication.ForeignKeys[0]: // user_authentications
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -91,6 +90,12 @@ func (a *Authentication) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			a.ID = uint64(value.Int64)
+		case authentication.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				a.UserID = uint64(value.Int64)
+			}
 		case authentication.FieldProvider:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field provider", values[i])
@@ -120,13 +125,6 @@ func (a *Authentication) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				a.CreatedAt = value.Time
-			}
-		case authentication.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_authentications", value)
-			} else if value.Valid {
-				a.user_authentications = new(uint64)
-				*a.user_authentications = uint64(value.Int64)
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
@@ -169,6 +167,9 @@ func (a *Authentication) String() string {
 	var builder strings.Builder
 	builder.WriteString("Authentication(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", a.UserID))
+	builder.WriteString(", ")
 	builder.WriteString("provider=")
 	builder.WriteString(fmt.Sprintf("%v", a.Provider))
 	builder.WriteString(", ")

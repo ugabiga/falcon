@@ -55,6 +55,11 @@ func IDLTE(id uint64) predicate.Authentication {
 	return predicate.Authentication(sql.FieldLTE(FieldID, id))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint64) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldUserID, v))
+}
+
 // Identifier applies equality check predicate on the "identifier" field. It's identical to IdentifierEQ.
 func Identifier(v string) predicate.Authentication {
 	return predicate.Authentication(sql.FieldEQ(FieldIdentifier, v))
@@ -73,6 +78,26 @@ func UpdatedAt(v time.Time) predicate.Authentication {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Authentication {
 	return predicate.Authentication(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint64) predicate.Authentication {
+	return predicate.Authentication(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint64) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint64) predicate.Authentication {
+	return predicate.Authentication(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint64) predicate.Authentication {
+	return predicate.Authentication(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // ProviderEQ applies the EQ predicate on the "provider" field.

@@ -16,7 +16,7 @@ var (
 		{Name: "credential", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_authentications", Type: field.TypeUint64, Nullable: true},
+		{Name: "user_id", Type: field.TypeUint64},
 	}
 	// AuthenticationsTable holds the schema information for the "authentications" table.
 	AuthenticationsTable = &schema.Table{
@@ -28,7 +28,7 @@ var (
 				Symbol:     "authentications_users_authentications",
 				Columns:    []*schema.Column{AuthenticationsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -41,7 +41,7 @@ var (
 		{Name: "type", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "trading_account_tasks", Type: field.TypeUint64, Nullable: true},
+		{Name: "trading_account_id", Type: field.TypeUint64},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
 	TasksTable = &schema.Table{
@@ -53,7 +53,7 @@ var (
 				Symbol:     "tasks_trading_accounts_tasks",
 				Columns:    []*schema.Column{TasksColumns[7]},
 				RefColumns: []*schema.Column{TradingAccountsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -63,7 +63,7 @@ var (
 		{Name: "is_success", Type: field.TypeBool},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "task_task_histories", Type: field.TypeUint64, Nullable: true},
+		{Name: "task_id", Type: field.TypeUint64},
 	}
 	// TaskHistoriesTable holds the schema information for the "task_histories" table.
 	TaskHistoriesTable = &schema.Table{
@@ -75,7 +75,7 @@ var (
 				Symbol:     "task_histories_tasks_task_histories",
 				Columns:    []*schema.Column{TaskHistoriesColumns[4]},
 				RefColumns: []*schema.Column{TasksColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -90,7 +90,7 @@ var (
 		{Name: "phrase", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_trading_accounts", Type: field.TypeUint64, Nullable: true},
+		{Name: "user_id", Type: field.TypeUint64},
 	}
 	// TradingAccountsTable holds the schema information for the "trading_accounts" table.
 	TradingAccountsTable = &schema.Table{
@@ -102,7 +102,7 @@ var (
 				Symbol:     "trading_accounts_users_trading_accounts",
 				Columns:    []*schema.Column{TradingAccountsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
