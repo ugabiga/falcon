@@ -162,8 +162,8 @@ func (h AuthenticationHandler) Post(c echo.Context) error {
 }
 
 func (h AuthenticationHandler) Protected(c echo.Context) error {
-	name := h.jwtService.CustomClaimsName(c)
+	claim := h.jwtService.Claim(c)
 	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Hello " + name + "!",
+		"message": "Hello " + claim.Name + "!",
 	})
 }

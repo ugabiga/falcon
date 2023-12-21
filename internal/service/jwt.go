@@ -11,7 +11,7 @@ const (
 	SecretKey = "secret"
 )
 
-type jwtCustomClaims struct {
+type JWTClaim struct {
 	UserID  int    `json:"user_id"`
 	Name    string `json:"name"`
 	IsAdmin bool   `json:"is_admin"`
@@ -25,7 +25,7 @@ func NewJWTService() *JWTService {
 }
 
 func (s *JWTService) GenerateToken(userID int, name string, isAdmin bool) (string, error) {
-	claims := &jwtCustomClaims{
+	claims := &JWTClaim{
 		userID,
 		name,
 		isAdmin,
@@ -43,8 +43,9 @@ func (s *JWTService) GenerateToken(userID int, name string, isAdmin bool) (strin
 
 	return t, nil
 }
+
 func (s *JWTService) GenerateDummyToken() (string, error) {
-	claims := &jwtCustomClaims{
+	claims := &JWTClaim{
 		1,
 		"dummy",
 		true,
@@ -66,7 +67,7 @@ func (s *JWTService) GenerateDummyToken() (string, error) {
 func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(jwtCustomClaims)
+			return new(JWTClaim)
 		},
 		SigningKey:  []byte(SecretKey),
 		TokenLookup: "header:Authorization:Bearer ,cookie:falcon.access_token",
@@ -83,8 +84,9 @@ func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
 		},
 	})
 }
-func (s *JWTService) CustomClaimsName(c echo.Context) string {
+
+func (s *JWTService) Claim(c echo.Context) *JWTClaim {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*jwtCustomClaims)
-	return claims.Name
+	claims := user.Claims.(*JWTClaim)
+	return claims
 }
