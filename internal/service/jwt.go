@@ -4,7 +4,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"strings"
 	"time"
 )
 
@@ -13,8 +12,9 @@ const (
 )
 
 type jwtCustomClaims struct {
-	Name  string `json:"name"`
-	Admin bool   `json:"admin"`
+	UserID  int    `json:"user_id"`
+	Name    string `json:"name"`
+	IsAdmin bool   `json:"is_admin"`
 	jwt.RegisteredClaims
 }
 type JWTService struct {
@@ -24,9 +24,29 @@ func NewJWTService() *JWTService {
 	return &JWTService{}
 }
 
-func (s *JWTService) GenerateToken() (string, error) {
+func (s *JWTService) GenerateToken(userID int, name string, isAdmin bool) (string, error) {
 	claims := &jwtCustomClaims{
-		"John Doe",
+		userID,
+		name,
+		isAdmin,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(SecretKey))
+	if err != nil {
+		return "", err
+	}
+
+	return t, nil
+}
+func (s *JWTService) GenerateDummyToken() (string, error) {
+	claims := &jwtCustomClaims{
+		1,
+		"dummy",
 		true,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
@@ -52,7 +72,10 @@ func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
 		TokenLookup: "header:Authorization:Bearer ,cookie:falcon.access_token",
 		Skipper: func(c echo.Context) bool {
 			for _, v := range whiteList {
-				if strings.HasPrefix(c.Request().RequestURI, v) {
+				//if strings.HasPrefix(c.Request().RequestURI, v) {
+				//	return true
+				//}
+				if v == c.Request().RequestURI {
 					return true
 				}
 			}

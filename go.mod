@@ -12,14 +12,14 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/labstack/echo-jwt/v4 v4.2.0
-	github.com/labstack/echo/v4 v4.11.3
+	github.com/labstack/echo/v4 v4.11.4
 	github.com/markbates/goth v1.78.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/viper v1.18.2
 	github.com/vektah/gqlparser/v2 v2.4.3-0.20220508162109-d3d9eb001575
 	go.uber.org/fx v1.20.1
-	golang.org/x/crypto v0.16.0
+	golang.org/x/crypto v0.17.0
 	golang.org/x/sync v0.5.0
 )
 
@@ -36,20 +36,21 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/gorilla/context v1.1.1 // indirect
+	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/mux v1.6.2 // indirect
-	github.com/gorilla/securecookie v1.1.1 // indirect
-	github.com/gorilla/sessions v1.1.1 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/gorilla/sessions v1.2.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
-	github.com/labstack/gommon v0.4.0 // indirect
+	github.com/labstack/echo-contrib v0.15.0 // indirect
+	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/matryer/moq v0.2.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect

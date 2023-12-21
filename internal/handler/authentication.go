@@ -2,12 +2,15 @@ package handler
 
 import (
 	"context"
+	"github.com/gorilla/sessions"
+	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
 	"net/http"
+	"time"
 )
 
 type AuthenticationHandler struct {
@@ -27,10 +30,10 @@ func NewAuthenticationHandler(
 
 func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
 	e.GET("/auth/signin", h.SignInIndex)
-	e.POST("/auth/action/_test", h.ActionTest)
 	e.GET("/auth/signin/:provider", h.SignIn)
 	e.GET("/auth/signin/:provider/callback", h.SignInCallback)
 	e.GET("/auth/signout/:provider", h.SignOut)
+	e.GET("/auth/protected", h.Protected)
 }
 
 func (h AuthenticationHandler) SignIn(c echo.Context) error {
@@ -61,7 +64,47 @@ func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
 		return err
 	}
 
+	a, err := h.authenticationService.SignInOrSignUp(
+		c.Request().Context(),
+		"google",
+		user.UserID,
+		user.AccessToken,
+		user.Name,
+	)
+	if err != nil {
+		return err
+	}
+
+	token, err := h.jwtService.GenerateToken(
+		a.UserID,
+		a.Edges.User.Name,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
 	log.Printf("User: %+v", debug.ToJSONStr(user))
+
+	sess, _ := session.Get("session", c)
+	sess.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+	}
+	if err := sess.Save(c.Request(), c.Response()); err != nil {
+		return err
+	}
+
+	cookie := http.Cookie{
+		Name:     "falcon.access_token",
+		Value:    token,
+		HttpOnly: true,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(24 * time.Hour),
+	}
+	c.SetCookie(&cookie)
 
 	return c.Redirect(http.StatusFound, "/")
 }
@@ -108,7 +151,7 @@ func (h AuthenticationHandler) Get(c echo.Context) error {
 }
 
 func (h AuthenticationHandler) Post(c echo.Context) error {
-	t, err := h.jwtService.GenerateToken()
+	t, err := h.jwtService.GenerateDummyToken()
 	if err != nil {
 		return err
 	}

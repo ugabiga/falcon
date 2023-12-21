@@ -32,7 +32,7 @@ func (s AuthenticationService) InitializeProviders() {
 	callbackURL := baseURL + "/auth/signin/google/callback"
 	key := s.cfg.SessionSecretKey
 	googleClientID := s.cfg.GoogleClientID
-	googleClientSecret := "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"
+	googleClientSecret := s.cfg.GoogleClientSecret
 
 	store := sessions.NewCookieStore([]byte(key))
 	store.Options = &sessions.Options{
@@ -48,13 +48,13 @@ func (s AuthenticationService) InitializeProviders() {
 			googleClientID,
 			googleClientSecret,
 			callbackURL,
-			"email",
+			"email", "profile",
 		),
 	)
 }
 
 func (s AuthenticationService) SignInOrSignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string,
+	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
 ) (
 	*ent.Authentication, error,
 ) {
@@ -67,7 +67,7 @@ func (s AuthenticationService) SignInOrSignUp(
 		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return s.SignUp(ctx, authenticationProvider, identifier, credential)
+			return s.SignUp(ctx, authenticationProvider, identifier, credential, name)
 		}
 
 		return nil, err
@@ -77,7 +77,7 @@ func (s AuthenticationService) SignInOrSignUp(
 }
 
 func (s AuthenticationService) SignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string,
+	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
 ) (
 	*ent.Authentication, error,
 ) {
@@ -86,8 +86,12 @@ func (s AuthenticationService) SignUp(
 		return nil, err
 	}
 
-	u, err := s.db.User.Create().
-		Save(ctx)
+	userCreateQuery := s.db.User.Create()
+	if name != "" {
+		userCreateQuery = userCreateQuery.SetName(name)
+	}
+
+	u, err := userCreateQuery.Save(ctx)
 	if err != nil {
 		return nil, dbRollback(tx, err)
 	}
