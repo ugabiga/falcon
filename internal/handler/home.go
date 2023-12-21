@@ -2,13 +2,22 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/ugabiga/falcon/internal/service"
 )
 
 type HomeHandler struct {
+	jwtService            *service.JWTService
+	authenticationService *service.AuthenticationService
 }
 
-func NewHomeHandler() *HomeHandler {
-	return &HomeHandler{}
+func NewHomeHandler(
+	jwtService *service.JWTService,
+	authenticationService *service.AuthenticationService,
+) *HomeHandler {
+	return &HomeHandler{
+		jwtService:            jwtService,
+		authenticationService: authenticationService,
+	}
 }
 
 func (h HomeHandler) SetRoutes(e *echo.Group) {
@@ -21,11 +30,14 @@ type HomeIndex struct {
 }
 
 func (h HomeHandler) Index(c echo.Context) error {
-	return RenderPage(
+	r := RenderPage(
 		c.Response().Writer,
 		HomeIndex{
-			Title: "Home Page",
+			Layout: ExtractLayout(c),
+			Title:  "Home Page",
 		},
 		"/index.html",
 	)
+
+	return r
 }

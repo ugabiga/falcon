@@ -4,6 +4,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	"strings"
 	"time"
 )
 
@@ -64,7 +65,7 @@ func (s *JWTService) GenerateDummyToken() (string, error) {
 	return t, nil
 }
 
-func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
+func (s *JWTService) Middleware(matchWhiteList, prefixWhiteList []string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(JWTClaim)
@@ -72,11 +73,14 @@ func (s *JWTService) Middleware(whiteList []string) echo.MiddlewareFunc {
 		SigningKey:  []byte(SecretKey),
 		TokenLookup: "header:Authorization:Bearer ,cookie:falcon.access_token",
 		Skipper: func(c echo.Context) bool {
-			for _, v := range whiteList {
-				//if strings.HasPrefix(c.Request().RequestURI, v) {
-				//	return true
-				//}
-				if v == c.Request().RequestURI {
+			for _, v := range matchWhiteList {
+				if c.Path() == v {
+					return true
+				}
+			}
+
+			for _, v := range prefixWhiteList {
+				if strings.HasPrefix(c.Path(), v) {
 					return true
 				}
 			}

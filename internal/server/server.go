@@ -31,19 +31,20 @@ func NewServer(
 
 func (s *Server) middleware() {
 	s.e.Use(middleware.Logger())
-	s.e.Use(middleware.Recover())
+	//s.e.Use(middleware.Recover())
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+	s.e.Use(s.jwtService.Middleware(
+		[]string{
+			"/",
+		},
+		[]string{
+			"/auth/signin",
+		}))
+	s.e.Use(handler.LayoutMiddleware())
 	//s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 	//	AllowOrigins:     []string{"http://localhost:3000"},
 	//	AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	//	AllowCredentials: true,
-	//}))
-	//s.e.Use(s.jwtService.Middleware([]string{
-	//	"/",
-	//	"/auth/signin",
-	//	"/auth/signin/:provider",
-	//	"/",
-	//	"/playground",
 	//}))
 }
 
@@ -57,9 +58,7 @@ func (s *Server) router() {
 	r.GET("/auth/signin/:provider", s.authenticationHandler.SignIn)
 	r.GET("/auth/signin/:provider/callback", s.authenticationHandler.SignInCallback)
 	r.GET("/auth/signout/:provider", s.authenticationHandler.SignOut)
-	r.GET("/auth/protected", s.authenticationHandler.Protected,
-		s.jwtService.Middleware([]string{}),
-	)
+	r.GET("/auth/protected", s.authenticationHandler.Protected)
 }
 
 func (s *Server) Run() error {
