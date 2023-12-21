@@ -2,18 +2,55 @@ package service
 
 import (
 	"context"
+	"github.com/gorilla/sessions"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/google"
+	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/authentication"
 )
 
 type AuthenticationService struct {
-	db *ent.Client
+	db  *ent.Client
+	cfg *config.Config
 }
 
-func NewAuthenticationService(db *ent.Client) *AuthenticationService {
-	return &AuthenticationService{
-		db: db,
+func NewAuthenticationService(db *ent.Client, cfg *config.Config) *AuthenticationService {
+	a := &AuthenticationService{
+		db:  db,
+		cfg: cfg,
 	}
+	a.InitializeProviders()
+
+	return a
+}
+
+func (s AuthenticationService) InitializeProviders() {
+	MaxAge := 86400 * 30
+	baseURL := "http://localhost:3000"
+	callbackURL := baseURL + "/auth/signin/google/callback"
+	key := s.cfg.SessionSecretKey
+	googleClientID := s.cfg.GoogleClientID
+	googleClientSecret := "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"
+
+	store := sessions.NewCookieStore([]byte(key))
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   MaxAge,
+		HttpOnly: true,
+		Secure:   false,
+	}
+
+	gothic.Store = store
+	goth.UseProviders(
+		google.New(
+			googleClientID,
+			googleClientSecret,
+			callbackURL,
+			"email",
+		),
+	)
 }
 
 func (s AuthenticationService) SignInOrSignUp(
