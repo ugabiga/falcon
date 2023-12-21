@@ -30,10 +30,7 @@ func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
 	e.POST("/auth/action/_test", h.ActionTest)
 	e.GET("/auth/signin/:provider", h.SignIn)
 	e.GET("/auth/signin/:provider/callback", h.SignInCallback)
-}
-
-type SignIn struct {
-	Layout Layout
+	e.GET("/auth/signout/:provider", h.SignOut)
 }
 
 func (h AuthenticationHandler) SignIn(c echo.Context) error {
@@ -69,10 +66,29 @@ func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
 	return c.Redirect(http.StatusFound, "/")
 }
 
+func (h AuthenticationHandler) SignOut(c echo.Context) error {
+	c.SetRequest(c.Request().WithContext(
+		context.WithValue(
+			c.Request().Context(),
+			"provider",
+			c.Param("provider"),
+		),
+	))
+	if err := gothic.Logout(c.Response(), c.Request()); err != nil {
+		return err
+	}
+
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
+}
+
+type SignInIndex struct {
+	Layout Layout
+}
+
 func (h AuthenticationHandler) SignInIndex(c echo.Context) error {
 	return RenderPage(
 		c.Response().Writer,
-		SignIn{},
+		SignInIndex{},
 		"/auth/index.html",
 	)
 }
@@ -80,7 +96,7 @@ func (h AuthenticationHandler) SignInIndex(c echo.Context) error {
 func (h AuthenticationHandler) ActionTest(c echo.Context) error {
 	return RenderComponent(
 		c.Response().Writer,
-		SignIn{},
+		SignInIndex{},
 		"/refresh.html",
 	)
 }
