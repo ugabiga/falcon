@@ -19,9 +19,28 @@ func NewAuthenticationHandler(
 }
 
 func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
-	e.GET("/auth", h.Get)
-	e.POST("/auth", h.Post)
-	e.GET("/protected", h.Protected)
+	e.GET("/auth/signin", h.SignIn)
+	e.POST("/auth/action/_test", h.ActionTest)
+}
+
+type SignIn struct {
+	Layout Layout
+}
+
+func (h AuthenticationHandler) SignIn(c echo.Context) error {
+	return RenderPage(
+		c.Response().Writer,
+		SignIn{},
+		"/auth/index.html",
+	)
+}
+
+func (h AuthenticationHandler) ActionTest(c echo.Context) error {
+	return RenderComponent(
+		c.Response().Writer,
+		SignIn{},
+		"/refresh.html",
+	)
 }
 
 func (h AuthenticationHandler) Get(c echo.Context) error {

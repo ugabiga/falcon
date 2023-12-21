@@ -1,9 +1,0 @@
-query GetUser($id: ID!) {
-    user(id: $id, withOptions:{
-        withTradingAccounts: false
-        withAuthentications: false
-    }){
-        id
-        name
-    }
-}

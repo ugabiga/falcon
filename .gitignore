@@ -32,3 +32,6 @@ go.work
 /config.yaml
 
 /tmp
+
+# web
+/web/node_modules/

@@ -27,7 +27,7 @@ func provider() fx.Option {
 		// Handler
 		handler.NewAuthenticationHandler,
 		handler.NewUserHandler,
-		handler.NewGraphHandler,
+		handler.NewHomeHandler,
 
 		// GraphQL
 		helper.NewNodeResolver,
