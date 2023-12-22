@@ -2,17 +2,14 @@ package handler
 
 import (
 	"context"
-	"github.com/gorilla/sessions"
-	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
-	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 	"github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
 	"net/http"
-	"time"
 )
 
 type AuthenticationHandler struct {
@@ -35,105 +32,6 @@ func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
 	e.GET("/auth/protected", h.Protected)
 }
 
-func (h AuthenticationHandler) SignIn(c echo.Context) error {
-	newRequestContext := c.Request().WithContext(
-		context.WithValue(
-			c.Request().Context(),
-			"provider",
-			c.Param("provider"),
-		),
-	)
-	c.SetRequest(newRequestContext)
-
-	if gothUser, err := gothic.CompleteUserAuth(c.Response(), c.Request()); err == nil {
-		log.Printf("User: %+v", gothUser)
-		return c.Redirect(http.StatusTemporaryRedirect, "/")
-	} else {
-		gothic.BeginAuthHandler(c.Response(), c.Request())
-	}
-
-	return nil
-}
-
-func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
-	log.Printf("in ProviderCallBack")
-	user, err := gothic.CompleteUserAuth(c.Response(), c.Request())
-	if err != nil {
-		log.Printf("err: %+v", err)
-		return err
-	}
-
-	a, err := h.authenticationService.SignInOrSignUp(
-		c.Request().Context(),
-		"google",
-		user.UserID,
-		user.AccessToken,
-		user.Name,
-	)
-	if err != nil {
-		return err
-	}
-
-	token, err := h.authenticationService.JWTToken(
-		a.UserID,
-		a.Edges.User.Name,
-		false,
-	)
-	if err != nil {
-		return err
-	}
-
-	log.Printf("User: %+v", debug.ToJSONStr(user))
-
-	sess, _ := session.Get("session", c)
-	sess.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   86400 * 7,
-		HttpOnly: true,
-	}
-	if err := sess.Save(c.Request(), c.Response()); err != nil {
-		return err
-	}
-
-	cookie := http.Cookie{
-		Name:     "falcon.access_token",
-		Value:    token,
-		HttpOnly: true,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(24 * time.Hour),
-	}
-	c.SetCookie(&cookie)
-
-	return c.Redirect(http.StatusFound, "/")
-}
-
-func (h AuthenticationHandler) SignOut(c echo.Context) error {
-	c.SetRequest(c.Request().WithContext(
-		context.WithValue(
-			c.Request().Context(),
-			"provider",
-			c.Param("provider"),
-		),
-	))
-	if err := gothic.Logout(c.Response(), c.Request()); err != nil {
-		return err
-	}
-
-	//remove cookie
-	cookie := http.Cookie{
-		Name:     "falcon.access_token",
-		Value:    "",
-		HttpOnly: true,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(-1 * time.Hour),
-	}
-	c.SetCookie(&cookie)
-
-	return c.Redirect(http.StatusTemporaryRedirect, "/")
-}
-
 type SignInIndex struct {
 	Layout model.Layout
 }
@@ -148,18 +46,76 @@ func (h AuthenticationHandler) SignInIndex(c echo.Context) error {
 	)
 }
 
-func (h AuthenticationHandler) ActionTest(c echo.Context) error {
-	return RenderComponent(
-		c.Response().Writer,
-		SignInIndex{},
-		"/refresh.html",
-	)
+func (h AuthenticationHandler) SignIn(c echo.Context) error {
+	c.SetRequest(c.Request().WithContext(
+		context.WithValue(
+			c.Request().Context(),
+			"provider",
+			c.Param("provider"),
+		),
+	))
+
+	if gothUser, err := gothic.CompleteUserAuth(c.Response(), c.Request()); err == nil {
+		log.Printf("User: %+v", gothUser)
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
+	} else {
+		gothic.BeginAuthHandler(c.Response(), c.Request())
+	}
+
+	return nil
 }
 
-func (h AuthenticationHandler) Get(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Hello World!",
-	})
+func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
+	user, err := gothic.CompleteUserAuth(c.Response(), c.Request())
+	if err != nil {
+		return err
+	}
+
+	a, err := h.authenticationService.SignInOrSignUp(
+		c.Request().Context(),
+		"google",
+		user.UserID,
+		user.AccessToken,
+		user.Name,
+	)
+	if err != nil {
+		return err
+	}
+
+	token, err := h.authenticationService.CreateJWTToken(
+		a.UserID,
+		a.Edges.User.Name,
+		false,
+	)
+	if err != nil {
+		return err
+	}
+
+	if err := helper.SetSession(c); err != nil {
+		return err
+	}
+
+	helper.SetCookie(c, service.JWTCookieName, token)
+
+	return c.Redirect(http.StatusFound, "/")
+}
+
+func (h AuthenticationHandler) SignOut(c echo.Context) error {
+	c.SetRequest(c.Request().WithContext(
+		context.WithValue(
+			c.Request().Context(),
+			"provider",
+			c.Param("provider"),
+		),
+	))
+
+	if err := gothic.Logout(c.Response(), c.Request()); err != nil {
+		return err
+	}
+
+	helper.RemoveCookie(c, service.JWTCookieName)
+
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
 func (h AuthenticationHandler) Protected(c echo.Context) error {

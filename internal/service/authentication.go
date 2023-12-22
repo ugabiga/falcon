@@ -20,7 +20,7 @@ const (
 	maxAge        = 86400 * 30
 	baseURL       = "http://localhost:3000"
 	callbackURL   = baseURL + "/auth/signin/google/callback"
-	jwtCookieName = "falcon.access_token"
+	JWTCookieName = "falcon.access_token"
 )
 
 type JWTClaim struct {
@@ -81,7 +81,7 @@ func (s AuthenticationService) InitializeOAuthProviders() {
 	)
 }
 
-func (s AuthenticationService) JWTToken(userID int, name string, isAdmin bool) (string, error) {
+func (s AuthenticationService) CreateJWTToken(userID int, name string, isAdmin bool) (string, error) {
 	secretKey := s.cfg.JWTSecretKey
 	claims := &JWTClaim{
 		userID,
@@ -119,7 +119,7 @@ func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.Middlew
 			return new(JWTClaim)
 		},
 		SigningKey:  []byte(secretKey),
-		TokenLookup: "header:Authorization:Bearer ,cookie:" + jwtCookieName,
+		TokenLookup: "header:Authorization:Bearer ,cookie:" + JWTCookieName,
 		Skipper: func(c echo.Context) bool {
 			for _, v := range whiteList {
 				requestedPath := c.Path()
@@ -152,7 +152,7 @@ func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
 				return next(c)
 			}
 
-			tokenStr, err := c.Request().Cookie(jwtCookieName)
+			tokenStr, err := c.Request().Cookie(JWTCookieName)
 			if err != nil {
 				return next(c)
 			}
