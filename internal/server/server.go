@@ -12,45 +12,56 @@ import (
 
 type Server struct {
 	e                     *echo.Echo
-	authenticationHandler *handler.AuthenticationHandler
-	homeHandler           *handler.HomeHandler
 	authenticationService *service.AuthenticationService
+	homeHandler           *handler.HomeHandler
+	authenticationHandler *handler.AuthenticationHandler
+	userHandler           *handler.UserHandler
+	errorHandler          *handler.ErrorHandler
 }
 
 func NewServer(
-	authenticationHandler *handler.AuthenticationHandler,
-	homeHandler *handler.HomeHandler,
 	authenticationService *service.AuthenticationService,
+	homeHandler *handler.HomeHandler,
+	authenticationHandler *handler.AuthenticationHandler,
+	userHandler *handler.UserHandler,
+	errorHandler *handler.ErrorHandler,
 ) *Server {
 	return &Server{
 		e:                     echo.New(),
-		authenticationHandler: authenticationHandler,
-		homeHandler:           homeHandler,
 		authenticationService: authenticationService,
+		homeHandler:           homeHandler,
+		authenticationHandler: authenticationHandler,
+		userHandler:           userHandler,
+		errorHandler:          errorHandler,
 	}
-}
-
-func (s *Server) middleware() {
-	s.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
-		Output: s.e.Logger.Output(),
-	}))
-	s.e.Use(middleware.Recover())
-	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
-	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
-		{Type: service.WhiteListTypeExact, Path: "/"},
-		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
-	}))
-	s.e.Use(s.authenticationService.UngradedJWTMiddleware())
-	s.e.Use(falconMiddleware.LayoutMiddleware())
 }
 
 func (s *Server) router() {
 	s.e.Static("/static", "web/static")
 
+	s.e.HTTPErrorHandler = s.errorHandler.DebugErrorHandler
+
 	r := s.e.Group("")
 	s.homeHandler.SetRoutes(r)
 	s.authenticationHandler.SetRoutes(r)
+	s.userHandler.SetRoutes(r)
+}
+
+func (s *Server) middleware() {
+
+	s.e.Use(middleware.Recover())
+	s.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
+		Output: s.e.Logger.Output(),
+	}))
+	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
+	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
+		{Type: service.WhiteListTypeExact, Path: "/"},
+		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
+		{Type: service.WhiteListTypePrefix, Path: "/static"},
+	}))
+	s.e.Use(s.authenticationService.UngradedJWTMiddleware())
+	s.e.Use(falconMiddleware.LayoutMiddleware())
 }
 
 func (s *Server) Run() error {

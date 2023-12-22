@@ -2,8 +2,13 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/handler/helper"
+	"github.com/ugabiga/falcon/internal/handler/middleware"
+	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
-	"net/http"
+	"log"
 )
 
 type UserHandler struct {
@@ -19,15 +24,32 @@ func NewUserHandler(
 }
 
 func (h UserHandler) SetRoutes(e *echo.Group) {
-	e.GET("/user", h.Get)
+	e.GET("/user", h.Index)
 }
 
-func (h UserHandler) Get(c echo.Context) error {
-	var userID int = 1
-	user, err := h.userService.GetByID(c.Request().Context(), userID)
+type UserIndex struct {
+	Layout model.Layout
+	User   *ent.User
+}
+
+func (h UserHandler) Index(c echo.Context) error {
+	claim := helper.MustJWTClaim(c)
+	log.Printf("claim: %+v", debug.ToJSONStr(claim))
+	user, err := h.userService.GetByID(
+		c.Request().Context(),
+		claim.UserID,
+	)
 	if err != nil {
 		return err
 	}
+	log.Printf("user: %+v", debug.ToJSONStr(user))
 
-	return c.JSON(http.StatusOK, user)
+	return RenderPage(
+		c.Response().Writer,
+		UserIndex{
+			Layout: middleware.ExtractLayout(c),
+			User:   user,
+		},
+		"/user/index.html",
+	)
 }

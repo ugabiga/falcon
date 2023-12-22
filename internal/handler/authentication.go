@@ -119,10 +119,7 @@ func (h AuthenticationHandler) SignOut(c echo.Context) error {
 }
 
 func (h AuthenticationHandler) Protected(c echo.Context) error {
-	claim, err := h.authenticationService.JWTClaim(c)
-	if err != nil {
-		return err
-	}
+	claim := helper.MustJWTClaim(c)
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Hello " + claim.Name + "!",
 	})

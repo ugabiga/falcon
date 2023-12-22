@@ -102,15 +102,6 @@ func (s AuthenticationService) CreateJWTToken(userID int, name string, isAdmin b
 	return t, nil
 }
 
-func (s AuthenticationService) JWTClaim(c echo.Context) (*JWTClaim, error) {
-	user, ok := c.Get("user").(*jwt.Token)
-	if !ok {
-		return nil, echo.ErrUnauthorized
-	}
-	claims := user.Claims.(*JWTClaim)
-	return claims, nil
-}
-
 func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.MiddlewareFunc {
 	secretKey := s.cfg.JWTSecretKey
 
