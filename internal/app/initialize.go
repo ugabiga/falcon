@@ -19,7 +19,6 @@ func provider() fx.Option {
 		client.NewEntClient,
 
 		// Service
-		service.NewJWTService,
 		service.NewUserService,
 		service.NewAuthenticationService,
 		service.NewTradingAccountService,

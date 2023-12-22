@@ -11,21 +11,21 @@ import (
 
 type Server struct {
 	e                     *echo.Echo
-	jwtService            *service.JWTService
 	authenticationHandler *handler.AuthenticationHandler
 	homeHandler           *handler.HomeHandler
+	authenticationService *service.AuthenticationService
 }
 
 func NewServer(
-	jwtService *service.JWTService,
 	authenticationHandler *handler.AuthenticationHandler,
 	homeHandler *handler.HomeHandler,
+	authenticationService *service.AuthenticationService,
 ) *Server {
 	return &Server{
 		e:                     echo.New(),
-		jwtService:            jwtService,
 		authenticationHandler: authenticationHandler,
 		homeHandler:           homeHandler,
+		authenticationService: authenticationService,
 	}
 }
 
@@ -33,7 +33,7 @@ func (s *Server) middleware() {
 	s.e.Use(middleware.Logger())
 	//s.e.Use(middleware.Recover())
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
-	s.e.Use(s.jwtService.Middleware(
+	s.e.Use(s.authenticationService.JWTMiddleware(
 		[]string{
 			"/",
 		},
@@ -41,11 +41,6 @@ func (s *Server) middleware() {
 			"/auth/signin",
 		}))
 	s.e.Use(handler.LayoutMiddleware())
-	//s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-	//	AllowOrigins:     []string{"http://localhost:3000"},
-	//	AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	//	AllowCredentials: true,
-	//}))
 }
 
 func (s *Server) router() {

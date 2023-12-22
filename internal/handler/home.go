@@ -6,16 +6,13 @@ import (
 )
 
 type HomeHandler struct {
-	jwtService            *service.JWTService
 	authenticationService *service.AuthenticationService
 }
 
 func NewHomeHandler(
-	jwtService *service.JWTService,
 	authenticationService *service.AuthenticationService,
 ) *HomeHandler {
 	return &HomeHandler{
-		jwtService:            jwtService,
 		authenticationService: authenticationService,
 	}
 }

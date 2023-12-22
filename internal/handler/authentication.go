@@ -14,16 +14,13 @@ import (
 )
 
 type AuthenticationHandler struct {
-	jwtService            *service.JWTService
 	authenticationService *service.AuthenticationService
 }
 
 func NewAuthenticationHandler(
-	jwtService *service.JWTService,
 	authenticationService *service.AuthenticationService,
 ) *AuthenticationHandler {
 	return &AuthenticationHandler{
-		jwtService:            jwtService,
 		authenticationService: authenticationService,
 	}
 }
@@ -75,7 +72,7 @@ func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
 		return err
 	}
 
-	token, err := h.jwtService.GenerateToken(
+	token, err := h.authenticationService.JWTToken(
 		a.UserID,
 		a.Edges.User.Name,
 		false,
@@ -150,19 +147,8 @@ func (h AuthenticationHandler) Get(c echo.Context) error {
 	})
 }
 
-func (h AuthenticationHandler) Post(c echo.Context) error {
-	t, err := h.jwtService.GenerateDummyToken()
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"token": t,
-	})
-}
-
 func (h AuthenticationHandler) Protected(c echo.Context) error {
-	claim := h.jwtService.Claim(c)
+	claim := h.authenticationService.JWTClaim(c)
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Hello " + claim.Name + "!",
 	})
