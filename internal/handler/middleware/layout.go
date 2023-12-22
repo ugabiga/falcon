@@ -1,24 +1,15 @@
-package handler
+package middleware
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-
 	"github.com/labstack/echo/v4"
+	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
 )
 
 const (
 	LayoutContextKey = "layout"
 )
-
-type Layout struct {
-	Claim   *service.JWTClaim
-	IsLogin bool
-}
-
-type LayoutPage struct {
-	Layout Layout
-}
 
 func LayoutMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -49,7 +40,7 @@ func LayoutMiddleware() echo.MiddlewareFunc {
 			}
 
 			if claims, ok := token.Claims.(*service.JWTClaim); ok {
-				c.Set(LayoutContextKey, Layout{
+				c.Set(LayoutContextKey, model.Layout{
 					Claim:   claims,
 					IsLogin: true,
 				})
@@ -59,10 +50,10 @@ func LayoutMiddleware() echo.MiddlewareFunc {
 	}
 }
 
-func ExtractLayout(c echo.Context) Layout {
-	layout, ok := c.Get(LayoutContextKey).(Layout)
+func ExtractLayout(c echo.Context) model.Layout {
+	layout, ok := c.Get(LayoutContextKey).(model.Layout)
 	if !ok {
-		return Layout{}
+		return model.Layout{}
 	}
 
 	return layout

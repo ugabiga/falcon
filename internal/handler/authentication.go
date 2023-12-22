@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
 	"net/http"
@@ -122,7 +123,7 @@ func (h AuthenticationHandler) SignOut(c echo.Context) error {
 }
 
 type SignInIndex struct {
-	Layout Layout
+	Layout model.Layout
 }
 
 func (h AuthenticationHandler) SignInIndex(c echo.Context) error {

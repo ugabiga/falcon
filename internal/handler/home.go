@@ -2,6 +2,8 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/ugabiga/falcon/internal/handler/middleware"
+	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
 )
 
@@ -22,7 +24,7 @@ func (h HomeHandler) SetRoutes(e *echo.Group) {
 }
 
 type HomeIndex struct {
-	Layout Layout
+	Layout model.Layout
 	Title  string
 }
 
@@ -30,7 +32,7 @@ func (h HomeHandler) Index(c echo.Context) error {
 	r := RenderPage(
 		c.Response().Writer,
 		HomeIndex{
-			Layout: ExtractLayout(c),
+			Layout: middleware.ExtractLayout(c),
 			Title:  "Home Page",
 		},
 		"/index.html",

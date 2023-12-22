@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/ugabiga/falcon/internal/handler"
+	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/service"
 )
 
@@ -31,7 +32,7 @@ func NewServer(
 
 func (s *Server) middleware() {
 	s.e.Use(middleware.Logger())
-	//s.e.Use(middleware.Recover())
+	s.e.Use(middleware.Recover())
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	s.e.Use(s.authenticationService.JWTMiddleware(
 		[]string{
@@ -40,7 +41,7 @@ func (s *Server) middleware() {
 		[]string{
 			"/auth/signin",
 		}))
-	s.e.Use(handler.LayoutMiddleware())
+	s.e.Use(falconMiddleware.LayoutMiddleware())
 }
 
 func (s *Server) router() {
