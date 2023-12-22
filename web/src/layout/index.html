@@ -16,6 +16,8 @@
     {{template "head" .}}
 </head>
 <body class="dark:bg-gray-900">
+
+{{template "toast" .}}
 {{template "navigation" .}}
 {{template "content" .}}
 </body>
@@ -171,8 +173,30 @@
 
         document.body.addEventListener("myEvent",
             function (evt) {
-                alert("cart updated")
+                let element = document.getElementById("toast-bottom-right")
+
+                element.classList.replace('invisible', 'visible')
+                element.classList.replace('opacity-0', 'opacity-100')
+
+                function dismissToast() {
+                    setTimeout(function () {
+                        element.classList.replace('opacity-100', 'opacity-0')
+                    }, 1000);
+                    setTimeout(function () {
+                        element.classList.replace('visible', 'invisible')
+                    }, 2000);
+                }
+
+                dismissToast()
             }
         )
     </script>
+{{end}}
+
+{{define "toast"}}
+    <div id="toast-bottom-right"
+         class="invisible opacity-0 transition-opacity ease-in-out delay-150 duration-300 fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow right-5 bottom-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800"
+         role="alert">
+        <div class="text-sm font-normal">Message</div>
+    </div>
 {{end}}
