@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/markbates/goth/gothic"
 	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
@@ -119,6 +120,17 @@ func (h AuthenticationHandler) SignOut(c echo.Context) error {
 		return err
 	}
 
+	//remove cookie
+	cookie := http.Cookie{
+		Name:     "falcon.access_token",
+		Value:    "",
+		HttpOnly: true,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(-1 * time.Hour),
+	}
+	c.SetCookie(&cookie)
+
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
@@ -129,7 +141,9 @@ type SignInIndex struct {
 func (h AuthenticationHandler) SignInIndex(c echo.Context) error {
 	return RenderPage(
 		c.Response().Writer,
-		SignInIndex{},
+		SignInIndex{
+			Layout: middleware.ExtractLayout(c),
+		},
 		"/auth/index.html",
 	)
 }
@@ -149,7 +163,10 @@ func (h AuthenticationHandler) Get(c echo.Context) error {
 }
 
 func (h AuthenticationHandler) Protected(c echo.Context) error {
-	claim := h.authenticationService.JWTClaim(c)
+	claim, err := h.authenticationService.JWTClaim(c)
+	if err != nil {
+		return err
+	}
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "Hello " + claim.Name + "!",
 	})

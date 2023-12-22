@@ -102,10 +102,13 @@ func (s AuthenticationService) JWTToken(userID int, name string, isAdmin bool) (
 	return t, nil
 }
 
-func (s AuthenticationService) JWTClaim(c echo.Context) *JWTClaim {
-	user := c.Get("user").(*jwt.Token)
+func (s AuthenticationService) JWTClaim(c echo.Context) (*JWTClaim, error) {
+	user, ok := c.Get("user").(*jwt.Token)
+	if !ok {
+		return nil, echo.ErrUnauthorized
+	}
 	claims := user.Claims.(*JWTClaim)
-	return claims
+	return claims, nil
 }
 
 func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.MiddlewareFunc {
@@ -119,14 +122,19 @@ func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.Middlew
 		TokenLookup: "header:Authorization:Bearer ,cookie:" + jwtCookieName,
 		Skipper: func(c echo.Context) bool {
 			for _, v := range whiteList {
-				if v.Type == "prefix" {
-					if c.Path() == v.Path {
+				requestedPath := c.Path()
+
+				switch v.Type {
+				case WhiteListTypePrefix:
+					if strings.HasPrefix(requestedPath, v.Path) {
 						return true
 					}
-				} else if v.Type == "exact" {
-					if strings.HasPrefix(c.Path(), v.Path) {
+				case WhiteListTypeExact:
+					if requestedPath == v.Path {
 						return true
 					}
+				default:
+					return false
 				}
 			}
 

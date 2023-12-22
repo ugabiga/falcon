@@ -50,12 +50,7 @@ func (s *Server) router() {
 
 	r := s.e.Group("")
 	s.homeHandler.SetRoutes(r)
-
-	r.GET("/auth/signin", s.authenticationHandler.SignInIndex)
-	r.GET("/auth/signin/:provider", s.authenticationHandler.SignIn)
-	r.GET("/auth/signin/:provider/callback", s.authenticationHandler.SignInCallback)
-	r.GET("/auth/signout/:provider", s.authenticationHandler.SignOut)
-	r.GET("/auth/protected", s.authenticationHandler.Protected)
+	s.authenticationHandler.SetRoutes(r)
 }
 
 func (s *Server) Run() error {
