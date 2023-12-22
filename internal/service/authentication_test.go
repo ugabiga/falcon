@@ -15,7 +15,7 @@ func initAuthenticationService() *service.AuthenticationService {
 	}
 	entClient := client.NewEntClient(cfg)
 
-	return service.NewAuthenticationService(entClient)
+	return service.NewAuthenticationService(entClient, cfg)
 }
 func TestAuthenticationService_SignUp(t *testing.T) {
 	srv := initAuthenticationService()
@@ -29,6 +29,7 @@ func TestAuthenticationService_SignUp(t *testing.T) {
 			"google",
 			"",
 			"",
+			"test",
 		)
 		if err != nil {
 			t.Fatal(err)
@@ -60,6 +61,7 @@ func TestAuthenticationService_SignInOrSignUp(t *testing.T) {
 			"google",
 			"",
 			"",
+			"test",
 		)
 		if err != nil {
 			t.Fatal(err)

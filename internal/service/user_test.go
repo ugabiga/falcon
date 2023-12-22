@@ -29,6 +29,7 @@ func prepareUser(t *testing.T) *ent.User {
 		"google",
 		id,
 		"",
+		"test",
 	)
 	if err != nil {
 		t.Fatal(err)
