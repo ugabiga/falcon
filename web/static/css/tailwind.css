@@ -1185,6 +1185,10 @@ input:checked + .toggle-bg {
   z-index: 50;
 }
 
+.col-span-1 {
+  grid-column: span 1 / span 1;
+}
+
 .float-start {
   float: inline-start;
 }
@@ -4073,6 +4077,10 @@ input:checked + .toggle-bg {
 @media (min-width: 1024px) {
   .lg\:order-2 {
     order: 2;
+  }
+
+  .lg\:col-span-1 {
+    grid-column: span 1 / span 1;
   }
 
   .lg\:block {
