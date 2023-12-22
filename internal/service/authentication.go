@@ -17,10 +17,10 @@ import (
 )
 
 const (
-	SecretKey   = "secret"
-	maxAge      = 86400 * 30
-	baseURL     = "http://localhost:3000"
-	callbackURL = baseURL + "/auth/signin/google/callback"
+	maxAge        = 86400 * 30
+	baseURL       = "http://localhost:3000"
+	callbackURL   = baseURL + "/auth/signin/google/callback"
+	jwtCookieName = "falcon.access_token"
 )
 
 type JWTClaim struct {
@@ -28,6 +28,18 @@ type JWTClaim struct {
 	Name    string `json:"name"`
 	IsAdmin bool   `json:"is_admin"`
 	jwt.RegisteredClaims
+}
+
+type WhiteListType string
+
+const (
+	WhiteListTypePrefix WhiteListType = "prefix"
+	WhiteListTypeExact  WhiteListType = "exact"
+)
+
+type WhiteList struct {
+	Type WhiteListType
+	Path string
 }
 
 type AuthenticationService struct {
@@ -46,11 +58,11 @@ func NewAuthenticationService(db *ent.Client, cfg *config.Config) *Authenticatio
 }
 
 func (s AuthenticationService) InitializeOAuthProviders() {
-	key := s.cfg.SessionSecretKey
+	secretKey := s.cfg.SessionSecretKey
 	googleClientID := s.cfg.GoogleClientID
 	googleClientSecret := s.cfg.GoogleClientSecret
 
-	store := sessions.NewCookieStore([]byte(key))
+	store := sessions.NewCookieStore([]byte(secretKey))
 	store.Options = &sessions.Options{
 		Path:     "/",
 		MaxAge:   maxAge,
@@ -70,6 +82,7 @@ func (s AuthenticationService) InitializeOAuthProviders() {
 }
 
 func (s AuthenticationService) JWTToken(userID int, name string, isAdmin bool) (string, error) {
+	secretKey := s.cfg.JWTSecretKey
 	claims := &JWTClaim{
 		userID,
 		name,
@@ -81,7 +94,7 @@ func (s AuthenticationService) JWTToken(userID int, name string, isAdmin bool) (
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	t, err := token.SignedString([]byte(SecretKey))
+	t, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}
@@ -95,28 +108,67 @@ func (s AuthenticationService) JWTClaim(c echo.Context) *JWTClaim {
 	return claims
 }
 
-func (s AuthenticationService) JWTMiddleware(matchWhiteList, prefixWhiteList []string) echo.MiddlewareFunc {
+func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.MiddlewareFunc {
+	secretKey := s.cfg.JWTSecretKey
+
 	return echojwt.WithConfig(echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(JWTClaim)
 		},
-		SigningKey:  []byte(SecretKey),
-		TokenLookup: "header:Authorization:Bearer ,cookie:falcon.access_token",
+		SigningKey:  []byte(secretKey),
+		TokenLookup: "header:Authorization:Bearer ,cookie:" + jwtCookieName,
 		Skipper: func(c echo.Context) bool {
-			for _, v := range matchWhiteList {
-				if c.Path() == v {
-					return true
+			for _, v := range whiteList {
+				if v.Type == "prefix" {
+					if c.Path() == v.Path {
+						return true
+					}
+				} else if v.Type == "exact" {
+					if strings.HasPrefix(c.Path(), v.Path) {
+						return true
+					}
 				}
 			}
 
-			for _, v := range prefixWhiteList {
-				if strings.HasPrefix(c.Path(), v) {
-					return true
-				}
-			}
 			return false
 		},
 	})
+}
+func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
+	secretKey := s.cfg.JWTSecretKey
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) (returnErr error) {
+			cookies := c.Cookies()
+			if len(cookies) == 0 {
+				return next(c)
+			}
+
+			tokenStr, err := c.Request().Cookie(jwtCookieName)
+			if err != nil {
+				return next(c)
+			}
+
+			token, err := jwt.ParseWithClaims(
+				tokenStr.Value,
+				&JWTClaim{},
+				func(token *jwt.Token) (interface{}, error) {
+					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+						return nil, err
+					}
+					return []byte(secretKey), nil
+				},
+			)
+			if err != nil {
+				return next(c)
+			}
+
+			c.Set("user", token)
+
+			return next(c)
+		}
+	}
+
 }
 
 func (s AuthenticationService) SignInOrSignUp(

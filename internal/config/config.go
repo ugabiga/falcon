@@ -11,6 +11,7 @@ type Config struct {
 	DBDriverName       string `mapstructure:"DB_DRIVER_NAME"`
 	DBSource           string `mapstructure:"DB_SOURCE"`
 	SessionSecretKey   string `mapstructure:"SESSION_SECRET_KEY"`
+	JWTSecretKey       string `mapstructure:"JWT_SECRET_KEY"`
 	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
 	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 }

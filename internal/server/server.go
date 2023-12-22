@@ -34,13 +34,11 @@ func (s *Server) middleware() {
 	s.e.Use(middleware.Logger())
 	s.e.Use(middleware.Recover())
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
-	s.e.Use(s.authenticationService.JWTMiddleware(
-		[]string{
-			"/",
-		},
-		[]string{
-			"/auth/signin",
-		}))
+	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
+		{Type: service.WhiteListTypeExact, Path: "/"},
+		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
+	}))
+	s.e.Use(s.authenticationService.UngradedJWTMiddleware())
 	s.e.Use(falconMiddleware.LayoutMiddleware())
 }
 
