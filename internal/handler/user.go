@@ -2,13 +2,11 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 	"github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/handler/model"
 	"github.com/ugabiga/falcon/internal/service"
-	"log"
 )
 
 type UserHandler struct {
@@ -67,7 +65,7 @@ func (h UserHandler) Edit(c echo.Context) error {
 		return err
 	}
 
-	u, err := h.userService.Update(
+	_, err := h.userService.Update(
 		c.Request().Context(),
 		claim.UserID,
 		&ent.User{
@@ -79,9 +77,7 @@ func (h UserHandler) Edit(c echo.Context) error {
 		return err
 	}
 
-	log.Printf("updateUser: %+v", debug.ToJSONStr(u))
-
-	c.Response().Header().Set("Hx-Trigger", "myEvent")
+	helper.NewToastEvent(c, "success", "Successfully update user")
 
 	return nil
 }

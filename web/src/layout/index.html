@@ -16,10 +16,12 @@
     {{template "head" .}}
 </head>
 <body class="dark:bg-gray-900">
-
 {{template "toast" .}}
-{{template "navigation" .}}
-{{template "content" .}}
+<div class="flex flex-col h-screen justify-between">
+    {{template "navigation" .}}
+    {{template "content" .}}
+    {{template "footer" .}}
+</div>
 </body>
 {{template "dark-mode-switch-script" .}}
 {{template "hx-event" .}}
@@ -54,25 +56,15 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                           class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</a>
-                    </li>
-                    <li>
-                        <a href="#"
-                           class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</a>
+                        <a href="/user"
+                           class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                            User
+                        </a>
                     </li>
                 </ul>
             </div>
 
-            <div class="ml-4 mr-2">
+            <div class="ml-6 mr-2">
                 {{if .Layout.IsLogin}}
                     <a href="/auth/signin"
                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-700 border border-transparent rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -104,6 +96,14 @@
             </div>
         </div>
     </nav>
+{{end}}
+
+{{define "footer"}}
+    <footer class="dark:text-white py-4 footer">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2023 Crypto Trading Hub. All rights reserved.</p>
+        </div>
+    </footer>
 {{end}}
 
 {{define "dark-mode-load-script"}}
@@ -169,22 +169,24 @@
 
 {{define "hx-event"}}
     <script type="text/javascript">
-        htmx.logAll()
+        // htmx.logAll()
 
-        document.body.addEventListener("myEvent",
+        document.body.addEventListener("showToast",
             function (evt) {
-                let element = document.getElementById("toast-bottom-right")
+                let toastMessage = document.getElementById("toast-message")
+                toastMessage.innerText = evt.detail.message
 
-                element.classList.replace('invisible', 'visible')
-                element.classList.replace('opacity-0', 'opacity-100')
+                let toastElement = document.getElementById("toast-success")
+                toastElement.classList.replace('invisible', 'visible')
+                toastElement.classList.replace('opacity-0', 'opacity-100')
 
                 function dismissToast() {
                     setTimeout(function () {
-                        element.classList.replace('opacity-100', 'opacity-0')
-                    }, 1000);
+                        toastElement.classList.replace('opacity-100', 'opacity-0')
+                    }, 1200);
                     setTimeout(function () {
-                        element.classList.replace('visible', 'invisible')
-                    }, 2000);
+                        toastElement.classList.replace('visible', 'invisible')
+                    }, 1500);
                 }
 
                 dismissToast()
@@ -194,9 +196,15 @@
 {{end}}
 
 {{define "toast"}}
-    <div id="toast-bottom-right"
+    <div id="toast-success"
          class="invisible opacity-0 transition-opacity ease-in-out delay-150 duration-300 fixed flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow right-5 bottom-5 dark:text-gray-400 dark:divide-gray-700 space-x dark:bg-gray-800"
          role="alert">
-        <div class="text-sm font-normal">Message</div>
+        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                 viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+            </svg>
+        </div>
+        <div id="toast-message" class="pl-4 ms-3 text-sm font-normal">Success</div>
     </div>
 {{end}}

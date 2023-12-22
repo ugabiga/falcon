@@ -2,11 +2,84 @@
     <title>Test</title>
 {{end}}
 {{define "content"}}
-    <main class="md:max-w-[1200px] overflow-auto w-full mx-auto flex justify-between">
-        <div class="mt-6 w-full text-center">
-            <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-                Hello
-            </h1>
-        </div>
+    <main class="mb-auto md:max-w-[1200px] overflow-auto w-full mx-auto">
+        <!-- Hero Section -->
+        <section class="bg-gray-200 dark:bg-gray-900 dark:text-white py-20">
+            <div class="container mx-auto text-center">
+                <h1 class="text-4xl font-extrabold text-gray-800 dark:text-white mb-4">Welcome to Crypto Trading
+                    Hub</h1>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+                    Simplifying Dollar-Cost Averaging (DCA) and Amplifying the Strength of HODLing (HOLD).
+                </p>
+                <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+                    Explore the ease of automated investing through Dollar-Cost Averaging and harness the potential of
+                    holding for the long term with our advanced trading platform.
+                </p>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="dark:text-white py-20">
+            <div class="container mx-auto text-center">
+                <h1 class="text-4xl font-bold mb-4">
+                    Our Passion for Crypto Trading
+                </h1>
+                <p class="text-lg mb-8">
+                    We are a dedicated team passionate about crypto trading. Our focus lies in the principles of
+                    Dollar-Cost Averaging (DCA) and HODLing (HOLD). We believe in the long-term potential of
+                    cryptocurrencies and aim to provide a platform that empowers users to make informed
+                    investment
+                    decisions.
+                </p>
+            </div>
+        </section>
+
+        <!-- Pros Section -->
+        <section id="pros" class="bg-gray-200 dark:bg-gray-800 dark:text-white py-16">
+            <div class="container mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8 main-blue">Key Benefits</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Add your pros/benefits here -->
+                    <div class="p-4 bg-white dark:bg-gray-700 rounded-md shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 main-blue">Low Transaction Fees</h3>
+                        <p class="text-gray-700 dark:text-white">
+                            Our program orders in limit price to help you save on transaction fees.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white dark:bg-gray-700 rounded-md shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 main-blue">Diversified Investment</h3>
+                        <p class="text-gray-700 dark:text-white">
+                            Dollar-Cost Averaging allows for a systematic and diversified approach
+                            to
+                            investing in cryptocurrencies.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white dark:bg-gray-700 rounded-md shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 main-blue">
+                            Customizable DCA Schedule
+                        </h3>
+                        <p class="text-gray-700 dark:text-white">
+                            Tailor your Dollar-Cost Averaging strategy by setting your own schedule
+                            for
+                            investments.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white dark:bg-gray-700 rounded-md shadow-md">
+                        <h3 class="text-xl font-semibold mb-2 main-blue">
+                            Grid Trading
+                        </h3>
+                        <p class="text-gray-700 dark:text-white">
+                            Optimize your trading strategy with grid trading to capitalize on
+                            market
+                            fluctuations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 {{end}}
