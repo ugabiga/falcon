@@ -31,7 +31,10 @@ func NewServer(
 }
 
 func (s *Server) middleware() {
-	s.e.Use(middleware.Logger())
+	s.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
+		Output: s.e.Logger.Output(),
+	}))
 	s.e.Use(middleware.Recover())
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
