@@ -40,3 +40,9 @@ func (h HomeHandler) Index(c echo.Context) error {
 
 	return r
 }
+
+func (h HomeHandler) Event(c echo.Context) error {
+	c.Response().Header().Set("Hx-Trigger", "myEvent")
+
+	return nil
+}

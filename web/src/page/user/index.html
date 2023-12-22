@@ -3,21 +3,27 @@
 {{end}}
 
 {{define "content"}}
-    {{- /*gotype: github.com/ugabiga/falcon/internal/handler.UserIndex*/ -}}
     <main class="md:max-w-[1200px] overflow-auto w-full mx-auto justify-between">
+        {{- /*gotype: github.com/ugabiga/falcon/internal/handler.UserIndex*/ -}}
+
         <div class="mt-6 w-full text-center">
             <h1 class="text-4xl font-extrabold dark:text-white">Profile</h1>
         </div>
 
         <div class="mt-6 pr-12 pl-12">
-            <form>
+            <form hx-post="/user" hx-swap="none">
                 <div class="mb-6">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                         Name
                     </label>
-                    <input type="text" id="name"
+                    <input type="text"
+                           id="name"
+                           name="name"
                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                           placeholder="Your name" required>
+                           placeholder="Your name"
+                           value={{.User.Name}}
+                           required
+                    >
                 </div>
 
                 <div class="mb-6">
@@ -26,9 +32,20 @@
                     </label>
 
                     <select id="timezone"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option selected>Choose a timezone</option>
-                        <option value="Seoul">Seoul</option>
+                            name="timezone"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            required
+                    >
+                        {{if .User.Timezone}}
+                            <option value={{.User.Timezone}} selected>{{.User.Timezone}}</option>
+                        {{end}}
+
+                        {{ if not .User.Timezone}}
+                            <option value="" selected disabled>Select timezone</option>
+                            <option value="UTC">UTC</option>
+                            <option value="Asia/Seoul">Asia/Seoul</option>
+                        {{end}}
+
                     </select>
                 </div>
 
@@ -38,6 +55,7 @@
                 </button>
             </form>
 
+            <div id="toast"></div>
         </div>
     </main>
 {{end}}

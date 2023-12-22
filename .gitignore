@@ -27,6 +27,7 @@ go.work
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/vcs.xml
+/.idea/dataSources.xml
 
 # configuration
 /config.yaml

@@ -25,6 +25,7 @@ func NewUserHandler(
 
 func (h UserHandler) SetRoutes(e *echo.Group) {
 	e.GET("/user", h.Index)
+	e.POST("/user", h.Edit)
 }
 
 type UserIndex struct {
@@ -34,7 +35,7 @@ type UserIndex struct {
 
 func (h UserHandler) Index(c echo.Context) error {
 	claim := helper.MustJWTClaim(c)
-	log.Printf("claim: %+v", debug.ToJSONStr(claim))
+
 	user, err := h.userService.GetByID(
 		c.Request().Context(),
 		claim.UserID,
@@ -42,7 +43,6 @@ func (h UserHandler) Index(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("user: %+v", debug.ToJSONStr(user))
 
 	return RenderPage(
 		c.Response().Writer,
@@ -52,4 +52,36 @@ func (h UserHandler) Index(c echo.Context) error {
 		},
 		"/user/index.html",
 	)
+}
+
+type UserEditForm struct {
+	Name     string `form:"name"`
+	Timezone string `form:"timezone"`
+}
+
+func (h UserHandler) Edit(c echo.Context) error {
+	claim := helper.MustJWTClaim(c)
+
+	var form UserEditForm
+	if err := c.Bind(&form); err != nil {
+		return err
+	}
+
+	u, err := h.userService.Update(
+		c.Request().Context(),
+		claim.UserID,
+		&ent.User{
+			Name:     form.Name,
+			Timezone: form.Timezone,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("updateUser: %+v", debug.ToJSONStr(u))
+
+	c.Response().Header().Set("Hx-Trigger", "myEvent")
+
+	return nil
 }

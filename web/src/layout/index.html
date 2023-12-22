@@ -20,6 +20,7 @@
 {{template "content" .}}
 </body>
 {{template "dark-mode-switch-script" .}}
+{{template "hx-event" .}}
 </html>
 
 {{define "navigation"}}
@@ -153,5 +154,25 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        document.body.addEventListener("cart-updated",
+            function (evt) {
+                alert("cart updated")
+            }
+        )
+    </script>
+{{end}}
+
+{{define "hx-event"}}
+    <script type="text/javascript">
+        htmx.logAll()
+
+        document.body.addEventListener("myEvent",
+            function (evt) {
+                alert("cart updated")
+            }
+        )
     </script>
 {{end}}

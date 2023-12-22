@@ -10,3 +10,7 @@ type Layout struct {
 type LayoutPage struct {
 	Layout Layout
 }
+
+type Toast struct {
+	Message string
+}

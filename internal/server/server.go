@@ -45,6 +45,8 @@ func (s *Server) router() {
 	s.homeHandler.SetRoutes(r)
 	s.authenticationHandler.SetRoutes(r)
 	s.userHandler.SetRoutes(r)
+
+	s.e.GET("/event", s.homeHandler.Event)
 }
 
 func (s *Server) middleware() {
