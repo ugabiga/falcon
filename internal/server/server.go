@@ -17,6 +17,8 @@ type Server struct {
 	authenticationHandler *handler.AuthenticationHandler
 	userHandler           *handler.UserHandler
 	errorHandler          *handler.ErrorHandler
+	tradingAccountHandler *handler.TradingAccountHandler
+	taskHandler           *handler.TaskHandler
 }
 
 func NewServer(
@@ -25,6 +27,8 @@ func NewServer(
 	authenticationHandler *handler.AuthenticationHandler,
 	userHandler *handler.UserHandler,
 	errorHandler *handler.ErrorHandler,
+	tradingAccountHandler *handler.TradingAccountHandler,
+	taskHandler *handler.TaskHandler,
 ) *Server {
 	return &Server{
 		e:                     echo.New(),
@@ -33,6 +37,8 @@ func NewServer(
 		authenticationHandler: authenticationHandler,
 		userHandler:           userHandler,
 		errorHandler:          errorHandler,
+		tradingAccountHandler: tradingAccountHandler,
+		taskHandler:           taskHandler,
 	}
 }
 
@@ -45,6 +51,8 @@ func (s *Server) router() {
 	s.homeHandler.SetRoutes(r)
 	s.authenticationHandler.SetRoutes(r)
 	s.userHandler.SetRoutes(r)
+	s.tradingAccountHandler.SetRoutes(r)
+	s.taskHandler.SetRoutes(r)
 
 	s.e.GET("/event", s.homeHandler.Event)
 }
