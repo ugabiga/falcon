@@ -78,7 +78,9 @@ func (s TradingAccountService) Create(
 func (s TradingAccountService) Get(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
 	return s.db.TradingAccount.Query().Where(
 		tradingaccount.UserIDEQ(userID),
-	).All(ctx)
+	).
+		Order(ent.Desc(tradingaccount.FieldID)).
+		All(ctx)
 }
 
 func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID int) (*ent.TradingAccount, error) {
@@ -191,5 +193,5 @@ func (s TradingAccountService) encrypt(credential string) (string, error) {
 
 func (s TradingAccountService) availableIP() (string, error) {
 	// TODO : implement
-	return "", nil
+	return "192.168.0.1", nil
 }

@@ -17,6 +17,13 @@ type Toast struct {
 	Message string `json:"message"`
 }
 
+func NewEvent(c echo.Context, name string, data interface{}) {
+	resp := Event{
+		name: data,
+	}
+	c.Response().Header().Set("Hx-Trigger", toJSONStr(resp))
+}
+
 func NewToastEvent(c echo.Context, t, m string) {
 	resp := Event{
 		EventShowToast: Toast{
