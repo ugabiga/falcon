@@ -41,6 +41,11 @@ type TaskHistory struct {
 	Task      *Task     `json:"task"`
 }
 
+type TaskIndex struct {
+	SelectedTradingAccount *TradingAccount   `json:"selectedTradingAccount"`
+	TradingAccounts        []*TradingAccount `json:"tradingAccounts"`
+}
+
 type TradingAccount struct {
 	ID         string    `json:"id"`
 	UserID     string    `json:"userID"`
@@ -52,11 +57,6 @@ type TradingAccount struct {
 	CreatedAt  time.Time `json:"createdAt"`
 	User       *User     `json:"user"`
 	Tasks      []*Task   `json:"tasks"`
-}
-
-type TradingAccountWithTasks struct {
-	SelectedTradingAccount *TradingAccount   `json:"selectedTradingAccount"`
-	TradingAccounts        []*TradingAccount `json:"tradingAccounts"`
 }
 
 type UpdateUserInput struct {

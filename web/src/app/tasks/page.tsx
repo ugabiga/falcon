@@ -3,11 +3,11 @@
 import {TaskTable} from "@/app/tasks/table";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useQuery} from "@apollo/client";
-import {GetTradingAccountWithTasksDocument} from "@/graph/generated/generated";
 import {useState} from "react";
+import {GetTaskIndexDocument} from "@/graph/generated/generated";
 
 export default function Tasks() {
-    const {data, loading, refetch} = useQuery(GetTradingAccountWithTasksDocument)
+    const {data, loading, refetch} = useQuery(GetTaskIndexDocument)
     const [selectedTradingAccountId, setSelectedTradingAccountId] = useState<string | null>(null)
 
     if (loading) {
@@ -18,7 +18,7 @@ export default function Tasks() {
         return <div>No Data</div>
     }
 
-    if (!data.tradingAccountsWithTasks.selectedTradingAccount) {
+    if (!data.taskIndex?.selectedTradingAccount) {
         return <div>No Trading Account Selected</div>
     }
 
@@ -29,11 +29,11 @@ export default function Tasks() {
             <div className={"w-full flex space-x-2"}>
                 <div className={"flex-grow"}></div>
                 <div>
-                    <Select defaultValue={data.tradingAccountsWithTasks.selectedTradingAccount?.id}
+                    <Select defaultValue={data.taskIndex.selectedTradingAccount?.id}
                             onValueChange={(value) => {
                                 setSelectedTradingAccountId(value)
                                 refetch({
-                                    id: value
+                                    tradingAccountID: value
                                 }).then(() => data)
                             }}
                     >
@@ -42,7 +42,7 @@ export default function Tasks() {
                         </SelectTrigger>
                         <SelectContent>
                             {
-                                data.tradingAccountsWithTasks.tradingAccounts?.map((tradingAccount) => {
+                                data.taskIndex.tradingAccounts?.map((tradingAccount) => {
                                     return (
                                         <SelectItem key={tradingAccount.id} value={tradingAccount.id}>
                                             {tradingAccount.identifier}
@@ -57,7 +57,7 @@ export default function Tasks() {
 
             <div className="mt-6">
                 {/*@ts-ignore*/}
-                <TaskTable tasks={data.tradingAccountsWithTasks.selectedTradingAccount?.tasks}/>
+                <TaskTable tasks={data.taskIndex.selectedTradingAccount?.tasks}/>
             </div>
         </main>
     )

@@ -55,11 +55,10 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Tasks                    func(childComplexity int, tradingAccountID *string) int
-		TradingAccounts          func(childComplexity int) int
-		TradingAccountsWithTasks func(childComplexity int, id *string) int
-		User                     func(childComplexity int) int
-		Users                    func(childComplexity int, where UserWhereInput) int
+		TaskIndex       func(childComplexity int, tradingAccountID *string) int
+		TradingAccounts func(childComplexity int) int
+		User            func(childComplexity int) int
+		Users           func(childComplexity int, where UserWhereInput) int
 	}
 
 	Task struct {
@@ -84,6 +83,11 @@ type ComplexityRoot struct {
 		UpdatedAt func(childComplexity int) int
 	}
 
+	TaskIndex struct {
+		SelectedTradingAccount func(childComplexity int) int
+		TradingAccounts        func(childComplexity int) int
+	}
+
 	TradingAccount struct {
 		CreatedAt  func(childComplexity int) int
 		Currency   func(childComplexity int) int
@@ -95,11 +99,6 @@ type ComplexityRoot struct {
 		UpdatedAt  func(childComplexity int) int
 		User       func(childComplexity int) int
 		UserID     func(childComplexity int) int
-	}
-
-	TradingAccountWithTasks struct {
-		SelectedTradingAccount func(childComplexity int) int
-		TradingAccounts        func(childComplexity int) int
 	}
 
 	User struct {
@@ -225,17 +224,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(UpdateUserInput)), true
 
-	case "Query.tasks":
-		if e.complexity.Query.Tasks == nil {
+	case "Query.taskIndex":
+		if e.complexity.Query.TaskIndex == nil {
 			break
 		}
 
-		args, err := ec.field_Query_tasks_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_taskIndex_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Tasks(childComplexity, args["tradingAccountId"].(*string)), true
+		return e.complexity.Query.TaskIndex(childComplexity, args["tradingAccountID"].(*string)), true
 
 	case "Query.tradingAccounts":
 		if e.complexity.Query.TradingAccounts == nil {
@@ -243,18 +242,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.TradingAccounts(childComplexity), true
-
-	case "Query.tradingAccountsWithTasks":
-		if e.complexity.Query.TradingAccountsWithTasks == nil {
-			break
-		}
-
-		args, err := ec.field_Query_tradingAccountsWithTasks_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.TradingAccountsWithTasks(childComplexity, args["id"].(*string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -387,6 +374,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TaskHistory.UpdatedAt(childComplexity), true
 
+	case "TaskIndex.selectedTradingAccount":
+		if e.complexity.TaskIndex.SelectedTradingAccount == nil {
+			break
+		}
+
+		return e.complexity.TaskIndex.SelectedTradingAccount(childComplexity), true
+
+	case "TaskIndex.tradingAccounts":
+		if e.complexity.TaskIndex.TradingAccounts == nil {
+			break
+		}
+
+		return e.complexity.TaskIndex.TradingAccounts(childComplexity), true
+
 	case "TradingAccount.createdAt":
 		if e.complexity.TradingAccount.CreatedAt == nil {
 			break
@@ -456,20 +457,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TradingAccount.UserID(childComplexity), true
-
-	case "TradingAccountWithTasks.selectedTradingAccount":
-		if e.complexity.TradingAccountWithTasks.SelectedTradingAccount == nil {
-			break
-		}
-
-		return e.complexity.TradingAccountWithTasks.SelectedTradingAccount(childComplexity), true
-
-	case "TradingAccountWithTasks.tradingAccounts":
-		if e.complexity.TradingAccountWithTasks.TradingAccounts == nil {
-			break
-		}
-
-		return e.complexity.TradingAccountWithTasks.TradingAccounts(childComplexity), true
 
 	case "User.authentications":
 		if e.complexity.User.Authentications == nil {
@@ -607,7 +594,12 @@ enum AuthenticationProvider {
 }
 `, BuiltIn: false},
 	{Name: "api/graph/task.graphql", Input: `extend type Query {
-    tasks(tradingAccountId: ID): [Task!]
+    taskIndex(tradingAccountID: ID): TaskIndex
+}
+
+type TaskIndex{
+    selectedTradingAccount: TradingAccount
+    tradingAccounts: [TradingAccount!]
 }
 
 type Task {
@@ -635,7 +627,6 @@ type Task {
 `, BuiltIn: false},
 	{Name: "api/graph/tradingaccount.graphql", Input: `extend type Query {
     tradingAccounts: [TradingAccount!]
-    tradingAccountsWithTasks(id: ID): TradingAccountWithTasks!
 }
 
 extend type Mutation {
@@ -654,12 +645,6 @@ extend type Mutation {
     ): Boolean!
     deleteTradingAccount(id: ID!): Boolean!
 }
-
-type TradingAccountWithTasks{
-    selectedTradingAccount: TradingAccount
-    tradingAccounts: [TradingAccount!]
-}
-
 
 type TradingAccount {
     id: ID!

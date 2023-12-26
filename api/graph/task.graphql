@@ -1,5 +1,10 @@
 extend type Query {
-    tasks(tradingAccountId: ID): [Task!]
+    taskIndex(tradingAccountID: ID): TaskIndex
+}
+
+type TaskIndex{
+    selectedTradingAccount: TradingAccount
+    tradingAccounts: [TradingAccount!]
 }
 
 type Task {

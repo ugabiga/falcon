@@ -1,10 +1,30 @@
-query GetTask ($tradingAccountID: ID!) {
-    tasks(tradingAccountId: $tradingAccountID){
-        id
-        tradingAccountID
-        cron
-        nextExecutionTime
-        isActive
-        type
+query GetTaskIndex($tradingAccountID: ID){
+    taskIndex(tradingAccountID: $tradingAccountID){
+        selectedTradingAccount {
+            id
+            exchange
+            currency
+            ip
+            identifier
+            tasks {
+                id
+                cron
+                nextExecutionTime
+                isActive
+            }
+        }
+        tradingAccounts {
+            id
+            exchange
+            currency
+            ip
+            identifier
+            tasks {
+                id
+                cron
+                nextExecutionTime
+                isActive
+            }
+        }
     }
 }

@@ -5,27 +5,44 @@ package resolvers
 
 import (
 	"context"
-
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *queryResolver) Tasks(ctx context.Context, tradingAccountID *string) ([]*generated.Task, error) {
+func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
-	if tradingAccountID == nil {
-		tradingAccount, err := r.tradingAccountSrv.First(ctx, claim.UserID)
-		if err != nil {
-			return nil, err
-		}
 
-		tasks, err := r.taskSrv.GetByTradingAccount(ctx, tradingAccount.ID)
-		if err != nil {
-			return nil, err
-		}
-
-		return converter.ToTasks(tasks)
+	tradingAccounts, err := r.tradingAccountSrv.GetWithTask(
+		ctx,
+		claim.UserID,
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, nil
+	accounts, err := converter.ToTradingAccounts(tradingAccounts)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(accounts) == 0 {
+		return &generated.TaskIndex{}, nil
+	}
+
+	selectedAccount := accounts[0]
+
+	if tradingAccountID != nil {
+		for _, account := range accounts {
+			if account.ID == *tradingAccountID {
+				selectedAccount = account
+				break
+			}
+		}
+	}
+
+	return &generated.TaskIndex{
+		TradingAccounts:        accounts,
+		SelectedTradingAccount: selectedAccount,
+	}, nil
 }

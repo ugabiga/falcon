@@ -1,6 +1,5 @@
 extend type Query {
     tradingAccounts: [TradingAccount!]
-    tradingAccountsWithTasks(id: ID): TradingAccountWithTasks!
 }
 
 extend type Mutation {
@@ -19,12 +18,6 @@ extend type Mutation {
     ): Boolean!
     deleteTradingAccount(id: ID!): Boolean!
 }
-
-type TradingAccountWithTasks{
-    selectedTradingAccount: TradingAccount
-    tradingAccounts: [TradingAccount!]
-}
-
 
 type TradingAccount {
     id: ID!
