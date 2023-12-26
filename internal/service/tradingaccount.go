@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/AlekSi/pointer"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"golang.org/x/crypto/bcrypt"
@@ -94,37 +95,52 @@ func (s TradingAccountService) Update(
 	ctx context.Context,
 	tradingAccountID int,
 	userID int,
-	exchange string,
-	currency string,
-	Identifier string,
-	credential string,
-	phrase string,
+	exchange *string,
+	currency *string,
+	Identifier *string,
+	credential *string,
+	phrase *string,
 ) error {
-	if err := s.validateExchange(exchange); err != nil {
-		return err
+	if exchange == nil && currency == nil && Identifier == nil && credential == nil && phrase == nil {
+		return nil
 	}
 
-	if err := s.validateCurrency(currency); err != nil {
-		return err
+	if exchange != nil {
+		if err := s.validateExchange(pointer.GetString(exchange)); err != nil {
+			return err
+		}
 	}
 
-	encryptedCredential, err := s.encrypt(credential)
-	if err != nil {
-		return err
+	if currency != nil {
+		if err := s.validateCurrency(pointer.GetString(currency)); err != nil {
+			return err
+		}
 	}
 
 	updateQuery := s.db.TradingAccount.Update().
 		Where(
 			tradingaccount.IDEQ(tradingAccountID),
 			tradingaccount.UserIDEQ(userID),
-		).
-		SetExchange(exchange).
-		SetCurrency(currency).
-		SetIdentifier(Identifier).
-		SetCredential(encryptedCredential)
+		)
+	if exchange != nil {
+		updateQuery.SetExchange(pointer.GetString(exchange))
+	}
+	if currency != nil {
+		updateQuery.SetCurrency(pointer.GetString(currency))
+	}
+	if Identifier != nil {
+		updateQuery.SetIdentifier(pointer.GetString(Identifier))
+	}
+	if credential != nil {
+		encryptedCredential, err := s.encrypt(pointer.GetString(credential))
+		if err != nil {
+			return err
+		}
+		updateQuery.SetCredential(encryptedCredential)
+	}
 
-	if phrase != "" {
-		encryptedPhrase, err := s.encrypt(phrase)
+	if phrase != nil {
+		encryptedPhrase, err := s.encrypt(pointer.GetString(phrase))
 		if err != nil {
 			return err
 		}

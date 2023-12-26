@@ -1,0 +1,162 @@
+import {useMutation} from "@apollo/client";
+import {TradingAccount, UpdateTradingAccountDocument} from "@/graph/generated/generated";
+import {useState} from "react";
+import {useForm} from "react-hook-form";
+import * as z from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {useAppDispatch} from "@/store";
+import {refreshTradingAccount} from "@/store/tradingAccountSlice";
+
+export const EditTradingAccountFormSchema = z.object({
+    exchange: z
+        .string({
+            required_error: "Please enter a exchange",
+        }),
+    currency: z
+        .string({
+            required_error: "Please enter a currency",
+        }),
+    identifier: z
+        .string({
+            required_error: "Please enter a identifier",
+        }),
+    credential: z
+        .string({
+            required_error: "Please enter a credential",
+        }),
+})
+
+export function EditTradingAccount(
+    {tradingAccount}: { tradingAccount: TradingAccount }
+) {
+    const [updateTradingAccount] = useMutation(UpdateTradingAccountDocument);
+    const [openDialog, setOpenDialog] = useState(false)
+    const dispatch = useAppDispatch()
+
+    const form = useForm<z.infer<typeof EditTradingAccountFormSchema>>({
+        resolver: zodResolver(EditTradingAccountFormSchema),
+        defaultValues: {
+            exchange: tradingAccount.exchange,
+            currency: tradingAccount.currency,
+            identifier: tradingAccount.identifier,
+            credential: ""
+        },
+    })
+
+    function onSubmit(data: z.infer<typeof EditTradingAccountFormSchema>) {
+        updateTradingAccount({
+            variables: {
+                id: tradingAccount.id,
+                exchange: data.exchange,
+                currency: data.currency,
+                identifier: data.identifier,
+                credential: data.credential,
+            }
+        }).then(() => {
+            setOpenDialog(false)
+            form.reset()
+            dispatch(refreshTradingAccount(true))
+        })
+    }
+
+    return (
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+                <Button variant="outline">Edit</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <Form {...form}>
+                    <form className={"grid gap-2 py-4"}
+                          onSubmit={form.handleSubmit(onSubmit)}
+                    >
+                        <DialogHeader>
+                            <DialogTitle>Edit Trading Account</DialogTitle>
+                        </DialogHeader>
+
+                        <FormField
+                            control={form.control}
+                            name="exchange"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Exchange</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a Exchange"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="upbit">Upbit</SelectItem>
+                                            <SelectItem value="binance">Binance</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="currency"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Currency</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a currency"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="KRW">KRW</SelectItem>
+                                            <SelectItem value="USD">USD</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="identifier"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Identifier</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Identifier" {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="credential"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Credential</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Credential" {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Submit */}
+                        <DialogFooter className={"mt-4"}>
+                            <Button type="submit">Save changes</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    )
+}

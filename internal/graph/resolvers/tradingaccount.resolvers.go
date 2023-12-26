@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
@@ -32,8 +33,23 @@ func (r *mutationResolver) CreateTradingAccount(ctx context.Context, exchange st
 	return converter.ToTradingAccount(newTradingAccount)
 }
 
-func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string) (*generated.TradingAccount, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string, credential *string) (bool, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+	err := r.tradingAccountSrv.Update(
+		ctx,
+		str.New(id).ToIntDefault(0),
+		claim.UserID,
+		exchange,
+		currency,
+		identifier,
+		credential,
+		nil,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (r *mutationResolver) DeleteTradingAccount(ctx context.Context, id string) (bool, error) {

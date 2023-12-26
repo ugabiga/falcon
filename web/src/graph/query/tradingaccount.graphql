@@ -27,3 +27,19 @@ mutation CreateTradingAccount(
         ip
     }
 }
+
+mutation UpdateTradingAccount(
+    $id: ID!
+    $exchange: String
+    $currency: String
+    $identifier: String
+    $credential: String
+) {
+    updateTradingAccount(
+        id: $id
+        exchange: $exchange
+        currency: $currency
+        identifier: $identifier
+        credential: $credential
+    )
+}

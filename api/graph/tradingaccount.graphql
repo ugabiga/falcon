@@ -14,7 +14,8 @@ extend type Mutation {
         exchange: String
         currency: String
         identifier: String
-    ): TradingAccount!
+        credential: String
+    ): Boolean!
     deleteTradingAccount(id: ID!): Boolean!
 }
 

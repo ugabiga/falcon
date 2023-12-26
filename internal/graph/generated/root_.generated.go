@@ -50,7 +50,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateTradingAccount func(childComplexity int, exchange string, currency string, identifier string, credential string) int
 		DeleteTradingAccount func(childComplexity int, id string) int
-		UpdateTradingAccount func(childComplexity int, id string, exchange *string, currency *string, identifier *string) int
+		UpdateTradingAccount func(childComplexity int, id string, exchange *string, currency *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
 
@@ -204,7 +204,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(string), args["exchange"].(*string), args["currency"].(*string), args["identifier"].(*string)), true
+		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(string), args["exchange"].(*string), args["currency"].(*string), args["identifier"].(*string), args["credential"].(*string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -600,7 +600,8 @@ extend type Mutation {
         exchange: String
         currency: String
         identifier: String
-    ): TradingAccount!
+        credential: String
+    ): Boolean!
     deleteTradingAccount(id: ID!): Boolean!
 }
 

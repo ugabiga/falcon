@@ -1,14 +1,6 @@
 "use client";
 
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,25 +12,15 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import {zodResolver} from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription, DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
 
-import {CreateTradingAccountDocument, GetTradingAccountsDocument, TradingAccount} from "@/graph/generated/generated";
-import {useMutation, useQuery} from "@apollo/client";
+import {GetTradingAccountsDocument, TradingAccount} from "@/graph/generated/generated";
+import {useQuery} from "@apollo/client";
 import {Button} from "@/components/ui/button";
-import {useState} from "react";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {useForm} from "react-hook-form";
-import {Input} from "@/components/ui/input";
+import {useEffect} from "react";
+import {AddTradingAccount} from "@/app/tradingaccounts/add";
+import {EditTradingAccount} from "@/app/tradingaccounts/edit";
+import {useAppDispatch, useAppSelector} from "@/store";
+import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
 
 function camelize(str: string) {
     return str.replace(/^\w|[A-Z]|\b\w/g, function (word, index) {
@@ -47,9 +29,20 @@ function camelize(str: string) {
 }
 
 export default function TradingAccounts() {
-    const {data, loading} = useQuery(GetTradingAccountsDocument);
-    const [openAdd, setOpenAdd] = useState(false)
-    const [openImport, setOpenImport] = useState(false)
+    const {data, loading, refetch} = useQuery(GetTradingAccountsDocument);
+    const tradingAccount = useAppSelector((state) => state.tradingAccount);
+    const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        if (tradingAccount?.refresh) {
+            console.log(tradingAccount)
+            refetch()
+                .then(r => data)
+                .then(r => {
+                    dispatch(refreshTradingAccount(false))
+                })
+        }
+    }, [tradingAccount])
 
     if (loading || !data) {
         return <div>Loading...</div>;
@@ -72,143 +65,40 @@ export default function TradingAccounts() {
     )
 }
 
-function AddTradingAccount() {
-    const [createTradingAccount] = useMutation(CreateTradingAccountDocument);
-    const [openDialog, setOpenDialog] = useState(false)
-
-    const formSchema = z.object({
-        exchange: z
-            .string({
-                required_error: "Please enter a exchange",
-            })
-            .min(1, {
-                message: "Please enter a exchange",
-            }),
-        currency: z
-            .string({
-                required_error: "Please enter a currency",
-            })
-            .min(1, {
-                message: "Please enter a currency",
-            }),
-        identifier: z
-            .string({
-                required_error: "Please enter a identifier",
-            })
-            .min(1, {
-                message: "Please enter a identifier",
-            }),
-        credential: z
-            .string({
-                required_error: "Please enter a credential",
-            })
-            .min(1, {
-                message: "Please enter a credential",
-            }),
-    })
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            exchange: "",
-            currency: "",
-            identifier: "",
-            credential: "",
-        },
-    })
-
-    function onSubmit(data: z.infer<typeof formSchema>) {
-        createTradingAccount({
-            variables: {
-                exchange: data.exchange,
-                currency: data.currency,
-                identifier: data.identifier,
-                credential: data.credential,
-            }
-        }).then(() => {
-            setOpenDialog(false)
-            form.reset()
-        })
-    }
-
+function TradingAccountTable({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
     return (
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-            <DialogTrigger asChild>
-                <Button variant="outline">Add</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <Form {...form}>
-                    <form className={"grid gap-2 py-4"}
-                          onSubmit={form.handleSubmit(onSubmit)}
-                    >
-                        <DialogHeader>
-                            <DialogTitle>Add Trading Account</DialogTitle>
-                        </DialogHeader>
-
-                        <FormField
-                            control={form.control}
-                            name="exchange"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Exchange</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="exchange" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="currency"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Currency</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Currency" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="identifier"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Identifier</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="identifier" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="credential"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Credential</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="credential" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Submit */}
-                        <DialogFooter className={"mt-4"}>
-                            <Button type="submit">Save changes</Button>
-                        </DialogFooter>
-                    </form>
-                </Form>
-            </DialogContent>
-        </Dialog>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="w-[100px]">Exchange</TableHead>
+                    <TableHead>Currency</TableHead>
+                    <TableHead>Identifier</TableHead>
+                    <TableHead>IP</TableHead>
+                    <TableHead>Action</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {
+                    tradingAccounts?.map((tradingAccount) => (
+                        <TableRow key={tradingAccount.id}>
+                            <TableCell className="font-medium">{camelize(tradingAccount.exchange)}</TableCell>
+                            <TableCell>{tradingAccount.currency}</TableCell>
+                            <TableCell>{tradingAccount.identifier}</TableCell>
+                            <TableCell>{tradingAccount.ip}</TableCell>
+                            <TableCell>
+                                <EditTradingAccount tradingAccount={tradingAccount}/>
+                            </TableCell>
+                        </TableRow>
+                    ))
+                    ??
+                    <TableRow>
+                        <TableCell className="font-medium">No trading accounts found</TableCell>
+                    </TableRow>
+                }
+            </TableBody>
+        </Table>
     )
+
 }
 
 function ClearTradingAccountDialog() {
@@ -234,45 +124,6 @@ function ClearTradingAccountDialog() {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    )
-
-}
-
-function TradingAccountTable({
-                                 tradingAccounts
-                             }: {
-    tradingAccounts?: TradingAccount[]
-}) {
-
-    return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-[100px]">Exchange</TableHead>
-                    <TableHead>Currency</TableHead>
-                    <TableHead>Identifier</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Action</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {
-                    tradingAccounts?.map((tradingAccount) => (
-                        <TableRow key={tradingAccount.id}>
-                            <TableCell className="font-medium">{camelize(tradingAccount.exchange)}</TableCell>
-                            <TableCell>{tradingAccount.currency}</TableCell>
-                            <TableCell>{tradingAccount.identifier}</TableCell>
-                            <TableCell>{tradingAccount.ip}</TableCell>
-                            <TableCell>Action</TableCell>
-                        </TableRow>
-                    ))
-                    ??
-                    <TableRow>
-                        <TableCell className="font-medium">No trading accounts found</TableCell>
-                    </TableRow>
-                }
-            </TableBody>
-        </Table>
     )
 
 }

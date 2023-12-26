@@ -21,7 +21,7 @@ import (
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTradingAccount(ctx context.Context, exchange string, currency string, identifier string, credential string) (*TradingAccount, error)
-	UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string) (*TradingAccount, error)
+	UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string, credential *string) (bool, error)
 	DeleteTradingAccount(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
@@ -130,6 +130,15 @@ func (ec *executionContext) field_Mutation_updateTradingAccount_args(ctx context
 		}
 	}
 	args["identifier"] = arg3
+	var arg4 *string
+	if tmp, ok := rawArgs["credential"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["credential"] = arg4
 	return args, nil
 }
 
@@ -348,7 +357,7 @@ func (ec *executionContext) _Mutation_updateTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(string), fc.Args["exchange"].(*string), fc.Args["currency"].(*string), fc.Args["identifier"].(*string))
+		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(string), fc.Args["exchange"].(*string), fc.Args["currency"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -360,9 +369,9 @@ func (ec *executionContext) _Mutation_updateTradingAccount(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*TradingAccount)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNTradingAccount2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccount(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateTradingAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -372,29 +381,7 @@ func (ec *executionContext) fieldContext_Mutation_updateTradingAccount(ctx conte
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_TradingAccount_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_TradingAccount_userID(ctx, field)
-			case "exchange":
-				return ec.fieldContext_TradingAccount_exchange(ctx, field)
-			case "currency":
-				return ec.fieldContext_TradingAccount_currency(ctx, field)
-			case "ip":
-				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TradingAccount_createdAt(ctx, field)
-			case "user":
-				return ec.fieldContext_TradingAccount_user(ctx, field)
-			case "tasks":
-				return ec.fieldContext_TradingAccount_tasks(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TradingAccount", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
