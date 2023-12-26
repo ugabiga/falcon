@@ -2,8 +2,11 @@ package resolvers
 
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/rs/zerolog"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/service"
+	"os"
+	"time"
 )
 
 // This file will not be regenerated automatically.
@@ -12,13 +15,24 @@ import (
 
 type Resolver struct {
 	userSrv *service.UserService
+	logger  zerolog.Logger
 }
 
 func NewResolver(
 	userSrv *service.UserService,
 ) *handler.Server {
+
+	logger := zerolog.New(
+		zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
+	).Level(zerolog.TraceLevel).
+		With().
+		Timestamp().
+		Caller().
+		Logger()
+
 	resolver := &Resolver{
 		userSrv: userSrv,
+		logger:  logger,
 	}
 
 	graphSrv := handler.NewDefaultServer(

@@ -19,6 +19,7 @@ gen:
 
 generate:
 	@go run github.com/99designs/gqlgen generate
+	@cd web && yarn codegen
 
 css-watch:
 	@cd web && yarn watch:css

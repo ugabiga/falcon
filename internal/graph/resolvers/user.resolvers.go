@@ -5,39 +5,41 @@ package resolvers
 
 import (
 	"context"
-	"os"
-	"time"
 
-	"github.com/rs/zerolog"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
-	"github.com/ugabiga/falcon/internal/service"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *queryResolver) User(ctx context.Context, id string, withOptions generated.UserWithOptions) (*generated.User, error) {
-	logger := zerolog.New(
-		zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
-	).Level(zerolog.TraceLevel).With().Timestamp().Caller().Logger()
-	logger.Printf("User query with id: %s", id)
-	logger.Printf("User query with options: %+v", withOptions)
+func (r *mutationResolver) UpdateUser(ctx context.Context, input generated.UpdateUserInput) (*generated.User, error) {
+	r.logger.Printf("Input: %+v", input)
+	claim := helper.MustJWTClaimInResolver(ctx)
 
-	dummy, err := r.userSrv.CreateDummy(ctx,
-		converter.StringToInt(id),
-		service.UserWithOptions{
-			WithAuthentications: withOptions.WithAuthentications,
-			WithTradingAccounts: withOptions.WithTradingAccounts,
+	updateUser, err := r.userSrv.Update(
+		ctx,
+		claim.UserID,
+		&ent.User{
+			Name:     input.Name,
+			Timezone: input.Timezone,
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := converter.ToUser(dummy)
+	return converter.ToUser(updateUser)
+}
+
+func (r *queryResolver) User(ctx context.Context) (*generated.User, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+
+	user, err := r.userSrv.GetByID(ctx, claim.UserID)
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+
+	return converter.ToUser(user)
 }
 
 func (r *queryResolver) Users(ctx context.Context, where generated.UserWhereInput) ([]*generated.User, error) {
@@ -52,7 +54,11 @@ func (r *queryResolver) Users(ctx context.Context, where generated.UserWhereInpu
 	return converter.ToUsers(users)
 }
 
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

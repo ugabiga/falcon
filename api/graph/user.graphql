@@ -3,8 +3,13 @@ directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | I
 directive @goModel(model: String, models: [String!]) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Query {
-    user(id: ID!, withOptions: UserWithOptions!): User!
+    user: User!
     users(where: UserWhereInput!): [User!]!
+}
+
+type Mutation {
+    updateUser(input: UpdateUserInput!): User!
+
 }
 
 type User {
@@ -20,6 +25,11 @@ type User {
 input UserWithOptions {
     withTradingAccounts: Boolean!
     withAuthentications: Boolean!
+}
+
+input UpdateUserInput {
+    name: String!
+    timezone: String!
 }
 
 """

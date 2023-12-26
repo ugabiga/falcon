@@ -1,9 +1,21 @@
-query GetUser($id: ID!) {
-    user(id: $id, withOptions:{
-        withTradingAccounts: false
-        withAuthentications: false
-    }){
+query GetUser {
+    user {
         id
         name
+        timezone
+    }
+}
+
+mutation UpdateUser (
+    $name: String!
+    $timezone: String!
+) {
+    updateUser(input: {
+        name: $name
+        timezone: $timezone
+    }) {
+        id
+        name
+        timezone
     }
 }

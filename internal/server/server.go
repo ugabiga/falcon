@@ -1,11 +1,13 @@
 package server
 
 import (
+	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/ugabiga/falcon/internal/handler"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/service"
 )
@@ -19,6 +21,7 @@ type Server struct {
 	errorHandler          *handler.ErrorHandler
 	tradingAccountHandler *handler.TradingAccountHandler
 	taskHandler           *handler.TaskHandler
+	graphServer           *gqlHandler.Server
 }
 
 func NewServer(
@@ -29,6 +32,7 @@ func NewServer(
 	errorHandler *handler.ErrorHandler,
 	tradingAccountHandler *handler.TradingAccountHandler,
 	taskHandler *handler.TaskHandler,
+	graphServer *gqlHandler.Server,
 ) *Server {
 	return &Server{
 		e:                     echo.New(),
@@ -39,6 +43,7 @@ func NewServer(
 		errorHandler:          errorHandler,
 		tradingAccountHandler: tradingAccountHandler,
 		taskHandler:           taskHandler,
+		graphServer:           graphServer,
 	}
 }
 
@@ -54,6 +59,14 @@ func (s *Server) router() {
 	s.tradingAccountHandler.SetRoutes(r)
 	s.taskHandler.SetRoutes(r)
 
+	s.e.POST("/graph", func(c echo.Context) error {
+		ctx := helper.NewJWTClaimContext(c)
+		r := c.Request()
+		r = r.WithContext(ctx)
+
+		s.graphServer.ServeHTTP(c.Response(), r)
+		return nil
+	})
 	s.e.GET("/event", s.homeHandler.Event)
 }
 

@@ -2,8 +2,10 @@
 
 
 import {useTheme} from "next-themes";
+import {cn} from "@/lib/utils"
 import {
     NavigationMenu,
+    NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
     navigationMenuTriggerStyle
@@ -11,54 +13,92 @@ import {
 import Link from "next/link";
 import {Toggle} from "@/components/ui/toggle";
 import {Moon, Sun} from "lucide-react";
-import {User} from "@/graph/generated/generated";
-import React, {useState} from "react";
-import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button";
-import {useAppSelector} from "@/store";
-import {Spacer} from "@/components/ui/Spacer";
+import React, {useEffect, useState} from "react";
+import {icon} from "@/components/styles";
+
 
 export function NavigationBar() {
     const {theme, setTheme} = useTheme()
     const [isClient, setIsClient] = useState(false)
-    const user = useAppSelector(state => state.user)
 
+    // Fix : Content does not match server-rendered HTML
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
 
     return (
         <div className="md:max-w-[1200px] overflow-auto w-full mx-auto flex justify-between">
             <NavigationMenu>
                 <NavigationMenuList>
-                    <Link href={"/"} legacyBehavior passHref>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                            Home
-                        </NavigationMenuLink>
-                    </Link>
+                    <NavigationMenuItem>
+                        <Link href="/" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                Home
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/users" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                User
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/order" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                Order
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/settings" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                Settings
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <Link href="/tutorial" legacyBehavior passHref>
+                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                Tutorial
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
-
-            <Spacer/>
-
-            <div className={"flex items-center"}>
-                {
-                    user.isLogged
-                        ? <Button>Logout</Button>
-                        : <Button>Login</Button>
-                }
-                {/*<Label>Hi, {user.name}</Label>*/}
-                {/*{*/}
-                {/*    user.isLogged*/}
-                {/*        ? <Label>{user.name}</Label>*/}
-                {/*        : <Button>Login</Button>*/}
-                {/*}*/}
-            </div>
-
-            <Toggle onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-                {
-                    isClient && theme === "dark"
-                        ? <Sun className={"h-[1.2rem] w-[1.2rem transition-all"}/>
-                        : <Moon className={"h-[1.2rem] w-[1.2rem transition-all"}/>
-                }
-            </Toggle>
+            {
+                isClient
+                && <Toggle onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                    {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
+                </Toggle>
+            }
         </div>
     )
 }
+
+const ListItem = React.forwardRef<
+    React.ElementRef<"a">,
+    React.ComponentPropsWithoutRef<"a">
+>(({className, title, children, ...props}, ref) => {
+    return (
+        <li>
+            <NavigationMenuLink asChild>
+                <a
+                    ref={ref}
+                    className={cn(
+                        "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                        className
+                    )}
+                    {...props}
+                >
+                    <div className="text-sm font-medium leading-none">{title}</div>
+                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                        {children}
+                    </p>
+                </a>
+            </NavigationMenuLink>
+        </li>
+    )
+})
+ListItem.displayName = "ListItem"

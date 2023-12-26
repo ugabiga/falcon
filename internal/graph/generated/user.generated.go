@@ -18,14 +18,32 @@ import (
 
 // region    ************************** generated!.gotpl **************************
 
+type MutationResolver interface {
+	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
+}
 type QueryResolver interface {
-	User(ctx context.Context, id string, withOptions UserWithOptions) (*User, error)
+	User(ctx context.Context) (*User, error)
 	Users(ctx context.Context, where UserWhereInput) ([]*User, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 UpdateUserInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateUserInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUpdateUserInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -39,30 +57,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 UserWithOptions
-	if tmp, ok := rawArgs["withOptions"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("withOptions"))
-		arg1, err = ec.unmarshalNUserWithOptions2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUserWithOptions(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["withOptions"] = arg1
 	return args, nil
 }
 
@@ -89,6 +83,77 @@ func (ec *executionContext) field_Query_users_args(ctx context.Context, rawArgs 
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["input"].(UpdateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "timezone":
+				return ec.fieldContext_User_timezone(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "authentications":
+				return ec.fieldContext_User_authentications(ctx, field)
+			case "tradingAccounts":
+				return ec.fieldContext_User_tradingAccounts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_user(ctx, field)
 	if err != nil {
@@ -103,7 +168,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().User(rctx, fc.Args["id"].(string), fc.Args["withOptions"].(UserWithOptions))
+		return ec.resolvers.Query().User(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -145,17 +210,6 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
 	}
 	return fc, nil
 }
@@ -704,6 +758,37 @@ func (ec *executionContext) fieldContext_User_tradingAccounts(ctx context.Contex
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj interface{}) (UpdateUserInput, error) {
+	var it UpdateUserInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			it.Name, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "timezone":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
+			it.Timezone, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, obj interface{}) (UserWhereInput, error) {
 	var it UserWhereInput
 	asMap := map[string]interface{}{}
@@ -1230,6 +1315,45 @@ func (ec *executionContext) unmarshalInputUserWithOptions(ctx context.Context, o
 
 // region    **************************** object.gotpl ****************************
 
+var mutationImplementors = []string{"Mutation"}
+
+func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, mutationImplementors)
+	ctx = graphql.WithFieldContext(ctx, &graphql.FieldContext{
+		Object: "Mutation",
+	})
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
+			Object: field.Name,
+			Field:  field,
+		})
+
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Mutation")
+		case "updateUser":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateUser(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -1422,6 +1546,11 @@ func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel
 	return res
 }
 
+func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUpdateUserInput(ctx context.Context, v interface{}) (UpdateUserInput, error) {
+	res, err := ec.unmarshalInputUpdateUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUser(ctx context.Context, sel ast.SelectionSet, v User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
@@ -1488,11 +1617,6 @@ func (ec *executionContext) unmarshalNUserWhereInput2githubᚗcomᚋugabigaᚋfa
 func (ec *executionContext) unmarshalNUserWhereInput2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUserWhereInput(ctx context.Context, v interface{}) (*UserWhereInput, error) {
 	res, err := ec.unmarshalInputUserWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUserWithOptions2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUserWithOptions(ctx context.Context, v interface{}) (UserWithOptions, error) {
-	res, err := ec.unmarshalInputUserWithOptions(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOTime2ᚕᚖtimeᚐTimeᚄ(ctx context.Context, v interface{}) ([]*time.Time, error) {

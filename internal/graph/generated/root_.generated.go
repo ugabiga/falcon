@@ -29,6 +29,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Mutation() MutationResolver
 	Query() QueryResolver
 }
 
@@ -46,8 +47,12 @@ type ComplexityRoot struct {
 		UserID     func(childComplexity int) int
 	}
 
+	Mutation struct {
+		UpdateUser func(childComplexity int, input UpdateUserInput) int
+	}
+
 	Query struct {
-		User  func(childComplexity int, id string, withOptions UserWithOptions) int
+		User  func(childComplexity int) int
 		Users func(childComplexity int, where UserWhereInput) int
 	}
 
@@ -161,17 +166,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Authentication.UserID(childComplexity), true
 
+	case "Mutation.updateUser":
+		if e.complexity.Mutation.UpdateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(UpdateUserInput)), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
 		}
 
-		args, err := ec.field_Query_user_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.User(childComplexity, args["id"].(string), args["withOptions"].(UserWithOptions)), true
+		return e.complexity.Query.User(childComplexity), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -424,6 +436,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUserWhereInput,
 		ec.unmarshalInputUserWithOptions,
 	)
@@ -438,6 +451,21 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 			first = false
 			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
 			data := ec._Query(ctx, rc.Operation.SelectionSet)
+			var buf bytes.Buffer
+			data.MarshalGQL(&buf)
+
+			return &graphql.Response{
+				Data: buf.Bytes(),
+			}
+		}
+	case ast.Mutation:
+		return func(ctx context.Context) *graphql.Response {
+			if !first {
+				return nil
+			}
+			first = false
+			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
+			data := ec._Mutation(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 
@@ -527,8 +555,13 @@ directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | I
 directive @goModel(model: String, models: [String!]) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Query {
-    user(id: ID!, withOptions: UserWithOptions!): User!
+    user: User!
     users(where: UserWhereInput!): [User!]!
+}
+
+type Mutation {
+    updateUser(input: UpdateUserInput!): User!
+
 }
 
 type User {
@@ -544,6 +577,11 @@ type User {
 input UserWithOptions {
     withTradingAccounts: Boolean!
     withAuthentications: Boolean!
+}
+
+input UpdateUserInput {
+    name: String!
+    timezone: String!
 }
 
 """
