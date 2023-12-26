@@ -11,25 +11,8 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useAppDispatch} from "@/store";
 import {refreshTradingAccount} from "@/store/tradingAccountSlice";
+import {EditTradingAccountFormSchema} from "@/app/tradingaccounts/form";
 
-export const EditTradingAccountFormSchema = z.object({
-    exchange: z
-        .string({
-            required_error: "Please enter a exchange",
-        }),
-    currency: z
-        .string({
-            required_error: "Please enter a currency",
-        }),
-    identifier: z
-        .string({
-            required_error: "Please enter a identifier",
-        }),
-    credential: z
-        .string({
-            required_error: "Please enter a credential",
-        }),
-})
 
 export function EditTradingAccount(
     {tradingAccount}: { tradingAccount: TradingAccount }

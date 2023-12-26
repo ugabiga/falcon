@@ -3,7 +3,7 @@ import {CreateTradingAccountDocument} from "@/graph/generated/generated";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
-import {TradingAccountFormSchema} from "@/app/tradingaccounts/form";
+import {AddTradingAccountFormSchema} from "@/app/tradingaccounts/form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -19,8 +19,8 @@ export function AddTradingAccount() {
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
 
-    const form = useForm<z.infer<typeof TradingAccountFormSchema>>({
-        resolver: zodResolver(TradingAccountFormSchema),
+    const form = useForm<z.infer<typeof AddTradingAccountFormSchema>>({
+        resolver: zodResolver(AddTradingAccountFormSchema),
         defaultValues: {
             exchange: "upbit",
             currency: "KRW",
@@ -29,7 +29,7 @@ export function AddTradingAccount() {
         },
     })
 
-    function onSubmit(data: z.infer<typeof TradingAccountFormSchema>) {
+    function onSubmit(data: z.infer<typeof AddTradingAccountFormSchema>) {
         createTradingAccount({
             variables: {
                 exchange: data.exchange,
