@@ -1,14 +1,33 @@
 "use client";
 
 import {TaskTable} from "@/app/tasks/table";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useQuery} from "@apollo/client";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {GetTaskIndexDocument} from "@/graph/generated/generated";
+import {TradingAccountSelector} from "@/app/tasks/selector";
+import {useAppSelector} from "@/store";
+import {useDispatch} from "react-redux";
+import {refreshTask} from "@/store/taskSlice";
+import {AddTask} from "@/app/tasks/add";
 
 export default function Tasks() {
     const {data, loading, refetch} = useQuery(GetTaskIndexDocument)
     const [selectedTradingAccountId, setSelectedTradingAccountId] = useState<string | null>(null)
+    const task = useAppSelector((state) => state.task)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (task?.refresh) {
+            refetch()
+                .then(r => data)
+                .then(r => {
+                    dispatch(refreshTask({
+                        refresh: false
+                    }))
+                })
+        }
+
+    }, [task]);
 
     if (loading) {
         return <div>Loading...</div>
@@ -26,32 +45,16 @@ export default function Tasks() {
         <main className="min-h-screen p-12">
             <h1 className="text-3xl font-bold">Tasks</h1>
 
-            <div className={"w-full flex space-x-2"}>
-                <div className={"flex-grow"}></div>
+            <div className={"mt-6 w-full flex space-x-2"}>
                 <div>
-                    <Select defaultValue={data.taskIndex.selectedTradingAccount?.id}
-                            onValueChange={(value) => {
-                                setSelectedTradingAccountId(value)
-                                refetch({
-                                    tradingAccountID: value
-                                }).then(() => data)
-                            }}
-                    >
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a Exchange"/>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {
-                                data.taskIndex.tradingAccounts?.map((tradingAccount) => {
-                                    return (
-                                        <SelectItem key={tradingAccount.id} value={tradingAccount.id}>
-                                            {tradingAccount.identifier}
-                                        </SelectItem>
-                                    )
-                                })
-                            }
-                        </SelectContent>
-                    </Select>
+                    {/*@ts-ignore*/}
+                    <TradingAccountSelector taskIndex={data.taskIndex}/>
+                </div>
+
+                <div className={"flex-grow"}></div>
+
+                <div>
+                    <AddTask/>
                 </div>
             </div>
 
