@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	pageRoot      = "web/src/page"
-	componentRoot = "web/src/component"
-	layoutPage    = "web/src/layout/index.html"
+	pageRoot      = "template/src/page"
+	componentRoot = "template/src/component"
+	layoutPage    = "template/src/layout/index.html"
 )
 
 func RenderPage(w http.ResponseWriter, data any, filenames ...string) error {

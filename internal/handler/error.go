@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
-	"github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/handler/model"
 	"net/http"
 )
@@ -34,17 +33,17 @@ func (h ErrorHandler) DebugErrorHandler(err error, c echo.Context) {
 	c.Logger().Error(err)
 
 	c.Response().WriteHeader(code)
-	if err := RenderPage(
-		c.Response().Writer,
-		ErrorIndex{
-			Layout: middleware.ExtractLayout(c),
-			Error: Error{
-				Code:    code,
-				Message: err.Error(),
-			},
-		},
-		"/error/index.html",
-	); err != nil {
-		c.Logger().Error(err)
-	}
+	//if err := RenderPage(
+	//	c.Response().Writer,
+	//	ErrorIndex{
+	//		Layout: middleware.ExtractLayout(c),
+	//		Error: Error{
+	//			Code:    code,
+	//			Message: err.Error(),
+	//		},
+	//	},
+	//	"/error/index.html",
+	//); err != nil {
+	//	c.Logger().Error(err)
+	//}
 }

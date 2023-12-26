@@ -43,7 +43,7 @@ func NewServer(
 }
 
 func (s *Server) router() {
-	s.e.Static("/static", "web/static")
+	s.e.Static("/static", "template/static")
 
 	s.e.HTTPErrorHandler = s.errorHandler.DebugErrorHandler
 
@@ -58,15 +58,23 @@ func (s *Server) router() {
 }
 
 func (s *Server) middleware() {
-
 	s.e.Use(middleware.Recover())
 	s.e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
 		Output: s.e.Logger.Output(),
 	}))
+	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS, echo.PATCH},
+		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposeHeaders:    []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
 		{Type: service.WhiteListTypeExact, Path: "/"},
+		{Type: service.WhiteListTypeExact, Path: "/auth/signin"},
 		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
 		{Type: service.WhiteListTypePrefix, Path: "/static"},
 	}))
@@ -78,6 +86,6 @@ func (s *Server) Run() error {
 	s.middleware()
 	s.router()
 
-	s.e.Logger.Fatal(s.e.Start(":3000"))
+	s.e.Logger.Fatal(s.e.Start(":8080"))
 	return nil
 }

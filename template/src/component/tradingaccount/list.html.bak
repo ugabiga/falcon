@@ -1,0 +1,32 @@
+{{- /*gotype: github.com/ugabiga/falcon/internal/handler.TradingAccountLoad*/ -}}
+{{ range .TradingAccounts }}
+<tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+    <td class="px-4 py-2">
+        {{.Exchange}}
+    </td>
+    <td class="px-4 py-2">
+        {{.Currency}}
+    </td>
+    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        {{.Identifier}}
+    </td>
+    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        {{.IP}}
+    </td>
+    <td class="px-6 py-4">
+        <button class="btn btn-link" onclick="edit_modal.showModal()">Edit</button>
+        <dialog id="edit_modal" class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Hello!</h3>
+                <p class="py-4">Press ESC key or click the button below to close</p>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <!-- if there is a button in form, it will close the modal -->
+                        <button class="btn">Close</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+    </td>
+</tr>
+{{end}}

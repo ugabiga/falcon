@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -9,9 +10,11 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
+	auth "github.com/ugabiga/falcon/internal/authentication"
 	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/authentication"
+	"golang.org/x/oauth2"
 	"strings"
 	"time"
 )
@@ -133,6 +136,7 @@ func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.Middlew
 		},
 	})
 }
+
 func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
 	secretKey := s.cfg.JWTSecretKey
 
@@ -168,6 +172,30 @@ func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
 		}
 	}
 
+}
+
+func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
+	p, err := s.provider(loginType)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := p.GetUserData(ctx, &oauth2.Token{
+		TokenType:    "Bearer",
+		AccessToken:  token,
+		RefreshToken: "",
+	})
+
+	return user, err
+}
+
+func (s AuthenticationService) provider(loginType string) (auth.OAuthProvider, error) {
+	switch loginType {
+	case "google":
+		return auth.NewGoogleProvider(s.cfg.GoogleClientID, s.cfg.GoogleClientSecret)
+	default:
+		return nil, errors.New("unknown login type")
+	}
 }
 
 func (s AuthenticationService) SignInOrSignUp(

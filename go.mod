@@ -12,6 +12,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/sessions v1.2.2
 	github.com/hashicorp/go-multierror v1.1.1
+	github.com/iancoleman/strcase v0.3.0
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo-jwt/v4 v4.2.0
 	github.com/labstack/echo/v4 v4.11.4
@@ -19,10 +20,12 @@ require (
 	github.com/markbates/goth v1.78.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/rs/zerolog v1.31.0
+	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.18.2
 	github.com/vektah/gqlparser/v2 v2.4.3-0.20220508162109-d3d9eb001575
 	go.uber.org/fx v1.20.1
 	golang.org/x/crypto v0.17.0
+	golang.org/x/oauth2 v0.15.0
 	golang.org/x/sync v0.5.0
 )
 
@@ -47,7 +50,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
-	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/matryer/moq v0.2.7 // indirect
@@ -77,7 +79,6 @@ require (
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
-	golang.org/x/oauth2 v0.15.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect

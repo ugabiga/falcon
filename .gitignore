@@ -37,3 +37,6 @@ go.work
 
 # web
 /web/node_modules/
+
+# template
+/template/node_modules/
