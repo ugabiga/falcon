@@ -52,16 +52,9 @@ export function NavigationBar() {
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <Link href="/settings" legacyBehavior passHref>
+                        <Link href="/tasks" legacyBehavior passHref>
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Settings
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <Link href="/tutorial" legacyBehavior passHref>
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Tutorial
+                                Tasks
                             </NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>

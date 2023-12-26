@@ -84,6 +84,25 @@ func (s TradingAccountService) Get(ctx context.Context, userID int) ([]*ent.Trad
 		All(ctx)
 }
 
+func (s TradingAccountService) GetWithTask(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
+	query := s.db.TradingAccount.Query().Where(
+		tradingaccount.UserIDEQ(userID),
+	)
+
+	return query.
+		Order(ent.Desc(tradingaccount.FieldID)).
+		WithTasks().
+		All(ctx)
+}
+
+func (s TradingAccountService) First(ctx context.Context, userID int) (*ent.TradingAccount, error) {
+	return s.db.TradingAccount.Query().Where(
+		tradingaccount.UserIDEQ(userID),
+	).
+		Order(ent.Desc(tradingaccount.FieldID)).
+		First(ctx)
+}
+
 func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID int) (*ent.TradingAccount, error) {
 	return s.db.TradingAccount.Query().Where(
 		tradingaccount.UserIDEQ(userID),

@@ -54,6 +54,11 @@ type TradingAccount struct {
 	Tasks      []*Task   `json:"tasks"`
 }
 
+type TradingAccountWithTasks struct {
+	SelectedTradingAccount *TradingAccount   `json:"selectedTradingAccount"`
+	TradingAccounts        []*TradingAccount `json:"tradingAccounts"`
+}
+
 type UpdateUserInput struct {
 	Name     string `json:"name"`
 	Timezone string `json:"timezone"`

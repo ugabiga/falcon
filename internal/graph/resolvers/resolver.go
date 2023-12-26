@@ -16,12 +16,14 @@ import (
 type Resolver struct {
 	userSrv           *service.UserService
 	tradingAccountSrv *service.TradingAccountService
+	taskSrv           *service.TaskService
 	logger            zerolog.Logger
 }
 
 func NewResolver(
 	userSrv *service.UserService,
 	tradingAccountSrv *service.TradingAccountService,
+	taskSrv *service.TaskService,
 ) *handler.Server {
 
 	logger := zerolog.New(
@@ -36,6 +38,7 @@ func NewResolver(
 		userSrv:           userSrv,
 		logger:            logger,
 		tradingAccountSrv: tradingAccountSrv,
+		taskSrv:           taskSrv,
 	}
 
 	graphSrv := handler.NewDefaultServer(

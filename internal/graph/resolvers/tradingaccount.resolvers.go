@@ -69,3 +69,40 @@ func (r *queryResolver) TradingAccounts(ctx context.Context) ([]*generated.Tradi
 
 	return converter.ToTradingAccounts(tradingAccounts)
 }
+
+func (r *queryResolver) TradingAccountsWithTasks(ctx context.Context, id *string) (*generated.TradingAccountWithTasks, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+
+	tradingAccounts, err := r.tradingAccountSrv.GetWithTask(
+		ctx,
+		claim.UserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	accounts, err := converter.ToTradingAccounts(tradingAccounts)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(accounts) == 0 {
+		return &generated.TradingAccountWithTasks{}, nil
+	}
+
+	selectedAccount := accounts[0]
+
+	if id != nil {
+		for _, account := range accounts {
+			if account.ID == *id {
+				selectedAccount = account
+				break
+			}
+		}
+	}
+
+	return &generated.TradingAccountWithTasks{
+		TradingAccounts:        accounts,
+		SelectedTradingAccount: selectedAccount,
+	}, nil
+}

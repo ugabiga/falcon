@@ -1,0 +1,10 @@
+query GetTask ($tradingAccountID: ID!) {
+    tasks(tradingAccountId: $tradingAccountID){
+        id
+        tradingAccountID
+        cron
+        nextExecutionTime
+        isActive
+        type
+    }
+}

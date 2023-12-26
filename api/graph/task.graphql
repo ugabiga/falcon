@@ -1,3 +1,7 @@
+extend type Query {
+    tasks(tradingAccountId: ID): [Task!]
+}
+
 type Task {
     id: ID!
     tradingAccountID: ID!

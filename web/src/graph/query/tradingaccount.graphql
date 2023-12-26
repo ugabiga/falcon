@@ -8,6 +8,45 @@ query GetTradingAccounts {
     }
 }
 
+query GetTradingAccountWithTasks($id: ID){
+    tradingAccountsWithTasks(id: $id) {
+        tradingAccounts {
+            id
+            exchange
+            currency
+            identifier
+            ip
+            tasks {
+                id
+                type
+                cron
+                nextExecutionTime
+                isActive
+                createdAt
+                updatedAt
+            }
+        }
+        selectedTradingAccount {
+            id
+            exchange
+            currency
+            identifier
+            ip
+            tasks {
+                id
+                type
+                cron
+                nextExecutionTime
+                isActive
+                createdAt
+                updatedAt
+            }
+        }
+
+    }
+
+}
+
 mutation CreateTradingAccount(
     $exchange: String!
     $currency: String!

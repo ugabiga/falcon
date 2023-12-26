@@ -55,9 +55,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		TradingAccounts func(childComplexity int) int
-		User            func(childComplexity int) int
-		Users           func(childComplexity int, where UserWhereInput) int
+		Tasks                    func(childComplexity int, tradingAccountID *string) int
+		TradingAccounts          func(childComplexity int) int
+		TradingAccountsWithTasks func(childComplexity int, id *string) int
+		User                     func(childComplexity int) int
+		Users                    func(childComplexity int, where UserWhereInput) int
 	}
 
 	Task struct {
@@ -93,6 +95,11 @@ type ComplexityRoot struct {
 		UpdatedAt  func(childComplexity int) int
 		User       func(childComplexity int) int
 		UserID     func(childComplexity int) int
+	}
+
+	TradingAccountWithTasks struct {
+		SelectedTradingAccount func(childComplexity int) int
+		TradingAccounts        func(childComplexity int) int
 	}
 
 	User struct {
@@ -218,12 +225,36 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(UpdateUserInput)), true
 
+	case "Query.tasks":
+		if e.complexity.Query.Tasks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tasks_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Tasks(childComplexity, args["tradingAccountId"].(*string)), true
+
 	case "Query.tradingAccounts":
 		if e.complexity.Query.TradingAccounts == nil {
 			break
 		}
 
 		return e.complexity.Query.TradingAccounts(childComplexity), true
+
+	case "Query.tradingAccountsWithTasks":
+		if e.complexity.Query.TradingAccountsWithTasks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tradingAccountsWithTasks_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TradingAccountsWithTasks(childComplexity, args["id"].(*string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -426,6 +457,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingAccount.UserID(childComplexity), true
 
+	case "TradingAccountWithTasks.selectedTradingAccount":
+		if e.complexity.TradingAccountWithTasks.SelectedTradingAccount == nil {
+			break
+		}
+
+		return e.complexity.TradingAccountWithTasks.SelectedTradingAccount(childComplexity), true
+
+	case "TradingAccountWithTasks.tradingAccounts":
+		if e.complexity.TradingAccountWithTasks.TradingAccounts == nil {
+			break
+		}
+
+		return e.complexity.TradingAccountWithTasks.TradingAccounts(childComplexity), true
+
 	case "User.authentications":
 		if e.complexity.User.Authentications == nil {
 			break
@@ -561,7 +606,11 @@ enum AuthenticationProvider {
     facebook
 }
 `, BuiltIn: false},
-	{Name: "api/graph/task.graphql", Input: `type Task {
+	{Name: "api/graph/task.graphql", Input: `extend type Query {
+    tasks(tradingAccountId: ID): [Task!]
+}
+
+type Task {
     id: ID!
     tradingAccountID: ID!
     cron: String!
@@ -586,6 +635,7 @@ enum AuthenticationProvider {
 `, BuiltIn: false},
 	{Name: "api/graph/tradingaccount.graphql", Input: `extend type Query {
     tradingAccounts: [TradingAccount!]
+    tradingAccountsWithTasks(id: ID): TradingAccountWithTasks!
 }
 
 extend type Mutation {
@@ -603,6 +653,11 @@ extend type Mutation {
         credential: String
     ): Boolean!
     deleteTradingAccount(id: ID!): Boolean!
+}
+
+type TradingAccountWithTasks{
+    selectedTradingAccount: TradingAccount
+    tradingAccounts: [TradingAccount!]
 }
 
 
