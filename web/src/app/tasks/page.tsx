@@ -18,7 +18,9 @@ export default function Tasks() {
 
     useEffect(() => {
         if (task?.refresh) {
-            refetch()
+            refetch({
+                tradingAccountID: task.tradingAccountID
+            })
                 .then(r => data)
                 .then(r => {
                     dispatch(refreshTask({
