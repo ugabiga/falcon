@@ -1,6 +1,6 @@
 "use client";
 
-import {GetUserDocument, UpdateUserDocument} from "@/graph/generated/generated";
+import {UpdateUserDocument, UserIndexDocument} from "@/graph/generated/generated";
 import {useMutation, useQuery} from "@apollo/client";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
@@ -10,8 +10,8 @@ import {useEffect, useState} from "react";
 import {useToast} from "@/components/ui/use-toast";
 
 export default function Users() {
-    const { toast } = useToast()
-    const {data, loading} = useQuery(GetUserDocument)
+    const {toast} = useToast()
+    const {data, loading} = useQuery(UserIndexDocument)
     const [updateUser] = useMutation(UpdateUserDocument)
     const [user, setUser] = useState({
         name: "",
@@ -20,8 +20,8 @@ export default function Users() {
 
     useEffect(() => {
         setUser({
-            name: data?.user.name || "",
-            timezone: data?.user.timezone || ""
+            name: data?.userIndex.user.name || "",
+            timezone: data?.userIndex.user.timezone || ""
         })
     }, [data]);
 
@@ -54,7 +54,7 @@ export default function Users() {
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="name">Name</Label>
-                    <Input type="name" id="name" defaultValue={data.user.name} onChange={(e) => {
+                    <Input type="name" id="name" defaultValue={data.userIndex.user.name} onChange={(e) => {
                         return setUser({
                             ...user,
                             name: e.target.value
@@ -64,7 +64,7 @@ export default function Users() {
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="name">Timezone</Label>
-                    <Select defaultValue={data.user.timezone}
+                    <Select defaultValue={data.userIndex.user.timezone}
                             onValueChange={(value) => {
                                 return setUser({
                                     ...user,

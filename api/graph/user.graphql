@@ -3,13 +3,16 @@ directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | I
 directive @goModel(model: String, models: [String!]) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Query {
-    user: User!
-    users(where: UserWhereInput!): [User!]!
+    userIndex: UserIndex!
 }
 
 type Mutation {
     updateUser(input: UpdateUserInput!): User!
 
+}
+
+type UserIndex {
+    user: User!
 }
 
 type User {

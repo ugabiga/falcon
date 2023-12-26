@@ -57,8 +57,7 @@ type ComplexityRoot struct {
 	Query struct {
 		TaskIndex       func(childComplexity int, tradingAccountID *string) int
 		TradingAccounts func(childComplexity int) int
-		User            func(childComplexity int) int
-		Users           func(childComplexity int, where UserWhereInput) int
+		UserIndex       func(childComplexity int) int
 	}
 
 	Task struct {
@@ -109,6 +108,10 @@ type ComplexityRoot struct {
 		Timezone        func(childComplexity int) int
 		TradingAccounts func(childComplexity int) int
 		UpdatedAt       func(childComplexity int) int
+	}
+
+	UserIndex struct {
+		User func(childComplexity int) int
 	}
 }
 
@@ -243,24 +246,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.TradingAccounts(childComplexity), true
 
-	case "Query.user":
-		if e.complexity.Query.User == nil {
+	case "Query.userIndex":
+		if e.complexity.Query.UserIndex == nil {
 			break
 		}
 
-		return e.complexity.Query.User(childComplexity), true
-
-	case "Query.users":
-		if e.complexity.Query.Users == nil {
-			break
-		}
-
-		args, err := ec.field_Query_users_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Users(childComplexity, args["where"].(UserWhereInput)), true
+		return e.complexity.Query.UserIndex(childComplexity), true
 
 	case "Task.createdAt":
 		if e.complexity.Task.CreatedAt == nil {
@@ -507,6 +498,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.UpdatedAt(childComplexity), true
 
+	case "UserIndex.user":
+		if e.complexity.UserIndex.User == nil {
+			break
+		}
+
+		return e.complexity.UserIndex.User(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -664,13 +662,16 @@ directive @goField(forceResolver: Boolean, name: String) on FIELD_DEFINITION | I
 directive @goModel(model: String, models: [String!]) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Query {
-    user: User!
-    users(where: UserWhereInput!): [User!]!
+    userIndex: UserIndex!
 }
 
 type Mutation {
     updateUser(input: UpdateUserInput!): User!
 
+}
+
+type UserIndex {
+    user: User!
 }
 
 type User {

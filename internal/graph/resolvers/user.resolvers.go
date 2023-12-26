@@ -5,7 +5,6 @@ package resolvers
 
 import (
 	"context"
-
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
@@ -31,7 +30,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input generated.Updat
 	return converter.ToUser(updateUser)
 }
 
-func (r *queryResolver) User(ctx context.Context) (*generated.User, error) {
+func (r *queryResolver) UserIndex(ctx context.Context) (*generated.UserIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	user, err := r.userSrv.GetByID(ctx, claim.UserID)
@@ -39,19 +38,14 @@ func (r *queryResolver) User(ctx context.Context) (*generated.User, error) {
 		return nil, err
 	}
 
-	return converter.ToUser(user)
-}
-
-func (r *queryResolver) Users(ctx context.Context, where generated.UserWhereInput) ([]*generated.User, error) {
-	var whereInput ent.UserWhereInput
-	converter.BindWhereInput(&where, &whereInput)
-
-	users, err := r.userSrv.Query(ctx, whereInput)
+	respUser, err := converter.ToUser(user)
 	if err != nil {
 		return nil, err
 	}
 
-	return converter.ToUsers(users)
+	return &generated.UserIndex{
+		User: respUser,
+	}, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

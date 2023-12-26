@@ -1,8 +1,10 @@
-query GetUser {
-    user {
-        id
-        name
-        timezone
+query UserIndex {
+    userIndex {
+        user {
+            id
+            name
+            timezone
+        }
     }
 }
 
