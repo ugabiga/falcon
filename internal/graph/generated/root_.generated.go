@@ -49,15 +49,14 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateTradingAccount func(childComplexity int, exchange string, currency string, identifier string, credential string) int
-		DeleteTradingAccount func(childComplexity int, id string) int
 		UpdateTradingAccount func(childComplexity int, id string, exchange *string, currency *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
 
 	Query struct {
-		TaskIndex       func(childComplexity int, tradingAccountID *string) int
-		TradingAccounts func(childComplexity int) int
-		UserIndex       func(childComplexity int) int
+		TaskIndex           func(childComplexity int, tradingAccountID *string) int
+		TradingAccountIndex func(childComplexity int) int
+		UserIndex           func(childComplexity int) int
 	}
 
 	Task struct {
@@ -98,6 +97,10 @@ type ComplexityRoot struct {
 		UpdatedAt  func(childComplexity int) int
 		User       func(childComplexity int) int
 		UserID     func(childComplexity int) int
+	}
+
+	TradingAccountIndex struct {
+		TradingAccounts func(childComplexity int) int
 	}
 
 	User struct {
@@ -191,18 +194,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTradingAccount(childComplexity, args["exchange"].(string), args["currency"].(string), args["identifier"].(string), args["credential"].(string)), true
 
-	case "Mutation.deleteTradingAccount":
-		if e.complexity.Mutation.DeleteTradingAccount == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_deleteTradingAccount_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.DeleteTradingAccount(childComplexity, args["id"].(string)), true
-
 	case "Mutation.updateTradingAccount":
 		if e.complexity.Mutation.UpdateTradingAccount == nil {
 			break
@@ -239,12 +230,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.TaskIndex(childComplexity, args["tradingAccountID"].(*string)), true
 
-	case "Query.tradingAccounts":
-		if e.complexity.Query.TradingAccounts == nil {
+	case "Query.tradingAccountIndex":
+		if e.complexity.Query.TradingAccountIndex == nil {
 			break
 		}
 
-		return e.complexity.Query.TradingAccounts(childComplexity), true
+		return e.complexity.Query.TradingAccountIndex(childComplexity), true
 
 	case "Query.userIndex":
 		if e.complexity.Query.UserIndex == nil {
@@ -449,6 +440,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingAccount.UserID(childComplexity), true
 
+	case "TradingAccountIndex.tradingAccounts":
+		if e.complexity.TradingAccountIndex.TradingAccounts == nil {
+			break
+		}
+
+		return e.complexity.TradingAccountIndex.TradingAccounts(childComplexity), true
+
 	case "User.authentications":
 		if e.complexity.User.Authentications == nil {
 			break
@@ -624,7 +622,7 @@ type Task {
 }
 `, BuiltIn: false},
 	{Name: "api/graph/tradingaccount.graphql", Input: `extend type Query {
-    tradingAccounts: [TradingAccount!]
+    tradingAccountIndex: TradingAccountIndex!
 }
 
 extend type Mutation {
@@ -641,7 +639,10 @@ extend type Mutation {
         identifier: String
         credential: String
     ): Boolean!
-    deleteTradingAccount(id: ID!): Boolean!
+}
+
+type TradingAccountIndex {
+    tradingAccounts: [TradingAccount!]
 }
 
 type TradingAccount {

@@ -503,6 +503,69 @@ func (ec *executionContext) fieldContext_TradingAccount_tasks(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _TradingAccountIndex_tradingAccounts(ctx context.Context, field graphql.CollectedField, obj *TradingAccountIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingAccountIndex_tradingAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TradingAccounts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*TradingAccount)
+	fc.Result = res
+	return ec.marshalOTradingAccount2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TradingAccountIndex_tradingAccounts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TradingAccountIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TradingAccount_id(ctx, field)
+			case "userID":
+				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "exchange":
+				return ec.fieldContext_TradingAccount_exchange(ctx, field)
+			case "currency":
+				return ec.fieldContext_TradingAccount_currency(ctx, field)
+			case "ip":
+				return ec.fieldContext_TradingAccount_ip(ctx, field)
+			case "identifier":
+				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_TradingAccount_createdAt(ctx, field)
+			case "user":
+				return ec.fieldContext_TradingAccount_user(ctx, field)
+			case "tasks":
+				return ec.fieldContext_TradingAccount_tasks(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TradingAccount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -603,6 +666,31 @@ func (ec *executionContext) _TradingAccount(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var tradingAccountIndexImplementors = []string{"TradingAccountIndex"}
+
+func (ec *executionContext) _TradingAccountIndex(ctx context.Context, sel ast.SelectionSet, obj *TradingAccountIndex) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, tradingAccountIndexImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TradingAccountIndex")
+		case "tradingAccounts":
+
+			out.Values[i] = ec._TradingAccountIndex_tradingAccounts(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
@@ -619,6 +707,20 @@ func (ec *executionContext) marshalNTradingAccount2ᚖgithubᚗcomᚋugabigaᚋf
 		return graphql.Null
 	}
 	return ec._TradingAccount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTradingAccountIndex2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountIndex(ctx context.Context, sel ast.SelectionSet, v TradingAccountIndex) graphql.Marshaler {
+	return ec._TradingAccountIndex(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTradingAccountIndex2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountIndex(ctx context.Context, sel ast.SelectionSet, v *TradingAccountIndex) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TradingAccountIndex(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOTradingAccount2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*TradingAccount) graphql.Marshaler {

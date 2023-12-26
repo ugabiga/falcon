@@ -21,12 +21,11 @@ type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTradingAccount(ctx context.Context, exchange string, currency string, identifier string, credential string) (*TradingAccount, error)
 	UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string, credential *string) (bool, error)
-	DeleteTradingAccount(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
 	UserIndex(ctx context.Context) (*UserIndex, error)
 	TaskIndex(ctx context.Context, tradingAccountID *string) (*TaskIndex, error)
-	TradingAccounts(ctx context.Context) ([]*TradingAccount, error)
+	TradingAccountIndex(ctx context.Context) (*TradingAccountIndex, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
@@ -72,21 +71,6 @@ func (ec *executionContext) field_Mutation_createTradingAccount_args(ctx context
 		}
 	}
 	args["credential"] = arg3
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_deleteTradingAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -397,61 +381,6 @@ func (ec *executionContext) fieldContext_Mutation_updateTradingAccount(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_deleteTradingAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteTradingAccount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTradingAccount(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_deleteTradingAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteTradingAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_userIndex(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_userIndex(ctx, field)
 	if err != nil {
@@ -558,8 +487,8 @@ func (ec *executionContext) fieldContext_Query_taskIndex(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_tradingAccounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_tradingAccounts(ctx, field)
+func (ec *executionContext) _Query_tradingAccountIndex(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_tradingAccountIndex(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -572,21 +501,24 @@ func (ec *executionContext) _Query_tradingAccounts(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TradingAccounts(rctx)
+		return ec.resolvers.Query().TradingAccountIndex(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]*TradingAccount)
+	res := resTmp.(*TradingAccountIndex)
 	fc.Result = res
-	return ec.marshalOTradingAccount2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountᚄ(ctx, field.Selections, res)
+	return ec.marshalNTradingAccountIndex2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccountIndex(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_tradingAccounts(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_tradingAccountIndex(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -594,28 +526,10 @@ func (ec *executionContext) fieldContext_Query_tradingAccounts(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_TradingAccount_id(ctx, field)
-			case "userID":
-				return ec.fieldContext_TradingAccount_userID(ctx, field)
-			case "exchange":
-				return ec.fieldContext_TradingAccount_exchange(ctx, field)
-			case "currency":
-				return ec.fieldContext_TradingAccount_currency(ctx, field)
-			case "ip":
-				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_TradingAccount_createdAt(ctx, field)
-			case "user":
-				return ec.fieldContext_TradingAccount_user(ctx, field)
-			case "tasks":
-				return ec.fieldContext_TradingAccount_tasks(ctx, field)
+			case "tradingAccounts":
+				return ec.fieldContext_TradingAccountIndex_tradingAccounts(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type TradingAccount", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TradingAccountIndex", field.Name)
 		},
 	}
 	return fc, nil
@@ -1757,15 +1671,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deleteTradingAccount":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteTradingAccount(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -1839,7 +1744,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "tradingAccounts":
+		case "tradingAccountIndex":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -1848,7 +1753,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_tradingAccounts(ctx, field)
+				res = ec._Query_tradingAccountIndex(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 

@@ -1,10 +1,12 @@
-query GetTradingAccounts {
-    tradingAccounts {
-        id
-        exchange
-        currency
-        identifier
-        ip
+query TradingAccountIndex {
+    tradingAccountIndex {
+        tradingAccounts {
+            id
+            exchange
+            currency
+            identifier
+            ip
+        }
     }
 }
 

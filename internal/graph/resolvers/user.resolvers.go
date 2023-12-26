@@ -5,6 +5,7 @@ package resolvers
 
 import (
 	"context"
+
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"

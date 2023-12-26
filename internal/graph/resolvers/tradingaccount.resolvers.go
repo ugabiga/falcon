@@ -5,8 +5,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
@@ -52,11 +50,7 @@ func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, 
 	return true, nil
 }
 
-func (r *mutationResolver) DeleteTradingAccount(ctx context.Context, id string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) TradingAccounts(ctx context.Context) ([]*generated.TradingAccount, error) {
+func (r *queryResolver) TradingAccountIndex(ctx context.Context) (*generated.TradingAccountIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	tradingAccounts, err := r.tradingAccountSrv.Get(
@@ -67,5 +61,12 @@ func (r *queryResolver) TradingAccounts(ctx context.Context) ([]*generated.Tradi
 		return nil, err
 	}
 
-	return converter.ToTradingAccounts(tradingAccounts)
+	respTradingAccounts, err := converter.ToTradingAccounts(tradingAccounts)
+	if err != nil {
+		return nil, err
+	}
+
+	return &generated.TradingAccountIndex{
+		TradingAccounts: respTradingAccounts,
+	}, nil
 }

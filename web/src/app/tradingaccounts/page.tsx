@@ -1,6 +1,6 @@
 "use client";
 
-import {GetTradingAccountsDocument} from "@/graph/generated/generated";
+import {TradingAccountIndexDocument} from "@/graph/generated/generated";
 import {useQuery} from "@apollo/client";
 import {useEffect} from "react";
 import {AddTradingAccount} from "@/app/tradingaccounts/add";
@@ -10,7 +10,7 @@ import {TradingAccountTable} from "@/app/tradingaccounts/table";
 
 
 export default function TradingAccounts() {
-    const {data, loading, refetch} = useQuery(GetTradingAccountsDocument);
+    const {data, loading, refetch} = useQuery(TradingAccountIndexDocument);
     const tradingAccount = useAppSelector((state) => state.tradingAccount);
     const dispatch = useAppDispatch()
 
@@ -40,7 +40,7 @@ export default function TradingAccounts() {
 
             <div className="mt-6">
                 {/*@ts-ignore*/}
-                <TradingAccountTable tradingAccounts={data.tradingAccounts}/>
+                <TradingAccountTable tradingAccounts={data.tradingAccountIndex.tradingAccounts}/>
             </div>
         </main>
     )

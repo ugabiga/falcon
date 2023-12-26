@@ -1,5 +1,5 @@
 extend type Query {
-    tradingAccounts: [TradingAccount!]
+    tradingAccountIndex: TradingAccountIndex!
 }
 
 extend type Mutation {
@@ -16,7 +16,10 @@ extend type Mutation {
         identifier: String
         credential: String
     ): Boolean!
-    deleteTradingAccount(id: ID!): Boolean!
+}
+
+type TradingAccountIndex {
+    tradingAccounts: [TradingAccount!]
 }
 
 type TradingAccount {

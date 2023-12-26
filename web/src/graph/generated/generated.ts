@@ -35,7 +35,6 @@ export enum AuthenticationProvider {
 export type Mutation = {
   __typename?: 'Mutation';
   createTradingAccount: TradingAccount;
-  deleteTradingAccount: Scalars['Boolean']['output'];
   updateTradingAccount: Scalars['Boolean']['output'];
   updateUser: User;
 };
@@ -46,11 +45,6 @@ export type MutationCreateTradingAccountArgs = {
   currency: Scalars['String']['input'];
   exchange: Scalars['String']['input'];
   identifier: Scalars['String']['input'];
-};
-
-
-export type MutationDeleteTradingAccountArgs = {
-  id: Scalars['ID']['input'];
 };
 
 
@@ -70,7 +64,7 @@ export type MutationUpdateUserArgs = {
 export type Query = {
   __typename?: 'Query';
   taskIndex?: Maybe<TaskIndex>;
-  tradingAccounts?: Maybe<Array<TradingAccount>>;
+  tradingAccountIndex: TradingAccountIndex;
   userIndex: UserIndex;
 };
 
@@ -121,6 +115,11 @@ export type TradingAccount = {
   updatedAt: Scalars['Time']['output'];
   user: User;
   userID: Scalars['ID']['output'];
+};
+
+export type TradingAccountIndex = {
+  __typename?: 'TradingAccountIndex';
+  tradingAccounts?: Maybe<Array<TradingAccount>>;
 };
 
 export type UpdateUserInput = {
@@ -229,10 +228,10 @@ export type GetTaskIndexQueryVariables = Exact<{
 
 export type GetTaskIndexQuery = { __typename?: 'Query', taskIndex?: { __typename?: 'TaskIndex', selectedTradingAccount?: { __typename?: 'TradingAccount', id: string, exchange: string, currency: string, ip: string, identifier: string, tasks?: Array<{ __typename?: 'Task', id: string, cron: string, nextExecutionTime: any, isActive: boolean }> | null } | null, tradingAccounts?: Array<{ __typename?: 'TradingAccount', id: string, exchange: string, currency: string, ip: string, identifier: string, tasks?: Array<{ __typename?: 'Task', id: string, cron: string, nextExecutionTime: any, isActive: boolean }> | null }> | null } | null };
 
-export type GetTradingAccountsQueryVariables = Exact<{ [key: string]: never; }>;
+export type TradingAccountIndexQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTradingAccountsQuery = { __typename?: 'Query', tradingAccounts?: Array<{ __typename?: 'TradingAccount', id: string, exchange: string, currency: string, identifier: string, ip: string }> | null };
+export type TradingAccountIndexQuery = { __typename?: 'Query', tradingAccountIndex: { __typename?: 'TradingAccountIndex', tradingAccounts?: Array<{ __typename?: 'TradingAccount', id: string, exchange: string, currency: string, identifier: string, ip: string }> | null } };
 
 export type CreateTradingAccountMutationVariables = Exact<{
   exchange: Scalars['String']['input'];
@@ -270,7 +269,7 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __type
 
 
 export const GetTaskIndexDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTaskIndex"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"tradingAccountID"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"taskIndex"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"tradingAccountID"},"value":{"kind":"Variable","name":{"kind":"Name","value":"tradingAccountID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"selectedTradingAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"exchange"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"ip"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cron"}},{"kind":"Field","name":{"kind":"Name","value":"nextExecutionTime"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"tradingAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"exchange"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"ip"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"tasks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"cron"}},{"kind":"Field","name":{"kind":"Name","value":"nextExecutionTime"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetTaskIndexQuery, GetTaskIndexQueryVariables>;
-export const GetTradingAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTradingAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tradingAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"exchange"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ip"}}]}}]}}]} as unknown as DocumentNode<GetTradingAccountsQuery, GetTradingAccountsQueryVariables>;
+export const TradingAccountIndexDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"TradingAccountIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tradingAccountIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tradingAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"exchange"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ip"}}]}}]}}]}}]} as unknown as DocumentNode<TradingAccountIndexQuery, TradingAccountIndexQueryVariables>;
 export const CreateTradingAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTradingAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"exchange"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currency"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"credential"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTradingAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"exchange"},"value":{"kind":"Variable","name":{"kind":"Name","value":"exchange"}}},{"kind":"Argument","name":{"kind":"Name","value":"currency"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currency"}}},{"kind":"Argument","name":{"kind":"Name","value":"identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}}},{"kind":"Argument","name":{"kind":"Name","value":"credential"},"value":{"kind":"Variable","name":{"kind":"Name","value":"credential"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"exchange"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"identifier"}},{"kind":"Field","name":{"kind":"Name","value":"ip"}}]}}]}}]} as unknown as DocumentNode<CreateTradingAccountMutation, CreateTradingAccountMutationVariables>;
 export const UpdateTradingAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateTradingAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"exchange"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currency"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"credential"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateTradingAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"exchange"},"value":{"kind":"Variable","name":{"kind":"Name","value":"exchange"}}},{"kind":"Argument","name":{"kind":"Name","value":"currency"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currency"}}},{"kind":"Argument","name":{"kind":"Name","value":"identifier"},"value":{"kind":"Variable","name":{"kind":"Name","value":"identifier"}}},{"kind":"Argument","name":{"kind":"Name","value":"credential"},"value":{"kind":"Variable","name":{"kind":"Name","value":"credential"}}}]}]}}]} as unknown as DocumentNode<UpdateTradingAccountMutation, UpdateTradingAccountMutationVariables>;
 export const UserIndexDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userIndex"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"timezone"}}]}}]}}]}}]} as unknown as DocumentNode<UserIndexQuery, UserIndexQueryVariables>;
