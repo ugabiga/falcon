@@ -607,6 +607,10 @@ func (ec *executionContext) _TradingAccount(ctx context.Context, sel ast.Selecti
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNTradingAccount2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccount(ctx context.Context, sel ast.SelectionSet, v TradingAccount) graphql.Marshaler {
+	return ec._TradingAccount(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNTradingAccount2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTradingAccount(ctx context.Context, sel ast.SelectionSet, v *TradingAccount) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {

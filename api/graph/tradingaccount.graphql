@@ -1,3 +1,24 @@
+extend type Query {
+    tradingAccounts: [TradingAccount!]
+}
+
+extend type Mutation {
+    createTradingAccount(
+        exchange: String!
+        currency: String!
+        identifier: String!
+        credential: String!
+    ): TradingAccount!
+    updateTradingAccount(
+        id: ID!
+        exchange: String
+        currency: String
+        identifier: String
+    ): TradingAccount!
+    deleteTradingAccount(id: ID!): Boolean!
+}
+
+
 type TradingAccount {
     id: ID!
     userID: ID!

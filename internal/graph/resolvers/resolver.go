@@ -14,12 +14,14 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	userSrv *service.UserService
-	logger  zerolog.Logger
+	userSrv           *service.UserService
+	tradingAccountSrv *service.TradingAccountService
+	logger            zerolog.Logger
 }
 
 func NewResolver(
 	userSrv *service.UserService,
+	tradingAccountSrv *service.TradingAccountService,
 ) *handler.Server {
 
 	logger := zerolog.New(
@@ -31,8 +33,9 @@ func NewResolver(
 		Logger()
 
 	resolver := &Resolver{
-		userSrv: userSrv,
-		logger:  logger,
+		userSrv:           userSrv,
+		logger:            logger,
+		tradingAccountSrv: tradingAccountSrv,
 	}
 
 	graphSrv := handler.NewDefaultServer(

@@ -1,0 +1,29 @@
+query GetTradingAccounts {
+    tradingAccounts {
+        id
+        exchange
+        currency
+        identifier
+        ip
+    }
+}
+
+mutation CreateTradingAccount(
+    $exchange: String!
+    $currency: String!
+    $identifier: String!
+    $credential: String!
+) {
+    createTradingAccount(
+        exchange: $exchange
+        currency: $currency
+        identifier: $identifier
+        credential: $credential
+    ) {
+        id
+        exchange
+        currency
+        identifier
+        ip
+    }
+}

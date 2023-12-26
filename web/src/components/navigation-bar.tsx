@@ -45,9 +45,9 @@ export function NavigationBar() {
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <Link href="/order" legacyBehavior passHref>
+                        <Link href="/tradingaccounts" legacyBehavior passHref>
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Order
+                                Trading Accounts
                             </NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>
