@@ -2,6 +2,10 @@ extend type Query {
     taskIndex(tradingAccountID: ID): TaskIndex
 }
 
+extend type Mutation {
+    createTask(tradingAccountID: ID!, cron: String!, type: String!): Task!
+}
+
 type TaskIndex{
     selectedTradingAccount: TradingAccount
     tradingAccounts: [TradingAccount!]
@@ -11,7 +15,7 @@ type Task {
     id: ID!
     tradingAccountID: ID!
     cron: String!
-    nextExecutionTime: Time!
+    nextExecutionTime: Time
     isActive: Boolean!
     type: String!
     updatedAt: Time!

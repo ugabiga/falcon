@@ -924,9 +924,22 @@ func (m *TaskMutation) OldNextExecutionTime(ctx context.Context) (v time.Time, e
 	return oldValue.NextExecutionTime, nil
 }
 
+// ClearNextExecutionTime clears the value of the "next_execution_time" field.
+func (m *TaskMutation) ClearNextExecutionTime() {
+	m.next_execution_time = nil
+	m.clearedFields[task.FieldNextExecutionTime] = struct{}{}
+}
+
+// NextExecutionTimeCleared returns if the "next_execution_time" field was cleared in this mutation.
+func (m *TaskMutation) NextExecutionTimeCleared() bool {
+	_, ok := m.clearedFields[task.FieldNextExecutionTime]
+	return ok
+}
+
 // ResetNextExecutionTime resets all changes to the "next_execution_time" field.
 func (m *TaskMutation) ResetNextExecutionTime() {
 	m.next_execution_time = nil
+	delete(m.clearedFields, task.FieldNextExecutionTime)
 }
 
 // SetIsActive sets the "is_active" field.
@@ -1345,7 +1358,11 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TaskMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(task.FieldNextExecutionTime) {
+		fields = append(fields, task.FieldNextExecutionTime)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1358,6 +1375,11 @@ func (m *TaskMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TaskMutation) ClearField(name string) error {
+	switch name {
+	case task.FieldNextExecutionTime:
+		m.ClearNextExecutionTime()
+		return nil
+	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
 }
 

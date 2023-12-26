@@ -75,6 +75,8 @@ func ValidColumn(column string) bool {
 var (
 	// TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	TradingAccountIDValidator func(int) error
+	// DefaultIsActive holds the default value on creation for the "is_active" field.
+	DefaultIsActive bool
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.

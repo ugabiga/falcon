@@ -36,8 +36,8 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "cron", Type: field.TypeString},
-		{Name: "next_execution_time", Type: field.TypeTime},
-		{Name: "is_active", Type: field.TypeBool},
+		{Name: "next_execution_time", Type: field.TypeTime, Nullable: true},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
 		{Name: "type", Type: field.TypeString},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},

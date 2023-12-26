@@ -226,6 +226,16 @@ func NextExecutionTimeLTE(v time.Time) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldNextExecutionTime, v))
 }
 
+// NextExecutionTimeIsNil applies the IsNil predicate on the "next_execution_time" field.
+func NextExecutionTimeIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldNextExecutionTime))
+}
+
+// NextExecutionTimeNotNil applies the NotNil predicate on the "next_execution_time" field.
+func NextExecutionTimeNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldNextExecutionTime))
+}
+
 // IsActiveEQ applies the EQ predicate on the "is_active" field.
 func IsActiveEQ(v bool) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldIsActive, v))

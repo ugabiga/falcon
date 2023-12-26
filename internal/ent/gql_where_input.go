@@ -412,14 +412,16 @@ type TaskWhereInput struct {
 	CronContainsFold *string  `json:"cronContainsFold,omitempty"`
 
 	// "next_execution_time" field predicates.
-	NextExecutionTime      *time.Time  `json:"nextExecutionTime,omitempty"`
-	NextExecutionTimeNEQ   *time.Time  `json:"nextExecutionTimeNEQ,omitempty"`
-	NextExecutionTimeIn    []time.Time `json:"nextExecutionTimeIn,omitempty"`
-	NextExecutionTimeNotIn []time.Time `json:"nextExecutionTimeNotIn,omitempty"`
-	NextExecutionTimeGT    *time.Time  `json:"nextExecutionTimeGT,omitempty"`
-	NextExecutionTimeGTE   *time.Time  `json:"nextExecutionTimeGTE,omitempty"`
-	NextExecutionTimeLT    *time.Time  `json:"nextExecutionTimeLT,omitempty"`
-	NextExecutionTimeLTE   *time.Time  `json:"nextExecutionTimeLTE,omitempty"`
+	NextExecutionTime       *time.Time  `json:"nextExecutionTime,omitempty"`
+	NextExecutionTimeNEQ    *time.Time  `json:"nextExecutionTimeNEQ,omitempty"`
+	NextExecutionTimeIn     []time.Time `json:"nextExecutionTimeIn,omitempty"`
+	NextExecutionTimeNotIn  []time.Time `json:"nextExecutionTimeNotIn,omitempty"`
+	NextExecutionTimeGT     *time.Time  `json:"nextExecutionTimeGT,omitempty"`
+	NextExecutionTimeGTE    *time.Time  `json:"nextExecutionTimeGTE,omitempty"`
+	NextExecutionTimeLT     *time.Time  `json:"nextExecutionTimeLT,omitempty"`
+	NextExecutionTimeLTE    *time.Time  `json:"nextExecutionTimeLTE,omitempty"`
+	NextExecutionTimeIsNil  bool        `json:"nextExecutionTimeIsNil,omitempty"`
+	NextExecutionTimeNotNil bool        `json:"nextExecutionTimeNotNil,omitempty"`
 
 	// "is_active" field predicates.
 	IsActive    *bool `json:"isActive,omitempty"`
@@ -638,6 +640,12 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	}
 	if i.NextExecutionTimeLTE != nil {
 		predicates = append(predicates, task.NextExecutionTimeLTE(*i.NextExecutionTimeLTE))
+	}
+	if i.NextExecutionTimeIsNil {
+		predicates = append(predicates, task.NextExecutionTimeIsNil())
+	}
+	if i.NextExecutionTimeNotNil {
+		predicates = append(predicates, task.NextExecutionTimeNotNil())
 	}
 	if i.IsActive != nil {
 		predicates = append(predicates, task.IsActiveEQ(*i.IsActive))

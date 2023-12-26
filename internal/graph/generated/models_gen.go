@@ -23,7 +23,7 @@ type Task struct {
 	ID                string          `json:"id"`
 	TradingAccountID  string          `json:"tradingAccountID"`
 	Cron              string          `json:"cron"`
-	NextExecutionTime time.Time       `json:"nextExecutionTime"`
+	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
 	IsActive          bool            `json:"isActive"`
 	Type              string          `json:"type"`
 	UpdatedAt         time.Time       `json:"updatedAt"`

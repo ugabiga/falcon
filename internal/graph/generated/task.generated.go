@@ -181,14 +181,11 @@ func (ec *executionContext) _Task_nextExecutionTime(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Task_nextExecutionTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -674,9 +671,6 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 
 			out.Values[i] = ec._Task_nextExecutionTime(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "isActive":
 
 			out.Values[i] = ec._Task_isActive(ctx, field, obj)
@@ -759,6 +753,10 @@ func (ec *executionContext) _TaskIndex(ctx context.Context, sel ast.SelectionSet
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNTask2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTask(ctx context.Context, sel ast.SelectionSet, v Task) graphql.Marshaler {
+	return ec._Task(ctx, sel, &v)
+}
 
 func (ec *executionContext) marshalNTask2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTask(ctx context.Context, sel ast.SelectionSet, v *Task) graphql.Marshaler {
 	if v == nil {

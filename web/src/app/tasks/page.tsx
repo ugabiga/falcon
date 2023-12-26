@@ -54,7 +54,7 @@ export default function Tasks() {
                 <div className={"flex-grow"}></div>
 
                 <div>
-                    <AddTask/>
+                    <AddTask tradingAccountID={data.taskIndex.selectedTradingAccount.id}/>
                 </div>
             </div>
 

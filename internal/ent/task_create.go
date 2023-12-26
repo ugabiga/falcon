@@ -40,9 +40,25 @@ func (tc *TaskCreate) SetNextExecutionTime(t time.Time) *TaskCreate {
 	return tc
 }
 
+// SetNillableNextExecutionTime sets the "next_execution_time" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableNextExecutionTime(t *time.Time) *TaskCreate {
+	if t != nil {
+		tc.SetNextExecutionTime(*t)
+	}
+	return tc
+}
+
 // SetIsActive sets the "is_active" field.
 func (tc *TaskCreate) SetIsActive(b bool) *TaskCreate {
 	tc.mutation.SetIsActive(b)
+	return tc
+}
+
+// SetNillableIsActive sets the "is_active" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableIsActive(b *bool) *TaskCreate {
+	if b != nil {
+		tc.SetIsActive(*b)
+	}
 	return tc
 }
 
@@ -141,6 +157,10 @@ func (tc *TaskCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TaskCreate) defaults() {
+	if _, ok := tc.mutation.IsActive(); !ok {
+		v := task.DefaultIsActive
+		tc.mutation.SetIsActive(v)
+	}
 	if _, ok := tc.mutation.UpdatedAt(); !ok {
 		v := task.DefaultUpdatedAt()
 		tc.mutation.SetUpdatedAt(v)
@@ -163,9 +183,6 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
-	}
-	if _, ok := tc.mutation.NextExecutionTime(); !ok {
-		return &ValidationError{Name: "next_execution_time", err: errors.New(`ent: missing required field "Task.next_execution_time"`)}
 	}
 	if _, ok := tc.mutation.IsActive(); !ok {
 		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Task.is_active"`)}

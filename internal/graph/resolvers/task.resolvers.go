@@ -6,10 +6,28 @@ package resolvers
 import (
 	"context"
 
+	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
+
+func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, cron string, typeArg string) (*generated.Task, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+
+	task, err := r.taskSrv.Create(
+		ctx,
+		claim.UserID,
+		str.New(tradingAccountID).ToIntDefault(0),
+		cron,
+		typeArg,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return converter.ToTask(task)
+}
 
 func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)

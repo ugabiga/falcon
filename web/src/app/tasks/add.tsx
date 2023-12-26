@@ -1,5 +1,5 @@
 import {useMutation} from "@apollo/client";
-import {CreateTradingAccountDocument} from "@/graph/generated/generated";
+import {CreateTaskDocument, CreateTradingAccountDocument} from "@/graph/generated/generated";
 import {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
@@ -13,32 +13,36 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {AddTaskForm} from "@/app/tasks/form";
+import {refreshTask} from "@/store/taskSlice";
 
-export function AddTask() {
-    // const [createTradingAccount] = useMutation(CreateTradingAccountDocument);
+export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
+    const [createTask] = useMutation(CreateTaskDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
 
     const form = useForm<z.infer<typeof AddTaskForm>>({
         resolver: zodResolver(AddTaskForm),
         defaultValues: {
-            name: "upbit",
+            schedule: "",
+            type: "DCA"
         },
     })
 
     function onSubmit(data: z.infer<typeof AddTaskForm>) {
-        // createTradingAccount({
-        //     variables: {
-        //         exchange: data.exchange,
-        //         currency: data.currency,
-        //         identifier: data.identifier,
-        //         credential: data.credential,
-        //     }
-        // }).then(() => {
-        //     setOpenDialog(false)
-        //     form.reset()
-        //     dispatch(refreshTradingAccount(true))
-        // })
+        createTask({
+            variables: {
+                tradingAccountID: tradingAccountID,
+                cron: data.schedule,
+                type: data.type,
+            }
+        }).then(() => {
+            setOpenDialog(false)
+            form.reset()
+            dispatch(refreshTask({
+                tradingAccountID: tradingAccountID,
+                refresh: true
+            }))
+        })
     }
 
     return (
@@ -57,12 +61,34 @@ export function AddTask() {
 
                         <FormField
                             control={form.control}
-                            name="name"
+                            name="type"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>Type</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a Type"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="DCA">DCA</SelectItem>
+                                            <SelectItem value="Grid">Grid</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="schedule"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Schedule</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Name" {...field} />
+                                        <Input placeholder="Schedule" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

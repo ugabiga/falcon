@@ -72,6 +72,12 @@ func (tu *TaskUpdate) SetNillableNextExecutionTime(t *time.Time) *TaskUpdate {
 	return tu
 }
 
+// ClearNextExecutionTime clears the value of the "next_execution_time" field.
+func (tu *TaskUpdate) ClearNextExecutionTime() *TaskUpdate {
+	tu.mutation.ClearNextExecutionTime()
+	return tu
+}
+
 // SetIsActive sets the "is_active" field.
 func (tu *TaskUpdate) SetIsActive(b bool) *TaskUpdate {
 	tu.mutation.SetIsActive(b)
@@ -225,6 +231,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.NextExecutionTime(); ok {
 		_spec.SetField(task.FieldNextExecutionTime, field.TypeTime, value)
 	}
+	if tu.mutation.NextExecutionTimeCleared() {
+		_spec.ClearField(task.FieldNextExecutionTime, field.TypeTime)
+	}
 	if value, ok := tu.mutation.IsActive(); ok {
 		_spec.SetField(task.FieldIsActive, field.TypeBool, value)
 	}
@@ -367,6 +376,12 @@ func (tuo *TaskUpdateOne) SetNillableNextExecutionTime(t *time.Time) *TaskUpdate
 	if t != nil {
 		tuo.SetNextExecutionTime(*t)
 	}
+	return tuo
+}
+
+// ClearNextExecutionTime clears the value of the "next_execution_time" field.
+func (tuo *TaskUpdateOne) ClearNextExecutionTime() *TaskUpdateOne {
+	tuo.mutation.ClearNextExecutionTime()
 	return tuo
 }
 
@@ -552,6 +567,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.NextExecutionTime(); ok {
 		_spec.SetField(task.FieldNextExecutionTime, field.TypeTime, value)
+	}
+	if tuo.mutation.NextExecutionTimeCleared() {
+		_spec.ClearField(task.FieldNextExecutionTime, field.TypeTime)
 	}
 	if value, ok := tuo.mutation.IsActive(); ok {
 		_spec.SetField(task.FieldIsActive, field.TypeBool, value)

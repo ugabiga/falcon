@@ -48,6 +48,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		CreateTask           func(childComplexity int, tradingAccountID string, cron string, typeArg string) int
 		CreateTradingAccount func(childComplexity int, exchange string, currency string, identifier string, credential string) int
 		UpdateTradingAccount func(childComplexity int, id string, exchange *string, currency *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
@@ -181,6 +182,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Authentication.UserID(childComplexity), true
+
+	case "Mutation.createTask":
+		if e.complexity.Mutation.CreateTask == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTask_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["cron"].(string), args["type"].(string)), true
 
 	case "Mutation.createTradingAccount":
 		if e.complexity.Mutation.CreateTradingAccount == nil {
@@ -593,6 +606,10 @@ enum AuthenticationProvider {
     taskIndex(tradingAccountID: ID): TaskIndex
 }
 
+extend type Mutation {
+    createTask(tradingAccountID: ID!, cron: String!, type: String!): Task!
+}
+
 type TaskIndex{
     selectedTradingAccount: TradingAccount
     tradingAccounts: [TradingAccount!]
@@ -602,7 +619,7 @@ type Task {
     id: ID!
     tradingAccountID: ID!
     cron: String!
-    nextExecutionTime: Time!
+    nextExecutionTime: Time
     isActive: Boolean!
     type: String!
     updatedAt: Time!

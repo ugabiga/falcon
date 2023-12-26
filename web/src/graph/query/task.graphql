@@ -9,6 +9,7 @@ query GetTaskIndex($tradingAccountID: ID){
             tasks {
                 id
                 cron
+                type
                 nextExecutionTime
                 isActive
             }
@@ -22,9 +23,19 @@ query GetTaskIndex($tradingAccountID: ID){
             tasks {
                 id
                 cron
+                type
                 nextExecutionTime
                 isActive
             }
         }
+    }
+}
+
+mutation CreateTask($tradingAccountID: ID!, $cron: String! $type: String!){
+    createTask(tradingAccountID: $tradingAccountID, cron: $cron type: $type){
+        id
+        cron
+        nextExecutionTime
+        isActive
     }
 }
