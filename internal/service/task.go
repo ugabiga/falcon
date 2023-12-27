@@ -63,3 +63,17 @@ func (s TaskService) validateHours(hours string) error {
 	}
 	return nil
 }
+
+func (s TaskService) Update(ctx context.Context, userID int, id int, hours string, typeArg string, isActive bool) (*ent.Task, error) {
+	if err := s.validateHours(hours); err != nil {
+		return nil, err
+	}
+
+	cron := "0 0 " + hours + " * * *"
+
+	return s.db.Task.UpdateOneID(id).
+		SetCron(cron).
+		SetType(typeArg).
+		SetIsActive(isActive).
+		Save(ctx)
+}

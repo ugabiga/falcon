@@ -5,7 +5,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
@@ -31,7 +30,21 @@ func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID stri
 }
 
 func (r *mutationResolver) UpdateTask(ctx context.Context, id string, hours string, typeArg string, isActive bool) (*generated.Task, error) {
-	panic(fmt.Errorf("not implemented"))
+	claim := helper.MustJWTClaimInResolver(ctx)
+
+	task, err := r.taskSrv.Update(
+		ctx,
+		claim.UserID,
+		str.New(id).ToIntDefault(0),
+		hours,
+		typeArg,
+		isActive,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return converter.ToTask(task)
 }
 
 func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {

@@ -13,6 +13,7 @@ query GetTaskIndex($tradingAccountID: ID){
                 type
                 nextExecutionTime
                 isActive
+                tradingAccountID
             }
         }
         tradingAccounts {
@@ -28,6 +29,7 @@ query GetTaskIndex($tradingAccountID: ID){
                 type
                 nextExecutionTime
                 isActive
+                tradingAccountID
             }
         }
     }

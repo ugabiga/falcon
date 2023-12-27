@@ -1,17 +1,20 @@
 import {useMutation} from "@apollo/client";
-import {CreateTaskDocument, Task} from "@/graph/generated/generated";
-import {useState} from "react";
+import {CreateTaskDocument, Task, UpdateTaskDocument} from "@/graph/generated/generated";
+import React, {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import {AddTaskForm} from "@/app/tasks/form";
+import {AddTaskForm, UpdateTaskForm} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
+import {refreshTask} from "@/store/taskSlice";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Label} from "@/components/ui/label";
 
 
 function convertCronToHours(cron: string): string {
@@ -24,43 +27,45 @@ function convertStringToTaskType(value: string): "DCA" | "Grid" {
 }
 
 export function EditTask({task}: { task: Task }) {
-    const [createTask] = useMutation(CreateTaskDocument);
+    const [updateTask] = useMutation(UpdateTaskDocument)
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
 
-    const form = useForm<z.infer<typeof AddTaskForm>>({
-        resolver: zodResolver(AddTaskForm),
+    const form = useForm<z.infer<typeof UpdateTaskForm>>({
+        resolver: zodResolver(UpdateTaskForm),
         defaultValues: {
             hours: convertCronToHours(task.cron),
-            type: convertStringToTaskType(task.type)
+            type: convertStringToTaskType(task.type),
+            isActive: task.isActive
         },
     })
 
-    function onSubmit(data: z.infer<typeof AddTaskForm>) {
-        // createTask({
-        //     variables: {
-        //         tradingAccountID: tradingAccountID,
-        //         hours: data.hours,
-        //         type: data.type,
-        //     }
-        // }).then(() => {
-        //     setOpenDialog(false)
-        //     form.reset()
-        //     dispatch(refreshTask({
-        //         tradingAccountID: tradingAccountID,
-        //         refresh: true
-        //     }))
-        // })
+    function onSubmit(data: z.infer<typeof UpdateTaskForm>) {
+        updateTask({
+            variables: {
+                id: task.id,
+                hours: data.hours,
+                type: data.type,
+                isActive: task.isActive
+            }
+        }).then(() => {
+            setOpenDialog(false)
+            form.reset()
+            dispatch(refreshTask({
+                tradingAccountID: task.tradingAccountID,
+                refresh: true
+            }))
+        })
     }
 
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="outline">Edit</Button>
+                <Button variant="ghost">Edit</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
-                    <form className={"grid gap-2 py-4"}
+                    <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
                         <DialogHeader>
@@ -103,9 +108,35 @@ export function EditTask({task}: { task: Task }) {
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="isActive"
+                            render={({field}) => (
+                                <FormItem >
+                                    <FormLabel>
+                                        Is Active
+                                    </FormLabel>
+                                    <div
+                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <Label className={"text-sm font-light"}>
+                                                If checked, this task will be executed
+                                            </Label>
+                                        </div>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
                         {/* Submit */}
-                        <DialogFooter className={"mt-4"}>
-                            <Button type="submit">Save changes</Button>
+                        <DialogFooter>
+                            <Button type="submit" className={"mt-6"}>Save changes</Button>
                         </DialogFooter>
                     </form>
                 </Form>
