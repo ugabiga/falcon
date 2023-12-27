@@ -128,7 +128,7 @@ export function EditTradingAccount(
                                 <FormItem>
                                     <FormLabel>Credential</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Credential" {...field} />
+                                        <Input type="password" placeholder="Credential" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

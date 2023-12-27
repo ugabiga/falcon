@@ -54,7 +54,7 @@ function SessionMenu() {
                             Profile
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => signOut()}>
-                            Logout
+                            Sign Out
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -62,7 +62,9 @@ function SessionMenu() {
         )
     } else {
         return (
-            <Button variant="ghost" onClick={() => signIn()}>Login</Button>
+            <Button variant="ghost" onClick={() => signIn()}>
+                Sign In or Sign Up
+            </Button>
         )
     }
 
