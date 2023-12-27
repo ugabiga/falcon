@@ -19,7 +19,7 @@ import (
 
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
-	CreateTask(ctx context.Context, tradingAccountID string, cron string, typeArg string) (*Task, error)
+	CreateTask(ctx context.Context, tradingAccountID string, hours string, typeArg string) (*Task, error)
 	CreateTradingAccount(ctx context.Context, name string, exchange string, currency string, identifier string, credential string) (*TradingAccount, error)
 	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, currency *string, identifier *string, credential *string) (bool, error)
 }
@@ -46,14 +46,14 @@ func (ec *executionContext) field_Mutation_createTask_args(ctx context.Context, 
 	}
 	args["tradingAccountID"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["cron"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cron"))
+	if tmp, ok := rawArgs["hours"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hours"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["cron"] = arg1
+	args["hours"] = arg1
 	var arg2 string
 	if tmp, ok := rawArgs["type"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
@@ -315,7 +315,7 @@ func (ec *executionContext) _Mutation_createTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["cron"].(string), fc.Args["type"].(string))
+		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["hours"].(string), fc.Args["type"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

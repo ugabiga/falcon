@@ -3,7 +3,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, cron: String!, type: String!): Task!
+    createTask(tradingAccountID: ID!, hours: String!, type: String!): Task!
 }
 
 type TaskIndex{

@@ -33,7 +33,9 @@ go.work
 # configuration
 /config.yaml
 
+# develop
 /tmp
+/*.db
 
 # web
 /web/node_modules/

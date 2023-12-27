@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const AddTaskForm= z.object({
-    schedule: z
+    hours: z
         .string({
             required_error: "Please enter a exchange",
         })

@@ -23,7 +23,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
     const form = useForm<z.infer<typeof AddTaskForm>>({
         resolver: zodResolver(AddTaskForm),
         defaultValues: {
-            schedule: "",
+            hours: "",
             type: "DCA"
         },
     })
@@ -32,7 +32,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
         createTask({
             variables: {
                 tradingAccountID: tradingAccountID,
-                cron: data.schedule,
+                hours: data.hours,
                 type: data.type,
             }
         }).then(() => {
@@ -83,12 +83,12 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
 
                         <FormField
                             control={form.control}
-                            name="schedule"
+                            name="hours"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Schedule</FormLabel>
+                                    <FormLabel>Execution Hours(Format 1,5,13,23)</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Schedule" {...field} />
+                                        <Input placeholder="Hours" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

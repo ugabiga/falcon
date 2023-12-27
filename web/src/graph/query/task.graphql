@@ -2,6 +2,7 @@ query GetTaskIndex($tradingAccountID: ID){
     taskIndex(tradingAccountID: $tradingAccountID){
         selectedTradingAccount {
             id
+            name
             exchange
             currency
             ip
@@ -16,6 +17,7 @@ query GetTaskIndex($tradingAccountID: ID){
         }
         tradingAccounts {
             id
+            name
             exchange
             currency
             ip
@@ -31,8 +33,8 @@ query GetTaskIndex($tradingAccountID: ID){
     }
 }
 
-mutation CreateTask($tradingAccountID: ID!, $cron: String! $type: String!){
-    createTask(tradingAccountID: $tradingAccountID, cron: $cron type: $type){
+mutation CreateTask($tradingAccountID: ID!, $hours: String! $type: String!){
+    createTask(tradingAccountID: $tradingAccountID, hours: $hours type: $type){
         id
         cron
         nextExecutionTime

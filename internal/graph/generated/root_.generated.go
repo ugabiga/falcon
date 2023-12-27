@@ -48,7 +48,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateTask           func(childComplexity int, tradingAccountID string, cron string, typeArg string) int
+		CreateTask           func(childComplexity int, tradingAccountID string, hours string, typeArg string) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, currency string, identifier string, credential string) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, currency *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
@@ -194,7 +194,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["cron"].(string), args["type"].(string)), true
+		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["hours"].(string), args["type"].(string)), true
 
 	case "Mutation.createTradingAccount":
 		if e.complexity.Mutation.CreateTradingAccount == nil {
@@ -615,7 +615,7 @@ enum AuthenticationProvider {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, cron: String!, type: String!): Task!
+    createTask(tradingAccountID: ID!, hours: String!, type: String!): Task!
 }
 
 type TaskIndex{

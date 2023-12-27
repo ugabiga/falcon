@@ -23,7 +23,7 @@ export function TradingAccountSelector({taskIndex}: { taskIndex: TaskIndex }) {
                     taskIndex.tradingAccounts?.map((tradingAccount) => {
                         return (
                             <SelectItem key={tradingAccount.id} value={tradingAccount.id}>
-                                {tradingAccount.identifier}
+                                {tradingAccount.name}
                             </SelectItem>
                         )
                     })

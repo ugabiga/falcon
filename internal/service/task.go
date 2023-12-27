@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
+	"strconv"
+	"strings"
 )
 
 type TaskService struct {
@@ -24,7 +27,7 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID i
 		All(ctx)
 }
 
-func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, cron string, typeArg string) (*ent.Task, error) {
+func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, hours string, typeArg string) (*ent.Task, error) {
 	tradingAccount, err := s.db.TradingAccount.Query().
 		Where(
 			tradingaccount.UserID(userID),
@@ -35,9 +38,28 @@ func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID in
 		return nil, err
 	}
 
+	if err = s.validateHours(hours); err != nil {
+		return nil, err
+	}
+	cron := "0 0 " + hours + " * * *"
+
 	return s.db.Task.Create().
 		SetCron(cron).
 		SetType(typeArg).
 		SetTradingAccountID(tradingAccount.ID).
 		Save(ctx)
+}
+
+func (s TaskService) validateHours(hours string) error {
+	splitHours := strings.Split(hours, ",")
+	for _, hour := range splitHours {
+		intHour, err := strconv.Atoi(hour)
+		if err != nil {
+			return errors.New("hours should be integers")
+		}
+		if intHour < 0 || intHour > 23 {
+			return errors.New("hours should be in the range 0-23")
+		}
+	}
+	return nil
 }

@@ -12,14 +12,14 @@ import (
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, cron string, typeArg string) (*generated.Task, error) {
+func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, hours string, typeArg string) (*generated.Task, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	task, err := r.taskSrv.Create(
 		ctx,
 		claim.UserID,
 		str.New(tradingAccountID).ToIntDefault(0),
-		cron,
+		hours,
 		typeArg,
 	)
 	if err != nil {
