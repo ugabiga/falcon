@@ -1,12 +1,10 @@
 import {useMutation} from "@apollo/client";
-import {CreateTaskDocument, CreateTradingAccountDocument} from "@/graph/generated/generated";
+import {CreateTaskDocument} from "@/graph/generated/generated";
 import {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
-import {AddTradingAccountFormSchema} from "@/app/tradingaccounts/form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
@@ -52,11 +50,11 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
-                    <form className={"grid gap-2 py-4"}
+                    <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
-                        <DialogHeader>
-                            <DialogTitle>Add Trading Account</DialogTitle>
+                        <DialogHeader className="mb-2">
+                            <DialogTitle>Add Task</DialogTitle>
                         </DialogHeader>
 
                         <FormField
@@ -96,8 +94,8 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
                         />
 
                         {/* Submit */}
-                        <DialogFooter className={"mt-4"}>
-                            <Button type="submit">Save changes</Button>
+                        <DialogFooter>
+                            <Button type="submit" className={"mt-6"}>Save changes</Button>
                         </DialogFooter>
                     </form>
                 </Form>

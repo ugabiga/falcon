@@ -52,14 +52,14 @@ export function EditTradingAccount(
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="outline">Edit</Button>
+                <Button variant="ghost">Edit</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
-                    <form className={"grid gap-2 py-4"}
+                    <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
-                        <DialogHeader>
+                        <DialogHeader className="mb-2">
                             <DialogTitle>Edit Trading Account</DialogTitle>
                         </DialogHeader>
 
@@ -136,8 +136,8 @@ export function EditTradingAccount(
                         />
 
                         {/* Submit */}
-                        <DialogFooter className={"mt-4"}>
-                            <Button type="submit">Save changes</Button>
+                        <DialogFooter>
+                            <Button type="submit" className={"mt-6"}>Save changes</Button>
                         </DialogFooter>
                     </form>
                 </Form>

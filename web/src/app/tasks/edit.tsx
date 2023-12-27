@@ -1,5 +1,5 @@
 import {useMutation} from "@apollo/client";
-import {CreateTaskDocument, Task, UpdateTaskDocument} from "@/graph/generated/generated";
+import {Task, UpdateTaskDocument} from "@/graph/generated/generated";
 import React, {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
@@ -7,10 +7,10 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
-import {AddTaskForm, UpdateTaskForm} from "@/app/tasks/form";
+import {UpdateTaskForm} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
 import {refreshTask} from "@/store/taskSlice";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -68,7 +68,7 @@ export function EditTask({task}: { task: Task }) {
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
-                        <DialogHeader>
+                        <DialogHeader className="mb-2">
                             <DialogTitle>Edit task</DialogTitle>
                         </DialogHeader>
 
@@ -112,7 +112,7 @@ export function EditTask({task}: { task: Task }) {
                             control={form.control}
                             name="isActive"
                             render={({field}) => (
-                                <FormItem >
+                                <FormItem>
                                     <FormLabel>
                                         Is Active
                                     </FormLabel>

@@ -23,6 +23,7 @@ function convertToPastHourString(input: string): string {
 
     return `At ${hoursString}, and ${lastHour} o'clock.`;
 }
+
 function convertCronToHumanReadable(value: string) {
     const result = parseCronExpression(value)
     const hours = result.fields.hour.toString()
@@ -44,6 +45,7 @@ function formatDate(dateTime: Date): string {
 
     return formattedString.replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+)/, '$3 $4 $5');
 }
+
 function convertToNextCronDate(value: string) {
     const result = nextCronDate(value)
     if (result === null) {
@@ -67,18 +69,24 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
             </TableHeader>
             <TableBody>
                 {
-                    tasks?.map((task) => (
-                        <TableRow key={task.id}>
-                            <TableCell>{task.id}</TableCell>
-                            <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
-                            <TableCell>{task.type}</TableCell>
-                            <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
-                            <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
-                            <TableCell>
-                                <EditTask task={task} />
-                            </TableCell>
-                        </TableRow>
-                    ))
+                    tasks?.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="font-medium text-center">No tasks found.</TableCell>
+                            </TableRow>
+                        )
+                        : tasks?.map((task) => (
+                            <TableRow key={task.id}>
+                                <TableCell>{task.id}</TableCell>
+                                <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
+                                <TableCell>{task.type}</TableCell>
+                                <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
+                                <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
+                                <TableCell>
+                                    <EditTask task={task}/>
+                                </TableCell>
+                            </TableRow>
+                        ))
+
                 }
             </TableBody>
         </Table>
