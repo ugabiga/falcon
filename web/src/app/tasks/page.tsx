@@ -2,7 +2,7 @@
 
 import {TaskTable} from "@/app/tasks/table";
 import {useQuery} from "@apollo/client";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import {GetTaskIndexDocument} from "@/graph/generated/generated";
 import {TradingAccountSelector} from "@/app/tasks/selector";
 import {useAppSelector} from "@/store";
