@@ -7,8 +7,9 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
-import { toast } from "sonner"
 import {Loading} from "@/components/loading";
+import {customToast} from "@/components/toast";
+
 
 export default function Users() {
     const {data, loading} = useQuery(UserIndexDocument)
@@ -40,9 +41,7 @@ export default function Users() {
                 timezone: user.timezone
             }
         }).then(() => {
-            toast("Your profile has been updated",{
-                position: "top-right"
-            })
+            customToast({message: "Your profile has been updated"})
         })
     }
 
