@@ -44,7 +44,7 @@ export default function Tasks() {
     }
 
     return (
-        <main className="min-h-screen p-12">
+        <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
             <h1 className="text-3xl font-bold">Tasks</h1>
 
             <div className={"mt-6 w-full flex space-x-2"}>
