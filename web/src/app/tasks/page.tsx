@@ -9,6 +9,7 @@ import {useAppSelector} from "@/store";
 import {useDispatch} from "react-redux";
 import {refreshTask} from "@/store/taskSlice";
 import {AddTask} from "@/app/tasks/add";
+import {Loading} from "@/components/loading";
 
 export default function Tasks() {
     const {data, loading, refetch} = useQuery(GetTaskIndexDocument)
@@ -32,14 +33,11 @@ export default function Tasks() {
     }, [task]);
 
     if (loading) {
-        return <div>Loading...</div>
+        return <Loading/>
     }
 
-    if (!data) {
-        return <div>No Data</div>
-    }
 
-    if (!data.taskIndex?.selectedTradingAccount) {
+    if (!data?.taskIndex?.selectedTradingAccount) {
         return <div>No Trading Account Selected</div>
     }
 

@@ -7,6 +7,7 @@ import {AddTradingAccount} from "@/app/tradingaccounts/add";
 import {useAppDispatch, useAppSelector} from "@/store";
 import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
 import {TradingAccountTable} from "@/app/tradingaccounts/table";
+import {Loading} from "@/components/loading";
 
 
 export default function TradingAccounts() {
@@ -25,8 +26,8 @@ export default function TradingAccounts() {
         }
     }, [tradingAccount])
 
-    if (loading || !data) {
-        return <div>Loading...</div>;
+    if (loading) {
+        return <Loading/>
     }
 
     return (

@@ -8,6 +8,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
 import { toast } from "sonner"
+import {Loading} from "@/components/loading";
 
 export default function Users() {
     const {data, loading} = useQuery(UserIndexDocument)
@@ -25,7 +26,7 @@ export default function Users() {
     }, [data]);
 
     if (loading) {
-        return <div></div>
+        return <Loading/>
     }
 
     if (!data) {
