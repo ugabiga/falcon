@@ -2,7 +2,7 @@ import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
-import {Avatar, AvatarImage} from "@/components/ui/avatar";
+import {Icons} from "@/components/icons";
 
 export function NavigationMainBar() {
     const pathname = usePathname()
@@ -18,9 +18,7 @@ export function NavigationMainBar() {
                     )}
                 >
                     <div className="flex items-center">
-                        <Avatar>
-                            <AvatarImage src="/logo1.png" alt="avatar"/>
-                        </Avatar>
+                        <Icons.logo/>
                         <span className="ml-2">Falcon</span>
                     </div>
                 </Link>
