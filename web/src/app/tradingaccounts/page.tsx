@@ -19,8 +19,8 @@ export default function TradingAccounts() {
         if (tradingAccount?.refresh) {
             console.log(tradingAccount)
             refetch()
-                .then(r => data)
-                .then(r => {
+                .then(() => data)
+                .then(() => {
                     dispatch(refreshTradingAccount(false))
                 })
         }

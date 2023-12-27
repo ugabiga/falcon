@@ -13,7 +13,6 @@ import {Loading} from "@/components/loading";
 
 export default function Tasks() {
     const {data, loading, refetch} = useQuery(GetTaskIndexDocument)
-    const [selectedTradingAccountId, setSelectedTradingAccountId] = useState<string | null>(null)
     const task = useAppSelector((state) => state.task)
     const dispatch = useDispatch()
 
@@ -22,8 +21,8 @@ export default function Tasks() {
             refetch({
                 tradingAccountID: task.tradingAccountID
             })
-                .then(r => data)
-                .then(r => {
+                .then(() => data)
+                .then(() => {
                     dispatch(refreshTask({
                         refresh: false
                     }))
