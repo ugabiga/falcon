@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import {useTheme} from "next-themes";
 import {cn} from "@/lib/utils"
@@ -15,6 +14,10 @@ import {Toggle} from "@/components/ui/toggle";
 import {Moon, Sun} from "lucide-react";
 import React, {useEffect, useState} from "react";
 import {icon} from "@/components/styles";
+import {signIn, signOut, useSession} from "next-auth/react";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Button} from "@/components/ui/button";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
 
 export function NavigationBar() {
@@ -38,13 +41,6 @@ export function NavigationBar() {
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <Link href="/users" legacyBehavior passHref>
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                User
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
                         <Link href="/tradingaccounts" legacyBehavior passHref>
                             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                 Trading Accounts
@@ -60,14 +56,55 @@ export function NavigationBar() {
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
-            {
-                isClient
-                && <Toggle onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-                    {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
-                </Toggle>
-            }
+            <div className="flex items-center">
+                {
+                    isClient
+                    && <Toggle onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                        {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
+                    </Toggle>
+                }
+                <LoginButton/>
+            </div>
         </div>
     )
+}
+
+function LoginButton() {
+    const {data: session} = useSession();
+    // const session = true
+
+    if (session) {
+        return (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button className="rounded-full" size="icon" variant="ghost">
+                        <Avatar className="h-9 w-9">
+                            <AvatarImage alt="User's name" src="/placeholder-user.jpg"/>
+                            <AvatarFallback>UN</AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem onClick={
+                        () => {
+                            // @ts-ignore
+                            window.location.href = "/users"
+                        }
+                    }>
+                        Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => signOut()}>
+                        Logout
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        )
+    } else {
+        return (
+            <Button variant="ghost" onClick={() => signIn()}>Login</Button>
+        )
+    }
+
 }
 
 const ListItem = React.forwardRef<

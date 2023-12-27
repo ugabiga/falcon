@@ -5,6 +5,8 @@ import React from "react";
 import Providers from "@/app/providers";
 import {NavigationBar} from "@/components/navigation-bar";
 import {Toaster} from "@/components/ui/toaster";
+import {getServerSession} from "next-auth";
+import SessionProvider from "@/lib/session"
 
 const inter = Inter({subsets: ['latin']})
 
@@ -14,14 +16,18 @@ export const metadata: Metadata = {
 }
 
 
-export default function RootLayout({children,}: { children: React.ReactNode }) {
+export default async function RootLayout({children,}: { children: React.ReactNode }) {
+    const session = await getServerSession()
+
     return (
         <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
         <Providers>
-            <NavigationBar/>
-            {children}
-            <Toaster/>
+            <SessionProvider session={session}>
+                <NavigationBar/>
+                {children}
+                <Toaster/>
+            </SessionProvider>
         </Providers>
         </body>
         </html>
