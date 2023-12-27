@@ -8,7 +8,7 @@ export function NavigationMainBar() {
     const pathname = usePathname()
 
     return (
-        <div className="hidden md:flex md:max-w-[1200px] w-full mx-auto flex justify-between">
+        <div className="hidden md:flex md:max-w-[1200px] w-full mx-auto justify-between">
             <nav className="pt-4 pb-4 flex items-center gap-6 text-sm w-full">
                 <Link
                     href="/"
