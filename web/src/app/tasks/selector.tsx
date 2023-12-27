@@ -3,7 +3,11 @@ import {TaskIndex} from "@/graph/generated/generated";
 import {useDispatch} from "react-redux";
 import {refreshTask} from "@/store/taskSlice";
 
-export function TradingAccountSelector({taskIndex}: { taskIndex: TaskIndex }) {
+export function TradingAccountSelector({taskIndex}: { taskIndex?: TaskIndex }) {
+    if (!taskIndex) {
+        return null
+    }
+
     const dispatch = useDispatch()
 
     return (

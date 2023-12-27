@@ -41,7 +41,7 @@ export default function TradingAccounts() {
 
             <div className="mt-6">
                 {/*@ts-ignore*/}
-                <TradingAccountTable tradingAccounts={data.tradingAccountIndex.tradingAccounts}/>
+                <TradingAccountTable tradingAccounts={data?.tradingAccountIndex?.tradingAccounts}/>
             </div>
         </main>
     )

@@ -69,7 +69,8 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
             </TableHeader>
             <TableBody>
                 {
-                    tasks?.length === 0 ? (
+                    !tasks || tasks?.length === 0
+                        ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="font-medium text-center">No tasks found.</TableCell>
                             </TableRow>

@@ -13,7 +13,11 @@ import {Input} from "@/components/ui/input";
 import {AddTaskForm} from "@/app/tasks/form";
 import {refreshTask} from "@/store/taskSlice";
 
-export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
+export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
+    if (!tradingAccountID) {
+        return null
+    }
+
     const [createTask] = useMutation(CreateTaskDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
@@ -29,7 +33,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID: string }) {
     function onSubmit(data: z.infer<typeof AddTaskForm>) {
         createTask({
             variables: {
-                tradingAccountID: tradingAccountID,
+                tradingAccountID: tradingAccountID!,
                 hours: data.hours,
                 type: data.type,
             }

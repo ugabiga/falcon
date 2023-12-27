@@ -35,11 +35,6 @@ export default function Tasks() {
         return <Loading/>
     }
 
-
-    if (!data?.taskIndex?.selectedTradingAccount) {
-        return <div>No Trading Account Selected</div>
-    }
-
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
             <h1 className="text-3xl font-bold">Tasks</h1>
@@ -47,19 +42,19 @@ export default function Tasks() {
             <div className={"mt-6 w-full flex space-x-2"}>
                 <div>
                     {/*@ts-ignore*/}
-                    <TradingAccountSelector taskIndex={data.taskIndex}/>
+                    <TradingAccountSelector taskIndex={data?.taskIndex}/>
                 </div>
 
                 <div className={"flex-grow"}></div>
 
                 <div>
-                    <AddTask tradingAccountID={data.taskIndex.selectedTradingAccount.id}/>
+                    <AddTask tradingAccountID={data?.taskIndex?.selectedTradingAccount?.id}/>
                 </div>
             </div>
 
             <div className="mt-6">
                 {/*@ts-ignore*/}
-                <TaskTable tasks={data.taskIndex.selectedTradingAccount?.tasks}/>
+                <TaskTable tasks={data?.taskIndex?.selectedTradingAccount?.tasks}/>
             </div>
         </main>
     )
