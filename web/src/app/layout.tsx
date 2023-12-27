@@ -4,7 +4,7 @@ import './globals.css'
 import React from "react";
 import Providers from "@/app/providers";
 import {NavigationBar} from "@/components/navigation-bar";
-import {Toaster} from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner"
 import {getServerSession} from "next-auth";
 import SessionProvider from "@/lib/session"
 

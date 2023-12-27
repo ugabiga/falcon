@@ -18,9 +18,17 @@ import {signIn, signOut, useSession} from "next-auth/react";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {usePathname} from "next/navigation";
 
 
 export function NavigationBar() {
+    return (
+        <MainNavigation/>
+    )
+}
+
+function MainNavigation() {
+    const pathname = usePathname()
     const {theme, setTheme} = useTheme()
     const [isClient, setIsClient] = useState(false)
 
@@ -30,42 +38,49 @@ export function NavigationBar() {
     }, [])
 
     return (
-        <div className="mt-2 mb-2 md:max-w-[1200px] overflow-auto w-full mx-auto flex justify-between">
-            <NavigationMenu>
-                <NavigationMenuList>
-                    <NavigationMenuItem>
-                        <Link href="/" legacyBehavior passHref>
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Home
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <Link href="/tradingaccounts" legacyBehavior passHref>
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Trading Accounts
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <Link href="/tasks" legacyBehavior passHref>
-                            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                Tasks
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                </NavigationMenuList>
-            </NavigationMenu>
-            <div className="flex items-center">
-                {
-                    isClient
-                    && <Toggle onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-                        {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
-                    </Toggle>
-                }
-                <SessionMenu/>
+        <header
+            className="sticky top-0 z-50 mt-2 mb-2  border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="md:max-w-[1200px] w-full mx-auto flex justify-between">
+                <nav className="pt-4 pb-4 flex items-center gap-6 text-sm w-full">
+                    <Link
+                        href="/"
+                        className={cn(
+                            "transition-colors hover:text-foreground/80",
+                            pathname === "/" ? "text-foreground" : "text-foreground/60"
+                        )}
+                    >
+                        Home
+                    </Link>
+                    <Link
+                        href="/tradingaccounts"
+                        className={cn(
+                            "transition-colors hover:text-foreground/80",
+                            pathname === "/tradingaccounts" ? "text-foreground" : "text-foreground/60"
+                        )}
+                    >
+                        Trading Accounts
+                    </Link>
+                    <Link
+                        href="/tasks"
+                        className={cn(
+                            "transition-colors hover:text-foreground/80",
+                            pathname === "/tasks" ? "text-foreground" : "text-foreground/60"
+                        )}
+                    >
+                        Tasks
+                    </Link>
+                    <div className={"flex-grow"}></div>
+                    <div className={"flex"}>
+                        {isClient
+                            && <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                                {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
+                            </Button>
+                        }
+                        <SessionMenu/>
+                    </div>
+                </nav>
             </div>
-        </div>
+        </header>
     )
 }
 
@@ -80,7 +95,7 @@ function SessionMenu() {
 
     if (session) {
         return (
-            <div className={"mr-2"}>
+            <div className={"ml-2"}>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button className="rounded-full" size="icon" variant="ghost">

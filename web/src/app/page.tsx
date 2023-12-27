@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader} from "@/components/ui/card";
 export default function Home() {
     return (
         <main className="flex-1 flex flex-col min-h-screen">
-            <section className="w-full py-12 md:py-24 lg:py-32 border-y">
+            <section className="w-full py-12 md:py-24 lg:py-32">
                 <div className="container space-y-12 px-4 md:px-6 justify-center">
                     <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
                         Welcome to CryptoDCA
@@ -17,7 +17,7 @@ export default function Home() {
                     </p>
                 </div>
             </section>
-            <section className="w-full py-12 md:py-24 lg:py-32">
+            <section className="w-full py-12 md:py-24 lg:py-32 border-y">
                 <div className="container space-y-12 px-4 md:px-6">
                     <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
                         What is Dollar Cost Averaging (DCA)?

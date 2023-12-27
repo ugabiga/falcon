@@ -7,10 +7,9 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
-import {useToast} from "@/components/ui/use-toast";
+import { toast } from "sonner"
 
 export default function Users() {
-    const {toast} = useToast()
     const {data, loading} = useQuery(UserIndexDocument)
     const [updateUser] = useMutation(UpdateUserDocument)
     const [user, setUser] = useState({
@@ -40,9 +39,8 @@ export default function Users() {
                 timezone: user.timezone
             }
         }).then(() => {
-            toast({
-                title: "Success",
-                description: "Your profile has been updated",
+            toast("Your profile has been updated",{
+                position: "top-right"
             })
         })
     }
