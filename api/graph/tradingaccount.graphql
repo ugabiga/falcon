@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
     createTradingAccount(
+        name: String!
         exchange: String!
         currency: String!
         identifier: String!
@@ -11,6 +12,7 @@ extend type Mutation {
     ): TradingAccount!
     updateTradingAccount(
         id: ID!
+        name: String
         exchange: String
         currency: String
         identifier: String
@@ -25,6 +27,7 @@ type TradingAccountIndex {
 type TradingAccount {
     id: ID!
     userID: ID!
+    name: String!
     exchange: String!
     currency: String!
     ip: String!

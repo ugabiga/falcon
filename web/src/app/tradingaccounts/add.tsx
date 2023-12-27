@@ -22,6 +22,7 @@ export function AddTradingAccount() {
     const form = useForm<z.infer<typeof AddTradingAccountFormSchema>>({
         resolver: zodResolver(AddTradingAccountFormSchema),
         defaultValues: {
+            name: "",
             exchange: "upbit",
             currency: "KRW",
             identifier: "",
@@ -32,6 +33,7 @@ export function AddTradingAccount() {
     function onSubmit(data: z.infer<typeof AddTradingAccountFormSchema>) {
         createTradingAccount({
             variables: {
+                name: data.name,
                 exchange: data.exchange,
                 currency: data.currency,
                 identifier: data.identifier,
@@ -57,6 +59,20 @@ export function AddTradingAccount() {
                         <DialogHeader>
                             <DialogTitle>Add Trading Account</DialogTitle>
                         </DialogHeader>
+
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}

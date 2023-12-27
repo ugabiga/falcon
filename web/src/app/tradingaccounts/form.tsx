@@ -1,6 +1,13 @@
 import * as z from "zod";
 
 export const AddTradingAccountFormSchema = z.object({
+    name: z
+        .string({
+            required_error: "Please enter a name",
+        })
+        .min(1, {
+            message: "Please enter a name",
+        }),
     exchange: z
         .string({
             required_error: "Please enter a exchange",
@@ -32,6 +39,10 @@ export const AddTradingAccountFormSchema = z.object({
 })
 
 export const EditTradingAccountFormSchema = z.object({
+    name: z
+        .string({
+            required_error: "Please enter a name",
+        }),
     exchange: z
         .string({
             required_error: "Please enter a exchange",

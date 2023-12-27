@@ -8,7 +8,8 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">Exchange</TableHead>
+                    <TableHead className="w-[100px]">Name</TableHead>
+                    <TableHead>Exchange</TableHead>
                     <TableHead>Currency</TableHead>
                     <TableHead>Identifier</TableHead>
                     <TableHead>IP</TableHead>
@@ -19,7 +20,8 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                 {
                     tradingAccounts?.map((tradingAccount) => (
                         <TableRow key={tradingAccount.id}>
-                            <TableCell className="font-medium">{camelize(tradingAccount.exchange)}</TableCell>
+                            <TableCell className="font-medium">{tradingAccount.name}</TableCell>
+                            <TableCell>{camelize(tradingAccount.exchange)}</TableCell>
                             <TableCell>{tradingAccount.currency}</TableCell>
                             <TableCell>{tradingAccount.identifier}</TableCell>
                             <TableCell>{tradingAccount.ip}</TableCell>

@@ -410,6 +410,7 @@ input TaskWhereInput {
 type TradingAccount implements Node {
   id: ID!
   userID: ID!
+  name: String!
   exchange: String!
   currency: String!
   ip: String!
@@ -457,6 +458,20 @@ input TradingAccountWhereInput {
   userIDNEQ: ID
   userIDIn: [ID!]
   userIDNotIn: [ID!]
+  """name field predicates"""
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameEqualFold: String
+  nameContainsFold: String
   """exchange field predicates"""
   exchange: String
   exchangeNEQ: String

@@ -1052,6 +1052,21 @@ type TradingAccountWhereInput struct {
 	UserIDIn    []int `json:"userIDIn,omitempty"`
 	UserIDNotIn []int `json:"userIDNotIn,omitempty"`
 
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
 	// "exchange" field predicates.
 	Exchange             *string  `json:"exchange,omitempty"`
 	ExchangeNEQ          *string  `json:"exchangeNEQ,omitempty"`
@@ -1279,6 +1294,45 @@ func (i *TradingAccountWhereInput) P() (predicate.TradingAccount, error) {
 	}
 	if len(i.UserIDNotIn) > 0 {
 		predicates = append(predicates, tradingaccount.UserIDNotIn(i.UserIDNotIn...))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, tradingaccount.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, tradingaccount.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, tradingaccount.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, tradingaccount.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, tradingaccount.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, tradingaccount.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, tradingaccount.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, tradingaccount.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, tradingaccount.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, tradingaccount.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, tradingaccount.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, tradingaccount.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, tradingaccount.NameContainsFold(*i.NameContainsFold))
 	}
 	if i.Exchange != nil {
 		predicates = append(predicates, tradingaccount.ExchangeEQ(*i.Exchange))

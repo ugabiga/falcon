@@ -44,6 +44,20 @@ func (tau *TradingAccountUpdate) SetNillableUserID(i *int) *TradingAccountUpdate
 	return tau
 }
 
+// SetName sets the "name" field.
+func (tau *TradingAccountUpdate) SetName(s string) *TradingAccountUpdate {
+	tau.mutation.SetName(s)
+	return tau
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (tau *TradingAccountUpdate) SetNillableName(s *string) *TradingAccountUpdate {
+	if s != nil {
+		tau.SetName(*s)
+	}
+	return tau
+}
+
 // SetExchange sets the "exchange" field.
 func (tau *TradingAccountUpdate) SetExchange(s string) *TradingAccountUpdate {
 	tau.mutation.SetExchange(s)
@@ -253,6 +267,9 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 			}
 		}
 	}
+	if value, ok := tau.mutation.Name(); ok {
+		_spec.SetField(tradingaccount.FieldName, field.TypeString, value)
+	}
 	if value, ok := tau.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)
 	}
@@ -381,6 +398,20 @@ func (tauo *TradingAccountUpdateOne) SetUserID(i int) *TradingAccountUpdateOne {
 func (tauo *TradingAccountUpdateOne) SetNillableUserID(i *int) *TradingAccountUpdateOne {
 	if i != nil {
 		tauo.SetUserID(*i)
+	}
+	return tauo
+}
+
+// SetName sets the "name" field.
+func (tauo *TradingAccountUpdateOne) SetName(s string) *TradingAccountUpdateOne {
+	tauo.mutation.SetName(s)
+	return tauo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (tauo *TradingAccountUpdateOne) SetNillableName(s *string) *TradingAccountUpdateOne {
+	if s != nil {
+		tauo.SetName(*s)
 	}
 	return tauo
 }
@@ -623,6 +654,9 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tauo.mutation.Name(); ok {
+		_spec.SetField(tradingaccount.FieldName, field.TypeString, value)
 	}
 	if value, ok := tauo.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)

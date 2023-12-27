@@ -23,6 +23,7 @@ func (TradingAccount) Fields() []ent.Field {
 		field.Int("user_id").
 			Positive().
 			GoType(int(0)),
+		field.String("name"),
 		field.String("exchange"),
 		field.String("currency"),
 		field.String("ip"),

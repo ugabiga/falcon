@@ -20,6 +20,8 @@ type TradingAccount struct {
 	ID int `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID int `json:"user_id,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Exchange holds the value of the "exchange" field.
 	Exchange string `json:"exchange,omitempty"`
 	// Currency holds the value of the "currency" field.
@@ -86,7 +88,7 @@ func (*TradingAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tradingaccount.FieldID, tradingaccount.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case tradingaccount.FieldExchange, tradingaccount.FieldCurrency, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
+		case tradingaccount.FieldName, tradingaccount.FieldExchange, tradingaccount.FieldCurrency, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
 			values[i] = new(sql.NullString)
 		case tradingaccount.FieldUpdatedAt, tradingaccount.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -116,6 +118,12 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
 				ta.UserID = int(value.Int64)
+			}
+		case tradingaccount.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				ta.Name = value.String
 			}
 		case tradingaccount.FieldExchange:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -213,6 +221,9 @@ func (ta *TradingAccount) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", ta.ID))
 	builder.WriteString("user_id=")
 	builder.WriteString(fmt.Sprintf("%v", ta.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(ta.Name)
 	builder.WriteString(", ")
 	builder.WriteString("exchange=")
 	builder.WriteString(ta.Exchange)

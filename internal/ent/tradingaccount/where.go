@@ -61,6 +61,11 @@ func UserID(v int) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldUserID, vc))
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldName, v))
+}
+
 // Exchange applies equality check predicate on the "exchange" field. It's identical to ExchangeEQ.
 func Exchange(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldExchange, v))
@@ -129,6 +134,71 @@ func UserIDNotIn(vs ...int) predicate.TradingAccount {
 		v[i] = int(vs[i])
 	}
 	return predicate.TradingAccount(sql.FieldNotIn(FieldUserID, v...))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContainsFold(FieldName, v))
 }
 
 // ExchangeEQ applies the EQ predicate on the "exchange" field.

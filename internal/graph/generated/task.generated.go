@@ -420,6 +420,8 @@ func (ec *executionContext) fieldContext_Task_tradingAccount(ctx context.Context
 				return ec.fieldContext_TradingAccount_id(ctx, field)
 			case "userID":
 				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "name":
+				return ec.fieldContext_TradingAccount_name(ctx, field)
 			case "exchange":
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "currency":
@@ -538,6 +540,8 @@ func (ec *executionContext) fieldContext_TaskIndex_selectedTradingAccount(ctx co
 				return ec.fieldContext_TradingAccount_id(ctx, field)
 			case "userID":
 				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "name":
+				return ec.fieldContext_TradingAccount_name(ctx, field)
 			case "exchange":
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "currency":
@@ -601,6 +605,8 @@ func (ec *executionContext) fieldContext_TaskIndex_tradingAccounts(ctx context.C
 				return ec.fieldContext_TradingAccount_id(ctx, field)
 			case "userID":
 				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "name":
+				return ec.fieldContext_TradingAccount_name(ctx, field)
 			case "exchange":
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "currency":

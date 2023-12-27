@@ -16,6 +16,8 @@ const (
 	FieldID = "id"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldExchange holds the string denoting the exchange field in the database.
 	FieldExchange = "exchange"
 	// FieldCurrency holds the string denoting the currency field in the database.
@@ -58,6 +60,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldUserID,
+	FieldName,
 	FieldExchange,
 	FieldCurrency,
 	FieldIP,
@@ -102,6 +105,11 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByUserID orders the results by the user_id field.
 func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByExchange orders the results by the exchange field.

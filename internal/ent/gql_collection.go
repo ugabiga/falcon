@@ -386,6 +386,11 @@ func (ta *TradingAccountQuery) collectField(ctx context.Context, opCtx *graphql.
 				selectedFields = append(selectedFields, tradingaccount.FieldUserID)
 				fieldSeen[tradingaccount.FieldUserID] = struct{}{}
 			}
+		case "name":
+			if _, ok := fieldSeen[tradingaccount.FieldName]; !ok {
+				selectedFields = append(selectedFields, tradingaccount.FieldName)
+				fieldSeen[tradingaccount.FieldName] = struct{}{}
+			}
 		case "exchange":
 			if _, ok := fieldSeen[tradingaccount.FieldExchange]; !ok {
 				selectedFields = append(selectedFields, tradingaccount.FieldExchange)

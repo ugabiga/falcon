@@ -24,6 +24,7 @@ export function EditTradingAccount(
     const form = useForm<z.infer<typeof EditTradingAccountFormSchema>>({
         resolver: zodResolver(EditTradingAccountFormSchema),
         defaultValues: {
+            name: tradingAccount.name,
             exchange: tradingAccount.exchange,
             currency: tradingAccount.currency,
             identifier: tradingAccount.identifier,
@@ -35,6 +36,7 @@ export function EditTradingAccount(
         updateTradingAccount({
             variables: {
                 id: tradingAccount.id,
+                name: data.name,
                 exchange: data.exchange,
                 currency: data.currency,
                 identifier: data.identifier,

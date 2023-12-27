@@ -82,6 +82,7 @@ var (
 	// TradingAccountsColumns holds the columns for the "trading_accounts" table.
 	TradingAccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
 		{Name: "exchange", Type: field.TypeString},
 		{Name: "currency", Type: field.TypeString},
 		{Name: "ip", Type: field.TypeString},
@@ -100,7 +101,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trading_accounts_users_trading_accounts",
-				Columns:    []*schema.Column{TradingAccountsColumns[9]},
+				Columns:    []*schema.Column{TradingAccountsColumns[10]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

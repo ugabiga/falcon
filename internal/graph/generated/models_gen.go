@@ -49,6 +49,7 @@ type TaskIndex struct {
 type TradingAccount struct {
 	ID         string    `json:"id"`
 	UserID     string    `json:"userID"`
+	Name       string    `json:"name"`
 	Exchange   string    `json:"exchange"`
 	Currency   string    `json:"currency"`
 	IP         string    `json:"ip"`

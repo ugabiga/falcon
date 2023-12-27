@@ -26,6 +26,7 @@ func NewTradingAccountService(db *ent.Client) *TradingAccountService {
 func (s TradingAccountService) Create(
 	ctx context.Context,
 	userID int,
+	name string,
 	exchange string,
 	currency string,
 	Identifier string,
@@ -54,6 +55,7 @@ func (s TradingAccountService) Create(
 
 	createQuery := s.db.TradingAccount.Create().
 		SetUserID(userID).
+		SetName(name).
 		SetExchange(exchange).
 		SetCurrency(currency).
 		SetIP(ip).
@@ -114,6 +116,7 @@ func (s TradingAccountService) Update(
 	ctx context.Context,
 	tradingAccountID int,
 	userID int,
+	name *string,
 	exchange *string,
 	currency *string,
 	Identifier *string,
@@ -141,6 +144,9 @@ func (s TradingAccountService) Update(
 			tradingaccount.IDEQ(tradingAccountID),
 			tradingaccount.UserIDEQ(userID),
 		)
+	if name != nil {
+		updateQuery.SetName(pointer.GetString(name))
+	}
 	if exchange != nil {
 		updateQuery.SetExchange(pointer.GetString(exchange))
 	}

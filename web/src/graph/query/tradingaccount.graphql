@@ -2,6 +2,7 @@ query TradingAccountIndex {
     tradingAccountIndex {
         tradingAccounts {
             id
+            name
             exchange
             currency
             identifier
@@ -12,12 +13,14 @@ query TradingAccountIndex {
 
 
 mutation CreateTradingAccount(
+    $name: String!
     $exchange: String!
     $currency: String!
     $identifier: String!
     $credential: String!
 ) {
     createTradingAccount(
+        name: $name
         exchange: $exchange
         currency: $currency
         identifier: $identifier
@@ -33,6 +36,7 @@ mutation CreateTradingAccount(
 
 mutation UpdateTradingAccount(
     $id: ID!
+    $name: String
     $exchange: String
     $currency: String
     $identifier: String
@@ -40,6 +44,7 @@ mutation UpdateTradingAccount(
 ) {
     updateTradingAccount(
         id: $id
+        name: $name
         exchange: $exchange
         currency: $currency
         identifier: $identifier

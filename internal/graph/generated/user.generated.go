@@ -20,8 +20,8 @@ import (
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTask(ctx context.Context, tradingAccountID string, cron string, typeArg string) (*Task, error)
-	CreateTradingAccount(ctx context.Context, exchange string, currency string, identifier string, credential string) (*TradingAccount, error)
-	UpdateTradingAccount(ctx context.Context, id string, exchange *string, currency *string, identifier *string, credential *string) (bool, error)
+	CreateTradingAccount(ctx context.Context, name string, exchange string, currency string, identifier string, credential string) (*TradingAccount, error)
+	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, currency *string, identifier *string, credential *string) (bool, error)
 }
 type QueryResolver interface {
 	UserIndex(ctx context.Context) (*UserIndex, error)
@@ -70,41 +70,50 @@ func (ec *executionContext) field_Mutation_createTradingAccount_args(ctx context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["exchange"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchange"))
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["exchange"] = arg0
+	args["name"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["currency"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+	if tmp, ok := rawArgs["exchange"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchange"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["currency"] = arg1
+	args["exchange"] = arg1
 	var arg2 string
-	if tmp, ok := rawArgs["identifier"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
+	if tmp, ok := rawArgs["currency"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
 		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["identifier"] = arg2
+	args["currency"] = arg2
 	var arg3 string
-	if tmp, ok := rawArgs["credential"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+	if tmp, ok := rawArgs["identifier"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
 		arg3, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["credential"] = arg3
+	args["identifier"] = arg3
+	var arg4 string
+	if tmp, ok := rawArgs["credential"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+		arg4, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["credential"] = arg4
 	return args, nil
 }
 
@@ -121,41 +130,50 @@ func (ec *executionContext) field_Mutation_updateTradingAccount_args(ctx context
 	}
 	args["id"] = arg0
 	var arg1 *string
-	if tmp, ok := rawArgs["exchange"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchange"))
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["exchange"] = arg1
+	args["name"] = arg1
 	var arg2 *string
-	if tmp, ok := rawArgs["currency"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
+	if tmp, ok := rawArgs["exchange"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exchange"))
 		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["currency"] = arg2
+	args["exchange"] = arg2
 	var arg3 *string
-	if tmp, ok := rawArgs["identifier"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
+	if tmp, ok := rawArgs["currency"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
 		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["identifier"] = arg3
+	args["currency"] = arg3
 	var arg4 *string
-	if tmp, ok := rawArgs["credential"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+	if tmp, ok := rawArgs["identifier"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
 		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["credential"] = arg4
+	args["identifier"] = arg4
+	var arg5 *string
+	if tmp, ok := rawArgs["credential"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+		arg5, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["credential"] = arg5
 	return args, nil
 }
 
@@ -374,7 +392,7 @@ func (ec *executionContext) _Mutation_createTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTradingAccount(rctx, fc.Args["exchange"].(string), fc.Args["currency"].(string), fc.Args["identifier"].(string), fc.Args["credential"].(string))
+		return ec.resolvers.Mutation().CreateTradingAccount(rctx, fc.Args["name"].(string), fc.Args["exchange"].(string), fc.Args["currency"].(string), fc.Args["identifier"].(string), fc.Args["credential"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -403,6 +421,8 @@ func (ec *executionContext) fieldContext_Mutation_createTradingAccount(ctx conte
 				return ec.fieldContext_TradingAccount_id(ctx, field)
 			case "userID":
 				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "name":
+				return ec.fieldContext_TradingAccount_name(ctx, field)
 			case "exchange":
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "currency":
@@ -451,7 +471,7 @@ func (ec *executionContext) _Mutation_updateTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(string), fc.Args["exchange"].(*string), fc.Args["currency"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
+		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(string), fc.Args["name"].(*string), fc.Args["exchange"].(*string), fc.Args["currency"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1092,6 +1112,8 @@ func (ec *executionContext) fieldContext_User_tradingAccounts(ctx context.Contex
 				return ec.fieldContext_TradingAccount_id(ctx, field)
 			case "userID":
 				return ec.fieldContext_TradingAccount_userID(ctx, field)
+			case "name":
+				return ec.fieldContext_TradingAccount_name(ctx, field)
 			case "exchange":
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "currency":

@@ -88,13 +88,13 @@ func init() {
 	// tradingaccount.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	tradingaccount.UserIDValidator = tradingaccountDescUserID.Validators[0].(func(int) error)
 	// tradingaccountDescUpdatedAt is the schema descriptor for updated_at field.
-	tradingaccountDescUpdatedAt := tradingaccountFields[8].Descriptor()
+	tradingaccountDescUpdatedAt := tradingaccountFields[9].Descriptor()
 	// tradingaccount.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	tradingaccount.DefaultUpdatedAt = tradingaccountDescUpdatedAt.Default.(func() time.Time)
 	// tradingaccount.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	tradingaccount.UpdateDefaultUpdatedAt = tradingaccountDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// tradingaccountDescCreatedAt is the schema descriptor for created_at field.
-	tradingaccountDescCreatedAt := tradingaccountFields[9].Descriptor()
+	tradingaccountDescCreatedAt := tradingaccountFields[10].Descriptor()
 	// tradingaccount.DefaultCreatedAt holds the default value on creation for the created_at field.
 	tradingaccount.DefaultCreatedAt = tradingaccountDescCreatedAt.Default.(func() time.Time)
 	// tradingaccountDescID is the schema descriptor for id field.

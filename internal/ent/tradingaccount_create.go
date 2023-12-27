@@ -28,6 +28,12 @@ func (tac *TradingAccountCreate) SetUserID(i int) *TradingAccountCreate {
 	return tac
 }
 
+// SetName sets the "name" field.
+func (tac *TradingAccountCreate) SetName(s string) *TradingAccountCreate {
+	tac.mutation.SetName(s)
+	return tac
+}
+
 // SetExchange sets the "exchange" field.
 func (tac *TradingAccountCreate) SetExchange(s string) *TradingAccountCreate {
 	tac.mutation.SetExchange(s)
@@ -181,6 +187,9 @@ func (tac *TradingAccountCreate) check() error {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "TradingAccount.user_id": %w`, err)}
 		}
 	}
+	if _, ok := tac.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "TradingAccount.name"`)}
+	}
 	if _, ok := tac.mutation.Exchange(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`ent: missing required field "TradingAccount.exchange"`)}
 	}
@@ -241,6 +250,10 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 	if id, ok := tac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := tac.mutation.Name(); ok {
+		_spec.SetField(tradingaccount.FieldName, field.TypeString, value)
+		_node.Name = value
 	}
 	if value, ok := tac.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)
