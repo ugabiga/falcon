@@ -48,10 +48,12 @@ export default function Users() {
     }
 
     return (
-        <main className="min-h-screen p-12">
-            <h1 className="text-4xl font-bold">Profile</h1>
-            <div className={"mt-6 space-y-6 w-full"}>
+        <main className="min-h-screen p-12 ">
+            <div className="w-full text-center">
+                <h1 className="text-4xl font-bold">Profile</h1>
+            </div>
 
+            <div className={" mt-6 space-y-6 w-full grid place-items-center"}>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
                     <Label htmlFor="name">Name</Label>
                     <Input type="name" id="name" defaultValue={data.userIndex.user.name} onChange={(e) => {
@@ -87,7 +89,6 @@ export default function Users() {
                         Save
                     </Button>
                 </div>
-
             </div>
         </main>
     )
