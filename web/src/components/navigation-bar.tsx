@@ -15,7 +15,7 @@ import {Moon, Sun} from "lucide-react";
 import React, {useEffect, useState} from "react";
 import {icon} from "@/components/styles";
 import {signIn, signOut, useSession} from "next-auth/react";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 
@@ -30,7 +30,7 @@ export function NavigationBar() {
     }, [])
 
     return (
-        <div className="md:max-w-[1200px] overflow-auto w-full mx-auto flex justify-between">
+        <div className="mt-2 mb-2 md:max-w-[1200px] overflow-auto w-full mx-auto flex justify-between">
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
@@ -63,41 +63,47 @@ export function NavigationBar() {
                         {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
                     </Toggle>
                 }
-                <LoginButton/>
+                <SessionMenu/>
             </div>
         </div>
     )
 }
 
-function LoginButton() {
+function convertToInitials(name: string) {
+    const [first, last] = name.split(" ")
+    return `${first[0]}${last[0]}`
+}
+
+function SessionMenu() {
     const {data: session} = useSession();
     // const session = true
 
     if (session) {
         return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button className="rounded-full" size="icon" variant="ghost">
-                        <Avatar className="h-9 w-9">
-                            <AvatarImage alt="User's name" src="/placeholder-user.jpg"/>
-                            <AvatarFallback>UN</AvatarFallback>
-                        </Avatar>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem onClick={
-                        () => {
-                            // @ts-ignore
-                            window.location.href = "/users"
-                        }
-                    }>
-                        Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => signOut()}>
-                        Logout
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <div className={"mr-2"}>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button className="rounded-full" size="icon" variant="ghost">
+                            <Avatar className="h-9 w-9">
+                                <AvatarFallback>{convertToInitials(session.user?.name ?? "")}</AvatarFallback>
+                            </Avatar>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuItem onClick={
+                            () => {
+                                // @ts-ignore
+                                window.location.href = "/users"
+                            }
+                        }>
+                            Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => signOut()}>
+                            Logout
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
         )
     } else {
         return (
