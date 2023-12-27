@@ -5,6 +5,7 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
@@ -27,6 +28,10 @@ func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID stri
 	}
 
 	return converter.ToTask(task)
+}
+
+func (r *mutationResolver) UpdateTask(ctx context.Context, id string, hours string, typeArg string, isActive bool) (*generated.Task, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {

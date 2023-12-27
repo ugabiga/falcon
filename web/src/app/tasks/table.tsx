@@ -1,6 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Task} from "@/graph/generated/generated";
 import {nextCronDate, parseCronExpression} from "@/lib/cron-parser";
+import {EditTask} from "@/app/tasks/edit";
 
 function convertBooleanToYesNo(value: boolean) {
     return value ? "Yes" : "No"
@@ -73,7 +74,9 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                             <TableCell>{task.type}</TableCell>
                             <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
                             <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
-                            <TableCell>Edit</TableCell>
+                            <TableCell>
+                                <EditTask task={task} />
+                            </TableCell>
                         </TableRow>
                     ))
                 }

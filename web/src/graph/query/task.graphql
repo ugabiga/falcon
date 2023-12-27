@@ -41,3 +41,12 @@ mutation CreateTask($tradingAccountID: ID!, $hours: String! $type: String!){
         isActive
     }
 }
+
+mutation UpdateTask($id: ID!, $hours: String! $type: String! $isActive: Boolean!){
+    updateTask(id: $id, hours: $hours type: $type isActive: $isActive){
+        id
+        cron
+        nextExecutionTime
+        isActive
+    }
+}
