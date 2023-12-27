@@ -6,6 +6,7 @@ import Link, {LinkProps} from "next/link";
 import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
+import {Avatar, AvatarImage} from "@/components/ui/avatar";
 
 export function NavigationMobileBar() {
     const [open, setOpen] = useState(false)
@@ -56,7 +57,10 @@ export function NavigationMobileBar() {
                         className="flex items-center"
                         onOpenChange={setOpen}
                     >
-                        <span className="font-bold">Home</span>
+                        <Avatar>
+                            <AvatarImage src="/logo1.png" alt="avatar"/>
+                        </Avatar>
+                        <span className="ml-2 font-bold">Falcon</span>
                     </MobileLink>
                     <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
                         <div className="flex flex-col space-y-3">
