@@ -4,9 +4,11 @@ type IconProps = HTMLAttributes<SVGElement>
 
 export const Icons = {
     logo: (props: IconProps) => (
-        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-             width="40" height="40" viewBox="0 0 680.000000 680.000000"
-             preserveAspectRatio="xMidYMid meet">
+        <svg
+            {...props}
+            version="1.0" xmlns="http://www.w3.org/2000/svg"
+            width="40" height="40" viewBox="0 0 680.000000 680.000000"
+            preserveAspectRatio="xMidYMid meet">
             <g transform="translate(0.000000,680.000000) scale(0.100000,-0.100000)"
                fill="gray" stroke="none">
                 <path d="M1872 4493 c-106 -219 -192 -404 -192 -410 0 -10 314 -13 1534 -13
