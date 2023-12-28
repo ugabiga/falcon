@@ -40,12 +40,6 @@ function convertStringToTaskType(value: string): "DCA" | "Grid" {
 }
 
 export function EditTask({task}: { task: Task }) {
-    const [formState, setFormState] = useState<z.infer<typeof UpdateTaskForm>>({
-        days: convertCronToDays(task.cron),
-        hours: convertCronToHours(task.cron),
-        type: convertStringToTaskType(task.type),
-        isActive: task.isActive
-    })
     const [updateTask] = useMutation(UpdateTaskDocument)
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
@@ -53,16 +47,14 @@ export function EditTask({task}: { task: Task }) {
     const form = useForm<z.infer<typeof UpdateTaskForm>>({
         resolver: zodResolver(UpdateTaskForm),
         defaultValues: {
-            days: formState.days,
-            hours: formState.hours,
-            type: formState.type,
-            isActive: formState.isActive
+            type: convertStringToTaskType(task.type),
+            days: convertCronToDays(task.cron),
+            hours: convertCronToHours(task.cron),
+            isActive: task.isActive
         },
     })
 
     function onSubmit(data: z.infer<typeof UpdateTaskForm>) {
-        setFormState(data)
-
         updateTask({
             variables: {
                 id: task.id,

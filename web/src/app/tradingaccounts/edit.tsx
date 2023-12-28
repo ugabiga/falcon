@@ -18,13 +18,6 @@ import {errorToast} from "@/components/toast";
 export function EditTradingAccount(
     {tradingAccount}: { tradingAccount: TradingAccount }
 ) {
-    const [formState, setFormState] = useState<z.infer<typeof EditTradingAccountFormSchema>>({
-        name: tradingAccount.name,
-        exchange: tradingAccount.exchange,
-        currency: tradingAccount.currency,
-        identifier: tradingAccount.identifier,
-        credential: ""
-    })
     const [updateTradingAccount] = useMutation(UpdateTradingAccountDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
@@ -32,17 +25,15 @@ export function EditTradingAccount(
     const form = useForm<z.infer<typeof EditTradingAccountFormSchema>>({
         resolver: zodResolver(EditTradingAccountFormSchema),
         defaultValues: {
-            name: formState.name,
-            exchange: formState.exchange,
-            currency: formState.currency,
-            identifier: formState.identifier,
-            credential: formState.credential,
+            name: tradingAccount.name,
+            exchange: tradingAccount.exchange,
+            currency: tradingAccount.currency,
+            identifier: tradingAccount.identifier,
+            credential: ""
         },
     })
 
     function onSubmit(data: z.infer<typeof EditTradingAccountFormSchema>) {
-        setFormState(data)
-
         updateTradingAccount({
             variables: {
                 id: tradingAccount.id,
@@ -54,7 +45,6 @@ export function EditTradingAccount(
             }
         }).then(() => {
             setOpenDialog(false)
-            form.reset()
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
             errorToast(e.message)
@@ -74,6 +64,20 @@ export function EditTradingAccount(
                         <DialogHeader className="mb-2">
                             <DialogTitle>Edit Trading Account</DialogTitle>
                         </DialogHeader>
+
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Name" {...field} />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                            />
 
                         <FormField
                             control={form.control}
