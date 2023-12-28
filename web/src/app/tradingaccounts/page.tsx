@@ -8,10 +8,11 @@ import {useAppDispatch, useAppSelector} from "@/store";
 import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
 import {TradingAccountTable} from "@/app/tradingaccounts/table";
 import {Loading} from "@/components/loading";
+import {Error} from "@/components/error";
 
 
 export default function TradingAccounts() {
-    const {data, loading, refetch} = useQuery(TradingAccountIndexDocument);
+    const {data, loading, refetch, error} = useQuery(TradingAccountIndexDocument);
     const tradingAccount = useAppSelector((state) => state.tradingAccount);
     const dispatch = useAppDispatch()
 
@@ -28,6 +29,10 @@ export default function TradingAccounts() {
 
     if (loading) {
         return <Loading/>
+    }
+
+    if (error) {
+        return <Error message={error.message}/>
     }
 
     return (

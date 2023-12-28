@@ -9,10 +9,11 @@ import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
 import {Loading} from "@/components/loading";
 import {customToast} from "@/components/toast";
+import {Error} from "@/components/error";
 
 
 export default function Users() {
-    const {data, loading} = useQuery(UserIndexDocument)
+    const {data, loading, error} = useQuery(UserIndexDocument)
     const [updateUser] = useMutation(UpdateUserDocument)
     const [user, setUser] = useState({
         name: "",
@@ -30,9 +31,14 @@ export default function Users() {
         return <Loading/>
     }
 
+    if (error) {
+        return <Error message={error.message}/>
+    }
+
     if (!data) {
         return <div>No data</div>
     }
+
 
     const handleOnSave = () => {
         updateUser({

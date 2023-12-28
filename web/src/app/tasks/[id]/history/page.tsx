@@ -6,10 +6,11 @@ import {GetTaskHistoryIndexDocument} from "@/graph/generated/generated";
 import {Loading} from "@/components/loading";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
+import {Error} from "@/components/error";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
     const router = useRouter()
-    const {data, loading} = useQuery(GetTaskHistoryIndexDocument, {
+    const {data, loading, error} = useQuery(GetTaskHistoryIndexDocument, {
         variables: {
             taskID: params.id
         }
@@ -17,6 +18,10 @@ export default function TaskHistory({params}: { params: { id: string } }) {
 
     if (loading) {
         return <Loading/>
+    }
+
+    if (error) {
+        return <Error message={error.message}/>
     }
 
     return (

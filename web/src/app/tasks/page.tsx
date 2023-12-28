@@ -11,12 +11,13 @@ import {refreshTask} from "@/store/taskSlice";
 import {AddTask} from "@/app/tasks/add";
 import {Loading} from "@/components/loading";
 import {useSearchParams} from "next/navigation";
+import {Error} from "@/components/error";
 
 export default function Tasks(){
     const params = useSearchParams()
     const tradingAccountId = params.get('trading_account_id')
 
-    const {data, loading, refetch} = useQuery(GetTaskIndexDocument,{
+    const {data, loading, refetch, error} = useQuery(GetTaskIndexDocument,{
         variables: {
             tradingAccountID: tradingAccountId ?? null
         }
@@ -42,6 +43,10 @@ export default function Tasks(){
 
     if (loading) {
         return <Loading/>
+    }
+
+    if (error) {
+        return <Error message={error.message}/>
     }
 
     return (
