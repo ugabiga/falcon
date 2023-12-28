@@ -6,6 +6,7 @@ import {signIn, signOut, useSession} from "next-auth/react";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {useRouter} from "next/navigation";
 
 
 export function NavigationRightMenu() {
@@ -31,7 +32,7 @@ export function NavigationRightMenu() {
 
 function SessionMenu() {
     const {data: session} = useSession();
-    // const session = true
+    const router = useRouter()
 
     if (session) {
         return (
@@ -47,13 +48,14 @@ function SessionMenu() {
                     <DropdownMenuContent>
                         <DropdownMenuItem onClick={
                             () => {
-                                // @ts-ignore
-                                window.location.href = "/users"
+                                router.push("/users")
                             }
                         }>
                             Profile
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => signOut()}>
+                        <DropdownMenuItem onClick={() => signOut({redirect: false}).then(() => {
+                            router.push("/")
+                        })}>
                             Sign Out
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -63,7 +65,7 @@ function SessionMenu() {
     } else {
         return (
             <Button variant="ghost" onClick={() => signIn()}>
-                Sign In or Sign Up
+                Sign In
             </Button>
         )
     }

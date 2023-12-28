@@ -1,9 +1,11 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
+const jwtCookieName = process.env.JWT_COOKIE_NAME || "falcon.access_token";
 
 const handler = NextAuth({
     logger: {
@@ -27,7 +29,7 @@ const handler = NextAuth({
     ],
     events: {
         signOut: async (message) => {
-            cookies().delete("access_token",);
+            cookies().delete(jwtCookieName)
         }
     },
     callbacks: {
@@ -61,28 +63,13 @@ const handler = NextAuth({
 
 
             cookies().set(
-                "falcon.access_token",
+                jwtCookieName,
                 token,
                 {
                     httpOnly: true,
                     maxAge: 36000,
                 }
             );
-            //
-            // const respCSRF = await api.getCSRF()
-            //
-            // cookies().set(
-            //     "back.csrf_token",
-            //     respCSRF.csrfToken!,
-            //     {
-            //         httpOnly: true,
-            //         maxAge: 36000,
-            //     }
-            // );
-            //
-            // user.id = resp.user.id.toString()
-            // user.name = resp.user.firstName + " " + resp.user.lastName
-
             return true;
         },
     }
