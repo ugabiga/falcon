@@ -51,7 +51,11 @@ export function EditTask({task}: { task: Task }) {
             currency: task.currency,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
-            isActive: task.isActive
+            isActive: task.isActive,
+            grid: {
+                gap: 2,
+                quantity: 10,
+            }
         },
     })
 
@@ -164,6 +168,8 @@ export function EditTask({task}: { task: Task }) {
                             )}
                         />
 
+                        {form.watch("type") === "Grid" && <GridFormFields form={form}/>}
+
                         <FormField
                             control={form.control}
                             name="isActive"
@@ -199,5 +205,38 @@ export function EditTask({task}: { task: Task }) {
             </DialogContent>
         </Dialog>
     )
+}
 
+function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof UpdateTaskForm>>> }) {
+    return (
+        <>
+            <FormField
+                control={form.control}
+                name="grid.gap"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>Grid Gap (%)</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Grid gap" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="grid.quantity"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>Grid quantity</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Grid quantity" {...field} />
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+        </>
+    )
 }

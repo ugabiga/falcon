@@ -47,6 +47,15 @@ export const UpdateTaskForm = z.object({
     isActive: z
         .boolean({
             required_error: "Please enter a exchange",
+        }),
+    grid: z
+        .object({
+            gap: z.number({
+
+            }),
+            quantity: z.number({
+
+                }),
         })
 
 })
