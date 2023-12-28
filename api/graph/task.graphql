@@ -11,6 +11,7 @@ input CreateTaskInput {
     tradingAccountID: ID!
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     days: String!
     hours: String!
     type: String!
@@ -20,6 +21,7 @@ input CreateTaskInput {
 input UpdateTaskInput {
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     days: String!
     hours: String!
     type: String!
@@ -38,6 +40,7 @@ type Task {
     tradingAccountID: ID!
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!

@@ -25,6 +25,7 @@ type CreateTaskInput struct {
 	TradingAccountID string     `json:"tradingAccountID"`
 	Currency         string     `json:"currency"`
 	Amount           float64    `json:"amount"`
+	CryptoCurrency   string     `json:"cryptoCurrency"`
 	Days             string     `json:"days"`
 	Hours            string     `json:"hours"`
 	Type             string     `json:"type"`
@@ -36,6 +37,7 @@ type Task struct {
 	TradingAccountID  string          `json:"tradingAccountID"`
 	Currency          string          `json:"currency"`
 	Amount            float64         `json:"amount"`
+	CryptoCurrency    string          `json:"cryptoCurrency"`
 	Cron              string          `json:"cron"`
 	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
 	IsActive          bool            `json:"isActive"`
@@ -84,13 +86,14 @@ type TradingAccountIndex struct {
 }
 
 type UpdateTaskInput struct {
-	Currency string     `json:"currency"`
-	Amount   float64    `json:"amount"`
-	Days     string     `json:"days"`
-	Hours    string     `json:"hours"`
-	Type     string     `json:"type"`
-	IsActive bool       `json:"isActive"`
-	Params   model.JSON `json:"params"`
+	Currency       string     `json:"currency"`
+	Amount         float64    `json:"amount"`
+	CryptoCurrency string     `json:"cryptoCurrency"`
+	Days           string     `json:"days"`
+	Hours          string     `json:"hours"`
+	Type           string     `json:"type"`
+	IsActive       bool       `json:"isActive"`
+	Params         model.JSON `json:"params"`
 }
 
 type UpdateUserInput struct {

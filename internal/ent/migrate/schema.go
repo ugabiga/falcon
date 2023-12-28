@@ -37,6 +37,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "currency", Type: field.TypeString},
 		{Name: "amount", Type: field.TypeFloat64, Default: 0},
+		{Name: "crypto_currency", Type: field.TypeString},
 		{Name: "cron", Type: field.TypeString},
 		{Name: "next_execution_time", Type: field.TypeTime, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -54,7 +55,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_trading_accounts_tasks",
-				Columns:    []*schema.Column{TasksColumns[10]},
+				Columns:    []*schema.Column{TasksColumns[11]},
 				RefColumns: []*schema.Column{TradingAccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

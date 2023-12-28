@@ -48,6 +48,12 @@ func (tc *TaskCreate) SetNillableAmount(f *float64) *TaskCreate {
 	return tc
 }
 
+// SetCryptoCurrency sets the "crypto_currency" field.
+func (tc *TaskCreate) SetCryptoCurrency(s string) *TaskCreate {
+	tc.mutation.SetCryptoCurrency(s)
+	return tc
+}
+
 // SetCron sets the "cron" field.
 func (tc *TaskCreate) SetCron(s string) *TaskCreate {
 	tc.mutation.SetCron(s)
@@ -217,6 +223,9 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Task.amount"`)}
 	}
+	if _, ok := tc.mutation.CryptoCurrency(); !ok {
+		return &ValidationError{Name: "crypto_currency", err: errors.New(`ent: missing required field "Task.crypto_currency"`)}
+	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
 	}
@@ -279,6 +288,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Amount(); ok {
 		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
+	}
+	if value, ok := tc.mutation.CryptoCurrency(); ok {
+		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
+		_node.CryptoCurrency = value
 	}
 	if value, ok := tc.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

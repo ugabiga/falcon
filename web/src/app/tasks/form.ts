@@ -9,6 +9,13 @@ export const AddTaskForm = z.object({
         .number({
             required_error: "Please enter a currency amount",
         }),
+    cryptoCurrency: z
+        .string({
+            required_error: "Please enter a exchange",
+        })
+        .min(1, {
+            message: "Please enter a exchange",
+        }),
     days: z
         .string({
             required_error: "Please enter a exchange",
@@ -36,6 +43,13 @@ export const UpdateTaskForm = z.object({
         .number({
             required_error: "Please enter a currency amount",
         }),
+    cryptoCurrency: z
+        .string({
+            required_error: "Please enter a exchange",
+        })
+        .min(1, {
+            message: "Please enter a exchange",
+        }),
     days: z
         .string({
             required_error: "Please enter a exchange",
@@ -58,12 +72,8 @@ export const UpdateTaskForm = z.object({
         }),
     grid: z
         .object({
-            gap: z.number({
-
-            }),
-            quantity: z.number({
-
-                }),
+            gap: z.number({}),
+            quantity: z.number({}),
         })
 
 })

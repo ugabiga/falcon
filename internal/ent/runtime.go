@@ -48,17 +48,17 @@ func init() {
 	// task.DefaultAmount holds the default value on creation for the amount field.
 	task.DefaultAmount = taskDescAmount.Default.(float64)
 	// taskDescIsActive is the schema descriptor for is_active field.
-	taskDescIsActive := taskFields[6].Descriptor()
+	taskDescIsActive := taskFields[7].Descriptor()
 	// task.DefaultIsActive holds the default value on creation for the is_active field.
 	task.DefaultIsActive = taskDescIsActive.Default.(bool)
 	// taskDescUpdatedAt is the schema descriptor for updated_at field.
-	taskDescUpdatedAt := taskFields[9].Descriptor()
+	taskDescUpdatedAt := taskFields[10].Descriptor()
 	// task.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	task.DefaultUpdatedAt = taskDescUpdatedAt.Default.(func() time.Time)
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// taskDescCreatedAt is the schema descriptor for created_at field.
-	taskDescCreatedAt := taskFields[10].Descriptor()
+	taskDescCreatedAt := taskFields[11].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescID is the schema descriptor for id field.

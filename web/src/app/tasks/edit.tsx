@@ -76,6 +76,7 @@ export function EditTask({task}: { task: Task }) {
             type: convertStringToTaskType(task.type),
             currency: task.currency,
             amount: task.amount,
+            cryptoCurrency: task.cryptoCurrency,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
             isActive: task.isActive,
@@ -89,6 +90,7 @@ export function EditTask({task}: { task: Task }) {
                 id: task.id,
                 currency: data.currency,
                 amount: data.amount,
+                cryptoCurrency: data.cryptoCurrency,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -186,6 +188,27 @@ export function EditTask({task}: { task: Task }) {
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="cryptoCurrency"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Crypto Currency</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a crypto currency"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="BTC">BTC</SelectItem>
+                                            <SelectItem value="ETH">ETH</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}
@@ -232,7 +255,9 @@ export function EditTask({task}: { task: Task }) {
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
-                                                onChange={field.onChange}
+                                                onCheckedChange={(value) => {
+                                                    field.onChange(value)
+                                                }}
                                             />
                                         </FormControl>
                                         <div className="space-y-1 leading-none">

@@ -205,6 +205,50 @@ func (ec *executionContext) fieldContext_Task_amount(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Task_cryptoCurrency(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_cryptoCurrency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CryptoCurrency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_cryptoCurrency(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Task_cron(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Task_cron(ctx, field)
 	if err != nil {
@@ -791,6 +835,14 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
+		case "cryptoCurrency":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cryptoCurrency"))
+			it.CryptoCurrency, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "days":
 			var err error
 
@@ -851,6 +903,14 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			it.Amount, err = ec.unmarshalNFloat2float64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "cryptoCurrency":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cryptoCurrency"))
+			it.CryptoCurrency, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -942,6 +1002,13 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 		case "amount":
 
 			out.Values[i] = ec._Task_amount(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "cryptoCurrency":
+
+			out.Values[i] = ec._Task_cryptoCurrency(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

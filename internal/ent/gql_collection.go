@@ -177,6 +177,11 @@ func (t *TaskQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, task.FieldAmount)
 				fieldSeen[task.FieldAmount] = struct{}{}
 			}
+		case "cryptoCurrency":
+			if _, ok := fieldSeen[task.FieldCryptoCurrency]; !ok {
+				selectedFields = append(selectedFields, task.FieldCryptoCurrency)
+				fieldSeen[task.FieldCryptoCurrency] = struct{}{}
+			}
 		case "cron":
 			if _, ok := fieldSeen[task.FieldCron]; !ok {
 				selectedFields = append(selectedFields, task.FieldCron)

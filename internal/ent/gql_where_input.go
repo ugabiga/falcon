@@ -421,6 +421,21 @@ type TaskWhereInput struct {
 	AmountLT    *float64  `json:"amountLT,omitempty"`
 	AmountLTE   *float64  `json:"amountLTE,omitempty"`
 
+	// "crypto_currency" field predicates.
+	CryptoCurrency             *string  `json:"cryptoCurrency,omitempty"`
+	CryptoCurrencyNEQ          *string  `json:"cryptoCurrencyNEQ,omitempty"`
+	CryptoCurrencyIn           []string `json:"cryptoCurrencyIn,omitempty"`
+	CryptoCurrencyNotIn        []string `json:"cryptoCurrencyNotIn,omitempty"`
+	CryptoCurrencyGT           *string  `json:"cryptoCurrencyGT,omitempty"`
+	CryptoCurrencyGTE          *string  `json:"cryptoCurrencyGTE,omitempty"`
+	CryptoCurrencyLT           *string  `json:"cryptoCurrencyLT,omitempty"`
+	CryptoCurrencyLTE          *string  `json:"cryptoCurrencyLTE,omitempty"`
+	CryptoCurrencyContains     *string  `json:"cryptoCurrencyContains,omitempty"`
+	CryptoCurrencyHasPrefix    *string  `json:"cryptoCurrencyHasPrefix,omitempty"`
+	CryptoCurrencyHasSuffix    *string  `json:"cryptoCurrencyHasSuffix,omitempty"`
+	CryptoCurrencyEqualFold    *string  `json:"cryptoCurrencyEqualFold,omitempty"`
+	CryptoCurrencyContainsFold *string  `json:"cryptoCurrencyContainsFold,omitempty"`
+
 	// "cron" field predicates.
 	Cron             *string  `json:"cron,omitempty"`
 	CronNEQ          *string  `json:"cronNEQ,omitempty"`
@@ -665,6 +680,45 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	}
 	if i.AmountLTE != nil {
 		predicates = append(predicates, task.AmountLTE(*i.AmountLTE))
+	}
+	if i.CryptoCurrency != nil {
+		predicates = append(predicates, task.CryptoCurrencyEQ(*i.CryptoCurrency))
+	}
+	if i.CryptoCurrencyNEQ != nil {
+		predicates = append(predicates, task.CryptoCurrencyNEQ(*i.CryptoCurrencyNEQ))
+	}
+	if len(i.CryptoCurrencyIn) > 0 {
+		predicates = append(predicates, task.CryptoCurrencyIn(i.CryptoCurrencyIn...))
+	}
+	if len(i.CryptoCurrencyNotIn) > 0 {
+		predicates = append(predicates, task.CryptoCurrencyNotIn(i.CryptoCurrencyNotIn...))
+	}
+	if i.CryptoCurrencyGT != nil {
+		predicates = append(predicates, task.CryptoCurrencyGT(*i.CryptoCurrencyGT))
+	}
+	if i.CryptoCurrencyGTE != nil {
+		predicates = append(predicates, task.CryptoCurrencyGTE(*i.CryptoCurrencyGTE))
+	}
+	if i.CryptoCurrencyLT != nil {
+		predicates = append(predicates, task.CryptoCurrencyLT(*i.CryptoCurrencyLT))
+	}
+	if i.CryptoCurrencyLTE != nil {
+		predicates = append(predicates, task.CryptoCurrencyLTE(*i.CryptoCurrencyLTE))
+	}
+	if i.CryptoCurrencyContains != nil {
+		predicates = append(predicates, task.CryptoCurrencyContains(*i.CryptoCurrencyContains))
+	}
+	if i.CryptoCurrencyHasPrefix != nil {
+		predicates = append(predicates, task.CryptoCurrencyHasPrefix(*i.CryptoCurrencyHasPrefix))
+	}
+	if i.CryptoCurrencyHasSuffix != nil {
+		predicates = append(predicates, task.CryptoCurrencyHasSuffix(*i.CryptoCurrencyHasSuffix))
+	}
+	if i.CryptoCurrencyEqualFold != nil {
+		predicates = append(predicates, task.CryptoCurrencyEqualFold(*i.CryptoCurrencyEqualFold))
+	}
+	if i.CryptoCurrencyContainsFold != nil {
+		predicates = append(predicates, task.CryptoCurrencyContainsFold(*i.CryptoCurrencyContainsFold))
 	}
 	if i.Cron != nil {
 		predicates = append(predicates, task.CronEQ(*i.Cron))

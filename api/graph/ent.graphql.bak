@@ -227,6 +227,7 @@ type Task implements Node {
   currency: String!
   """Amount of currency to buy/sell"""
   amount: Float!
+  cryptoCurrency: String!
   cron: String!
   nextExecutionTime: Time
   isActive: Boolean!
@@ -369,6 +370,20 @@ input TaskWhereInput {
   amountGTE: Float
   amountLT: Float
   amountLTE: Float
+  """crypto_currency field predicates"""
+  cryptoCurrency: String
+  cryptoCurrencyNEQ: String
+  cryptoCurrencyIn: [String!]
+  cryptoCurrencyNotIn: [String!]
+  cryptoCurrencyGT: String
+  cryptoCurrencyGTE: String
+  cryptoCurrencyLT: String
+  cryptoCurrencyLTE: String
+  cryptoCurrencyContains: String
+  cryptoCurrencyHasPrefix: String
+  cryptoCurrencyHasSuffix: String
+  cryptoCurrencyEqualFold: String
+  cryptoCurrencyContainsFold: String
   """cron field predicates"""
   cron: String
   cronNEQ: String

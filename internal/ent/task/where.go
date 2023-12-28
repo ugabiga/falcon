@@ -71,6 +71,11 @@ func Amount(v float64) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldAmount, v))
 }
 
+// CryptoCurrency applies equality check predicate on the "crypto_currency" field. It's identical to CryptoCurrencyEQ.
+func CryptoCurrency(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldCryptoCurrency, v))
+}
+
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
 func Cron(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCron, v))
@@ -234,6 +239,71 @@ func AmountLT(v float64) predicate.Task {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v float64) predicate.Task {
 	return predicate.Task(sql.FieldLTE(FieldAmount, v))
+}
+
+// CryptoCurrencyEQ applies the EQ predicate on the "crypto_currency" field.
+func CryptoCurrencyEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyNEQ applies the NEQ predicate on the "crypto_currency" field.
+func CryptoCurrencyNEQ(v string) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyIn applies the In predicate on the "crypto_currency" field.
+func CryptoCurrencyIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldCryptoCurrency, vs...))
+}
+
+// CryptoCurrencyNotIn applies the NotIn predicate on the "crypto_currency" field.
+func CryptoCurrencyNotIn(vs ...string) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldCryptoCurrency, vs...))
+}
+
+// CryptoCurrencyGT applies the GT predicate on the "crypto_currency" field.
+func CryptoCurrencyGT(v string) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyGTE applies the GTE predicate on the "crypto_currency" field.
+func CryptoCurrencyGTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyLT applies the LT predicate on the "crypto_currency" field.
+func CryptoCurrencyLT(v string) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyLTE applies the LTE predicate on the "crypto_currency" field.
+func CryptoCurrencyLTE(v string) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyContains applies the Contains predicate on the "crypto_currency" field.
+func CryptoCurrencyContains(v string) predicate.Task {
+	return predicate.Task(sql.FieldContains(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyHasPrefix applies the HasPrefix predicate on the "crypto_currency" field.
+func CryptoCurrencyHasPrefix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasPrefix(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyHasSuffix applies the HasSuffix predicate on the "crypto_currency" field.
+func CryptoCurrencyHasSuffix(v string) predicate.Task {
+	return predicate.Task(sql.FieldHasSuffix(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyEqualFold applies the EqualFold predicate on the "crypto_currency" field.
+func CryptoCurrencyEqualFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldEqualFold(FieldCryptoCurrency, v))
+}
+
+// CryptoCurrencyContainsFold applies the ContainsFold predicate on the "crypto_currency" field.
+func CryptoCurrencyContainsFold(v string) predicate.Task {
+	return predicate.Task(sql.FieldContainsFold(FieldCryptoCurrency, v))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.

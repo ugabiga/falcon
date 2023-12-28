@@ -38,6 +38,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                 tradingAccountID: tradingAccountID!,
                 currency: data.currency,
                 amount: data.amount,
+                cryptoCurrency: data.cryptoCurrency,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -129,6 +130,28 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                                                }}
                                         />
                                     </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="cryptoCurrency"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Crypto Currency</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a crypto currency"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="BTC">BTC</SelectItem>
+                                            <SelectItem value="ETH">ETH</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage/>
                                 </FormItem>
                             )}

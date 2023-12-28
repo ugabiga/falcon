@@ -27,6 +27,7 @@ func (Task) Fields() []ent.Field {
 		field.Float("amount").
 			Default(0).
 			Comment("Amount of currency to buy/sell"),
+		field.String("crypto_currency"),
 		field.String("cron"),
 		field.Time("next_execution_time").
 			Optional(),

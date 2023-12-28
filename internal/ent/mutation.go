@@ -703,6 +703,7 @@ type TaskMutation struct {
 	currency               *string
 	amount                 *float64
 	addamount              *float64
+	crypto_currency        *string
 	cron                   *string
 	next_execution_time    *time.Time
 	is_active              *bool
@@ -951,6 +952,42 @@ func (m *TaskMutation) AddedAmount() (r float64, exists bool) {
 func (m *TaskMutation) ResetAmount() {
 	m.amount = nil
 	m.addamount = nil
+}
+
+// SetCryptoCurrency sets the "crypto_currency" field.
+func (m *TaskMutation) SetCryptoCurrency(s string) {
+	m.crypto_currency = &s
+}
+
+// CryptoCurrency returns the value of the "crypto_currency" field in the mutation.
+func (m *TaskMutation) CryptoCurrency() (r string, exists bool) {
+	v := m.crypto_currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCryptoCurrency returns the old "crypto_currency" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldCryptoCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCryptoCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCryptoCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCryptoCurrency: %w", err)
+	}
+	return oldValue.CryptoCurrency, nil
+}
+
+// ResetCryptoCurrency resets all changes to the "crypto_currency" field.
+func (m *TaskMutation) ResetCryptoCurrency() {
+	m.crypto_currency = nil
 }
 
 // SetCron sets the "cron" field.
@@ -1346,7 +1383,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.trading_account != nil {
 		fields = append(fields, task.FieldTradingAccountID)
 	}
@@ -1355,6 +1392,9 @@ func (m *TaskMutation) Fields() []string {
 	}
 	if m.amount != nil {
 		fields = append(fields, task.FieldAmount)
+	}
+	if m.crypto_currency != nil {
+		fields = append(fields, task.FieldCryptoCurrency)
 	}
 	if m.cron != nil {
 		fields = append(fields, task.FieldCron)
@@ -1391,6 +1431,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Currency()
 	case task.FieldAmount:
 		return m.Amount()
+	case task.FieldCryptoCurrency:
+		return m.CryptoCurrency()
 	case task.FieldCron:
 		return m.Cron()
 	case task.FieldNextExecutionTime:
@@ -1420,6 +1462,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCurrency(ctx)
 	case task.FieldAmount:
 		return m.OldAmount(ctx)
+	case task.FieldCryptoCurrency:
+		return m.OldCryptoCurrency(ctx)
 	case task.FieldCron:
 		return m.OldCron(ctx)
 	case task.FieldNextExecutionTime:
@@ -1463,6 +1507,13 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount(v)
+		return nil
+	case task.FieldCryptoCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCryptoCurrency(v)
 		return nil
 	case task.FieldCron:
 		v, ok := value.(string)
@@ -1600,6 +1651,9 @@ func (m *TaskMutation) ResetField(name string) error {
 		return nil
 	case task.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case task.FieldCryptoCurrency:
+		m.ResetCryptoCurrency()
 		return nil
 	case task.FieldCron:
 		m.ResetCron()

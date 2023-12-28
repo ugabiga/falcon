@@ -79,6 +79,20 @@ func (tu *TaskUpdate) AddAmount(f float64) *TaskUpdate {
 	return tu
 }
 
+// SetCryptoCurrency sets the "crypto_currency" field.
+func (tu *TaskUpdate) SetCryptoCurrency(s string) *TaskUpdate {
+	tu.mutation.SetCryptoCurrency(s)
+	return tu
+}
+
+// SetNillableCryptoCurrency sets the "crypto_currency" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCryptoCurrency(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetCryptoCurrency(*s)
+	}
+	return tu
+}
+
 // SetCron sets the "cron" field.
 func (tu *TaskUpdate) SetCron(s string) *TaskUpdate {
 	tu.mutation.SetCron(s)
@@ -281,6 +295,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedAmount(); ok {
 		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
 	}
+	if value, ok := tu.mutation.CryptoCurrency(); ok {
+		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
+	}
 	if value, ok := tu.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
 	}
@@ -445,6 +462,20 @@ func (tuo *TaskUpdateOne) SetNillableAmount(f *float64) *TaskUpdateOne {
 // AddAmount adds f to the "amount" field.
 func (tuo *TaskUpdateOne) AddAmount(f float64) *TaskUpdateOne {
 	tuo.mutation.AddAmount(f)
+	return tuo
+}
+
+// SetCryptoCurrency sets the "crypto_currency" field.
+func (tuo *TaskUpdateOne) SetCryptoCurrency(s string) *TaskUpdateOne {
+	tuo.mutation.SetCryptoCurrency(s)
+	return tuo
+}
+
+// SetNillableCryptoCurrency sets the "crypto_currency" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCryptoCurrency(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetCryptoCurrency(*s)
+	}
 	return tuo
 }
 
@@ -679,6 +710,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.AddedAmount(); ok {
 		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
+	}
+	if value, ok := tuo.mutation.CryptoCurrency(); ok {
+		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

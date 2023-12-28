@@ -66,6 +66,7 @@ type ComplexityRoot struct {
 		Amount            func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Cron              func(childComplexity int) int
+		CryptoCurrency    func(childComplexity int) int
 		Currency          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		IsActive          func(childComplexity int) int
@@ -311,6 +312,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Task.Cron(childComplexity), true
+
+	case "Task.cryptoCurrency":
+		if e.complexity.Task.CryptoCurrency == nil {
+			break
+		}
+
+		return e.complexity.Task.CryptoCurrency(childComplexity), true
 
 	case "Task.currency":
 		if e.complexity.Task.Currency == nil {
@@ -686,6 +694,7 @@ input CreateTaskInput {
     tradingAccountID: ID!
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     days: String!
     hours: String!
     type: String!
@@ -695,6 +704,7 @@ input CreateTaskInput {
 input UpdateTaskInput {
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     days: String!
     hours: String!
     type: String!
@@ -713,6 +723,7 @@ type Task {
     tradingAccountID: ID!
     currency: String!
     amount: Float!
+    cryptoCurrency: String!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!
