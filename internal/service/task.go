@@ -18,7 +18,11 @@ func NewTaskService(db *ent.Client) *TaskService {
 	return &TaskService{db: db}
 }
 
-func (s TaskService) GetWithTaskHistory(ctx context.Context, Id int) (*ent.Task, error) {
+func (s TaskService) GetWithTaskHistory(ctx context.Context, userID, Id int) (*ent.Task, error) {
+	if err := s.validateUser(ctx, userID, Id); err != nil {
+		return nil, err
+	}
+
 	return s.db.Task.Query().
 		Where(
 			task.ID(Id),
@@ -77,6 +81,10 @@ func (s TaskService) Update(ctx context.Context, userID int, id int, hours strin
 		return nil, err
 	}
 
+	if err := s.validateUser(ctx, userID, id); err != nil {
+		return nil, err
+	}
+
 	cron := "0 0 " + hours + " * * *"
 
 	return s.db.Task.UpdateOneID(id).
@@ -84,4 +92,14 @@ func (s TaskService) Update(ctx context.Context, userID int, id int, hours strin
 		SetType(typeArg).
 		SetIsActive(isActive).
 		Save(ctx)
+}
+
+func (s TaskService) validateUser(ctx context.Context, userID int, id int) error {
+	_, err := s.db.Task.Query().
+		Where(
+			task.TradingAccountID(userID),
+			task.ID(id),
+		).
+		First(ctx)
+	return err
 }

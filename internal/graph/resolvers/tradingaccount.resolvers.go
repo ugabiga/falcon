@@ -13,8 +13,6 @@ import (
 )
 
 func (r *mutationResolver) CreateTradingAccount(ctx context.Context, name string, exchange string, currency string, identifier string, credential string) (*generated.TradingAccount, error) {
-	r.logger.Printf("CreateTradingAccount: exchange=%s, currency=%s, identifier=%s", exchange, currency, identifier)
-
 	claim := helper.MustJWTClaimInResolver(ctx)
 	newTradingAccount, err := r.tradingAccountSrv.Create(
 		ctx,
