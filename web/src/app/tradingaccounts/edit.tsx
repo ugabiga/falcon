@@ -18,6 +18,13 @@ import {errorToast} from "@/components/toast";
 export function EditTradingAccount(
     {tradingAccount}: { tradingAccount: TradingAccount }
 ) {
+    const [formState, setFormState] = useState<z.infer<typeof EditTradingAccountFormSchema>>({
+        name: tradingAccount.name,
+        exchange: tradingAccount.exchange,
+        currency: tradingAccount.currency,
+        identifier: tradingAccount.identifier,
+        credential: ""
+    })
     const [updateTradingAccount] = useMutation(UpdateTradingAccountDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
@@ -25,15 +32,17 @@ export function EditTradingAccount(
     const form = useForm<z.infer<typeof EditTradingAccountFormSchema>>({
         resolver: zodResolver(EditTradingAccountFormSchema),
         defaultValues: {
-            name: tradingAccount.name,
-            exchange: tradingAccount.exchange,
-            currency: tradingAccount.currency,
-            identifier: tradingAccount.identifier,
-            credential: ""
+            name: formState.name,
+            exchange: formState.exchange,
+            currency: formState.currency,
+            identifier: formState.identifier,
+            credential: formState.credential,
         },
     })
 
     function onSubmit(data: z.infer<typeof EditTradingAccountFormSchema>) {
+        setFormState(data)
+
         updateTradingAccount({
             variables: {
                 id: tradingAccount.id,

@@ -16,6 +16,7 @@ import {refreshTask} from "@/store/taskSlice";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
+import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
 
 
 function convertCronToHours(cron: string): string {
@@ -23,11 +24,28 @@ function convertCronToHours(cron: string): string {
     return parsedCron.fields.hour.toString()
 }
 
+function convertCronToDays(cron: string): string {
+    const parsedCron = parseCronExpression(cron)
+    const result = parsedCron.fields.dayOfWeek.toString()
+
+    if (result === "0,1,2,3,4,5,6,7") {
+        return "*"
+    }
+
+    return result
+}
+
 function convertStringToTaskType(value: string): "DCA" | "Grid" {
     return value === "DCA" ? "DCA" : "Grid"
 }
 
 export function EditTask({task}: { task: Task }) {
+    const [formState, setFormState] = useState<z.infer<typeof UpdateTaskForm>>({
+        days: convertCronToDays(task.cron),
+        hours: convertCronToHours(task.cron),
+        type: convertStringToTaskType(task.type),
+        isActive: task.isActive
+    })
     const [updateTask] = useMutation(UpdateTaskDocument)
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
@@ -35,23 +53,26 @@ export function EditTask({task}: { task: Task }) {
     const form = useForm<z.infer<typeof UpdateTaskForm>>({
         resolver: zodResolver(UpdateTaskForm),
         defaultValues: {
-            hours: convertCronToHours(task.cron),
-            type: convertStringToTaskType(task.type),
-            isActive: task.isActive
+            days: formState.days,
+            hours: formState.hours,
+            type: formState.type,
+            isActive: formState.isActive
         },
     })
 
     function onSubmit(data: z.infer<typeof UpdateTaskForm>) {
+        setFormState(data)
+
         updateTask({
             variables: {
                 id: task.id,
+                days: data.days,
                 hours: data.hours,
                 type: data.type,
                 isActive: task.isActive
             }
         }).then(() => {
             setOpenDialog(false)
-            form.reset()
             dispatch(refreshTask({
                 tradingAccountID: task.tradingAccountID,
                 refresh: true
@@ -93,6 +114,22 @@ export function EditTask({task}: { task: Task }) {
                                         </SelectContent>
                                     </Select>
                                     <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="days"
+                            render={({field}) => (
+                                <FormItem className="min-h-12">
+                                    <FormLabel>Days</FormLabel>
+                                    <FormMessage/>
+                                    <DaysOfWeekSelector selectedDaysInString={field.value} onChange={
+                                        (days) => {
+                                            field.onChange(days)
+                                        }
+                                    }/>
                                 </FormItem>
                             )}
                         />

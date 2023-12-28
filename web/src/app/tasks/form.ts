@@ -1,6 +1,13 @@
 import * as z from "zod";
 
 export const AddTaskForm = z.object({
+    days: z
+        .string({
+            required_error: "Please enter a exchange",
+        })
+        .min(1, {
+            message: "Please enter a exchange",
+        }),
     hours: z
         .string({
             required_error: "Please enter a exchange",
@@ -13,6 +20,13 @@ export const AddTaskForm = z.object({
 
 })
 export const UpdateTaskForm = z.object({
+    days: z
+        .string({
+            required_error: "Please enter a exchange",
+        })
+        .min(1, {
+            message: "Please enter a exchange",
+        }),
     hours: z
         .string({
             required_error: "Please enter a exchange",

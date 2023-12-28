@@ -35,8 +35,8 @@ query GetTaskIndex($tradingAccountID: ID){
     }
 }
 
-mutation CreateTask($tradingAccountID: ID!, $hours: String! $type: String!){
-    createTask(tradingAccountID: $tradingAccountID, hours: $hours type: $type){
+mutation CreateTask($tradingAccountID: ID!, $days: String!, $hours: String!, $type: String!){
+    createTask(tradingAccountID: $tradingAccountID, days: $days hours: $hours type: $type){
         id
         cron
         nextExecutionTime
@@ -44,8 +44,8 @@ mutation CreateTask($tradingAccountID: ID!, $hours: String! $type: String!){
     }
 }
 
-mutation UpdateTask($id: ID!, $hours: String! $type: String! $isActive: Boolean!){
-    updateTask(id: $id, hours: $hours type: $type isActive: $isActive){
+mutation UpdateTask($id: ID!, $days: String! $hours: String! $type: String! $isActive: Boolean!){
+    updateTask(id: $id, days: $days, hours: $hours type: $type isActive: $isActive){
         id
         cron
         nextExecutionTime

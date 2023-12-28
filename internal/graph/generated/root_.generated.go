@@ -48,9 +48,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateTask           func(childComplexity int, tradingAccountID string, hours string, typeArg string) int
+		CreateTask           func(childComplexity int, tradingAccountID string, days string, hours string, typeArg string) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, currency string, identifier string, credential string) int
-		UpdateTask           func(childComplexity int, id string, hours string, typeArg string, isActive bool) int
+		UpdateTask           func(childComplexity int, id string, days string, hours string, typeArg string, isActive bool) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, currency *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
@@ -201,7 +201,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["hours"].(string), args["type"].(string)), true
+		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["days"].(string), args["hours"].(string), args["type"].(string)), true
 
 	case "Mutation.createTradingAccount":
 		if e.complexity.Mutation.CreateTradingAccount == nil {
@@ -225,7 +225,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool)), true
+		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool)), true
 
 	case "Mutation.updateTradingAccount":
 		if e.complexity.Mutation.UpdateTradingAccount == nil {
@@ -660,8 +660,8 @@ enum AuthenticationProvider {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, hours: String!, type: String!): Task!
-    updateTask(id: ID!, hours: String!, type: String! isActive: Boolean!): Task!
+    createTask(tradingAccountID: ID!, days: String!, hours: String!, type: String!): Task!
+    updateTask(id: ID!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
 }
 
 type TaskIndex{

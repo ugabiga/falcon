@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import {CreateTaskDocument} from "@/graph/generated/generated";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
@@ -13,6 +13,7 @@ import {Input} from "@/components/ui/input";
 import {AddTaskForm} from "@/app/tasks/form";
 import {refreshTask} from "@/store/taskSlice";
 import {errorToast} from "@/components/toast";
+import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
 
 export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
     if (!tradingAccountID) {
@@ -35,6 +36,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
         createTask({
             variables: {
                 tradingAccountID: tradingAccountID!,
+                days: data.days,
                 hours: data.hours,
                 type: data.type,
             }
@@ -82,6 +84,23 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                                         </SelectContent>
                                     </Select>
                                     <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="days"
+                            render={({field}) => (
+                                <FormItem className="min-h-12">
+                                    <FormLabel>Days</FormLabel>
+                                    <FormMessage/>
+                                    <DaysOfWeekSelector selectedDaysInString={field.value} onChange={
+                                        (days) => {
+                                            console.log(days)
+                                            field.onChange(days)
+                                        }
+                                    }/>
                                 </FormItem>
                             )}
                         />

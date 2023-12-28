@@ -44,7 +44,7 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID i
 		All(ctx)
 }
 
-func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, hours string, typeArg string) (*ent.Task, error) {
+func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, days string, hours string, typeArg string) (*ent.Task, error) {
 	if err := s.validateExceedLimit(ctx, userID); err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID in
 	if err = s.validateHours(hours); err != nil {
 		return nil, err
 	}
-	cron := "0 0 " + hours + " * * *"
+	cron := "0 0 " + hours + " * * " + days
 
 	return s.db.Task.Create().
 		SetCron(cron).
@@ -102,16 +102,16 @@ func (s TaskService) validateHours(hours string) error {
 	return nil
 }
 
-func (s TaskService) Update(ctx context.Context, userID int, id int, hours string, typeArg string, isActive bool) (*ent.Task, error) {
+func (s TaskService) Update(ctx context.Context, userID int, id int, days string, hours string, typeArg string, isActive bool) (*ent.Task, error) {
 	if err := s.validateHours(hours); err != nil {
 		return nil, err
 	}
 
 	if err := s.validateUser(ctx, userID, id); err != nil {
-		return nil, err
+		return nil, ErrDoNotHaveAccess
 	}
 
-	cron := "0 0 " + hours + " * * *"
+	cron := "0 0 " + hours + " * * " + days
 
 	return s.db.Task.UpdateOneID(id).
 		SetCron(cron).
@@ -121,11 +121,16 @@ func (s TaskService) Update(ctx context.Context, userID int, id int, hours strin
 }
 
 func (s TaskService) validateUser(ctx context.Context, userID int, id int) error {
-	_, err := s.db.Task.Query().
-		Where(
-			task.TradingAccountID(userID),
-			task.ID(id),
-		).
-		First(ctx)
+	targetTask, err := s.db.Task.Query().Where(
+		task.ID(id),
+	).WithTradingAccount().First(ctx)
+	if err != nil {
+		return err
+	}
+
+	if targetTask.Edges.TradingAccount.UserID != userID {
+		return ErrDoNotHaveAccess
+	}
+
 	return err
 }

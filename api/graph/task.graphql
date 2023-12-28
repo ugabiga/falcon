@@ -3,8 +3,8 @@ extend type Query {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, hours: String!, type: String!): Task!
-    updateTask(id: ID!, hours: String!, type: String! isActive: Boolean!): Task!
+    createTask(tradingAccountID: ID!, days: String!, hours: String!, type: String!): Task!
+    updateTask(id: ID!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
 }
 
 type TaskIndex{

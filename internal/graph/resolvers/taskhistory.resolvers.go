@@ -5,11 +5,11 @@ package resolvers
 
 import (
 	"context"
-	"github.com/ugabiga/falcon/internal/handler/helper"
 
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
 func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID string) (*generated.TaskHistoryIndex, error) {
