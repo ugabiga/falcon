@@ -480,6 +480,8 @@ func (ec *executionContext) fieldContext_TradingAccount_tasks(ctx context.Contex
 				return ec.fieldContext_Task_id(ctx, field)
 			case "tradingAccountID":
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
+			case "currency":
+				return ec.fieldContext_Task_currency(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":

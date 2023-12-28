@@ -22,6 +22,7 @@ type Authentication struct {
 type Task struct {
 	ID                string          `json:"id"`
 	TradingAccountID  string          `json:"tradingAccountID"`
+	Currency          string          `json:"currency"`
 	Cron              string          `json:"cron"`
 	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
 	IsActive          bool            `json:"isActive"`

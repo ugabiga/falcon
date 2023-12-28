@@ -44,8 +44,12 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID i
 		All(ctx)
 }
 
-func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, days string, hours string, typeArg string) (*ent.Task, error) {
+func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, currency string, days string, hours string, typeArg string) (*ent.Task, error) {
 	if err := s.validateExceedLimit(ctx, userID); err != nil {
+		return nil, err
+	}
+
+	if err := s.validateCurrency(currency); err != nil {
 		return nil, err
 	}
 
@@ -65,6 +69,7 @@ func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID in
 	cron := "0 0 " + hours + " * * " + days
 
 	return s.db.Task.Create().
+		SetCurrency(currency).
 		SetCron(cron).
 		SetType(typeArg).
 		SetTradingAccountID(tradingAccount.ID).
@@ -102,7 +107,7 @@ func (s TaskService) validateHours(hours string) error {
 	return nil
 }
 
-func (s TaskService) Update(ctx context.Context, userID int, id int, days string, hours string, typeArg string, isActive bool) (*ent.Task, error) {
+func (s TaskService) Update(ctx context.Context, userID int, id int, currency string, days string, hours string, typeArg string, isActive bool) (*ent.Task, error) {
 	if err := s.validateHours(hours); err != nil {
 		return nil, err
 	}
@@ -111,9 +116,14 @@ func (s TaskService) Update(ctx context.Context, userID int, id int, days string
 		return nil, ErrDoNotHaveAccess
 	}
 
+	if err := s.validateCurrency(currency); err != nil {
+		return nil, err
+	}
+
 	cron := "0 0 " + hours + " * * " + days
 
 	return s.db.Task.UpdateOneID(id).
+		SetCurrency(currency).
 		SetCron(cron).
 		SetType(typeArg).
 		SetIsActive(isActive).
@@ -133,4 +143,16 @@ func (s TaskService) validateUser(ctx context.Context, userID int, id int) error
 	}
 
 	return err
+}
+
+func (s TaskService) validateCurrency(currency string) error {
+	// currency code ISO 4217
+	switch currency {
+	case "KRW":
+		return nil
+	case "USD":
+		return nil
+	default:
+		return ErrWrongCurrency
+	}
 }

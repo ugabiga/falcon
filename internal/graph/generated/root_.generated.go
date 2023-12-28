@@ -48,9 +48,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateTask           func(childComplexity int, tradingAccountID string, days string, hours string, typeArg string) int
+		CreateTask           func(childComplexity int, tradingAccountID string, currency string, days string, hours string, typeArg string) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, identifier string, credential string) int
-		UpdateTask           func(childComplexity int, id string, days string, hours string, typeArg string, isActive bool) int
+		UpdateTask           func(childComplexity int, id string, currency string, days string, hours string, typeArg string, isActive bool) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
@@ -65,6 +65,7 @@ type ComplexityRoot struct {
 	Task struct {
 		CreatedAt         func(childComplexity int) int
 		Cron              func(childComplexity int) int
+		Currency          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		IsActive          func(childComplexity int) int
 		NextExecutionTime func(childComplexity int) int
@@ -200,7 +201,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["days"].(string), args["hours"].(string), args["type"].(string)), true
+		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string)), true
 
 	case "Mutation.createTradingAccount":
 		if e.complexity.Mutation.CreateTradingAccount == nil {
@@ -224,7 +225,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool)), true
+		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool)), true
 
 	case "Mutation.updateTradingAccount":
 		if e.complexity.Mutation.UpdateTradingAccount == nil {
@@ -301,6 +302,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Task.Cron(childComplexity), true
+
+	case "Task.currency":
+		if e.complexity.Task.Currency == nil {
+			break
+		}
+
+		return e.complexity.Task.Currency(childComplexity), true
 
 	case "Task.id":
 		if e.complexity.Task.ID == nil {
@@ -652,8 +660,8 @@ enum AuthenticationProvider {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, days: String!, hours: String!, type: String!): Task!
-    updateTask(id: ID!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
+    createTask(tradingAccountID: ID!, currency: String!, days: String!, hours: String!, type: String!): Task!
+    updateTask(id: ID!, currency: String!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
 }
 
 type TaskIndex{
@@ -664,6 +672,7 @@ type TaskIndex{
 type Task {
     id: ID!
     tradingAccountID: ID!
+    currency: String!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!

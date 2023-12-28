@@ -61,6 +61,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                     <TableHead className="w-[100px]">ID</TableHead>
                     <TableHead>Schedule(24h)</TableHead>
                     <TableHead>Type</TableHead>
+                    <TableHead>Currency</TableHead>
                     <TableHead>Next Execution Time(24h)</TableHead>
                     <TableHead>Is Active</TableHead>
                     <TableHead>Action</TableHead>
@@ -78,6 +79,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                         : tasks?.map((task) => (
                             <TableRow key={task.id}>
                                 <TableCell>{task.id}</TableCell>
+                                <TableCell>{task.currency}</TableCell>
                                 <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
                                 <TableCell>{task.type}</TableCell>
                                 <TableCell>{convertToNextCronDate(task.cron)}</TableCell>

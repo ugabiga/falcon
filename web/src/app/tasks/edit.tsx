@@ -48,6 +48,7 @@ export function EditTask({task}: { task: Task }) {
         resolver: zodResolver(UpdateTaskForm),
         defaultValues: {
             type: convertStringToTaskType(task.type),
+            currency: task.currency,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
             isActive: task.isActive
@@ -58,6 +59,7 @@ export function EditTask({task}: { task: Task }) {
         updateTask({
             variables: {
                 id: task.id,
+                currency: data.currency,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -103,6 +105,28 @@ export function EditTask({task}: { task: Task }) {
                                         <SelectContent>
                                             <SelectItem value="DCA">DCA</SelectItem>
                                             <SelectItem value="Grid">Grid</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="currency"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Currency</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a currency"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="KRW">KRW</SelectItem>
+                                            <SelectItem value="USD">USD</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage/>

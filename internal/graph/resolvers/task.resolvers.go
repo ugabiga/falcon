@@ -12,13 +12,14 @@ import (
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, days string, hours string, typeArg string) (*generated.Task, error) {
+func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, currency string, days string, hours string, typeArg string) (*generated.Task, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	task, err := r.taskSrv.Create(
 		ctx,
 		claim.UserID,
 		str.New(tradingAccountID).ToIntDefault(0),
+		currency,
 		days,
 		hours,
 		typeArg,
@@ -30,13 +31,14 @@ func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID stri
 	return converter.ToTask(task)
 }
 
-func (r *mutationResolver) UpdateTask(ctx context.Context, id string, days string, hours string, typeArg string, isActive bool) (*generated.Task, error) {
+func (r *mutationResolver) UpdateTask(ctx context.Context, id string, currency string, days string, hours string, typeArg string, isActive bool) (*generated.Task, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	task, err := r.taskSrv.Update(
 		ctx,
 		claim.UserID,
 		str.New(id).ToIntDefault(0),
+		currency,
 		days,
 		hours,
 		typeArg,

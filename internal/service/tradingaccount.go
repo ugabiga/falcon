@@ -211,18 +211,6 @@ func (s TradingAccountService) validateExchange(exchange string) error {
 	}
 }
 
-func (s TradingAccountService) validateCurrency(currency string) error {
-	// currency code ISO 4217
-	switch currency {
-	case "KRW":
-		return nil
-	case "USD":
-		return nil
-	default:
-		return ErrWrongCurrency
-	}
-}
-
 func (s TradingAccountService) encrypt(credential string) (string, error) {
 	password, err := bcrypt.GenerateFromPassword([]byte(credential), bcrypt.DefaultCost)
 	if err != nil {

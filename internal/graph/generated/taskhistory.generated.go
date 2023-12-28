@@ -291,6 +291,8 @@ func (ec *executionContext) fieldContext_TaskHistory_task(ctx context.Context, f
 				return ec.fieldContext_Task_id(ctx, field)
 			case "tradingAccountID":
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
+			case "currency":
+				return ec.fieldContext_Task_currency(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -357,6 +359,8 @@ func (ec *executionContext) fieldContext_TaskHistoryIndex_task(ctx context.Conte
 				return ec.fieldContext_Task_id(ctx, field)
 			case "tradingAccountID":
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
+			case "currency":
+				return ec.fieldContext_Task_currency(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":

@@ -101,28 +101,6 @@ export function EditTradingAccount(
 
                         <FormField
                             control={form.control}
-                            name="currency"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Currency</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a currency"/>
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="KRW">KRW</SelectItem>
-                                            <SelectItem value="USD">USD</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
                             name="identifier"
                             render={({field}) => (
                                 <FormItem>

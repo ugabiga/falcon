@@ -116,6 +116,50 @@ func (ec *executionContext) fieldContext_Task_tradingAccountID(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Task_currency(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_currency(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Task_cron(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Task_cron(ctx, field)
 	if err != nil {
@@ -656,6 +700,13 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 		case "tradingAccountID":
 
 			out.Values[i] = ec._Task_tradingAccountID(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "currency":
+
+			out.Values[i] = ec._Task_currency(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

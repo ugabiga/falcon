@@ -1,6 +1,10 @@
 import * as z from "zod";
 
 export const AddTaskForm = z.object({
+    currency: z
+        .string({
+            required_error: "Please enter a currency",
+        }),
     days: z
         .string({
             required_error: "Please enter a exchange",
@@ -20,6 +24,10 @@ export const AddTaskForm = z.object({
 
 })
 export const UpdateTaskForm = z.object({
+    currency: z
+        .string({
+            required_error: "Please enter a currency",
+        }),
     days: z
         .string({
             required_error: "Please enter a exchange",
