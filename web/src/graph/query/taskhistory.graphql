@@ -1,0 +1,11 @@
+query GetTaskHistoryIndex($taskID: ID!){
+    taskHistoryIndex(taskID: $taskID){
+        taskHistories {
+            id
+            taskID
+            isSuccess
+            updatedAt
+            createdAt
+        }
+    }
+}

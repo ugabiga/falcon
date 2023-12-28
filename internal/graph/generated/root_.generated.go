@@ -56,6 +56,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		TaskHistoryIndex    func(childComplexity int, taskID string) int
 		TaskIndex           func(childComplexity int, tradingAccountID *string) int
 		TradingAccountIndex func(childComplexity int) int
 		UserIndex           func(childComplexity int) int
@@ -81,6 +82,10 @@ type ComplexityRoot struct {
 		Task      func(childComplexity int) int
 		TaskID    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+	}
+
+	TaskHistoryIndex struct {
+		TaskHistories func(childComplexity int) int
 	}
 
 	TaskIndex struct {
@@ -245,6 +250,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["input"].(UpdateUserInput)), true
 
+	case "Query.taskHistoryIndex":
+		if e.complexity.Query.TaskHistoryIndex == nil {
+			break
+		}
+
+		args, err := ec.field_Query_taskHistoryIndex_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TaskHistoryIndex(childComplexity, args["taskID"].(string)), true
+
 	case "Query.taskIndex":
 		if e.complexity.Query.TaskIndex == nil {
 			break
@@ -382,6 +399,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.TaskHistory.UpdatedAt(childComplexity), true
+
+	case "TaskHistoryIndex.taskHistories":
+		if e.complexity.TaskHistoryIndex.TaskHistories == nil {
+			break
+		}
+
+		return e.complexity.TaskHistoryIndex.TaskHistories(childComplexity), true
 
 	case "TaskIndex.selectedTradingAccount":
 		if e.complexity.TaskIndex.SelectedTradingAccount == nil {
@@ -651,7 +675,15 @@ type Task {
 }
 
 `, BuiltIn: false},
-	{Name: "api/graph/taskhistory.graphql", Input: `type TaskHistory {
+	{Name: "api/graph/taskhistory.graphql", Input: `extend type Query {
+    taskHistoryIndex(taskID: ID!): TaskHistoryIndex!
+}
+
+type TaskHistoryIndex{
+    taskHistories: [TaskHistory!]
+}
+
+type TaskHistory {
     id: ID!
     taskID: ID!
     isSuccess: Boolean!

@@ -1,3 +1,11 @@
+extend type Query {
+    taskHistoryIndex(taskID: ID!): TaskHistoryIndex!
+}
+
+type TaskHistoryIndex{
+    taskHistories: [TaskHistory!]
+}
+
 type TaskHistory {
     id: ID!
     taskID: ID!

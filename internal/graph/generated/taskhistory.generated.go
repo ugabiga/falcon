@@ -314,6 +314,61 @@ func (ec *executionContext) fieldContext_TaskHistory_task(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _TaskHistoryIndex_taskHistories(ctx context.Context, field graphql.CollectedField, obj *TaskHistoryIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TaskHistoryIndex_taskHistories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TaskHistories, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*TaskHistory)
+	fc.Result = res
+	return ec.marshalOTaskHistory2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTaskHistoryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TaskHistoryIndex_taskHistories(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TaskHistoryIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TaskHistory_id(ctx, field)
+			case "taskID":
+				return ec.fieldContext_TaskHistory_taskID(ctx, field)
+			case "isSuccess":
+				return ec.fieldContext_TaskHistory_isSuccess(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_TaskHistory_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_TaskHistory_createdAt(ctx, field)
+			case "task":
+				return ec.fieldContext_TaskHistory_task(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TaskHistory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -389,6 +444,31 @@ func (ec *executionContext) _TaskHistory(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var taskHistoryIndexImplementors = []string{"TaskHistoryIndex"}
+
+func (ec *executionContext) _TaskHistoryIndex(ctx context.Context, sel ast.SelectionSet, obj *TaskHistoryIndex) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, taskHistoryIndexImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TaskHistoryIndex")
+		case "taskHistories":
+
+			out.Values[i] = ec._TaskHistoryIndex_taskHistories(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
@@ -401,6 +481,20 @@ func (ec *executionContext) marshalNTaskHistory2ᚖgithubᚗcomᚋugabigaᚋfalc
 		return graphql.Null
 	}
 	return ec._TaskHistory(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTaskHistoryIndex2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTaskHistoryIndex(ctx context.Context, sel ast.SelectionSet, v TaskHistoryIndex) graphql.Marshaler {
+	return ec._TaskHistoryIndex(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTaskHistoryIndex2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTaskHistoryIndex(ctx context.Context, sel ast.SelectionSet, v *TaskHistoryIndex) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TaskHistoryIndex(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOTaskHistory2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTaskHistoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*TaskHistory) graphql.Marshaler {

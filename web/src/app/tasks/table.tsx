@@ -2,10 +2,9 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {Task} from "@/graph/generated/generated";
 import {nextCronDate, parseCronExpression} from "@/lib/cron-parser";
 import {EditTask} from "@/app/tasks/edit";
-
-function convertBooleanToYesNo(value: boolean) {
-    return value ? "Yes" : "No"
-}
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {convertBooleanToYesNo} from "@/lib/converter";
 
 function convertToPastHourString(input: string): string {
     const hours = input.split(',').map(Number);
@@ -65,6 +64,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                     <TableHead>Next Execution Time(24h)</TableHead>
                     <TableHead>Is Active</TableHead>
                     <TableHead>Action</TableHead>
+                    <TableHead>More</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -84,6 +84,13 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
                                 <TableCell>
                                     <EditTask task={task}/>
+                                </TableCell>
+                                <TableCell>
+                                    <Button variant="link" asChild>
+                                        <Link href={`/tasks/${task.id}/history`} legacyBehavior>
+                                            <a>History</a>
+                                        </Link>
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))

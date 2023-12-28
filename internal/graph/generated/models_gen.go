@@ -41,6 +41,10 @@ type TaskHistory struct {
 	Task      *Task     `json:"task"`
 }
 
+type TaskHistoryIndex struct {
+	TaskHistories []*TaskHistory `json:"taskHistories"`
+}
+
 type TaskIndex struct {
 	SelectedTradingAccount *TradingAccount   `json:"selectedTradingAccount"`
 	TradingAccounts        []*TradingAccount `json:"tradingAccounts"`
