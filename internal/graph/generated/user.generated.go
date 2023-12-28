@@ -793,6 +793,8 @@ func (ec *executionContext) fieldContext_Query_taskHistoryIndex(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "task":
+				return ec.fieldContext_TaskHistoryIndex_task(ctx, field)
 			case "taskHistories":
 				return ec.fieldContext_TaskHistoryIndex_taskHistories(ctx, field)
 			}

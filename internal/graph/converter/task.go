@@ -8,9 +8,21 @@ import (
 
 func ToTask(inputData *ent.Task) (*generated.Task, error) {
 	var result generated.Task
+
 	result.ID = IntToString(inputData.ID)
+	result.TradingAccountID = IntToString(inputData.TradingAccountID)
+
 	if err := deepcopy.CopyEx(&result, inputData); err != nil {
 		return nil, err
+	}
+
+	result.TaskHistories = make([]*generated.TaskHistory, 0, len(inputData.Edges.TaskHistories))
+	for _, v := range inputData.Edges.TaskHistories {
+		newVal, err := ToTaskHistory(v)
+		if err != nil {
+			return nil, err
+		}
+		result.TaskHistories = append(result.TaskHistories, newVal)
 	}
 
 	return &result, nil

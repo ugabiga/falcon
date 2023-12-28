@@ -10,9 +10,18 @@ import {useDispatch} from "react-redux";
 import {refreshTask} from "@/store/taskSlice";
 import {AddTask} from "@/app/tasks/add";
 import {Loading} from "@/components/loading";
+import {useSearchParams} from "next/navigation";
 
-export default function Tasks() {
-    const {data, loading, refetch} = useQuery(GetTaskIndexDocument)
+export default function Tasks(){
+    const params = useSearchParams()
+    const tradingAccountId = params.get('trading_account_id')
+
+    const {data, loading, refetch} = useQuery(GetTaskIndexDocument,{
+        variables: {
+            tradingAccountID: tradingAccountId ?? null
+        }
+    })
+
     const task = useAppSelector((state) => state.task)
     const dispatch = useDispatch()
 

@@ -3,6 +3,7 @@ extend type Query {
 }
 
 type TaskHistoryIndex{
+    task: Task!
     taskHistories: [TaskHistory!]
 }
 

@@ -18,6 +18,14 @@ func NewTaskService(db *ent.Client) *TaskService {
 	return &TaskService{db: db}
 }
 
+func (s TaskService) GetWithTaskHistory(ctx context.Context, Id int) (*ent.Task, error) {
+	return s.db.Task.Query().
+		Where(
+			task.ID(Id),
+		).
+		WithTaskHistories().
+		First(ctx)
+}
 func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID int) ([]*ent.Task, error) {
 	return s.db.Task.Query().
 		Where(

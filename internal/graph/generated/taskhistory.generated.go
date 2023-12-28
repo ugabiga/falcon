@@ -314,6 +314,72 @@ func (ec *executionContext) fieldContext_TaskHistory_task(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _TaskHistoryIndex_task(ctx context.Context, field graphql.CollectedField, obj *TaskHistoryIndex) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TaskHistoryIndex_task(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Task, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*Task)
+	fc.Result = res
+	return ec.marshalNTask2ᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTask(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TaskHistoryIndex_task(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TaskHistoryIndex",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Task_id(ctx, field)
+			case "tradingAccountID":
+				return ec.fieldContext_Task_tradingAccountID(ctx, field)
+			case "cron":
+				return ec.fieldContext_Task_cron(ctx, field)
+			case "nextExecutionTime":
+				return ec.fieldContext_Task_nextExecutionTime(ctx, field)
+			case "isActive":
+				return ec.fieldContext_Task_isActive(ctx, field)
+			case "type":
+				return ec.fieldContext_Task_type(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Task_updatedAt(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Task_createdAt(ctx, field)
+			case "tradingAccount":
+				return ec.fieldContext_Task_tradingAccount(ctx, field)
+			case "taskHistories":
+				return ec.fieldContext_Task_taskHistories(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Task", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TaskHistoryIndex_taskHistories(ctx context.Context, field graphql.CollectedField, obj *TaskHistoryIndex) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TaskHistoryIndex_taskHistories(ctx, field)
 	if err != nil {
@@ -454,6 +520,13 @@ func (ec *executionContext) _TaskHistoryIndex(ctx context.Context, sel ast.Selec
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("TaskHistoryIndex")
+		case "task":
+
+			out.Values[i] = ec._TaskHistoryIndex_task(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "taskHistories":
 
 			out.Values[i] = ec._TaskHistoryIndex_taskHistories(ctx, field, obj)

@@ -15,5 +15,8 @@ func NewTaskHistoryService(db *ent.Client) *TaskHistoryService {
 }
 
 func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, taskId int) ([]*ent.TaskHistory, error) {
-	return s.db.TaskHistory.Query().Where(taskhistory.TaskID(taskId)).All(ctx)
+	return s.db.TaskHistory.Query().
+		Where(taskhistory.TaskID(taskId)).
+		WithTask().
+		All(ctx)
 }

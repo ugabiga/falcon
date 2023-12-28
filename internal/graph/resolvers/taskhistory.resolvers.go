@@ -5,27 +5,25 @@ package resolvers
 
 import (
 	"context"
+
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
-
 	"github.com/ugabiga/falcon/internal/graph/generated"
 )
 
 func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID string) (*generated.TaskHistoryIndex, error) {
-	taskHistories, err := r.taskHistorySrv.GetTaskHistoryByTaskId(
-		ctx,
-		str.New(taskID).ToIntDefault(0),
-	)
+	task, err := r.taskSrv.GetWithTaskHistory(ctx, str.New(taskID).ToIntDefault(0))
 	if err != nil {
 		return nil, err
 	}
 
-	convertedTaskHistories, err := converter.ToTaskHistories(taskHistories)
+	convertedTask, err := converter.ToTask(task)
 	if err != nil {
 		return nil, err
 	}
 
 	return &generated.TaskHistoryIndex{
-		TaskHistories: convertedTaskHistories,
+		Task:          convertedTask,
+		TaskHistories: convertedTask.TaskHistories,
 	}, nil
 }

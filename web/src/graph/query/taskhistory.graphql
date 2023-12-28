@@ -1,5 +1,11 @@
 query GetTaskHistoryIndex($taskID: ID!){
     taskHistoryIndex(taskID: $taskID){
+        task {
+            id
+            tradingAccountID
+            createdAt
+            updatedAt
+        }
         taskHistories {
             id
             taskID

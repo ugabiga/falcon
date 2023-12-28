@@ -85,6 +85,7 @@ type ComplexityRoot struct {
 	}
 
 	TaskHistoryIndex struct {
+		Task          func(childComplexity int) int
 		TaskHistories func(childComplexity int) int
 	}
 
@@ -400,6 +401,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TaskHistory.UpdatedAt(childComplexity), true
 
+	case "TaskHistoryIndex.task":
+		if e.complexity.TaskHistoryIndex.Task == nil {
+			break
+		}
+
+		return e.complexity.TaskHistoryIndex.Task(childComplexity), true
+
 	case "TaskHistoryIndex.taskHistories":
 		if e.complexity.TaskHistoryIndex.TaskHistories == nil {
 			break
@@ -680,6 +688,7 @@ type Task {
 }
 
 type TaskHistoryIndex{
+    task: Task!
     taskHistories: [TaskHistory!]
 }
 
