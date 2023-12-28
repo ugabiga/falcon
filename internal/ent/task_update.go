@@ -44,6 +44,20 @@ func (tu *TaskUpdate) SetNillableTradingAccountID(i *int) *TaskUpdate {
 	return tu
 }
 
+// SetCurrency sets the "currency" field.
+func (tu *TaskUpdate) SetCurrency(s string) *TaskUpdate {
+	tu.mutation.SetCurrency(s)
+	return tu
+}
+
+// SetNillableCurrency sets the "currency" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCurrency(s *string) *TaskUpdate {
+	if s != nil {
+		tu.SetCurrency(*s)
+	}
+	return tu
+}
+
 // SetCron sets the "cron" field.
 func (tu *TaskUpdate) SetCron(s string) *TaskUpdate {
 	tu.mutation.SetCron(s)
@@ -225,6 +239,9 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := tu.mutation.Currency(); ok {
+		_spec.SetField(task.FieldCurrency, field.TypeString, value)
+	}
 	if value, ok := tu.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
 	}
@@ -347,6 +364,20 @@ func (tuo *TaskUpdateOne) SetTradingAccountID(i int) *TaskUpdateOne {
 func (tuo *TaskUpdateOne) SetNillableTradingAccountID(i *int) *TaskUpdateOne {
 	if i != nil {
 		tuo.SetTradingAccountID(*i)
+	}
+	return tuo
+}
+
+// SetCurrency sets the "currency" field.
+func (tuo *TaskUpdateOne) SetCurrency(s string) *TaskUpdateOne {
+	tuo.mutation.SetCurrency(s)
+	return tuo
+}
+
+// SetNillableCurrency sets the "currency" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCurrency(s *string) *TaskUpdateOne {
+	if s != nil {
+		tuo.SetCurrency(*s)
 	}
 	return tuo
 }
@@ -561,6 +592,9 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := tuo.mutation.Currency(); ok {
+		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

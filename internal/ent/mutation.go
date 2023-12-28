@@ -700,6 +700,7 @@ type TaskMutation struct {
 	op                     Op
 	typ                    string
 	id                     *int
+	currency               *string
 	cron                   *string
 	next_execution_time    *time.Time
 	is_active              *bool
@@ -855,6 +856,42 @@ func (m *TaskMutation) OldTradingAccountID(ctx context.Context) (v int, err erro
 // ResetTradingAccountID resets all changes to the "trading_account_id" field.
 func (m *TaskMutation) ResetTradingAccountID() {
 	m.trading_account = nil
+}
+
+// SetCurrency sets the "currency" field.
+func (m *TaskMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *TaskMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *TaskMutation) ResetCurrency() {
+	m.currency = nil
 }
 
 // SetCron sets the "cron" field.
@@ -1201,9 +1238,12 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.trading_account != nil {
 		fields = append(fields, task.FieldTradingAccountID)
+	}
+	if m.currency != nil {
+		fields = append(fields, task.FieldCurrency)
 	}
 	if m.cron != nil {
 		fields = append(fields, task.FieldCron)
@@ -1233,6 +1273,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case task.FieldTradingAccountID:
 		return m.TradingAccountID()
+	case task.FieldCurrency:
+		return m.Currency()
 	case task.FieldCron:
 		return m.Cron()
 	case task.FieldNextExecutionTime:
@@ -1256,6 +1298,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case task.FieldTradingAccountID:
 		return m.OldTradingAccountID(ctx)
+	case task.FieldCurrency:
+		return m.OldCurrency(ctx)
 	case task.FieldCron:
 		return m.OldCron(ctx)
 	case task.FieldNextExecutionTime:
@@ -1283,6 +1327,13 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTradingAccountID(v)
+		return nil
+	case task.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
 		return nil
 	case task.FieldCron:
 		v, ok := value.(string)
@@ -1389,6 +1440,9 @@ func (m *TaskMutation) ResetField(name string) error {
 	switch name {
 	case task.FieldTradingAccountID:
 		m.ResetTradingAccountID()
+		return nil
+	case task.FieldCurrency:
+		m.ResetCurrency()
 		return nil
 	case task.FieldCron:
 		m.ResetCron()
@@ -2073,7 +2127,6 @@ type TradingAccountMutation struct {
 	id            *int
 	name          *string
 	exchange      *string
-	currency      *string
 	ip            *string
 	identifier    *string
 	credential    *string
@@ -2301,42 +2354,6 @@ func (m *TradingAccountMutation) OldExchange(ctx context.Context) (v string, err
 // ResetExchange resets all changes to the "exchange" field.
 func (m *TradingAccountMutation) ResetExchange() {
 	m.exchange = nil
-}
-
-// SetCurrency sets the "currency" field.
-func (m *TradingAccountMutation) SetCurrency(s string) {
-	m.currency = &s
-}
-
-// Currency returns the value of the "currency" field in the mutation.
-func (m *TradingAccountMutation) Currency() (r string, exists bool) {
-	v := m.currency
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCurrency returns the old "currency" field's value of the TradingAccount entity.
-// If the TradingAccount object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingAccountMutation) OldCurrency(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCurrency requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
-	}
-	return oldValue.Currency, nil
-}
-
-// ResetCurrency resets all changes to the "currency" field.
-func (m *TradingAccountMutation) ResetCurrency() {
-	m.currency = nil
 }
 
 // SetIP sets the "ip" field.
@@ -2683,7 +2700,7 @@ func (m *TradingAccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TradingAccountMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 9)
 	if m.user != nil {
 		fields = append(fields, tradingaccount.FieldUserID)
 	}
@@ -2692,9 +2709,6 @@ func (m *TradingAccountMutation) Fields() []string {
 	}
 	if m.exchange != nil {
 		fields = append(fields, tradingaccount.FieldExchange)
-	}
-	if m.currency != nil {
-		fields = append(fields, tradingaccount.FieldCurrency)
 	}
 	if m.ip != nil {
 		fields = append(fields, tradingaccount.FieldIP)
@@ -2728,8 +2742,6 @@ func (m *TradingAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case tradingaccount.FieldExchange:
 		return m.Exchange()
-	case tradingaccount.FieldCurrency:
-		return m.Currency()
 	case tradingaccount.FieldIP:
 		return m.IP()
 	case tradingaccount.FieldIdentifier:
@@ -2757,8 +2769,6 @@ func (m *TradingAccountMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldName(ctx)
 	case tradingaccount.FieldExchange:
 		return m.OldExchange(ctx)
-	case tradingaccount.FieldCurrency:
-		return m.OldCurrency(ctx)
 	case tradingaccount.FieldIP:
 		return m.OldIP(ctx)
 	case tradingaccount.FieldIdentifier:
@@ -2800,13 +2810,6 @@ func (m *TradingAccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExchange(v)
-		return nil
-	case tradingaccount.FieldCurrency:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCurrency(v)
 		return nil
 	case tradingaccount.FieldIP:
 		v, ok := value.(string)
@@ -2919,9 +2922,6 @@ func (m *TradingAccountMutation) ResetField(name string) error {
 		return nil
 	case tradingaccount.FieldExchange:
 		m.ResetExchange()
-		return nil
-	case tradingaccount.FieldCurrency:
-		m.ResetCurrency()
 		return nil
 	case tradingaccount.FieldIP:
 		m.ResetIP()

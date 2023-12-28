@@ -23,6 +23,7 @@ func (Task) Fields() []ent.Field {
 		field.Int("trading_account_id").
 			Positive().
 			GoType(int(0)),
+		field.String("currency"),
 		field.String("cron"),
 		field.Time("next_execution_time").
 			Optional(),

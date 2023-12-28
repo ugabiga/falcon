@@ -56,7 +56,6 @@ type TradingAccount struct {
 	UserID     string    `json:"userID"`
 	Name       string    `json:"name"`
 	Exchange   string    `json:"exchange"`
-	Currency   string    `json:"currency"`
 	IP         string    `json:"ip"`
 	Identifier string    `json:"identifier"`
 	UpdatedAt  time.Time `json:"updatedAt"`

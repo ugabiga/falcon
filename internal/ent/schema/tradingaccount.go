@@ -25,7 +25,6 @@ func (TradingAccount) Fields() []ent.Field {
 			GoType(int(0)),
 		field.String("name"),
 		field.String("exchange"),
-		field.String("currency"),
 		field.String("ip"),
 		field.String("identifier").
 			Unique(),

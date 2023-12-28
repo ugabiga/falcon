@@ -12,14 +12,13 @@ import (
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *mutationResolver) CreateTradingAccount(ctx context.Context, name string, exchange string, currency string, identifier string, credential string) (*generated.TradingAccount, error) {
+func (r *mutationResolver) CreateTradingAccount(ctx context.Context, name string, exchange string, identifier string, credential string) (*generated.TradingAccount, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 	newTradingAccount, err := r.tradingAccountSrv.Create(
 		ctx,
 		claim.UserID,
 		name,
 		exchange,
-		currency,
 		identifier,
 		credential,
 		"",
@@ -31,7 +30,7 @@ func (r *mutationResolver) CreateTradingAccount(ctx context.Context, name string
 	return converter.ToTradingAccount(newTradingAccount)
 }
 
-func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, currency *string, identifier *string, credential *string) (bool, error) {
+func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, identifier *string, credential *string) (bool, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 	err := r.tradingAccountSrv.Update(
 		ctx,
@@ -39,7 +38,6 @@ func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, 
 		claim.UserID,
 		name,
 		exchange,
-		currency,
 		identifier,
 		credential,
 		nil,

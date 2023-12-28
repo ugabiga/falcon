@@ -4,7 +4,6 @@ query GetTaskIndex($tradingAccountID: ID){
             id
             name
             exchange
-            currency
             ip
             identifier
             tasks {
@@ -20,7 +19,6 @@ query GetTaskIndex($tradingAccountID: ID){
             id
             name
             exchange
-            currency
             ip
             identifier
             tasks {

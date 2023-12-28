@@ -36,7 +36,6 @@ export function AddTradingAccount() {
             variables: {
                 name: data.name,
                 exchange: data.exchange,
-                currency: data.currency,
                 identifier: data.identifier,
                 credential: data.credential,
             }

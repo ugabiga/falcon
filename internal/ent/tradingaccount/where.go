@@ -71,11 +71,6 @@ func Exchange(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldExchange, v))
 }
 
-// Currency applies equality check predicate on the "currency" field. It's identical to CurrencyEQ.
-func Currency(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldCurrency, v))
-}
-
 // IP applies equality check predicate on the "ip" field. It's identical to IPEQ.
 func IP(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldIP, v))
@@ -264,71 +259,6 @@ func ExchangeEqualFold(v string) predicate.TradingAccount {
 // ExchangeContainsFold applies the ContainsFold predicate on the "exchange" field.
 func ExchangeContainsFold(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldContainsFold(FieldExchange, v))
-}
-
-// CurrencyEQ applies the EQ predicate on the "currency" field.
-func CurrencyEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldCurrency, v))
-}
-
-// CurrencyNEQ applies the NEQ predicate on the "currency" field.
-func CurrencyNEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNEQ(FieldCurrency, v))
-}
-
-// CurrencyIn applies the In predicate on the "currency" field.
-func CurrencyIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldIn(FieldCurrency, vs...))
-}
-
-// CurrencyNotIn applies the NotIn predicate on the "currency" field.
-func CurrencyNotIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNotIn(FieldCurrency, vs...))
-}
-
-// CurrencyGT applies the GT predicate on the "currency" field.
-func CurrencyGT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGT(FieldCurrency, v))
-}
-
-// CurrencyGTE applies the GTE predicate on the "currency" field.
-func CurrencyGTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGTE(FieldCurrency, v))
-}
-
-// CurrencyLT applies the LT predicate on the "currency" field.
-func CurrencyLT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLT(FieldCurrency, v))
-}
-
-// CurrencyLTE applies the LTE predicate on the "currency" field.
-func CurrencyLTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLTE(FieldCurrency, v))
-}
-
-// CurrencyContains applies the Contains predicate on the "currency" field.
-func CurrencyContains(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContains(FieldCurrency, v))
-}
-
-// CurrencyHasPrefix applies the HasPrefix predicate on the "currency" field.
-func CurrencyHasPrefix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasPrefix(FieldCurrency, v))
-}
-
-// CurrencyHasSuffix applies the HasSuffix predicate on the "currency" field.
-func CurrencyHasSuffix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasSuffix(FieldCurrency, v))
-}
-
-// CurrencyEqualFold applies the EqualFold predicate on the "currency" field.
-func CurrencyEqualFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEqualFold(FieldCurrency, v))
-}
-
-// CurrencyContainsFold applies the ContainsFold predicate on the "currency" field.
-func CurrencyContainsFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContainsFold(FieldCurrency, v))
 }
 
 // IPEQ applies the EQ predicate on the "ip" field.

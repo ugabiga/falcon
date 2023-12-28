@@ -396,6 +396,21 @@ type TaskWhereInput struct {
 	TradingAccountIDIn    []int `json:"tradingAccountIDIn,omitempty"`
 	TradingAccountIDNotIn []int `json:"tradingAccountIDNotIn,omitempty"`
 
+	// "currency" field predicates.
+	Currency             *string  `json:"currency,omitempty"`
+	CurrencyNEQ          *string  `json:"currencyNEQ,omitempty"`
+	CurrencyIn           []string `json:"currencyIn,omitempty"`
+	CurrencyNotIn        []string `json:"currencyNotIn,omitempty"`
+	CurrencyGT           *string  `json:"currencyGT,omitempty"`
+	CurrencyGTE          *string  `json:"currencyGTE,omitempty"`
+	CurrencyLT           *string  `json:"currencyLT,omitempty"`
+	CurrencyLTE          *string  `json:"currencyLTE,omitempty"`
+	CurrencyContains     *string  `json:"currencyContains,omitempty"`
+	CurrencyHasPrefix    *string  `json:"currencyHasPrefix,omitempty"`
+	CurrencyHasSuffix    *string  `json:"currencyHasSuffix,omitempty"`
+	CurrencyEqualFold    *string  `json:"currencyEqualFold,omitempty"`
+	CurrencyContainsFold *string  `json:"currencyContainsFold,omitempty"`
+
 	// "cron" field predicates.
 	Cron             *string  `json:"cron,omitempty"`
 	CronNEQ          *string  `json:"cronNEQ,omitempty"`
@@ -577,6 +592,45 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	}
 	if len(i.TradingAccountIDNotIn) > 0 {
 		predicates = append(predicates, task.TradingAccountIDNotIn(i.TradingAccountIDNotIn...))
+	}
+	if i.Currency != nil {
+		predicates = append(predicates, task.CurrencyEQ(*i.Currency))
+	}
+	if i.CurrencyNEQ != nil {
+		predicates = append(predicates, task.CurrencyNEQ(*i.CurrencyNEQ))
+	}
+	if len(i.CurrencyIn) > 0 {
+		predicates = append(predicates, task.CurrencyIn(i.CurrencyIn...))
+	}
+	if len(i.CurrencyNotIn) > 0 {
+		predicates = append(predicates, task.CurrencyNotIn(i.CurrencyNotIn...))
+	}
+	if i.CurrencyGT != nil {
+		predicates = append(predicates, task.CurrencyGT(*i.CurrencyGT))
+	}
+	if i.CurrencyGTE != nil {
+		predicates = append(predicates, task.CurrencyGTE(*i.CurrencyGTE))
+	}
+	if i.CurrencyLT != nil {
+		predicates = append(predicates, task.CurrencyLT(*i.CurrencyLT))
+	}
+	if i.CurrencyLTE != nil {
+		predicates = append(predicates, task.CurrencyLTE(*i.CurrencyLTE))
+	}
+	if i.CurrencyContains != nil {
+		predicates = append(predicates, task.CurrencyContains(*i.CurrencyContains))
+	}
+	if i.CurrencyHasPrefix != nil {
+		predicates = append(predicates, task.CurrencyHasPrefix(*i.CurrencyHasPrefix))
+	}
+	if i.CurrencyHasSuffix != nil {
+		predicates = append(predicates, task.CurrencyHasSuffix(*i.CurrencyHasSuffix))
+	}
+	if i.CurrencyEqualFold != nil {
+		predicates = append(predicates, task.CurrencyEqualFold(*i.CurrencyEqualFold))
+	}
+	if i.CurrencyContainsFold != nil {
+		predicates = append(predicates, task.CurrencyContainsFold(*i.CurrencyContainsFold))
 	}
 	if i.Cron != nil {
 		predicates = append(predicates, task.CronEQ(*i.Cron))
@@ -1082,21 +1136,6 @@ type TradingAccountWhereInput struct {
 	ExchangeEqualFold    *string  `json:"exchangeEqualFold,omitempty"`
 	ExchangeContainsFold *string  `json:"exchangeContainsFold,omitempty"`
 
-	// "currency" field predicates.
-	Currency             *string  `json:"currency,omitempty"`
-	CurrencyNEQ          *string  `json:"currencyNEQ,omitempty"`
-	CurrencyIn           []string `json:"currencyIn,omitempty"`
-	CurrencyNotIn        []string `json:"currencyNotIn,omitempty"`
-	CurrencyGT           *string  `json:"currencyGT,omitempty"`
-	CurrencyGTE          *string  `json:"currencyGTE,omitempty"`
-	CurrencyLT           *string  `json:"currencyLT,omitempty"`
-	CurrencyLTE          *string  `json:"currencyLTE,omitempty"`
-	CurrencyContains     *string  `json:"currencyContains,omitempty"`
-	CurrencyHasPrefix    *string  `json:"currencyHasPrefix,omitempty"`
-	CurrencyHasSuffix    *string  `json:"currencyHasSuffix,omitempty"`
-	CurrencyEqualFold    *string  `json:"currencyEqualFold,omitempty"`
-	CurrencyContainsFold *string  `json:"currencyContainsFold,omitempty"`
-
 	// "ip" field predicates.
 	IP             *string  `json:"ip,omitempty"`
 	IPNEQ          *string  `json:"ipNEQ,omitempty"`
@@ -1372,45 +1411,6 @@ func (i *TradingAccountWhereInput) P() (predicate.TradingAccount, error) {
 	}
 	if i.ExchangeContainsFold != nil {
 		predicates = append(predicates, tradingaccount.ExchangeContainsFold(*i.ExchangeContainsFold))
-	}
-	if i.Currency != nil {
-		predicates = append(predicates, tradingaccount.CurrencyEQ(*i.Currency))
-	}
-	if i.CurrencyNEQ != nil {
-		predicates = append(predicates, tradingaccount.CurrencyNEQ(*i.CurrencyNEQ))
-	}
-	if len(i.CurrencyIn) > 0 {
-		predicates = append(predicates, tradingaccount.CurrencyIn(i.CurrencyIn...))
-	}
-	if len(i.CurrencyNotIn) > 0 {
-		predicates = append(predicates, tradingaccount.CurrencyNotIn(i.CurrencyNotIn...))
-	}
-	if i.CurrencyGT != nil {
-		predicates = append(predicates, tradingaccount.CurrencyGT(*i.CurrencyGT))
-	}
-	if i.CurrencyGTE != nil {
-		predicates = append(predicates, tradingaccount.CurrencyGTE(*i.CurrencyGTE))
-	}
-	if i.CurrencyLT != nil {
-		predicates = append(predicates, tradingaccount.CurrencyLT(*i.CurrencyLT))
-	}
-	if i.CurrencyLTE != nil {
-		predicates = append(predicates, tradingaccount.CurrencyLTE(*i.CurrencyLTE))
-	}
-	if i.CurrencyContains != nil {
-		predicates = append(predicates, tradingaccount.CurrencyContains(*i.CurrencyContains))
-	}
-	if i.CurrencyHasPrefix != nil {
-		predicates = append(predicates, tradingaccount.CurrencyHasPrefix(*i.CurrencyHasPrefix))
-	}
-	if i.CurrencyHasSuffix != nil {
-		predicates = append(predicates, tradingaccount.CurrencyHasSuffix(*i.CurrencyHasSuffix))
-	}
-	if i.CurrencyEqualFold != nil {
-		predicates = append(predicates, tradingaccount.CurrencyEqualFold(*i.CurrencyEqualFold))
-	}
-	if i.CurrencyContainsFold != nil {
-		predicates = append(predicates, tradingaccount.CurrencyContainsFold(*i.CurrencyContainsFold))
 	}
 	if i.IP != nil {
 		predicates = append(predicates, tradingaccount.IPEQ(*i.IP))

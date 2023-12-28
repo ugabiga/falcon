@@ -72,20 +72,6 @@ func (tau *TradingAccountUpdate) SetNillableExchange(s *string) *TradingAccountU
 	return tau
 }
 
-// SetCurrency sets the "currency" field.
-func (tau *TradingAccountUpdate) SetCurrency(s string) *TradingAccountUpdate {
-	tau.mutation.SetCurrency(s)
-	return tau
-}
-
-// SetNillableCurrency sets the "currency" field if the given value is not nil.
-func (tau *TradingAccountUpdate) SetNillableCurrency(s *string) *TradingAccountUpdate {
-	if s != nil {
-		tau.SetCurrency(*s)
-	}
-	return tau
-}
-
 // SetIP sets the "ip" field.
 func (tau *TradingAccountUpdate) SetIP(s string) *TradingAccountUpdate {
 	tau.mutation.SetIP(s)
@@ -273,9 +259,6 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := tau.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)
 	}
-	if value, ok := tau.mutation.Currency(); ok {
-		_spec.SetField(tradingaccount.FieldCurrency, field.TypeString, value)
-	}
 	if value, ok := tau.mutation.IP(); ok {
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)
 	}
@@ -426,20 +409,6 @@ func (tauo *TradingAccountUpdateOne) SetExchange(s string) *TradingAccountUpdate
 func (tauo *TradingAccountUpdateOne) SetNillableExchange(s *string) *TradingAccountUpdateOne {
 	if s != nil {
 		tauo.SetExchange(*s)
-	}
-	return tauo
-}
-
-// SetCurrency sets the "currency" field.
-func (tauo *TradingAccountUpdateOne) SetCurrency(s string) *TradingAccountUpdateOne {
-	tauo.mutation.SetCurrency(s)
-	return tauo
-}
-
-// SetNillableCurrency sets the "currency" field if the given value is not nil.
-func (tauo *TradingAccountUpdateOne) SetNillableCurrency(s *string) *TradingAccountUpdateOne {
-	if s != nil {
-		tauo.SetCurrency(*s)
 	}
 	return tauo
 }
@@ -660,9 +629,6 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 	}
 	if value, ok := tauo.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)
-	}
-	if value, ok := tauo.mutation.Currency(); ok {
-		_spec.SetField(tradingaccount.FieldCurrency, field.TypeString, value)
 	}
 	if value, ok := tauo.mutation.IP(); ok {
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)

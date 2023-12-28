@@ -27,7 +27,6 @@ export function EditTradingAccount(
         defaultValues: {
             name: tradingAccount.name,
             exchange: tradingAccount.exchange,
-            currency: tradingAccount.currency,
             identifier: tradingAccount.identifier,
             credential: ""
         },
@@ -39,7 +38,6 @@ export function EditTradingAccount(
                 id: tradingAccount.id,
                 name: data.name,
                 exchange: data.exchange,
-                currency: data.currency,
                 identifier: data.identifier,
                 credential: data.credential,
             }

@@ -222,6 +222,7 @@ type Query {
 type Task implements Node {
   id: ID!
   tradingAccountID: ID!
+  currency: String!
   cron: String!
   nextExecutionTime: Time
   isActive: Boolean!
@@ -340,6 +341,20 @@ input TaskWhereInput {
   tradingAccountIDNEQ: ID
   tradingAccountIDIn: [ID!]
   tradingAccountIDNotIn: [ID!]
+  """currency field predicates"""
+  currency: String
+  currencyNEQ: String
+  currencyIn: [String!]
+  currencyNotIn: [String!]
+  currencyGT: String
+  currencyGTE: String
+  currencyLT: String
+  currencyLTE: String
+  currencyContains: String
+  currencyHasPrefix: String
+  currencyHasSuffix: String
+  currencyEqualFold: String
+  currencyContainsFold: String
   """cron field predicates"""
   cron: String
   cronNEQ: String
@@ -412,7 +427,6 @@ type TradingAccount implements Node {
   userID: ID!
   name: String!
   exchange: String!
-  currency: String!
   ip: String!
   identifier: String!
   updatedAt: Time!
@@ -486,20 +500,6 @@ input TradingAccountWhereInput {
   exchangeHasSuffix: String
   exchangeEqualFold: String
   exchangeContainsFold: String
-  """currency field predicates"""
-  currency: String
-  currencyNEQ: String
-  currencyIn: [String!]
-  currencyNotIn: [String!]
-  currencyGT: String
-  currencyGTE: String
-  currencyLT: String
-  currencyLTE: String
-  currencyContains: String
-  currencyHasPrefix: String
-  currencyHasSuffix: String
-  currencyEqualFold: String
-  currencyContainsFold: String
   """ip field predicates"""
   ip: String
   ipNEQ: String

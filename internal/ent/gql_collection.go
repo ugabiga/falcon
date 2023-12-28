@@ -167,6 +167,11 @@ func (t *TaskQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, task.FieldTradingAccountID)
 				fieldSeen[task.FieldTradingAccountID] = struct{}{}
 			}
+		case "currency":
+			if _, ok := fieldSeen[task.FieldCurrency]; !ok {
+				selectedFields = append(selectedFields, task.FieldCurrency)
+				fieldSeen[task.FieldCurrency] = struct{}{}
+			}
 		case "cron":
 			if _, ok := fieldSeen[task.FieldCron]; !ok {
 				selectedFields = append(selectedFields, task.FieldCron)
@@ -395,11 +400,6 @@ func (ta *TradingAccountQuery) collectField(ctx context.Context, opCtx *graphql.
 			if _, ok := fieldSeen[tradingaccount.FieldExchange]; !ok {
 				selectedFields = append(selectedFields, tradingaccount.FieldExchange)
 				fieldSeen[tradingaccount.FieldExchange] = struct{}{}
-			}
-		case "currency":
-			if _, ok := fieldSeen[tradingaccount.FieldCurrency]; !ok {
-				selectedFields = append(selectedFields, tradingaccount.FieldCurrency)
-				fieldSeen[tradingaccount.FieldCurrency] = struct{}{}
 			}
 		case "ip":
 			if _, ok := fieldSeen[tradingaccount.FieldIP]; !ok {

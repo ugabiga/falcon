@@ -16,6 +16,8 @@ const (
 	FieldID = "id"
 	// FieldTradingAccountID holds the string denoting the trading_account_id field in the database.
 	FieldTradingAccountID = "trading_account_id"
+	// FieldCurrency holds the string denoting the currency field in the database.
+	FieldCurrency = "currency"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldNextExecutionTime holds the string denoting the next_execution_time field in the database.
@@ -54,6 +56,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldTradingAccountID,
+	FieldCurrency,
 	FieldCron,
 	FieldNextExecutionTime,
 	FieldIsActive,
@@ -98,6 +101,11 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByTradingAccountID orders the results by the trading_account_id field.
 func ByTradingAccountID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTradingAccountID, opts...).ToFunc()
+}
+
+// ByCurrency orders the results by the currency field.
+func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

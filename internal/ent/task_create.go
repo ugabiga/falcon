@@ -28,6 +28,12 @@ func (tc *TaskCreate) SetTradingAccountID(i int) *TaskCreate {
 	return tc
 }
 
+// SetCurrency sets the "currency" field.
+func (tc *TaskCreate) SetCurrency(s string) *TaskCreate {
+	tc.mutation.SetCurrency(s)
+	return tc
+}
+
 // SetCron sets the "cron" field.
 func (tc *TaskCreate) SetCron(s string) *TaskCreate {
 	tc.mutation.SetCron(s)
@@ -181,6 +187,9 @@ func (tc *TaskCreate) check() error {
 			return &ValidationError{Name: "trading_account_id", err: fmt.Errorf(`ent: validator failed for field "Task.trading_account_id": %w`, err)}
 		}
 	}
+	if _, ok := tc.mutation.Currency(); !ok {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Task.currency"`)}
+	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
 	}
@@ -235,6 +244,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := tc.mutation.Currency(); ok {
+		_spec.SetField(task.FieldCurrency, field.TypeString, value)
+		_node.Currency = value
 	}
 	if value, ok := tc.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

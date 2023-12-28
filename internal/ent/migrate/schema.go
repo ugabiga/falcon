@@ -35,6 +35,7 @@ var (
 	// TasksColumns holds the columns for the "tasks" table.
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "currency", Type: field.TypeString},
 		{Name: "cron", Type: field.TypeString},
 		{Name: "next_execution_time", Type: field.TypeTime, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
@@ -51,7 +52,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_trading_accounts_tasks",
-				Columns:    []*schema.Column{TasksColumns[7]},
+				Columns:    []*schema.Column{TasksColumns[8]},
 				RefColumns: []*schema.Column{TradingAccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -84,7 +85,6 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "exchange", Type: field.TypeString},
-		{Name: "currency", Type: field.TypeString},
 		{Name: "ip", Type: field.TypeString},
 		{Name: "identifier", Type: field.TypeString, Unique: true},
 		{Name: "credential", Type: field.TypeString},
@@ -101,7 +101,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "trading_accounts_users_trading_accounts",
-				Columns:    []*schema.Column{TradingAccountsColumns[10]},
+				Columns:    []*schema.Column{TradingAccountsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

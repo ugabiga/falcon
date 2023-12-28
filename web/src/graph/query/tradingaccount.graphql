@@ -4,7 +4,6 @@ query TradingAccountIndex {
             id
             name
             exchange
-            currency
             identifier
             ip
         }
@@ -15,20 +14,17 @@ query TradingAccountIndex {
 mutation CreateTradingAccount(
     $name: String!
     $exchange: String!
-    $currency: String!
     $identifier: String!
     $credential: String!
 ) {
     createTradingAccount(
         name: $name
         exchange: $exchange
-        currency: $currency
         identifier: $identifier
         credential: $credential
     ) {
         id
         exchange
-        currency
         identifier
         ip
     }
@@ -38,7 +34,6 @@ mutation UpdateTradingAccount(
     $id: ID!
     $name: String
     $exchange: String
-    $currency: String
     $identifier: String
     $credential: String
 ) {
@@ -46,7 +41,6 @@ mutation UpdateTradingAccount(
         id: $id
         name: $name
         exchange: $exchange
-        currency: $currency
         identifier: $identifier
         credential: $credential
     )

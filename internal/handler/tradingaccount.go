@@ -98,7 +98,6 @@ func (h *TradingAccountHandler) Add(c echo.Context) error {
 		claim.UserID,
 		form.Exchange,
 		form.Exchange,
-		form.Currency,
 		form.Identifier,
 		form.Credential,
 		"",

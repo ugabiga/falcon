@@ -24,8 +24,6 @@ type TradingAccount struct {
 	Name string `json:"name,omitempty"`
 	// Exchange holds the value of the "exchange" field.
 	Exchange string `json:"exchange,omitempty"`
-	// Currency holds the value of the "currency" field.
-	Currency string `json:"currency,omitempty"`
 	// IP holds the value of the "ip" field.
 	IP string `json:"ip,omitempty"`
 	// Identifier holds the value of the "identifier" field.
@@ -88,7 +86,7 @@ func (*TradingAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tradingaccount.FieldID, tradingaccount.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case tradingaccount.FieldName, tradingaccount.FieldExchange, tradingaccount.FieldCurrency, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
+		case tradingaccount.FieldName, tradingaccount.FieldExchange, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
 			values[i] = new(sql.NullString)
 		case tradingaccount.FieldUpdatedAt, tradingaccount.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -130,12 +128,6 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field exchange", values[i])
 			} else if value.Valid {
 				ta.Exchange = value.String
-			}
-		case tradingaccount.FieldCurrency:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field currency", values[i])
-			} else if value.Valid {
-				ta.Currency = value.String
 			}
 		case tradingaccount.FieldIP:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -227,9 +219,6 @@ func (ta *TradingAccount) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("exchange=")
 	builder.WriteString(ta.Exchange)
-	builder.WriteString(", ")
-	builder.WriteString("currency=")
-	builder.WriteString(ta.Currency)
 	builder.WriteString(", ")
 	builder.WriteString("ip=")
 	builder.WriteString(ta.IP)

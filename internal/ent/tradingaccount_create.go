@@ -40,12 +40,6 @@ func (tac *TradingAccountCreate) SetExchange(s string) *TradingAccountCreate {
 	return tac
 }
 
-// SetCurrency sets the "currency" field.
-func (tac *TradingAccountCreate) SetCurrency(s string) *TradingAccountCreate {
-	tac.mutation.SetCurrency(s)
-	return tac
-}
-
 // SetIP sets the "ip" field.
 func (tac *TradingAccountCreate) SetIP(s string) *TradingAccountCreate {
 	tac.mutation.SetIP(s)
@@ -193,9 +187,6 @@ func (tac *TradingAccountCreate) check() error {
 	if _, ok := tac.mutation.Exchange(); !ok {
 		return &ValidationError{Name: "exchange", err: errors.New(`ent: missing required field "TradingAccount.exchange"`)}
 	}
-	if _, ok := tac.mutation.Currency(); !ok {
-		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "TradingAccount.currency"`)}
-	}
 	if _, ok := tac.mutation.IP(); !ok {
 		return &ValidationError{Name: "ip", err: errors.New(`ent: missing required field "TradingAccount.ip"`)}
 	}
@@ -258,10 +249,6 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 	if value, ok := tac.mutation.Exchange(); ok {
 		_spec.SetField(tradingaccount.FieldExchange, field.TypeString, value)
 		_node.Exchange = value
-	}
-	if value, ok := tac.mutation.Currency(); ok {
-		_spec.SetField(tradingaccount.FieldCurrency, field.TypeString, value)
-		_node.Currency = value
 	}
 	if value, ok := tac.mutation.IP(); ok {
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)

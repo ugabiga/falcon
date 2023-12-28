@@ -25,7 +25,6 @@ func (s TradingAccountService) Create(
 	userID int,
 	name string,
 	exchange string,
-	currency string,
 	Identifier string,
 	credential string,
 	phrase string,
@@ -33,10 +32,6 @@ func (s TradingAccountService) Create(
 	*ent.TradingAccount, error,
 ) {
 	if err := s.validateExchange(exchange); err != nil {
-		return nil, err
-	}
-
-	if err := s.validateCurrency(currency); err != nil {
 		return nil, err
 	}
 
@@ -58,7 +53,6 @@ func (s TradingAccountService) Create(
 		SetUserID(userID).
 		SetName(name).
 		SetExchange(exchange).
-		SetCurrency(currency).
 		SetIP(ip).
 		SetIdentifier(Identifier).
 		SetCredential(encryptedCredential)
@@ -134,23 +128,16 @@ func (s TradingAccountService) Update(
 	userID int,
 	name *string,
 	exchange *string,
-	currency *string,
 	Identifier *string,
 	credential *string,
 	phrase *string,
 ) error {
-	if exchange == nil && currency == nil && Identifier == nil && credential == nil && phrase == nil {
+	if exchange == nil && Identifier == nil && credential == nil && phrase == nil {
 		return nil
 	}
 
 	if exchange != nil {
 		if err := s.validateExchange(pointer.GetString(exchange)); err != nil {
-			return err
-		}
-	}
-
-	if currency != nil {
-		if err := s.validateCurrency(pointer.GetString(currency)); err != nil {
 			return err
 		}
 	}
@@ -165,9 +152,6 @@ func (s TradingAccountService) Update(
 	}
 	if exchange != nil {
 		updateQuery.SetExchange(pointer.GetString(exchange))
-	}
-	if currency != nil {
-		updateQuery.SetCurrency(pointer.GetString(currency))
 	}
 	if Identifier != nil {
 		updateQuery.SetIdentifier(pointer.GetString(Identifier))
