@@ -1,3 +1,18 @@
+fragment TaskFragment on Task {
+    id
+    tradingAccountID
+    currency
+    amount
+    cryptoCurrency
+    cron
+    nextExecutionTime
+    isActive
+    type
+    params
+    updatedAt
+    createdAt
+}
+
 query GetTaskIndex($tradingAccountID: ID){
     taskIndex(tradingAccountID: $tradingAccountID){
         selectedTradingAccount {
@@ -7,16 +22,7 @@ query GetTaskIndex($tradingAccountID: ID){
             ip
             identifier
             tasks {
-                id
-                currency
-                amount
-                cryptoCurrency
-                cron
-                type
-                nextExecutionTime
-                isActive
-                tradingAccountID
-                params
+                ...TaskFragment
             }
         }
         tradingAccounts {
@@ -26,15 +32,7 @@ query GetTaskIndex($tradingAccountID: ID){
             ip
             identifier
             tasks {
-                id
-                currency
-                amount
-                cryptoCurrency
-                cron
-                type
-                nextExecutionTime
-                isActive
-                tradingAccountID
+                ...TaskFragment
             }
         }
     }
@@ -58,13 +56,7 @@ mutation CreateTask($tradingAccountID: ID!,
         type: $type
         params: $params
     }){
-        id
-        currency
-        amount
-        cryptoCurrency
-        cron
-        nextExecutionTime
-        isActive
+        ...TaskFragment
     }
 }
 
@@ -90,12 +82,6 @@ mutation UpdateTask($id: ID!,
             params: $params
             isActive: $isActive
         }){
-        id
-        currency
-        amount
-        cryptoCurrency
-        cron
-        nextExecutionTime
-        isActive
+        ...TaskFragment
     }
 }

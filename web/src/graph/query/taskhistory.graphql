@@ -1,17 +1,18 @@
+fragment TaskHistoryFragment on TaskHistory {
+    id
+    taskID
+    isSuccess
+    updatedAt
+    createdAt
+}
+
 query GetTaskHistoryIndex($taskID: ID!){
     taskHistoryIndex(taskID: $taskID){
         task {
-            id
-            tradingAccountID
-            createdAt
-            updatedAt
+            ...TaskFragment
         }
         taskHistories {
-            id
-            taskID
-            isSuccess
-            updatedAt
-            createdAt
+            ...TaskHistoryFragment
         }
     }
 }

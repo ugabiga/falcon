@@ -1,9 +1,13 @@
+fragment UserFragment on User {
+    id
+    name
+    timezone
+}
+
 query UserIndex {
     userIndex {
         user {
-            id
-            name
-            timezone
+            ...UserFragment
         }
     }
 }
@@ -16,8 +20,6 @@ mutation UpdateUser (
         name: $name
         timezone: $timezone
     }) {
-        id
-        name
-        timezone
+        ...UserFragment
     }
 }

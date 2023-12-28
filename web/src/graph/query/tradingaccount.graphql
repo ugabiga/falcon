@@ -1,11 +1,18 @@
+fragment TradingAccount on TradingAccount {
+    id
+    userID
+    name
+    exchange
+    ip
+    identifier
+    updatedAt
+    createdAt
+}
+
 query TradingAccountIndex {
     tradingAccountIndex {
         tradingAccounts {
-            id
-            name
-            exchange
-            identifier
-            ip
+            ...TradingAccount
         }
     }
 }
@@ -23,10 +30,7 @@ mutation CreateTradingAccount(
         identifier: $identifier
         credential: $credential
     ) {
-        id
-        exchange
-        identifier
-        ip
+        ...TradingAccount
     }
 }
 
