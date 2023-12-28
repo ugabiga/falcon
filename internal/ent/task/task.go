@@ -18,8 +18,8 @@ const (
 	FieldTradingAccountID = "trading_account_id"
 	// FieldCurrency holds the string denoting the currency field in the database.
 	FieldCurrency = "currency"
-	// FieldCurrencyQuantity holds the string denoting the currency_quantity field in the database.
-	FieldCurrencyQuantity = "currency_quantity"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldNextExecutionTime holds the string denoting the next_execution_time field in the database.
@@ -61,7 +61,7 @@ var Columns = []string{
 	FieldID,
 	FieldTradingAccountID,
 	FieldCurrency,
-	FieldCurrencyQuantity,
+	FieldAmount,
 	FieldCron,
 	FieldNextExecutionTime,
 	FieldIsActive,
@@ -84,8 +84,8 @@ func ValidColumn(column string) bool {
 var (
 	// TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	TradingAccountIDValidator func(int) error
-	// DefaultCurrencyQuantity holds the default value on creation for the "currency_quantity" field.
-	DefaultCurrencyQuantity float32
+	// DefaultAmount holds the default value on creation for the "amount" field.
+	DefaultAmount float64
 	// DefaultIsActive holds the default value on creation for the "is_active" field.
 	DefaultIsActive bool
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -116,9 +116,9 @@ func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
 }
 
-// ByCurrencyQuantity orders the results by the currency_quantity field.
-func ByCurrencyQuantity(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCurrencyQuantity, opts...).ToFunc()
+// ByAmount orders the results by the amount field.
+func ByAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmount, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

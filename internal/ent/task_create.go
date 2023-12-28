@@ -34,16 +34,16 @@ func (tc *TaskCreate) SetCurrency(s string) *TaskCreate {
 	return tc
 }
 
-// SetCurrencyQuantity sets the "currency_quantity" field.
-func (tc *TaskCreate) SetCurrencyQuantity(f float32) *TaskCreate {
-	tc.mutation.SetCurrencyQuantity(f)
+// SetAmount sets the "amount" field.
+func (tc *TaskCreate) SetAmount(f float64) *TaskCreate {
+	tc.mutation.SetAmount(f)
 	return tc
 }
 
-// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableCurrencyQuantity(f *float32) *TaskCreate {
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableAmount(f *float64) *TaskCreate {
 	if f != nil {
-		tc.SetCurrencyQuantity(*f)
+		tc.SetAmount(*f)
 	}
 	return tc
 }
@@ -183,9 +183,9 @@ func (tc *TaskCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TaskCreate) defaults() {
-	if _, ok := tc.mutation.CurrencyQuantity(); !ok {
-		v := task.DefaultCurrencyQuantity
-		tc.mutation.SetCurrencyQuantity(v)
+	if _, ok := tc.mutation.Amount(); !ok {
+		v := task.DefaultAmount
+		tc.mutation.SetAmount(v)
 	}
 	if _, ok := tc.mutation.IsActive(); !ok {
 		v := task.DefaultIsActive
@@ -214,8 +214,8 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Currency(); !ok {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Task.currency"`)}
 	}
-	if _, ok := tc.mutation.CurrencyQuantity(); !ok {
-		return &ValidationError{Name: "currency_quantity", err: errors.New(`ent: missing required field "Task.currency_quantity"`)}
+	if _, ok := tc.mutation.Amount(); !ok {
+		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Task.amount"`)}
 	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
@@ -276,9 +276,9 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 		_node.Currency = value
 	}
-	if value, ok := tc.mutation.CurrencyQuantity(); ok {
-		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
-		_node.CurrencyQuantity = value
+	if value, ok := tc.mutation.Amount(); ok {
+		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
+		_node.Amount = value
 	}
 	if value, ok := tc.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

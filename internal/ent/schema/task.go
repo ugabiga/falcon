@@ -24,8 +24,9 @@ func (Task) Fields() []ent.Field {
 			Positive().
 			GoType(int(0)),
 		field.String("currency"),
-		field.Float32("currency_quantity").
-			Default(0),
+		field.Float("amount").
+			Default(0).
+			Comment("Amount of currency to buy/sell"),
 		field.String("cron"),
 		field.Time("next_execution_time").
 			Optional(),

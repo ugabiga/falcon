@@ -411,15 +411,15 @@ type TaskWhereInput struct {
 	CurrencyEqualFold    *string  `json:"currencyEqualFold,omitempty"`
 	CurrencyContainsFold *string  `json:"currencyContainsFold,omitempty"`
 
-	// "currency_quantity" field predicates.
-	CurrencyQuantity      *float32  `json:"currencyQuantity,omitempty"`
-	CurrencyQuantityNEQ   *float32  `json:"currencyQuantityNEQ,omitempty"`
-	CurrencyQuantityIn    []float32 `json:"currencyQuantityIn,omitempty"`
-	CurrencyQuantityNotIn []float32 `json:"currencyQuantityNotIn,omitempty"`
-	CurrencyQuantityGT    *float32  `json:"currencyQuantityGT,omitempty"`
-	CurrencyQuantityGTE   *float32  `json:"currencyQuantityGTE,omitempty"`
-	CurrencyQuantityLT    *float32  `json:"currencyQuantityLT,omitempty"`
-	CurrencyQuantityLTE   *float32  `json:"currencyQuantityLTE,omitempty"`
+	// "amount" field predicates.
+	Amount      *float64  `json:"amount,omitempty"`
+	AmountNEQ   *float64  `json:"amountNEQ,omitempty"`
+	AmountIn    []float64 `json:"amountIn,omitempty"`
+	AmountNotIn []float64 `json:"amountNotIn,omitempty"`
+	AmountGT    *float64  `json:"amountGT,omitempty"`
+	AmountGTE   *float64  `json:"amountGTE,omitempty"`
+	AmountLT    *float64  `json:"amountLT,omitempty"`
+	AmountLTE   *float64  `json:"amountLTE,omitempty"`
 
 	// "cron" field predicates.
 	Cron             *string  `json:"cron,omitempty"`
@@ -642,29 +642,29 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	if i.CurrencyContainsFold != nil {
 		predicates = append(predicates, task.CurrencyContainsFold(*i.CurrencyContainsFold))
 	}
-	if i.CurrencyQuantity != nil {
-		predicates = append(predicates, task.CurrencyQuantityEQ(*i.CurrencyQuantity))
+	if i.Amount != nil {
+		predicates = append(predicates, task.AmountEQ(*i.Amount))
 	}
-	if i.CurrencyQuantityNEQ != nil {
-		predicates = append(predicates, task.CurrencyQuantityNEQ(*i.CurrencyQuantityNEQ))
+	if i.AmountNEQ != nil {
+		predicates = append(predicates, task.AmountNEQ(*i.AmountNEQ))
 	}
-	if len(i.CurrencyQuantityIn) > 0 {
-		predicates = append(predicates, task.CurrencyQuantityIn(i.CurrencyQuantityIn...))
+	if len(i.AmountIn) > 0 {
+		predicates = append(predicates, task.AmountIn(i.AmountIn...))
 	}
-	if len(i.CurrencyQuantityNotIn) > 0 {
-		predicates = append(predicates, task.CurrencyQuantityNotIn(i.CurrencyQuantityNotIn...))
+	if len(i.AmountNotIn) > 0 {
+		predicates = append(predicates, task.AmountNotIn(i.AmountNotIn...))
 	}
-	if i.CurrencyQuantityGT != nil {
-		predicates = append(predicates, task.CurrencyQuantityGT(*i.CurrencyQuantityGT))
+	if i.AmountGT != nil {
+		predicates = append(predicates, task.AmountGT(*i.AmountGT))
 	}
-	if i.CurrencyQuantityGTE != nil {
-		predicates = append(predicates, task.CurrencyQuantityGTE(*i.CurrencyQuantityGTE))
+	if i.AmountGTE != nil {
+		predicates = append(predicates, task.AmountGTE(*i.AmountGTE))
 	}
-	if i.CurrencyQuantityLT != nil {
-		predicates = append(predicates, task.CurrencyQuantityLT(*i.CurrencyQuantityLT))
+	if i.AmountLT != nil {
+		predicates = append(predicates, task.AmountLT(*i.AmountLT))
 	}
-	if i.CurrencyQuantityLTE != nil {
-		predicates = append(predicates, task.CurrencyQuantityLTE(*i.CurrencyQuantityLTE))
+	if i.AmountLTE != nil {
+		predicates = append(predicates, task.AmountLTE(*i.AmountLTE))
 	}
 	if i.Cron != nil {
 		predicates = append(predicates, task.CronEQ(*i.Cron))

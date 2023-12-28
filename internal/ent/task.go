@@ -23,8 +23,8 @@ type Task struct {
 	TradingAccountID int `json:"trading_account_id,omitempty"`
 	// Currency holds the value of the "currency" field.
 	Currency string `json:"currency,omitempty"`
-	// CurrencyQuantity holds the value of the "currency_quantity" field.
-	CurrencyQuantity float32 `json:"currency_quantity,omitempty"`
+	// Amount of currency to buy/sell
+	Amount float64 `json:"amount,omitempty"`
 	// Cron holds the value of the "cron" field.
 	Cron string `json:"cron,omitempty"`
 	// NextExecutionTime holds the value of the "next_execution_time" field.
@@ -91,7 +91,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case task.FieldIsActive:
 			values[i] = new(sql.NullBool)
-		case task.FieldCurrencyQuantity:
+		case task.FieldAmount:
 			values[i] = new(sql.NullFloat64)
 		case task.FieldID, task.FieldTradingAccountID:
 			values[i] = new(sql.NullInt64)
@@ -132,11 +132,11 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Currency = value.String
 			}
-		case task.FieldCurrencyQuantity:
+		case task.FieldAmount:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
-				return fmt.Errorf("unexpected type %T for field currency_quantity", values[i])
+				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value.Valid {
-				t.CurrencyQuantity = float32(value.Float64)
+				t.Amount = value.Float64
 			}
 		case task.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -234,8 +234,8 @@ func (t *Task) String() string {
 	builder.WriteString("currency=")
 	builder.WriteString(t.Currency)
 	builder.WriteString(", ")
-	builder.WriteString("currency_quantity=")
-	builder.WriteString(fmt.Sprintf("%v", t.CurrencyQuantity))
+	builder.WriteString("amount=")
+	builder.WriteString(fmt.Sprintf("%v", t.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(t.Cron)

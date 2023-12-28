@@ -58,24 +58,24 @@ func (tu *TaskUpdate) SetNillableCurrency(s *string) *TaskUpdate {
 	return tu
 }
 
-// SetCurrencyQuantity sets the "currency_quantity" field.
-func (tu *TaskUpdate) SetCurrencyQuantity(f float32) *TaskUpdate {
-	tu.mutation.ResetCurrencyQuantity()
-	tu.mutation.SetCurrencyQuantity(f)
+// SetAmount sets the "amount" field.
+func (tu *TaskUpdate) SetAmount(f float64) *TaskUpdate {
+	tu.mutation.ResetAmount()
+	tu.mutation.SetAmount(f)
 	return tu
 }
 
-// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableCurrencyQuantity(f *float32) *TaskUpdate {
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableAmount(f *float64) *TaskUpdate {
 	if f != nil {
-		tu.SetCurrencyQuantity(*f)
+		tu.SetAmount(*f)
 	}
 	return tu
 }
 
-// AddCurrencyQuantity adds f to the "currency_quantity" field.
-func (tu *TaskUpdate) AddCurrencyQuantity(f float32) *TaskUpdate {
-	tu.mutation.AddCurrencyQuantity(f)
+// AddAmount adds f to the "amount" field.
+func (tu *TaskUpdate) AddAmount(f float64) *TaskUpdate {
+	tu.mutation.AddAmount(f)
 	return tu
 }
 
@@ -275,11 +275,11 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.CurrencyQuantity(); ok {
-		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	if value, ok := tu.mutation.Amount(); ok {
+		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.AddedCurrencyQuantity(); ok {
-		_spec.AddField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	if value, ok := tu.mutation.AddedAmount(); ok {
+		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
@@ -427,24 +427,24 @@ func (tuo *TaskUpdateOne) SetNillableCurrency(s *string) *TaskUpdateOne {
 	return tuo
 }
 
-// SetCurrencyQuantity sets the "currency_quantity" field.
-func (tuo *TaskUpdateOne) SetCurrencyQuantity(f float32) *TaskUpdateOne {
-	tuo.mutation.ResetCurrencyQuantity()
-	tuo.mutation.SetCurrencyQuantity(f)
+// SetAmount sets the "amount" field.
+func (tuo *TaskUpdateOne) SetAmount(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetAmount()
+	tuo.mutation.SetAmount(f)
 	return tuo
 }
 
-// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableCurrencyQuantity(f *float32) *TaskUpdateOne {
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableAmount(f *float64) *TaskUpdateOne {
 	if f != nil {
-		tuo.SetCurrencyQuantity(*f)
+		tuo.SetAmount(*f)
 	}
 	return tuo
 }
 
-// AddCurrencyQuantity adds f to the "currency_quantity" field.
-func (tuo *TaskUpdateOne) AddCurrencyQuantity(f float32) *TaskUpdateOne {
-	tuo.mutation.AddCurrencyQuantity(f)
+// AddAmount adds f to the "amount" field.
+func (tuo *TaskUpdateOne) AddAmount(f float64) *TaskUpdateOne {
+	tuo.mutation.AddAmount(f)
 	return tuo
 }
 
@@ -674,11 +674,11 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.CurrencyQuantity(); ok {
-		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	if value, ok := tuo.mutation.Amount(); ok {
+		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.AddedCurrencyQuantity(); ok {
-		_spec.AddField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	if value, ok := tuo.mutation.AddedAmount(); ok {
+		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

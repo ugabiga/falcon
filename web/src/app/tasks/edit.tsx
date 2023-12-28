@@ -75,6 +75,7 @@ export function EditTask({task}: { task: Task }) {
         defaultValues: {
             type: convertStringToTaskType(task.type),
             currency: task.currency,
+            amount: task.amount,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
             isActive: task.isActive,
@@ -87,6 +88,7 @@ export function EditTask({task}: { task: Task }) {
             variables: {
                 id: task.id,
                 currency: data.currency,
+                amount: data.amount,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -161,6 +163,29 @@ export function EditTask({task}: { task: Task }) {
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Amount
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input type="number"
+                                               placeholder="Amount"
+                                               value={field.value}
+                                               onChange={(e) => {
+                                                   field.onChange(Number(e.target.value))
+                                               }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
 
                         <FormField
                             control={form.control}

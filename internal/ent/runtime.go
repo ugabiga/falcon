@@ -43,10 +43,10 @@ func init() {
 	taskDescTradingAccountID := taskFields[1].Descriptor()
 	// task.TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	task.TradingAccountIDValidator = taskDescTradingAccountID.Validators[0].(func(int) error)
-	// taskDescCurrencyQuantity is the schema descriptor for currency_quantity field.
-	taskDescCurrencyQuantity := taskFields[3].Descriptor()
-	// task.DefaultCurrencyQuantity holds the default value on creation for the currency_quantity field.
-	task.DefaultCurrencyQuantity = taskDescCurrencyQuantity.Default.(float32)
+	// taskDescAmount is the schema descriptor for amount field.
+	taskDescAmount := taskFields[3].Descriptor()
+	// task.DefaultAmount holds the default value on creation for the amount field.
+	task.DefaultAmount = taskDescAmount.Default.(float64)
 	// taskDescIsActive is the schema descriptor for is_active field.
 	taskDescIsActive := taskFields[6].Descriptor()
 	// task.DefaultIsActive holds the default value on creation for the is_active field.

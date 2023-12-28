@@ -5,6 +5,10 @@ export const AddTaskForm = z.object({
         .string({
             required_error: "Please enter a currency",
         }),
+    amount: z
+        .number({
+            required_error: "Please enter a currency amount",
+        }),
     days: z
         .string({
             required_error: "Please enter a exchange",
@@ -27,6 +31,10 @@ export const UpdateTaskForm = z.object({
     currency: z
         .string({
             required_error: "Please enter a currency",
+        }),
+    amount: z
+        .number({
+            required_error: "Please enter a currency amount",
         }),
     days: z
         .string({

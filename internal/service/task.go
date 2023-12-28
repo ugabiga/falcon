@@ -3,10 +3,11 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
-	"github.com/ugabiga/falcon/internal/graph/model"
+	"github.com/ugabiga/falcon/internal/graph/generated"
 	"strconv"
 	"strings"
 )
@@ -21,6 +22,65 @@ type TaskService struct {
 
 func NewTaskService(db *ent.Client) *TaskService {
 	return &TaskService{db: db}
+}
+
+func (s TaskService) Create(ctx context.Context, userID int, input generated.CreateTaskInput) (*ent.Task, error) {
+	if err := s.validateExceedLimit(ctx, userID); err != nil {
+		return nil, err
+	}
+
+	if err := s.validateCurrency(input.Currency); err != nil {
+		return nil, err
+	}
+
+	tradingAccountID := str.New(input.TradingAccountID).ToIntDefault(0)
+	tradingAccount, err := s.db.TradingAccount.Query().
+		Where(
+			tradingaccount.UserID(userID),
+			tradingaccount.ID(tradingAccountID),
+		).
+		First(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = s.validateHours(input.Hours); err != nil {
+		return nil, err
+	}
+	cron := "0 0 " + input.Hours + " * * " + input.Days
+
+	return s.db.Task.Create().
+		SetCurrency(input.Currency).
+		SetAmount(input.Amount).
+		SetCron(cron).
+		SetType(input.Type).
+		SetTradingAccountID(tradingAccount.ID).
+		Save(ctx)
+}
+
+func (s TaskService) Update(ctx context.Context, userID int, taskID int, input generated.UpdateTaskInput) (*ent.Task, error) {
+	if err := s.validateHours(input.Hours); err != nil {
+		return nil, err
+	}
+
+	if err := s.validateUser(ctx, userID, taskID); err != nil {
+		return nil, ErrDoNotHaveAccess
+	}
+
+	if err := s.validateCurrency(input.Currency); err != nil {
+		return nil, err
+	}
+
+	cron := "0 0 " + input.Hours + " * * " + input.Days
+
+	return s.db.Task.UpdateOneID(taskID).
+		SetCurrency(input.Currency).
+		SetAmount(input.Amount).
+		SetCron(cron).
+		SetType(input.Type).
+		SetIsActive(input.IsActive).
+		SetParams(input.Params).
+		Save(ctx)
 }
 
 func (s TaskService) GetWithTaskHistory(ctx context.Context, userID, Id int) (*ent.Task, error) {
@@ -43,38 +103,6 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID i
 		).
 		WithTradingAccount().
 		All(ctx)
-}
-
-func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, currency string, days string, hours string, typeArg string) (*ent.Task, error) {
-	if err := s.validateExceedLimit(ctx, userID); err != nil {
-		return nil, err
-	}
-
-	if err := s.validateCurrency(currency); err != nil {
-		return nil, err
-	}
-
-	tradingAccount, err := s.db.TradingAccount.Query().
-		Where(
-			tradingaccount.UserID(userID),
-			tradingaccount.ID(tradingAccountID),
-		).
-		First(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	if err = s.validateHours(hours); err != nil {
-		return nil, err
-	}
-	cron := "0 0 " + hours + " * * " + days
-
-	return s.db.Task.Create().
-		SetCurrency(currency).
-		SetCron(cron).
-		SetType(typeArg).
-		SetTradingAccountID(tradingAccount.ID).
-		Save(ctx)
 }
 
 func (s TaskService) validateExceedLimit(ctx context.Context, userID int) error {
@@ -106,30 +134,6 @@ func (s TaskService) validateHours(hours string) error {
 		}
 	}
 	return nil
-}
-
-func (s TaskService) Update(ctx context.Context, userID int, id int, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) (*ent.Task, error) {
-	if err := s.validateHours(hours); err != nil {
-		return nil, err
-	}
-
-	if err := s.validateUser(ctx, userID, id); err != nil {
-		return nil, ErrDoNotHaveAccess
-	}
-
-	if err := s.validateCurrency(currency); err != nil {
-		return nil, err
-	}
-
-	cron := "0 0 " + hours + " * * " + days
-
-	return s.db.Task.UpdateOneID(id).
-		SetCurrency(currency).
-		SetCron(cron).
-		SetType(typeArg).
-		SetIsActive(isActive).
-		SetParams(params).
-		Save(ctx)
 }
 
 func (s TaskService) validateUser(ctx context.Context, userID int, id int) error {

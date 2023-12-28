@@ -36,7 +36,7 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "currency", Type: field.TypeString},
-		{Name: "currency_quantity", Type: field.TypeFloat32, Default: 0},
+		{Name: "amount", Type: field.TypeFloat64, Default: 0},
 		{Name: "cron", Type: field.TypeString},
 		{Name: "next_execution_time", Type: field.TypeTime, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},

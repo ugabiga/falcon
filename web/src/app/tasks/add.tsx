@@ -37,6 +37,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
             variables: {
                 tradingAccountID: tradingAccountID!,
                 currency: data.currency,
+                amount: data.amount,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -111,6 +112,27 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                             )}
                         />
 
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Amount
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input type="number"
+                                               placeholder="Amount"
+                                               value={field.value}
+                                               onChange={(e) => {
+                                                   field.onChange(Number(e.target.value))
+                                               }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
 
                         <FormField
                             control={form.control}

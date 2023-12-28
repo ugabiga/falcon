@@ -5,26 +5,18 @@ package resolvers
 
 import (
 	"context"
+
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
-	"github.com/ugabiga/falcon/internal/graph/model"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID string, currency string, days string, hours string, typeArg string, params model.JSON) (*generated.Task, error) {
+func (r *mutationResolver) CreateTask(ctx context.Context, input generated.CreateTaskInput) (*generated.Task, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
-	task, err := r.taskSrv.Create(
-		ctx,
-		claim.UserID,
-		str.New(tradingAccountID).ToIntDefault(0),
-		currency,
-		days,
-		hours,
-		typeArg,
-	)
+	task, err := r.taskSrv.Create(ctx, claim.UserID, input)
 	if err != nil {
 		return nil, err
 	}
@@ -32,30 +24,12 @@ func (r *mutationResolver) CreateTask(ctx context.Context, tradingAccountID stri
 	return converter.ToTask(task)
 }
 
-func (r *mutationResolver) UpdateTask(ctx context.Context, id string, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) (*generated.Task, error) {
-	r.logger.Printf("Reqest %v", debug.ToJSONStr(map[string]interface{}{
-		"id":       id,
-		"currency": currency,
-		"days":     days,
-		"hours":    hours,
-		"type":     typeArg,
-		"isActive": isActive,
-		"params":   params,
-	}))
+func (r *mutationResolver) UpdateTask(ctx context.Context, id string, input generated.UpdateTaskInput) (*generated.Task, error) {
+	r.logger.Printf("Reqest %v", debug.ToJSONStr(input))
 
 	claim := helper.MustJWTClaimInResolver(ctx)
 
-	task, err := r.taskSrv.Update(
-		ctx,
-		claim.UserID,
-		str.New(id).ToIntDefault(0),
-		currency,
-		days,
-		hours,
-		typeArg,
-		isActive,
-		params,
-	)
+	task, err := r.taskSrv.Update(ctx, claim.UserID, str.New(id).ToIntDefault(0), input)
 	if err != nil {
 		return nil, err
 	}

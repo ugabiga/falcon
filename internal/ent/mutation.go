@@ -701,8 +701,8 @@ type TaskMutation struct {
 	typ                    string
 	id                     *int
 	currency               *string
-	currency_quantity      *float32
-	addcurrency_quantity   *float32
+	amount                 *float64
+	addamount              *float64
 	cron                   *string
 	next_execution_time    *time.Time
 	is_active              *bool
@@ -897,60 +897,60 @@ func (m *TaskMutation) ResetCurrency() {
 	m.currency = nil
 }
 
-// SetCurrencyQuantity sets the "currency_quantity" field.
-func (m *TaskMutation) SetCurrencyQuantity(f float32) {
-	m.currency_quantity = &f
-	m.addcurrency_quantity = nil
+// SetAmount sets the "amount" field.
+func (m *TaskMutation) SetAmount(f float64) {
+	m.amount = &f
+	m.addamount = nil
 }
 
-// CurrencyQuantity returns the value of the "currency_quantity" field in the mutation.
-func (m *TaskMutation) CurrencyQuantity() (r float32, exists bool) {
-	v := m.currency_quantity
+// Amount returns the value of the "amount" field in the mutation.
+func (m *TaskMutation) Amount() (r float64, exists bool) {
+	v := m.amount
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCurrencyQuantity returns the old "currency_quantity" field's value of the Task entity.
+// OldAmount returns the old "amount" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldCurrencyQuantity(ctx context.Context) (v float32, err error) {
+func (m *TaskMutation) OldAmount(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCurrencyQuantity is only allowed on UpdateOne operations")
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCurrencyQuantity requires an ID field in the mutation")
+		return v, errors.New("OldAmount requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCurrencyQuantity: %w", err)
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
 	}
-	return oldValue.CurrencyQuantity, nil
+	return oldValue.Amount, nil
 }
 
-// AddCurrencyQuantity adds f to the "currency_quantity" field.
-func (m *TaskMutation) AddCurrencyQuantity(f float32) {
-	if m.addcurrency_quantity != nil {
-		*m.addcurrency_quantity += f
+// AddAmount adds f to the "amount" field.
+func (m *TaskMutation) AddAmount(f float64) {
+	if m.addamount != nil {
+		*m.addamount += f
 	} else {
-		m.addcurrency_quantity = &f
+		m.addamount = &f
 	}
 }
 
-// AddedCurrencyQuantity returns the value that was added to the "currency_quantity" field in this mutation.
-func (m *TaskMutation) AddedCurrencyQuantity() (r float32, exists bool) {
-	v := m.addcurrency_quantity
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *TaskMutation) AddedAmount() (r float64, exists bool) {
+	v := m.addamount
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetCurrencyQuantity resets all changes to the "currency_quantity" field.
-func (m *TaskMutation) ResetCurrencyQuantity() {
-	m.currency_quantity = nil
-	m.addcurrency_quantity = nil
+// ResetAmount resets all changes to the "amount" field.
+func (m *TaskMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
 }
 
 // SetCron sets the "cron" field.
@@ -1353,8 +1353,8 @@ func (m *TaskMutation) Fields() []string {
 	if m.currency != nil {
 		fields = append(fields, task.FieldCurrency)
 	}
-	if m.currency_quantity != nil {
-		fields = append(fields, task.FieldCurrencyQuantity)
+	if m.amount != nil {
+		fields = append(fields, task.FieldAmount)
 	}
 	if m.cron != nil {
 		fields = append(fields, task.FieldCron)
@@ -1389,8 +1389,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.TradingAccountID()
 	case task.FieldCurrency:
 		return m.Currency()
-	case task.FieldCurrencyQuantity:
-		return m.CurrencyQuantity()
+	case task.FieldAmount:
+		return m.Amount()
 	case task.FieldCron:
 		return m.Cron()
 	case task.FieldNextExecutionTime:
@@ -1418,8 +1418,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTradingAccountID(ctx)
 	case task.FieldCurrency:
 		return m.OldCurrency(ctx)
-	case task.FieldCurrencyQuantity:
-		return m.OldCurrencyQuantity(ctx)
+	case task.FieldAmount:
+		return m.OldAmount(ctx)
 	case task.FieldCron:
 		return m.OldCron(ctx)
 	case task.FieldNextExecutionTime:
@@ -1457,12 +1457,12 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCurrency(v)
 		return nil
-	case task.FieldCurrencyQuantity:
-		v, ok := value.(float32)
+	case task.FieldAmount:
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCurrencyQuantity(v)
+		m.SetAmount(v)
 		return nil
 	case task.FieldCron:
 		v, ok := value.(string)
@@ -1521,8 +1521,8 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TaskMutation) AddedFields() []string {
 	var fields []string
-	if m.addcurrency_quantity != nil {
-		fields = append(fields, task.FieldCurrencyQuantity)
+	if m.addamount != nil {
+		fields = append(fields, task.FieldAmount)
 	}
 	return fields
 }
@@ -1532,8 +1532,8 @@ func (m *TaskMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case task.FieldCurrencyQuantity:
-		return m.AddedCurrencyQuantity()
+	case task.FieldAmount:
+		return m.AddedAmount()
 	}
 	return nil, false
 }
@@ -1543,12 +1543,12 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TaskMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case task.FieldCurrencyQuantity:
-		v, ok := value.(float32)
+	case task.FieldAmount:
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddCurrencyQuantity(v)
+		m.AddAmount(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -1598,8 +1598,8 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldCurrency:
 		m.ResetCurrency()
 		return nil
-	case task.FieldCurrencyQuantity:
-		m.ResetCurrencyQuantity()
+	case task.FieldAmount:
+		m.ResetAmount()
 		return nil
 	case task.FieldCron:
 		m.ResetCron()

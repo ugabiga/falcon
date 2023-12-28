@@ -9,6 +9,7 @@ query GetTaskIndex($tradingAccountID: ID){
             tasks {
                 id
                 currency
+                amount
                 cron
                 type
                 nextExecutionTime
@@ -26,6 +27,7 @@ query GetTaskIndex($tradingAccountID: ID){
             tasks {
                 id
                 currency
+                amount
                 cron
                 type
                 nextExecutionTime
@@ -36,20 +38,40 @@ query GetTaskIndex($tradingAccountID: ID){
     }
 }
 
-mutation CreateTask($tradingAccountID: ID!, $currency: String!, $days: String!, $hours: String!, $type: String! $params: JSON){
-    createTask(tradingAccountID: $tradingAccountID, currency: $currency days: $days hours: $hours type: $type params: $params){
+mutation CreateTask($tradingAccountID: ID!, $currency: String!, $amount: Float! $days: String!, $hours: String!, $type: String! $params: JSON){
+    createTask(input: {
+        tradingAccountID: $tradingAccountID
+        currency: $currency
+        amount: $amount
+        days: $days
+        hours: $hours
+        type: $type
+        params: $params
+    }){
         id
         currency
+        amount
         cron
         nextExecutionTime
         isActive
     }
 }
 
-mutation UpdateTask($id: ID!, $currency: String!, $days: String! $hours: String! $type: String! $isActive: Boolean! $params: JSON){
-    updateTask(id: $id, currency: $currency, days: $days, hours: $hours type: $type isActive: $isActive params: $params){
+mutation UpdateTask($id: ID!, $currency: String!, $amount: Float! $days: String!, $hours: String!, $type: String! $params: JSON $isActive: Boolean!){
+    updateTask(
+        id: $id
+        input: {
+            currency: $currency
+            amount: $amount
+            days: $days
+            hours: $hours
+            type: $type
+            params: $params
+            isActive: $isActive
+        }){
         id
         currency
+        amount
         cron
         nextExecutionTime
         isActive

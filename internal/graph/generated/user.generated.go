@@ -12,7 +12,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/ugabiga/falcon/internal/graph/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -20,8 +19,8 @@ import (
 
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
-	CreateTask(ctx context.Context, tradingAccountID string, currency string, days string, hours string, typeArg string, params model.JSON) (*Task, error)
-	UpdateTask(ctx context.Context, id string, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) (*Task, error)
+	CreateTask(ctx context.Context, input CreateTaskInput) (*Task, error)
+	UpdateTask(ctx context.Context, id string, input UpdateTaskInput) (*Task, error)
 	CreateTradingAccount(ctx context.Context, name string, exchange string, identifier string, credential string) (*TradingAccount, error)
 	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, identifier *string, credential *string) (bool, error)
 }
@@ -39,60 +38,15 @@ type QueryResolver interface {
 func (ec *executionContext) field_Mutation_createTask_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["tradingAccountID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradingAccountID"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	var arg0 CreateTaskInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateTaskInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐCreateTaskInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["tradingAccountID"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["currency"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["currency"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["days"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("days"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["days"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["hours"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hours"))
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["hours"] = arg3
-	var arg4 string
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-		arg4, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["type"] = arg4
-	var arg5 model.JSON
-	if tmp, ok := rawArgs["params"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("params"))
-		arg5, err = ec.unmarshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["params"] = arg5
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -150,60 +104,15 @@ func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, 
 		}
 	}
 	args["id"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["currency"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+	var arg1 UpdateTaskInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateTaskInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUpdateTaskInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["currency"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["days"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("days"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["days"] = arg2
-	var arg3 string
-	if tmp, ok := rawArgs["hours"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hours"))
-		arg3, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["hours"] = arg3
-	var arg4 string
-	if tmp, ok := rawArgs["type"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-		arg4, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["type"] = arg4
-	var arg5 bool
-	if tmp, ok := rawArgs["isActive"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isActive"))
-		arg5, err = ec.unmarshalNBoolean2bool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["isActive"] = arg5
-	var arg6 model.JSON
-	if tmp, ok := rawArgs["params"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("params"))
-		arg6, err = ec.unmarshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["params"] = arg6
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -411,7 +320,7 @@ func (ec *executionContext) _Mutation_createTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string), fc.Args["params"].(model.JSON))
+		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["input"].(CreateTaskInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -442,8 +351,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
-			case "currencyQuantity":
-				return ec.fieldContext_Task_currencyQuantity(ctx, field)
+			case "amount":
+				return ec.fieldContext_Task_amount(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -494,7 +403,7 @@ func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string), fc.Args["isActive"].(bool), fc.Args["params"].(model.JSON))
+		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["input"].(UpdateTaskInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -525,8 +434,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
-			case "currencyQuantity":
-				return ec.fieldContext_Task_currencyQuantity(ctx, field)
+			case "amount":
+				return ec.fieldContext_Task_amount(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
