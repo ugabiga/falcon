@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+const (
+	TaskCreationLimit = 10
+)
+
 type TaskService struct {
 	db *ent.Client
 }
@@ -30,6 +34,7 @@ func (s TaskService) GetWithTaskHistory(ctx context.Context, userID, Id int) (*e
 		WithTaskHistories().
 		First(ctx)
 }
+
 func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID int) ([]*ent.Task, error) {
 	return s.db.Task.Query().
 		Where(
@@ -40,6 +45,10 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID i
 }
 
 func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID int, hours string, typeArg string) (*ent.Task, error) {
+	if err := s.validateExceedLimit(ctx, userID); err != nil {
+		return nil, err
+	}
+
 	tradingAccount, err := s.db.TradingAccount.Query().
 		Where(
 			tradingaccount.UserID(userID),
@@ -60,6 +69,23 @@ func (s TaskService) Create(ctx context.Context, userID int, tradingAccountID in
 		SetType(typeArg).
 		SetTradingAccountID(tradingAccount.ID).
 		Save(ctx)
+}
+
+func (s TaskService) validateExceedLimit(ctx context.Context, userID int) error {
+	count, err := s.db.TradingAccount.Query().
+		Where(
+			tradingaccount.UserID(userID),
+		).
+		Count(ctx)
+	if err != nil {
+		return err
+	}
+
+	if count >= TaskCreationLimit {
+		return ErrExceedLimit
+	}
+
+	return nil
 }
 
 func (s TaskService) validateHours(hours string) error {

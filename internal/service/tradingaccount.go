@@ -2,17 +2,14 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/AlekSi/pointer"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	ErrWrongExchange = errors.New("wrong_exchange")
-	ErrWrongCurrency = errors.New("wrong_currency")
-	ErrorNoRows      = errors.New("no_rows")
+const (
+	TradingAccountCreationLimit = 2
 )
 
 type TradingAccountService struct {
@@ -53,6 +50,10 @@ func (s TradingAccountService) Create(
 		return nil, err
 	}
 
+	if err = s.validateExceedLimit(ctx, userID); err != nil {
+		return nil, err
+	}
+
 	createQuery := s.db.TradingAccount.Create().
 		SetUserID(userID).
 		SetName(name).
@@ -76,6 +77,21 @@ func (s TradingAccountService) Create(
 	}
 	return t, nil
 
+}
+
+func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID int) error {
+	count, err := s.db.TradingAccount.Query().Where(
+		tradingaccount.UserIDEQ(userID),
+	).Count(ctx)
+	if err != nil {
+		return err
+	}
+
+	if count >= TradingAccountCreationLimit {
+		return ErrExceedLimit
+	}
+
+	return nil
 }
 
 func (s TradingAccountService) Get(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
