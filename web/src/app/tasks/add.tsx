@@ -12,6 +12,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Input} from "@/components/ui/input";
 import {AddTaskForm} from "@/app/tasks/form";
 import {refreshTask} from "@/store/taskSlice";
+import {errorToast} from "@/components/toast";
 
 export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
     if (!tradingAccountID) {
@@ -44,6 +45,8 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                 tradingAccountID: tradingAccountID,
                 refresh: true
             }))
+        }).catch((e) => {
+            errorToast(e.message)
         })
     }
 

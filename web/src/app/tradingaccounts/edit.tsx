@@ -12,6 +12,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {useAppDispatch} from "@/store";
 import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {EditTradingAccountFormSchema} from "@/app/tradingaccounts/form";
+import {errorToast} from "@/components/toast";
 
 
 export function EditTradingAccount(
@@ -46,6 +47,8 @@ export function EditTradingAccount(
             setOpenDialog(false)
             form.reset()
             dispatch(refreshTradingAccount(true))
+        }).catch((e) => {
+            errorToast(e.message)
         })
     }
 

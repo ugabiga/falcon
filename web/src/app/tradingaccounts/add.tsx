@@ -12,6 +12,7 @@ import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {useAppDispatch} from "@/store";
 import {refreshTradingAccount} from "@/store/tradingAccountSlice";
+import {errorToast} from "@/components/toast";
 
 
 export function AddTradingAccount() {
@@ -43,6 +44,8 @@ export function AddTradingAccount() {
             setOpenDialog(false)
             form.reset()
             dispatch(refreshTradingAccount(true))
+        }).catch((e) => {
+            errorToast(e.message)
         })
     }
 

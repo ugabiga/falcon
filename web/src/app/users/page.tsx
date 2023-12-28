@@ -8,7 +8,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {useEffect, useState} from "react";
 import {Loading} from "@/components/loading";
-import {customToast} from "@/components/toast";
+import {errorToast, normalToast} from "@/components/toast";
 import {Error} from "@/components/error";
 
 
@@ -47,7 +47,9 @@ export default function Users() {
                 timezone: user.timezone
             }
         }).then(() => {
-            customToast({message: "Your profile has been updated"})
+            normalToast({message: "Your profile has been updated"})
+        }).catch((e) => {
+            errorToast(e.message)
         })
     }
 

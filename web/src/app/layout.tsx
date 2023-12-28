@@ -26,7 +26,9 @@ export default async function RootLayout({children,}: { children: React.ReactNod
             <SessionProvider session={session}>
                 <NavigationBar/>
                 {children}
-                <Toaster/>
+                <Toaster
+                    richColors={true}
+                />
             </SessionProvider>
         </Providers>
         </body>

@@ -15,6 +15,7 @@ import {parseCronExpression} from "@/lib/cron-parser";
 import {refreshTask} from "@/store/taskSlice";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
+import {errorToast} from "@/components/toast";
 
 
 function convertCronToHours(cron: string): string {
@@ -55,6 +56,8 @@ export function EditTask({task}: { task: Task }) {
                 tradingAccountID: task.tradingAccountID,
                 refresh: true
             }))
+        }).catch((e) => {
+            errorToast(e.message)
         })
     }
 
