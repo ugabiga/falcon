@@ -6,6 +6,7 @@ import (
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
+	"github.com/ugabiga/falcon/internal/graph/model"
 	"strconv"
 	"strings"
 )
@@ -107,7 +108,7 @@ func (s TaskService) validateHours(hours string) error {
 	return nil
 }
 
-func (s TaskService) Update(ctx context.Context, userID int, id int, currency string, days string, hours string, typeArg string, isActive bool) (*ent.Task, error) {
+func (s TaskService) Update(ctx context.Context, userID int, id int, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) (*ent.Task, error) {
 	if err := s.validateHours(hours); err != nil {
 		return nil, err
 	}
@@ -127,6 +128,7 @@ func (s TaskService) Update(ctx context.Context, userID int, id int, currency st
 		SetCron(cron).
 		SetType(typeArg).
 		SetIsActive(isActive).
+		SetParams(params).
 		Save(ctx)
 }
 

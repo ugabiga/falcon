@@ -98,6 +98,8 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
+"""The builtin Map type"""
+scalar Map
 """
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
@@ -223,10 +225,12 @@ type Task implements Node {
   id: ID!
   tradingAccountID: ID!
   currency: String!
+  currencyQuantity: Float!
   cron: String!
   nextExecutionTime: Time
   isActive: Boolean!
   type: String!
+  params: Map
   updatedAt: Time!
   createdAt: Time!
   tradingAccount: TradingAccount!
@@ -355,6 +359,15 @@ input TaskWhereInput {
   currencyHasSuffix: String
   currencyEqualFold: String
   currencyContainsFold: String
+  """currency_quantity field predicates"""
+  currencyQuantity: Float
+  currencyQuantityNEQ: Float
+  currencyQuantityIn: [Float!]
+  currencyQuantityNotIn: [Float!]
+  currencyQuantityGT: Float
+  currencyQuantityGTE: Float
+  currencyQuantityLT: Float
+  currencyQuantityLTE: Float
   """cron field predicates"""
   cron: String
   cronNEQ: String

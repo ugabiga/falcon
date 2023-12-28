@@ -66,6 +66,11 @@ func Currency(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCurrency, v))
 }
 
+// CurrencyQuantity applies equality check predicate on the "currency_quantity" field. It's identical to CurrencyQuantityEQ.
+func CurrencyQuantity(v float32) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldCurrencyQuantity, v))
+}
+
 // Cron applies equality check predicate on the "cron" field. It's identical to CronEQ.
 func Cron(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCron, v))
@@ -189,6 +194,46 @@ func CurrencyEqualFold(v string) predicate.Task {
 // CurrencyContainsFold applies the ContainsFold predicate on the "currency" field.
 func CurrencyContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldCurrency, v))
+}
+
+// CurrencyQuantityEQ applies the EQ predicate on the "currency_quantity" field.
+func CurrencyQuantityEQ(v float32) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldCurrencyQuantity, v))
+}
+
+// CurrencyQuantityNEQ applies the NEQ predicate on the "currency_quantity" field.
+func CurrencyQuantityNEQ(v float32) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldCurrencyQuantity, v))
+}
+
+// CurrencyQuantityIn applies the In predicate on the "currency_quantity" field.
+func CurrencyQuantityIn(vs ...float32) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldCurrencyQuantity, vs...))
+}
+
+// CurrencyQuantityNotIn applies the NotIn predicate on the "currency_quantity" field.
+func CurrencyQuantityNotIn(vs ...float32) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldCurrencyQuantity, vs...))
+}
+
+// CurrencyQuantityGT applies the GT predicate on the "currency_quantity" field.
+func CurrencyQuantityGT(v float32) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldCurrencyQuantity, v))
+}
+
+// CurrencyQuantityGTE applies the GTE predicate on the "currency_quantity" field.
+func CurrencyQuantityGTE(v float32) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldCurrencyQuantity, v))
+}
+
+// CurrencyQuantityLT applies the LT predicate on the "currency_quantity" field.
+func CurrencyQuantityLT(v float32) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldCurrencyQuantity, v))
+}
+
+// CurrencyQuantityLTE applies the LTE predicate on the "currency_quantity" field.
+func CurrencyQuantityLTE(v float32) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldCurrencyQuantity, v))
 }
 
 // CronEQ applies the EQ predicate on the "cron" field.
@@ -379,6 +424,16 @@ func TypeEqualFold(v string) predicate.Task {
 // TypeContainsFold applies the ContainsFold predicate on the "type" field.
 func TypeContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldType, v))
+}
+
+// ParamsIsNil applies the IsNil predicate on the "params" field.
+func ParamsIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldParams))
+}
+
+// ParamsNotNil applies the NotNil predicate on the "params" field.
+func ParamsNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldParams))
 }
 
 // UpdatedAtEQ applies the EQ predicate on the "updated_at" field.

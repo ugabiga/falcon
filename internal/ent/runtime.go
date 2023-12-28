@@ -43,18 +43,22 @@ func init() {
 	taskDescTradingAccountID := taskFields[1].Descriptor()
 	// task.TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	task.TradingAccountIDValidator = taskDescTradingAccountID.Validators[0].(func(int) error)
+	// taskDescCurrencyQuantity is the schema descriptor for currency_quantity field.
+	taskDescCurrencyQuantity := taskFields[3].Descriptor()
+	// task.DefaultCurrencyQuantity holds the default value on creation for the currency_quantity field.
+	task.DefaultCurrencyQuantity = taskDescCurrencyQuantity.Default.(float32)
 	// taskDescIsActive is the schema descriptor for is_active field.
-	taskDescIsActive := taskFields[5].Descriptor()
+	taskDescIsActive := taskFields[6].Descriptor()
 	// task.DefaultIsActive holds the default value on creation for the is_active field.
 	task.DefaultIsActive = taskDescIsActive.Default.(bool)
 	// taskDescUpdatedAt is the schema descriptor for updated_at field.
-	taskDescUpdatedAt := taskFields[7].Descriptor()
+	taskDescUpdatedAt := taskFields[9].Descriptor()
 	// task.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	task.DefaultUpdatedAt = taskDescUpdatedAt.Default.(func() time.Time)
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// taskDescCreatedAt is the schema descriptor for created_at field.
-	taskDescCreatedAt := taskFields[8].Descriptor()
+	taskDescCreatedAt := taskFields[10].Descriptor()
 	// task.DefaultCreatedAt holds the default value on creation for the created_at field.
 	task.DefaultCreatedAt = taskDescCreatedAt.Default.(func() time.Time)
 	// taskDescID is the schema descriptor for id field.

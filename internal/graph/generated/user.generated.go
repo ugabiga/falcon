@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/ugabiga/falcon/internal/graph/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -19,8 +20,8 @@ import (
 
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
-	CreateTask(ctx context.Context, tradingAccountID string, currency string, days string, hours string, typeArg string) (*Task, error)
-	UpdateTask(ctx context.Context, id string, currency string, days string, hours string, typeArg string, isActive bool) (*Task, error)
+	CreateTask(ctx context.Context, tradingAccountID string, currency string, days string, hours string, typeArg string, params model.JSON) (*Task, error)
+	UpdateTask(ctx context.Context, id string, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) (*Task, error)
 	CreateTradingAccount(ctx context.Context, name string, exchange string, identifier string, credential string) (*TradingAccount, error)
 	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, identifier *string, credential *string) (bool, error)
 }
@@ -83,6 +84,15 @@ func (ec *executionContext) field_Mutation_createTask_args(ctx context.Context, 
 		}
 	}
 	args["type"] = arg4
+	var arg5 model.JSON
+	if tmp, ok := rawArgs["params"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("params"))
+		arg5, err = ec.unmarshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["params"] = arg5
 	return args, nil
 }
 
@@ -185,6 +195,15 @@ func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, 
 		}
 	}
 	args["isActive"] = arg5
+	var arg6 model.JSON
+	if tmp, ok := rawArgs["params"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("params"))
+		arg6, err = ec.unmarshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["params"] = arg6
 	return args, nil
 }
 
@@ -392,7 +411,7 @@ func (ec *executionContext) _Mutation_createTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string))
+		return ec.resolvers.Mutation().CreateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string), fc.Args["params"].(model.JSON))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -423,6 +442,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
+			case "currencyQuantity":
+				return ec.fieldContext_Task_currencyQuantity(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -431,6 +452,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_isActive(ctx, field)
 			case "type":
 				return ec.fieldContext_Task_type(ctx, field)
+			case "params":
+				return ec.fieldContext_Task_params(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Task_updatedAt(ctx, field)
 			case "createdAt":
@@ -471,7 +494,7 @@ func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string), fc.Args["isActive"].(bool))
+		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["currency"].(string), fc.Args["days"].(string), fc.Args["hours"].(string), fc.Args["type"].(string), fc.Args["isActive"].(bool), fc.Args["params"].(model.JSON))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -502,6 +525,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
+			case "currencyQuantity":
+				return ec.fieldContext_Task_currencyQuantity(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -510,6 +535,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_isActive(ctx, field)
 			case "type":
 				return ec.fieldContext_Task_type(ctx, field)
+			case "params":
+				return ec.fieldContext_Task_params(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Task_updatedAt(ctx, field)
 			case "createdAt":

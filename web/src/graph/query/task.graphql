@@ -14,6 +14,7 @@ query GetTaskIndex($tradingAccountID: ID){
                 nextExecutionTime
                 isActive
                 tradingAccountID
+                params
             }
         }
         tradingAccounts {
@@ -35,8 +36,8 @@ query GetTaskIndex($tradingAccountID: ID){
     }
 }
 
-mutation CreateTask($tradingAccountID: ID!, $currency: String!, $days: String!, $hours: String!, $type: String!){
-    createTask(tradingAccountID: $tradingAccountID, currency: $currency days: $days hours: $hours type: $type){
+mutation CreateTask($tradingAccountID: ID!, $currency: String!, $days: String!, $hours: String!, $type: String! $params: JSON){
+    createTask(tradingAccountID: $tradingAccountID, currency: $currency days: $days hours: $hours type: $type params: $params){
         id
         currency
         cron
@@ -45,8 +46,8 @@ mutation CreateTask($tradingAccountID: ID!, $currency: String!, $days: String!, 
     }
 }
 
-mutation UpdateTask($id: ID!, $currency: String!, $days: String! $hours: String! $type: String! $isActive: Boolean!){
-    updateTask(id: $id, currency: $currency, days: $days, hours: $hours type: $type isActive: $isActive){
+mutation UpdateTask($id: ID!, $currency: String!, $days: String! $hours: String! $type: String! $isActive: Boolean! $params: JSON){
+    updateTask(id: $id, currency: $currency, days: $days, hours: $hours type: $type isActive: $isActive params: $params){
         id
         currency
         cron

@@ -7,6 +7,8 @@ import (
 	"io"
 	"strconv"
 	"time"
+
+	"github.com/ugabiga/falcon/internal/graph/model"
 )
 
 type Authentication struct {
@@ -23,10 +25,12 @@ type Task struct {
 	ID                string          `json:"id"`
 	TradingAccountID  string          `json:"tradingAccountID"`
 	Currency          string          `json:"currency"`
+	CurrencyQuantity  float64         `json:"currencyQuantity"`
 	Cron              string          `json:"cron"`
 	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
 	IsActive          bool            `json:"isActive"`
 	Type              string          `json:"type"`
+	Params            model.JSON      `json:"params"`
 	UpdatedAt         time.Time       `json:"updatedAt"`
 	CreatedAt         time.Time       `json:"createdAt"`
 	TradingAccount    *TradingAccount `json:"tradingAccount"`

@@ -34,6 +34,20 @@ func (tc *TaskCreate) SetCurrency(s string) *TaskCreate {
 	return tc
 }
 
+// SetCurrencyQuantity sets the "currency_quantity" field.
+func (tc *TaskCreate) SetCurrencyQuantity(f float32) *TaskCreate {
+	tc.mutation.SetCurrencyQuantity(f)
+	return tc
+}
+
+// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableCurrencyQuantity(f *float32) *TaskCreate {
+	if f != nil {
+		tc.SetCurrencyQuantity(*f)
+	}
+	return tc
+}
+
 // SetCron sets the "cron" field.
 func (tc *TaskCreate) SetCron(s string) *TaskCreate {
 	tc.mutation.SetCron(s)
@@ -71,6 +85,12 @@ func (tc *TaskCreate) SetNillableIsActive(b *bool) *TaskCreate {
 // SetType sets the "type" field.
 func (tc *TaskCreate) SetType(s string) *TaskCreate {
 	tc.mutation.SetType(s)
+	return tc
+}
+
+// SetParams sets the "params" field.
+func (tc *TaskCreate) SetParams(m map[string]interface{}) *TaskCreate {
+	tc.mutation.SetParams(m)
 	return tc
 }
 
@@ -163,6 +183,10 @@ func (tc *TaskCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TaskCreate) defaults() {
+	if _, ok := tc.mutation.CurrencyQuantity(); !ok {
+		v := task.DefaultCurrencyQuantity
+		tc.mutation.SetCurrencyQuantity(v)
+	}
 	if _, ok := tc.mutation.IsActive(); !ok {
 		v := task.DefaultIsActive
 		tc.mutation.SetIsActive(v)
@@ -189,6 +213,9 @@ func (tc *TaskCreate) check() error {
 	}
 	if _, ok := tc.mutation.Currency(); !ok {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Task.currency"`)}
+	}
+	if _, ok := tc.mutation.CurrencyQuantity(); !ok {
+		return &ValidationError{Name: "currency_quantity", err: errors.New(`ent: missing required field "Task.currency_quantity"`)}
 	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
@@ -249,6 +276,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 		_node.Currency = value
 	}
+	if value, ok := tc.mutation.CurrencyQuantity(); ok {
+		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+		_node.CurrencyQuantity = value
+	}
 	if value, ok := tc.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
 		_node.Cron = value
@@ -264,6 +295,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeString, value)
 		_node.Type = value
+	}
+	if value, ok := tc.mutation.Params(); ok {
+		_spec.SetField(task.FieldParams, field.TypeJSON, value)
+		_node.Params = value
 	}
 	if value, ok := tc.mutation.UpdatedAt(); ok {
 		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)

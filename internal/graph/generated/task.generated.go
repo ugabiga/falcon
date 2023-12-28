@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/ugabiga/falcon/internal/graph/model"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
@@ -155,6 +156,50 @@ func (ec *executionContext) fieldContext_Task_currency(ctx context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_currencyQuantity(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_currencyQuantity(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrencyQuantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_currencyQuantity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
 		},
 	}
 	return fc, nil
@@ -328,6 +373,47 @@ func (ec *executionContext) fieldContext_Task_type(ctx context.Context, field gr
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Task_params(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_params(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Params, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(model.JSON)
+	fc.Result = res
+	return ec.marshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Task_params(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Task",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -711,6 +797,13 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "currencyQuantity":
+
+			out.Values[i] = ec._Task_currencyQuantity(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "cron":
 
 			out.Values[i] = ec._Task_cron(ctx, field, obj)
@@ -736,6 +829,10 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "params":
+
+			out.Values[i] = ec._Task_params(ctx, field, obj)
+
 		case "updatedAt":
 
 			out.Values[i] = ec._Task_updatedAt(ctx, field, obj)
@@ -817,6 +914,22 @@ func (ec *executionContext) marshalNTask2ᚖgithubᚗcomᚋugabigaᚋfalconᚋin
 		return graphql.Null
 	}
 	return ec._Task(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx context.Context, v interface{}) (model.JSON, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := model.UnmarshalJSON(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOJSON2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋmodelᚐJSON(ctx context.Context, sel ast.SelectionSet, v model.JSON) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := model.MarshalJSON(v)
+	return res
 }
 
 func (ec *executionContext) marshalOTask2ᚕᚖgithubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐTaskᚄ(ctx context.Context, sel ast.SelectionSet, v []*Task) graphql.Marshaler {

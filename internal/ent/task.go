@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -22,6 +23,8 @@ type Task struct {
 	TradingAccountID int `json:"trading_account_id,omitempty"`
 	// Currency holds the value of the "currency" field.
 	Currency string `json:"currency,omitempty"`
+	// CurrencyQuantity holds the value of the "currency_quantity" field.
+	CurrencyQuantity float32 `json:"currency_quantity,omitempty"`
 	// Cron holds the value of the "cron" field.
 	Cron string `json:"cron,omitempty"`
 	// NextExecutionTime holds the value of the "next_execution_time" field.
@@ -30,6 +33,8 @@ type Task struct {
 	IsActive bool `json:"is_active,omitempty"`
 	// Type holds the value of the "type" field.
 	Type string `json:"type,omitempty"`
+	// Params holds the value of the "params" field.
+	Params map[string]interface{} `json:"params,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -82,8 +87,12 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case task.FieldParams:
+			values[i] = new([]byte)
 		case task.FieldIsActive:
 			values[i] = new(sql.NullBool)
+		case task.FieldCurrencyQuantity:
+			values[i] = new(sql.NullFloat64)
 		case task.FieldID, task.FieldTradingAccountID:
 			values[i] = new(sql.NullInt64)
 		case task.FieldCurrency, task.FieldCron, task.FieldType:
@@ -123,6 +132,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Currency = value.String
 			}
+		case task.FieldCurrencyQuantity:
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
+				return fmt.Errorf("unexpected type %T for field currency_quantity", values[i])
+			} else if value.Valid {
+				t.CurrencyQuantity = float32(value.Float64)
+			}
 		case task.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field cron", values[i])
@@ -146,6 +161,14 @@ func (t *Task) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				t.Type = value.String
+			}
+		case task.FieldParams:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field params", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &t.Params); err != nil {
+					return fmt.Errorf("unmarshal field params: %w", err)
+				}
 			}
 		case task.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -211,6 +234,9 @@ func (t *Task) String() string {
 	builder.WriteString("currency=")
 	builder.WriteString(t.Currency)
 	builder.WriteString(", ")
+	builder.WriteString("currency_quantity=")
+	builder.WriteString(fmt.Sprintf("%v", t.CurrencyQuantity))
+	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(t.Cron)
 	builder.WriteString(", ")
@@ -222,6 +248,9 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(t.Type)
+	builder.WriteString(", ")
+	builder.WriteString("params=")
+	builder.WriteString(fmt.Sprintf("%v", t.Params))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))

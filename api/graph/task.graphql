@@ -3,8 +3,8 @@ extend type Query {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, currency: String!, days: String!, hours: String!, type: String!): Task!
-    updateTask(id: ID!, currency: String!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
+    createTask(tradingAccountID: ID!, currency: String!, days: String!, hours: String!, type: String!, params: JSON): Task!
+    updateTask(id: ID!, currency: String!, days: String!, hours: String!, type: String!, isActive: Boolean!, params: JSON): Task!
 }
 
 type TaskIndex{
@@ -12,17 +12,21 @@ type TaskIndex{
     tradingAccounts: [TradingAccount!]
 }
 
+
 type Task {
     id: ID!
     tradingAccountID: ID!
     currency: String!
+    currencyQuantity: Float!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!
     type: String!
+    params: JSON
     updatedAt: Time!
     createdAt: Time!
     tradingAccount: TradingAccount!
     taskHistories: [TaskHistory!]
 }
 
+scalar JSON

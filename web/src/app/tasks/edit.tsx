@@ -39,6 +39,32 @@ function convertStringToTaskType(value: string): "DCA" | "Grid" {
     return value === "DCA" ? "DCA" : "Grid"
 }
 
+function parseGridParams(task: Task): { gap: number, quantity: number } {
+    if (task.type === "Grid") {
+        return {
+            gap: task.params?.gap,
+            quantity: task.params?.quantity
+        }
+    }
+
+    return {
+        gap: 0,
+        quantity: 0,
+    }
+}
+
+function parseParamsFromData(data: z.infer<typeof UpdateTaskForm>): { gap: number, quantity: number } | null {
+    if (data.type === "Grid") {
+        return {
+            gap: data.grid.gap,
+            quantity: data.grid.quantity
+        }
+    }
+
+    return null
+}
+
+
 export function EditTask({task}: { task: Task }) {
     const [updateTask] = useMutation(UpdateTaskDocument)
     const [openDialog, setOpenDialog] = useState(false)
@@ -52,10 +78,7 @@ export function EditTask({task}: { task: Task }) {
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
             isActive: task.isActive,
-            grid: {
-                gap: 2,
-                quantity: 10,
-            }
+            grid: parseGridParams(task)
         },
     })
 
@@ -67,7 +90,8 @@ export function EditTask({task}: { task: Task }) {
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
-                isActive: task.isActive
+                isActive: data.isActive,
+                params: parseParamsFromData(data)
             }
         }).then(() => {
             setOpenDialog(false)
@@ -217,7 +241,14 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                     <FormItem>
                         <FormLabel>Grid Gap (%)</FormLabel>
                         <FormControl>
-                            <Input placeholder="Grid gap" {...field} />
+                            <Input type="number"
+                                   min={0}
+                                   placeholder="Grid gap"
+                                   value={field.value}
+                                   onChange={(e) => {
+                                       field.onChange(Number(e.target.value))
+                                   }}
+                            />
                         </FormControl>
                         <FormMessage/>
                     </FormItem>
@@ -231,7 +262,12 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                     <FormItem>
                         <FormLabel>Grid quantity</FormLabel>
                         <FormControl>
-                            <Input placeholder="Grid quantity" {...field} />
+                            <Input type="number" placeholder="Grid quantity"
+                                   value={field.value}
+                                   onChange={(e) => {
+                                       field.onChange(Number(e.target.value))
+                                   }}
+                            />
                         </FormControl>
                         <FormMessage/>
                     </FormItem>

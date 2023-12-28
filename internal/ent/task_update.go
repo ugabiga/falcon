@@ -58,6 +58,27 @@ func (tu *TaskUpdate) SetNillableCurrency(s *string) *TaskUpdate {
 	return tu
 }
 
+// SetCurrencyQuantity sets the "currency_quantity" field.
+func (tu *TaskUpdate) SetCurrencyQuantity(f float32) *TaskUpdate {
+	tu.mutation.ResetCurrencyQuantity()
+	tu.mutation.SetCurrencyQuantity(f)
+	return tu
+}
+
+// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableCurrencyQuantity(f *float32) *TaskUpdate {
+	if f != nil {
+		tu.SetCurrencyQuantity(*f)
+	}
+	return tu
+}
+
+// AddCurrencyQuantity adds f to the "currency_quantity" field.
+func (tu *TaskUpdate) AddCurrencyQuantity(f float32) *TaskUpdate {
+	tu.mutation.AddCurrencyQuantity(f)
+	return tu
+}
+
 // SetCron sets the "cron" field.
 func (tu *TaskUpdate) SetCron(s string) *TaskUpdate {
 	tu.mutation.SetCron(s)
@@ -117,6 +138,18 @@ func (tu *TaskUpdate) SetNillableType(s *string) *TaskUpdate {
 	if s != nil {
 		tu.SetType(*s)
 	}
+	return tu
+}
+
+// SetParams sets the "params" field.
+func (tu *TaskUpdate) SetParams(m map[string]interface{}) *TaskUpdate {
+	tu.mutation.SetParams(m)
+	return tu
+}
+
+// ClearParams clears the value of the "params" field.
+func (tu *TaskUpdate) ClearParams() *TaskUpdate {
+	tu.mutation.ClearParams()
 	return tu
 }
 
@@ -242,6 +275,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
+	if value, ok := tu.mutation.CurrencyQuantity(); ok {
+		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	}
+	if value, ok := tu.mutation.AddedCurrencyQuantity(); ok {
+		_spec.AddField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	}
 	if value, ok := tu.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
 	}
@@ -256,6 +295,12 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeString, value)
+	}
+	if value, ok := tu.mutation.Params(); ok {
+		_spec.SetField(task.FieldParams, field.TypeJSON, value)
+	}
+	if tu.mutation.ParamsCleared() {
+		_spec.ClearField(task.FieldParams, field.TypeJSON)
 	}
 	if value, ok := tu.mutation.UpdatedAt(); ok {
 		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)
@@ -382,6 +427,27 @@ func (tuo *TaskUpdateOne) SetNillableCurrency(s *string) *TaskUpdateOne {
 	return tuo
 }
 
+// SetCurrencyQuantity sets the "currency_quantity" field.
+func (tuo *TaskUpdateOne) SetCurrencyQuantity(f float32) *TaskUpdateOne {
+	tuo.mutation.ResetCurrencyQuantity()
+	tuo.mutation.SetCurrencyQuantity(f)
+	return tuo
+}
+
+// SetNillableCurrencyQuantity sets the "currency_quantity" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableCurrencyQuantity(f *float32) *TaskUpdateOne {
+	if f != nil {
+		tuo.SetCurrencyQuantity(*f)
+	}
+	return tuo
+}
+
+// AddCurrencyQuantity adds f to the "currency_quantity" field.
+func (tuo *TaskUpdateOne) AddCurrencyQuantity(f float32) *TaskUpdateOne {
+	tuo.mutation.AddCurrencyQuantity(f)
+	return tuo
+}
+
 // SetCron sets the "cron" field.
 func (tuo *TaskUpdateOne) SetCron(s string) *TaskUpdateOne {
 	tuo.mutation.SetCron(s)
@@ -441,6 +507,18 @@ func (tuo *TaskUpdateOne) SetNillableType(s *string) *TaskUpdateOne {
 	if s != nil {
 		tuo.SetType(*s)
 	}
+	return tuo
+}
+
+// SetParams sets the "params" field.
+func (tuo *TaskUpdateOne) SetParams(m map[string]interface{}) *TaskUpdateOne {
+	tuo.mutation.SetParams(m)
+	return tuo
+}
+
+// ClearParams clears the value of the "params" field.
+func (tuo *TaskUpdateOne) ClearParams() *TaskUpdateOne {
+	tuo.mutation.ClearParams()
 	return tuo
 }
 
@@ -596,6 +674,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
+	if value, ok := tuo.mutation.CurrencyQuantity(); ok {
+		_spec.SetField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	}
+	if value, ok := tuo.mutation.AddedCurrencyQuantity(); ok {
+		_spec.AddField(task.FieldCurrencyQuantity, field.TypeFloat32, value)
+	}
 	if value, ok := tuo.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
 	}
@@ -610,6 +694,12 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if value, ok := tuo.mutation.GetType(); ok {
 		_spec.SetField(task.FieldType, field.TypeString, value)
+	}
+	if value, ok := tuo.mutation.Params(); ok {
+		_spec.SetField(task.FieldParams, field.TypeJSON, value)
+	}
+	if tuo.mutation.ParamsCleared() {
+		_spec.ClearField(task.FieldParams, field.TypeJSON)
 	}
 	if value, ok := tuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(task.FieldUpdatedAt, field.TypeTime, value)

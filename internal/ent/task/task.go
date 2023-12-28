@@ -18,6 +18,8 @@ const (
 	FieldTradingAccountID = "trading_account_id"
 	// FieldCurrency holds the string denoting the currency field in the database.
 	FieldCurrency = "currency"
+	// FieldCurrencyQuantity holds the string denoting the currency_quantity field in the database.
+	FieldCurrencyQuantity = "currency_quantity"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldNextExecutionTime holds the string denoting the next_execution_time field in the database.
@@ -26,6 +28,8 @@ const (
 	FieldIsActive = "is_active"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldParams holds the string denoting the params field in the database.
+	FieldParams = "params"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -57,10 +61,12 @@ var Columns = []string{
 	FieldID,
 	FieldTradingAccountID,
 	FieldCurrency,
+	FieldCurrencyQuantity,
 	FieldCron,
 	FieldNextExecutionTime,
 	FieldIsActive,
 	FieldType,
+	FieldParams,
 	FieldUpdatedAt,
 	FieldCreatedAt,
 }
@@ -78,6 +84,8 @@ func ValidColumn(column string) bool {
 var (
 	// TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	TradingAccountIDValidator func(int) error
+	// DefaultCurrencyQuantity holds the default value on creation for the "currency_quantity" field.
+	DefaultCurrencyQuantity float32
 	// DefaultIsActive holds the default value on creation for the "is_active" field.
 	DefaultIsActive bool
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -106,6 +114,11 @@ func ByTradingAccountID(opts ...sql.OrderTermOption) OrderOption {
 // ByCurrency orders the results by the currency field.
 func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
+}
+
+// ByCurrencyQuantity orders the results by the currency_quantity field.
+func ByCurrencyQuantity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyQuantity, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

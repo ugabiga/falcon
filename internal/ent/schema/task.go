@@ -24,12 +24,16 @@ func (Task) Fields() []ent.Field {
 			Positive().
 			GoType(int(0)),
 		field.String("currency"),
+		field.Float32("currency_quantity").
+			Default(0),
 		field.String("cron"),
 		field.Time("next_execution_time").
 			Optional(),
 		field.Bool("is_active").
 			Default(true),
 		field.String("type"),
+		field.JSON("params", map[string]interface{}{}).
+			Optional(),
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),

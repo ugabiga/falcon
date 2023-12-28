@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/ugabiga/falcon/internal/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -48,9 +49,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateTask           func(childComplexity int, tradingAccountID string, currency string, days string, hours string, typeArg string) int
+		CreateTask           func(childComplexity int, tradingAccountID string, currency string, days string, hours string, typeArg string, params model.JSON) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, identifier string, credential string) int
-		UpdateTask           func(childComplexity int, id string, currency string, days string, hours string, typeArg string, isActive bool) int
+		UpdateTask           func(childComplexity int, id string, currency string, days string, hours string, typeArg string, isActive bool, params model.JSON) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, identifier *string, credential *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
@@ -66,9 +67,11 @@ type ComplexityRoot struct {
 		CreatedAt         func(childComplexity int) int
 		Cron              func(childComplexity int) int
 		Currency          func(childComplexity int) int
+		CurrencyQuantity  func(childComplexity int) int
 		ID                func(childComplexity int) int
 		IsActive          func(childComplexity int) int
 		NextExecutionTime func(childComplexity int) int
+		Params            func(childComplexity int) int
 		TaskHistories     func(childComplexity int) int
 		TradingAccount    func(childComplexity int) int
 		TradingAccountID  func(childComplexity int) int
@@ -201,7 +204,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string)), true
+		return e.complexity.Mutation.CreateTask(childComplexity, args["tradingAccountID"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["params"].(model.JSON)), true
 
 	case "Mutation.createTradingAccount":
 		if e.complexity.Mutation.CreateTradingAccount == nil {
@@ -225,7 +228,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool)), true
+		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["currency"].(string), args["days"].(string), args["hours"].(string), args["type"].(string), args["isActive"].(bool), args["params"].(model.JSON)), true
 
 	case "Mutation.updateTradingAccount":
 		if e.complexity.Mutation.UpdateTradingAccount == nil {
@@ -310,6 +313,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Task.Currency(childComplexity), true
 
+	case "Task.currencyQuantity":
+		if e.complexity.Task.CurrencyQuantity == nil {
+			break
+		}
+
+		return e.complexity.Task.CurrencyQuantity(childComplexity), true
+
 	case "Task.id":
 		if e.complexity.Task.ID == nil {
 			break
@@ -330,6 +340,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Task.NextExecutionTime(childComplexity), true
+
+	case "Task.params":
+		if e.complexity.Task.Params == nil {
+			break
+		}
+
+		return e.complexity.Task.Params(childComplexity), true
 
 	case "Task.taskHistories":
 		if e.complexity.Task.TaskHistories == nil {
@@ -660,8 +677,8 @@ enum AuthenticationProvider {
 }
 
 extend type Mutation {
-    createTask(tradingAccountID: ID!, currency: String!, days: String!, hours: String!, type: String!): Task!
-    updateTask(id: ID!, currency: String!, days: String!, hours: String!, type: String! isActive: Boolean!): Task!
+    createTask(tradingAccountID: ID!, currency: String!, days: String!, hours: String!, type: String!, params: JSON): Task!
+    updateTask(id: ID!, currency: String!, days: String!, hours: String!, type: String!, isActive: Boolean!, params: JSON): Task!
 }
 
 type TaskIndex{
@@ -669,20 +686,24 @@ type TaskIndex{
     tradingAccounts: [TradingAccount!]
 }
 
+
 type Task {
     id: ID!
     tradingAccountID: ID!
     currency: String!
+    currencyQuantity: Float!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!
     type: String!
+    params: JSON
     updatedAt: Time!
     createdAt: Time!
     tradingAccount: TradingAccount!
     taskHistories: [TaskHistory!]
 }
 
+scalar JSON
 `, BuiltIn: false},
 	{Name: "api/graph/taskhistory.graphql", Input: `extend type Query {
     taskHistoryIndex(taskID: ID!): TaskHistoryIndex!

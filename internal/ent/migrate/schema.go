@@ -36,10 +36,12 @@ var (
 	TasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "currency", Type: field.TypeString},
+		{Name: "currency_quantity", Type: field.TypeFloat32, Default: 0},
 		{Name: "cron", Type: field.TypeString},
 		{Name: "next_execution_time", Type: field.TypeTime, Nullable: true},
 		{Name: "is_active", Type: field.TypeBool, Default: true},
 		{Name: "type", Type: field.TypeString},
+		{Name: "params", Type: field.TypeJSON, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "trading_account_id", Type: field.TypeInt},
@@ -52,7 +54,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_trading_accounts_tasks",
-				Columns:    []*schema.Column{TasksColumns[8]},
+				Columns:    []*schema.Column{TasksColumns[10]},
 				RefColumns: []*schema.Column{TradingAccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
