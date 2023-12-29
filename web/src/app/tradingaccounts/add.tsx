@@ -1,34 +1,34 @@
 import {useMutation} from "@apollo/client";
 import {CreateTradingAccountDocument} from "@/graph/generated/generated";
-import {useState} from "react";
+import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
-import {AddTradingAccountFormSchema} from "@/app/tradingaccounts/form";
+import {TradingAccountForm, TradingAccountFormSchema} from "@/app/tradingaccounts/form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Input} from "@/components/ui/input";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Form} from "@/components/ui/form";
 import {useAppDispatch} from "@/store";
 import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {errorToast} from "@/components/toast";
+import {useTranslation} from "react-i18next";
 
 
 export function AddTradingAccount() {
+    const {t} = useTranslation();
     const [createTradingAccount] = useMutation(CreateTradingAccountDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
 
-    const form = useForm<z.infer<typeof AddTradingAccountFormSchema>>({
-        resolver: zodResolver(AddTradingAccountFormSchema),
+    const form = useForm<z.infer<typeof TradingAccountFormSchema>>({
+        resolver: zodResolver(TradingAccountFormSchema),
         defaultValues: {
             name: "",
             exchange: "upbit",
         },
     })
 
-    function onSubmit(data: z.infer<typeof AddTradingAccountFormSchema>) {
+    function onSubmit(data: z.infer<typeof TradingAccountFormSchema>) {
         createTradingAccount({
             variables: {
                 name: data.name,
@@ -48,7 +48,7 @@ export function AddTradingAccount() {
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="outline">Add</Button>
+                <Button variant="outline">{t("tradingAccounts.add.btn")}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
@@ -56,80 +56,14 @@ export function AddTradingAccount() {
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
                         <DialogHeader className="mb-2">
-                            <DialogTitle>Add Trading Account</DialogTitle>
+                            <DialogTitle>{t("tradingAccounts.add.title")}</DialogTitle>
                         </DialogHeader>
 
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Name" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="exchange"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Exchange</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a Exchange"/>
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            <SelectItem value="upbit">Upbit</SelectItem>
-                                            <SelectItem value="binance">Binance</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="key"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Key</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="Key" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="secret"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Secret</FormLabel>
-                                    <FormControl>
-                                        <Input type="password" placeholder="Secret" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        {/* Submit */}
-                        <DialogFooter>
-                            <Button type="submit" className={"mt-6"}>Save changes</Button>
-                        </DialogFooter>
+                        <TradingAccountForm form={form}/>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
     )
 }
+

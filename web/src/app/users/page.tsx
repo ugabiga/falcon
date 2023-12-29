@@ -10,9 +10,11 @@ import {useEffect, useState} from "react";
 import {Loading} from "@/components/loading";
 import {errorToast, normalToast} from "@/components/toast";
 import {Error} from "@/components/error";
+import {useTranslation} from "react-i18next";
 
 
 export default function Users() {
+    const {t} = useTranslation()
     const {data, loading, error} = useQuery(UserIndexDocument)
     const [updateUser] = useMutation(UpdateUserDocument)
     const [user, setUser] = useState({
@@ -47,7 +49,7 @@ export default function Users() {
                 timezone: user.timezone
             }
         }).then(() => {
-            normalToast({message: "Your profile has been updated"})
+            normalToast({message: t("users.profile.saved")})
         }).catch((e) => {
             errorToast(e.message)
         })
@@ -56,12 +58,14 @@ export default function Users() {
     return (
         <main className="min-h-screen p-12 ">
             <div className="w-full text-center">
-                <h1 className="text-4xl font-bold">Profile</h1>
+                <h1 className="text-4xl font-bold">
+                    {t("users.profile.title")}
+                </h1>
             </div>
 
             <div className={" mt-6 space-y-6 w-full grid place-items-center"}>
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name">{t("users.profile.name")}</Label>
                     <Input type="name" id="name" defaultValue={data.userIndex.user.name} onChange={(e) => {
                         return setUser({
                             ...user,
@@ -71,7 +75,7 @@ export default function Users() {
                 </div>
 
                 <div className="grid w-full max-w-sm items-center gap-1.5">
-                    <Label htmlFor="name">Timezone</Label>
+                    <Label htmlFor="name">{t("users.profile.timezone.title")}</Label>
                     <Select defaultValue={data.userIndex.user.timezone}
                             onValueChange={(value) => {
                                 return setUser({
@@ -83,16 +87,16 @@ export default function Users() {
                             <SelectValue placeholder="Timezone"/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="default" disabled>Choose your timezone</SelectItem>
-                            <SelectItem value="Asia/Seoul">Asia/Seoul</SelectItem>
-                            <SelectItem value="UTC">UTC</SelectItem>
+                            <SelectItem value="default" disabled>{t("users.profile.timezone.placeholder")}</SelectItem>
+                            <SelectItem value="Asia/Seoul">{t("users.profile.timezone.asia-seoul")}</SelectItem>
+                            <SelectItem value="UTC">{t("users.profile.timezone.utc")}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
 
                 <div className="grid w-full max-w-sm">
                     <Button onClick={handleOnSave}>
-                        Save
+                        {t("users.profile.save")}
                     </Button>
                 </div>
             </div>

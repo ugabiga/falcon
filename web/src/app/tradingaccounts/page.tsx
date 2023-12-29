@@ -9,9 +9,11 @@ import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
 import {TradingAccountTable} from "@/app/tradingaccounts/table";
 import {Loading} from "@/components/loading";
 import {Error} from "@/components/error";
+import {useTranslation} from "react-i18next";
 
 
 export default function TradingAccounts() {
+    const {t} = useTranslation();
     const {data, loading, refetch, error} = useQuery(TradingAccountIndexDocument);
     const tradingAccount = useAppSelector((state) => state.tradingAccount);
     const dispatch = useAppDispatch()
@@ -37,7 +39,7 @@ export default function TradingAccounts() {
 
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
-            <h1 className="text-3xl font-bold">Trading Accounts</h1>
+            <h1 className="text-3xl font-bold">{t("tradingAccounts.title")}</h1>
 
             <div className={"w-full flex space-x-2"}>
                 <div className={"flex-grow"}></div>

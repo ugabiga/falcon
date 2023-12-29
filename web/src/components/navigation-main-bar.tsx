@@ -3,8 +3,10 @@ import Link from "next/link";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
+import {useTranslation} from "react-i18next";
 
 export function NavigationMainBar() {
+    const {t} = useTranslation()
     const pathname = usePathname()
 
     return (
@@ -19,7 +21,9 @@ export function NavigationMainBar() {
                 >
                     <div className="flex items-center">
                         <Icons.logo/>
-                        <span className="ml-2">Falcon</span>
+                        <span className="ml-2">
+                            Falcon
+                        </span>
                     </div>
                 </Link>
                 <Link
@@ -29,7 +33,7 @@ export function NavigationMainBar() {
                         pathname === "/tradingaccounts" ? "text-foreground" : "text-foreground/60"
                     )}
                 >
-                    Trading Accounts
+                    {t("nav.trading-accounts")}
                 </Link>
                 <Link
                     href="/tasks"
@@ -38,7 +42,7 @@ export function NavigationMainBar() {
                         pathname === "/tasks" ? "text-foreground" : "text-foreground/60"
                     )}
                 >
-                    Tasks
+                    {t("nav.tasks")}
                 </Link>
                 <div className={"flex-grow"}></div>
                 <NavigationRightMenu/>

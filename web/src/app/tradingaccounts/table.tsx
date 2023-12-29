@@ -2,6 +2,7 @@ import {TradingAccount} from "@/graph/generated/generated";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {EditTradingAccount} from "@/app/tradingaccounts/edit";
 import {camelize} from "@/lib/str";
+import {useTranslation} from "react-i18next";
 
 function trim(str: string, length: number) {
     if (str.length <= length) {
@@ -11,15 +12,17 @@ function trim(str: string, length: number) {
 }
 
 export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
+    const {t} = useTranslation();
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">Name</TableHead>
-                    <TableHead>Exchange</TableHead>
-                    <TableHead>Key</TableHead>
-                    <TableHead>IP</TableHead>
-                    <TableHead>Action</TableHead>
+                    <TableHead className="w-[100px]">{t("tradingAccounts.table.name")}</TableHead>
+                    <TableHead>{t("tradingAccounts.table.exchange")}</TableHead>
+                    <TableHead>{t("tradingAccounts.table.key")}</TableHead>
+                    <TableHead>{t("tradingAccounts.table.ip")}</TableHead>
+                    <TableHead>{t("tradingAccounts.table.action")}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
