@@ -20,14 +20,14 @@ import (
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTask(ctx context.Context, input CreateTaskInput) (*Task, error)
-	UpdateTask(ctx context.Context, id string, input UpdateTaskInput) (*Task, error)
+	UpdateTask(ctx context.Context, id int, input UpdateTaskInput) (*Task, error)
 	CreateTradingAccount(ctx context.Context, name string, exchange string, identifier string, credential string) (*TradingAccount, error)
-	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, identifier *string, credential *string) (bool, error)
+	UpdateTradingAccount(ctx context.Context, id int, name *string, exchange *string, identifier *string, credential *string) (bool, error)
 }
 type QueryResolver interface {
 	UserIndex(ctx context.Context) (*UserIndex, error)
-	TaskIndex(ctx context.Context, tradingAccountID *string) (*TaskIndex, error)
-	TaskHistoryIndex(ctx context.Context, taskID string) (*TaskHistoryIndex, error)
+	TaskIndex(ctx context.Context, tradingAccountID *int) (*TaskIndex, error)
+	TaskHistoryIndex(ctx context.Context, taskID int) (*TaskHistoryIndex, error)
 	TradingAccountIndex(ctx context.Context) (*TradingAccountIndex, error)
 }
 
@@ -95,10 +95,10 @@ func (ec *executionContext) field_Mutation_createTradingAccount_args(ctx context
 func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 int
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -119,10 +119,10 @@ func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_updateTradingAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 int
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -200,10 +200,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_taskHistoryIndex_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
+	var arg0 int
 	if tmp, ok := rawArgs["taskID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taskID"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg0, err = ec.unmarshalNID2int(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -215,10 +215,10 @@ func (ec *executionContext) field_Query_taskHistoryIndex_args(ctx context.Contex
 func (ec *executionContext) field_Query_taskIndex_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 *int
 	if tmp, ok := rawArgs["tradingAccountID"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradingAccountID"))
-		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalOID2ᚖint(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -405,7 +405,7 @@ func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["input"].(UpdateTaskInput))
+		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(int), fc.Args["input"].(UpdateTaskInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -567,7 +567,7 @@ func (ec *executionContext) _Mutation_updateTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(string), fc.Args["name"].(*string), fc.Args["exchange"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
+		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(int), fc.Args["name"].(*string), fc.Args["exchange"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -670,7 +670,7 @@ func (ec *executionContext) _Query_taskIndex(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TaskIndex(rctx, fc.Args["tradingAccountID"].(*string))
+		return ec.resolvers.Query().TaskIndex(rctx, fc.Args["tradingAccountID"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -728,7 +728,7 @@ func (ec *executionContext) _Query_taskHistoryIndex(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TaskHistoryIndex(rctx, fc.Args["taskID"].(string))
+		return ec.resolvers.Query().TaskHistoryIndex(rctx, fc.Args["taskID"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -978,9 +978,9 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1424,7 +1424,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.ID, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1432,7 +1432,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
-			it.IDNeq, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.IDNeq, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1440,7 +1440,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
-			it.IDIn, err = ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			it.IDIn, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1448,7 +1448,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
-			it.IDNotIn, err = ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			it.IDNotIn, err = ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1456,7 +1456,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
-			it.IDGt, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.IDGt, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1464,7 +1464,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
-			it.IDGte, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.IDGte, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1472,7 +1472,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
-			it.IDLt, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.IDLt, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1480,7 +1480,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
-			it.IDLte, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.IDLte, err = ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}

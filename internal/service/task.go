@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
@@ -33,11 +32,10 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 		return nil, err
 	}
 
-	tradingAccountID := str.New(input.TradingAccountID).ToIntDefault(0)
 	tradingAccount, err := s.db.TradingAccount.Query().
 		Where(
 			tradingaccount.UserID(userID),
-			tradingaccount.ID(tradingAccountID),
+			tradingaccount.ID(input.TradingAccountID),
 		).
 		First(ctx)
 	if err != nil {

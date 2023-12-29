@@ -8,7 +8,6 @@ import (
 
 func ToUser(inputUser *ent.User) (*generated.User, error) {
 	var newUser generated.User
-	newUser.ID = IntToString(inputUser.ID)
 	if err := deepcopy.CopyEx(&newUser, inputUser); err != nil {
 		return nil, err
 	}
@@ -19,7 +18,6 @@ func ToUser(inputUser *ent.User) (*generated.User, error) {
 		if err := deepcopy.CopyEx(&a, v); err != nil {
 			return nil, err
 		}
-		a.ID = IntToString(v.ID)
 		newUser.Authentications = append(newUser.Authentications, &a)
 	}
 
@@ -29,7 +27,6 @@ func ToUser(inputUser *ent.User) (*generated.User, error) {
 		if err := deepcopy.CopyEx(&a, v); err != nil {
 			return nil, err
 		}
-		a.ID = IntToString(v.ID)
 		newUser.TradingAccounts = append(newUser.TradingAccounts, &a)
 	}
 

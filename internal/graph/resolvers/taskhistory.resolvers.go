@@ -6,19 +6,18 @@ package resolvers
 import (
 	"context"
 
-	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID string) (*generated.TaskHistoryIndex, error) {
+func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID int) (*generated.TaskHistoryIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	task, err := r.taskSrv.GetWithTaskHistory(
 		ctx,
 		claim.UserID,
-		str.New(taskID).ToIntDefault(0),
+		taskID,
 	)
 	if err != nil {
 		return nil, err

@@ -6,7 +6,6 @@ package resolvers
 import (
 	"context"
 
-	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
@@ -30,11 +29,11 @@ func (r *mutationResolver) CreateTradingAccount(ctx context.Context, name string
 	return converter.ToTradingAccount(newTradingAccount)
 }
 
-func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, identifier *string, credential *string) (bool, error) {
+func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id int, name *string, exchange *string, identifier *string, credential *string) (bool, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 	err := r.tradingAccountSrv.Update(
 		ctx,
-		str.New(id).ToIntDefault(0),
+		id,
 		claim.UserID,
 		name,
 		exchange,

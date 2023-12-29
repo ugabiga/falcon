@@ -8,7 +8,6 @@ import (
 
 func ToTradingAccount(inputData *ent.TradingAccount) (*generated.TradingAccount, error) {
 	var result generated.TradingAccount
-	result.ID = IntToString(inputData.ID)
 	if err := deepcopy.CopyEx(&result, inputData); err != nil {
 		return nil, err
 	}

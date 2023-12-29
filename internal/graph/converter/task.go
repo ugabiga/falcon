@@ -9,9 +9,6 @@ import (
 func ToTask(inputData *ent.Task) (*generated.Task, error) {
 	var result generated.Task
 
-	result.ID = IntToString(inputData.ID)
-	result.TradingAccountID = IntToString(inputData.TradingAccountID)
-
 	if err := deepcopy.CopyEx(&result, inputData); err != nil {
 		return nil, err
 	}

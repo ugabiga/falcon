@@ -8,7 +8,6 @@ import (
 
 func ToTaskHistory(inputData *ent.TaskHistory) (*generated.TaskHistory, error) {
 	var result generated.TaskHistory
-	result.ID = IntToString(inputData.ID)
 	if err := deepcopy.CopyEx(&result, inputData); err != nil {
 		return nil, err
 	}

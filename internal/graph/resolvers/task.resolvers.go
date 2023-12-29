@@ -7,7 +7,6 @@ import (
 	"context"
 
 	"github.com/ugabiga/falcon/internal/common/debug"
-	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
@@ -24,12 +23,12 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input generated.Creat
 	return converter.ToTask(task)
 }
 
-func (r *mutationResolver) UpdateTask(ctx context.Context, id string, input generated.UpdateTaskInput) (*generated.Task, error) {
+func (r *mutationResolver) UpdateTask(ctx context.Context, id int, input generated.UpdateTaskInput) (*generated.Task, error) {
 	r.logger.Printf("Reqest %v", debug.ToJSONStr(input))
 
 	claim := helper.MustJWTClaimInResolver(ctx)
 
-	task, err := r.taskSrv.Update(ctx, claim.UserID, str.New(id).ToIntDefault(0), input)
+	task, err := r.taskSrv.Update(ctx, claim.UserID, id, input)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +36,7 @@ func (r *mutationResolver) UpdateTask(ctx context.Context, id string, input gene
 	return converter.ToTask(task)
 }
 
-func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {
+func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *int) (*generated.TaskIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
 	tradingAccounts, err := r.tradingAccountSrv.GetWithTask(
