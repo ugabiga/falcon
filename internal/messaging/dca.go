@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
+	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/service"
 	"log"
 	"time"
 )
@@ -22,14 +24,19 @@ type HandlerInfo struct {
 }
 
 type DCAMessage struct {
-	Msg string
+	TaskOrderInfo service.TaskOrderInfo
 }
 
 type DCAMessageHandler struct {
+	dcaSrv *service.DcaService
 }
 
-func NewDCAHandler() *DCAMessageHandler {
-	return &DCAMessageHandler{}
+func NewDCAHandler(
+	dcaSrv *service.DcaService,
+) *DCAMessageHandler {
+	return &DCAMessageHandler{
+		dcaSrv: dcaSrv,
+	}
 }
 
 func (h DCAMessageHandler) Handler() HandlerInfo {
@@ -47,31 +54,55 @@ func (h DCAMessageHandler) Handle(msg *message.Message) ([]*message.Message, err
 		log.Fatalf("Error occurred during unmarshalling. Err: %v", err)
 	}
 
-	log.Printf("newMsg: %+v", newMsg)
+	log.Printf("newMsg: %+v", debug.ToJSONStr(newMsg))
+
+	if err := h.dcaSrv.Order(newMsg.TaskOrderInfo); err != nil {
+		log.Printf("Error occurred during order. Err: %v", err)
+		return nil, err
+	}
 
 	return nil, nil
 }
 
-func (h DCAMessageHandler) watch() ([]byte, error) {
-	data, err := json.Marshal(DCAMessage{Msg: "hello world"})
+func (h DCAMessageHandler) getTarget() ([]DCAMessage, error) {
+	orders, err := h.dcaSrv.GetTarget()
 	if err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	var dcaMessages []DCAMessage
+	for _, order := range orders {
+		dcaMessages = append(dcaMessages, DCAMessage{
+			TaskOrderInfo: order,
+		})
+	}
+
+	return dcaMessages, nil
 }
 func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
-	for {
+	for i := 0; i < 1; i++ {
 		log.Printf("Publishing message to topic: %s", DCAIncomingTopic)
 
-		data, err := h.watch()
+		messages, err := h.getTarget()
 		if err != nil {
 			log.Printf("Error occurred during watching. Err: %v", err)
 			continue
 		}
 
-		if err := publish(*pubSub, DCAIncomingTopic, data); err != nil {
-			log.Printf("Error occurred during publishing. Err: %v", err)
+		for _, msg := range messages {
+			data, err := json.Marshal(msg)
+			if err != nil {
+				log.Printf("Error occurred during marshalling. Err: %v", err)
+				continue
+			}
+
+			if err := publish(*pubSub, DCAIncomingTopic, data); err != nil {
+				log.Printf("Error occurred during publishing. Err: %v", err)
+				continue
+			}
+			if err != nil {
+				log.Printf("Error occurred during publishing. Err: %v", err)
+			}
 		}
 
 		time.Sleep(1 * time.Second)

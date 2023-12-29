@@ -25,6 +25,7 @@ func provider() fx.Option {
 		service.NewTradingAccountService,
 		service.NewTaskService,
 		service.NewTaskHistoryService,
+		service.NewDcaService,
 
 		// Handler
 		handler.NewAuthenticationHandler,
