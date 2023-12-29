@@ -6,6 +6,7 @@ import (
 	"github.com/ugabiga/falcon/internal/graph/helper"
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
+	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
 	"go.uber.org/fx"
@@ -39,6 +40,12 @@ func provider() fx.Option {
 
 		// Server
 		server.NewServer,
+
+		//Messaging Handler
+		messaging.NewDCAHandler,
+
+		//Messaging
+		messaging.NewMessaging,
 
 		// App
 		NewApp,
