@@ -4,7 +4,7 @@ import {loadErrorMessages, loadDevMessages} from "@apollo/client/dev";
 loadDevMessages();
 loadErrorMessages();
 
-const GQL_ENDPOINT = 'http://localhost:8080/graph';
+const GQL_ENDPOINT = process.env.NEXT_PUBLIC_API_URL + "/graph";
 
 function getCookie(name: string) {
     let cookieValue = "";

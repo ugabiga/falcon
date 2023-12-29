@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
@@ -14,6 +15,7 @@ import (
 
 type Server struct {
 	e                     *echo.Echo
+	cfg                   *config.Config
 	authenticationService *service.AuthenticationService
 	homeHandler           *handler.HomeHandler
 	authenticationHandler *handler.AuthenticationHandler
@@ -25,6 +27,7 @@ type Server struct {
 }
 
 func NewServer(
+	cfg *config.Config,
 	authenticationService *service.AuthenticationService,
 	homeHandler *handler.HomeHandler,
 	authenticationHandler *handler.AuthenticationHandler,
@@ -36,6 +39,7 @@ func NewServer(
 ) *Server {
 	return &Server{
 		e:                     echo.New(),
+		cfg:                   cfg,
 		authenticationService: authenticationService,
 		homeHandler:           homeHandler,
 		authenticationHandler: authenticationHandler,
@@ -67,7 +71,6 @@ func (s *Server) router() {
 		s.graphServer.ServeHTTP(c.Response(), r)
 		return nil
 	})
-	s.e.GET("/event", s.homeHandler.Event)
 }
 
 func (s *Server) middleware() {
@@ -77,7 +80,7 @@ func (s *Server) middleware() {
 		Output: s.e.Logger.Output(),
 	}))
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{s.cfg.WebURL},
 		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS, echo.PATCH},
 		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposeHeaders:    []string{"Link"},

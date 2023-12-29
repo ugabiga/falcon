@@ -163,7 +163,7 @@ func (h AuthenticationHandler) SignInCallback(c echo.Context) error {
 
 	helper.SetCookie(c, service.JWTCookieName, token)
 
-	return c.Redirect(http.StatusFound, "http://localhost:3000")
+	return c.Redirect(http.StatusFound, "/")
 }
 
 func (h AuthenticationHandler) SignOut(c echo.Context) error {

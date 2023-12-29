@@ -21,8 +21,7 @@ import (
 
 const (
 	maxAge        = 86400 * 30
-	baseURL       = "http://localhost:3000"
-	callbackURL   = baseURL + "/auth/signin/google/callback"
+	callbackURL   = "/auth/signin/google/callback"
 	JWTCookieName = "falcon.access_token"
 )
 
@@ -78,7 +77,7 @@ func (s AuthenticationService) InitializeOAuthProviders() {
 		google.New(
 			googleClientID,
 			googleClientSecret,
-			callbackURL,
+			s.cfg.WebURL+callbackURL,
 			"email", "profile",
 		),
 	)

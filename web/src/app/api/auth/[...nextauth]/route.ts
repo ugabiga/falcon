@@ -6,6 +6,7 @@ import {redirect} from "next/navigation";
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
 const jwtCookieName = process.env.JWT_COOKIE_NAME || "falcon.access_token";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const handler = NextAuth({
     logger: {
@@ -45,7 +46,7 @@ const handler = NextAuth({
             console.log(account)
 
 
-            const resp = await fetch("http://localhost:8080/auth/signin", {
+            const resp = await fetch(apiUrl + "/auth/signin", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
