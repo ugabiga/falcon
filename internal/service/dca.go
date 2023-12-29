@@ -51,6 +51,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	tasks, err := s.db.Task.Query().
 		Where(
 			task.NextExecutionTime(now),
+			task.IsActive(true),
 		).
 		WithTradingAccount().
 		All(ctx)
