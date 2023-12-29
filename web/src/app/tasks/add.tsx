@@ -14,6 +14,7 @@ import {AddTaskForm} from "@/app/tasks/form";
 import {refreshTask} from "@/store/taskSlice";
 import {errorToast} from "@/components/toast";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
+import {NumericFormatInput} from "@/components/numeric-format-input";
 
 export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
     if (!tradingAccountID) {
@@ -119,16 +120,22 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Amount
+                                        Investing Amount
                                     </FormLabel>
                                     <FormControl>
-                                        <Input type="number"
-                                               placeholder="Amount"
-                                               value={field.value}
-                                               onChange={(e) => {
-                                                   field.onChange(Number(e.target.value))
-                                               }}
+                                        <NumericFormatInput
+                                            value={field.value}
+                                            thousandSeparator={true}
+                                            allowNegative={false}
+                                            allowLeadingZeros={false}
+                                            fixedDecimalScale={false}
+                                            prefix={form.watch("currency") === "KRW" ? "₩" : "$"}
+                                            suffix={""}
+                                            onValueChange={(values) => {
+                                                field.onChange(values.floatValue)
+                                            }}
                                         />
+
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

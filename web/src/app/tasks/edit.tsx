@@ -17,9 +17,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
-import {NumericFormat} from 'react-number-format';
-import {cn} from "@/lib/utils";
-import {NumericFormatInput} from "@/components/numeric-format";
+import {NumericFormatInput} from "@/components/numeric-format-input";
 
 
 function convertCronToHours(cron: string): string {
@@ -175,7 +173,7 @@ export function EditTask({task}: { task: Task }) {
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Amount
+                                        Investing Amount
                                     </FormLabel>
                                     <FormControl>
                                         <NumericFormatInput

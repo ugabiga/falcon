@@ -95,8 +95,8 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                     <TableHead className="w-[100px]">ID</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Schedule</TableHead>
-                    <TableHead>Amount</TableHead>
                     <TableHead>Crypto Currency</TableHead>
+                    <TableHead>Investing Amount</TableHead>
                     <TableHead>Next Execution Time(24h)</TableHead>
                     <TableHead>Is Active</TableHead>
                     <TableHead>Action</TableHead>
@@ -116,8 +116,8 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 <TableCell>{task.id}</TableCell>
                                 <TableCell>{task.type}</TableCell>
                                 <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
-                                <TableCell>{convertNumberToCurrency(task.amount, task.currency)}</TableCell>
                                 <TableCell>{task.cryptoCurrency}</TableCell>
+                                <TableCell>{convertNumberToCurrency(task.amount, task.currency)}</TableCell>
                                 <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
                                 <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
                                 <TableCell>
