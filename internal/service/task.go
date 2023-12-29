@@ -3,10 +3,13 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/adhocore/gronx"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"github.com/ugabiga/falcon/internal/graph/generated"
+	"time"
+
 	"strconv"
 	"strings"
 )
@@ -45,13 +48,19 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 	if err = s.validateHours(input.Hours); err != nil {
 		return nil, err
 	}
-	cron := "0 0 " + input.Hours + " * * " + input.Days
+
+	cron := s.cronExpression(input.Hours, input.Days)
+	nextExecutionTime, err := s.nextCronExecutionTime(cron)
+	if err != nil {
+		return nil, err
+	}
 
 	return s.db.Task.Create().
 		SetCurrency(input.Currency).
 		SetSize(input.Size).
 		SetSymbol(input.Symbol).
 		SetCron(cron).
+		SetNextExecutionTime(nextExecutionTime).
 		SetType(input.Type).
 		SetTradingAccountID(tradingAccount.ID).
 		Save(ctx)
@@ -70,13 +79,18 @@ func (s TaskService) Update(ctx context.Context, userID int, taskID int, input g
 		return nil, err
 	}
 
-	cron := "0 0 " + input.Hours + " * * " + input.Days
+	cron := s.cronExpression(input.Hours, input.Days)
+	nextExecutionTime, err := s.nextCronExecutionTime(cron)
+	if err != nil {
+		return nil, err
+	}
 
 	return s.db.Task.UpdateOneID(taskID).
 		SetCurrency(input.Currency).
 		SetSize(input.Size).
 		SetSymbol(input.Symbol).
 		SetCron(cron).
+		SetNextExecutionTime(nextExecutionTime).
 		SetType(input.Type).
 		SetIsActive(input.IsActive).
 		SetParams(input.Params).
@@ -161,4 +175,16 @@ func (s TaskService) validateCurrency(currency string) error {
 	default:
 		return ErrWrongCurrency
 	}
+}
+func (s TaskService) cronExpression(hour string, days string) string {
+	return "0 0 " + hour + " * * " + days
+}
+
+func (s TaskService) nextCronExecutionTime(cron string) (time.Time, error) {
+	nextTime, err := gronx.NextTick(cron, true)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return nextTime.UTC(), nil
 }
