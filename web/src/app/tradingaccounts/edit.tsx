@@ -102,7 +102,7 @@ export function EditTradingAccount(
                                 <FormItem>
                                     <FormLabel>Key</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Key" {...field} />
+                                        <Input type="password" placeholder="Key" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

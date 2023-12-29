@@ -12,6 +12,10 @@ func ToTradingAccount(inputData *ent.TradingAccount) (*generated.TradingAccount,
 		return nil, err
 	}
 
+	//trim key
+	keyTrimCount := 5
+	result.Key = result.Key[:keyTrimCount]
+
 	result.Tasks = make([]*generated.Task, 0, len(inputData.Edges.Tasks))
 	for _, v := range inputData.Edges.Tasks {
 		newVal, err := ToTask(v)

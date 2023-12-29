@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"github.com/AlekSi/pointer"
+	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
-	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -13,11 +13,18 @@ const (
 )
 
 type TradingAccountService struct {
-	db *ent.Client
+	db         *ent.Client
+	encryption *encryption.Encryption
 }
 
-func NewTradingAccountService(db *ent.Client) *TradingAccountService {
-	return &TradingAccountService{db: db}
+func NewTradingAccountService(
+	db *ent.Client,
+	encryption *encryption.Encryption,
+) *TradingAccountService {
+	return &TradingAccountService{
+		db:         db,
+		encryption: encryption,
+	}
 }
 
 func (s TradingAccountService) Create(
@@ -212,12 +219,7 @@ func (s TradingAccountService) validateExchange(exchange string) error {
 }
 
 func (s TradingAccountService) encrypt(secret string) (string, error) {
-	password, err := bcrypt.GenerateFromPassword([]byte(secret), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-
-	return string(password), nil
+	return s.encryption.Encrypt(secret)
 }
 
 func (s TradingAccountService) availableIP() (string, error) {

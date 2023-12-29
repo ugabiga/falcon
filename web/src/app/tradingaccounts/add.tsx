@@ -95,7 +95,6 @@ export function AddTradingAccount() {
                             )}
                         />
 
-
                         <FormField
                             control={form.control}
                             name="key"
@@ -103,7 +102,7 @@ export function AddTradingAccount() {
                                 <FormItem>
                                     <FormLabel>Key</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Key" {...field} />
+                                        <Input type="password" placeholder="Key" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

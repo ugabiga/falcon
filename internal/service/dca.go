@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/ugabiga/falcon/internal/client"
+	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/ent"
@@ -16,18 +17,6 @@ var (
 	ErrTickerNotFound = errors.New("ticker not found")
 )
 
-type DcaService struct {
-	db *ent.Client
-}
-
-func NewDcaService(
-	db *ent.Client,
-) *DcaService {
-	return &DcaService{
-		db: db,
-	}
-}
-
 type TaskOrderInfo struct {
 	TaskID   int
 	Cron     string
@@ -36,6 +25,21 @@ type TaskOrderInfo struct {
 	Exchange string
 	Key      string
 	Secret   string
+}
+
+type DcaService struct {
+	db         *ent.Client
+	encryption *encryption.Encryption
+}
+
+func NewDcaService(
+	db *ent.Client,
+	encryption *encryption.Encryption,
+) *DcaService {
+	return &DcaService{
+		db:         db,
+		encryption: encryption,
+	}
 }
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
@@ -80,10 +84,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	case "upbit":
 		err = s.orderUpbitAt(
 			context.Background(),
-			orderInfo.Symbol,
-			orderInfo.Size,
-			orderInfo.Key,
-			orderInfo.Secret,
+			orderInfo,
 		)
 	default:
 		return errors.New("exchange not found")
@@ -133,15 +134,17 @@ func (s DcaService) updateNextTaskExecutionTime(orderInfo TaskOrderInfo) error {
 
 func (s DcaService) orderUpbitAt(
 	ctx context.Context,
-	symbol string,
-	size float64,
-	key string,
-	secret string,
+	orderInfo TaskOrderInfo,
 ) error {
-	log.Printf("did it")
-	return nil
+	symbol := orderInfo.Symbol
+	size := orderInfo.Size
+	key := orderInfo.Key
+	decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
+	if err != nil {
+		return err
+	}
 
-	c := client.NewUpbitClient("", "")
+	c := client.NewUpbitClient(key, decryptedSecret)
 
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {

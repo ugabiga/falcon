@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/ugabiga/falcon/internal/client"
+	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/graph/helper"
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
@@ -47,6 +48,9 @@ func provider() fx.Option {
 
 		//Messaging
 		messaging.NewMessaging,
+
+		//Others
+		encryption.NewEncryption,
 
 		// App
 		NewApp,

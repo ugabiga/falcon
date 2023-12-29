@@ -15,6 +15,7 @@ type Config struct {
 	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
 	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 	WebURL             string `mapstructure:"WEB_URL"`
+	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
 }
 
 func NewConfig() (*Config, error) {

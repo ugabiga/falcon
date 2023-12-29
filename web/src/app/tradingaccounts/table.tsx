@@ -3,6 +3,13 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {EditTradingAccount} from "@/app/tradingaccounts/edit";
 import {camelize} from "@/lib/str";
 
+function trim(str: string, length: number) {
+    if (str.length <= length) {
+        return str;
+    }
+    return str.trim().slice(0, length) + '...';
+}
+
 export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
     return (
         <Table>
@@ -23,7 +30,7 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                             <TableRow key={tradingAccount.id}>
                                 <TableCell className="font-medium">{tradingAccount.name}</TableCell>
                                 <TableCell>{camelize(tradingAccount.exchange)}</TableCell>
-                                <TableCell>{tradingAccount.key}</TableCell>
+                                <TableCell>{trim(tradingAccount.key, 4)}</TableCell>
                                 <TableCell>{tradingAccount.ip}</TableCell>
                                 <TableCell>
                                     <EditTradingAccount tradingAccount={tradingAccount}/>
