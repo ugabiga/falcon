@@ -77,7 +77,7 @@ export function EditTask({task}: { task: Task }) {
             type: convertStringToTaskType(task.type),
             currency: task.currency,
             size: task.size,
-            cryptoCurrency: task.cryptoCurrency,
+            symbol: task.symbol,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
             isActive: task.isActive,
@@ -91,7 +91,7 @@ export function EditTask({task}: { task: Task }) {
                 id: task.id,
                 currency: data.currency,
                 size: data.size,
-                cryptoCurrency: data.cryptoCurrency,
+                symbol: data.symbol,
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
@@ -197,10 +197,10 @@ export function EditTask({task}: { task: Task }) {
 
                         <FormField
                             control={form.control}
-                            name="cryptoCurrency"
+                            name="symbol"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Crypto Currency</FormLabel>
+                                    <FormLabel>Crypto Symbol</FormLabel>
                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                         <FormControl>
                                             <SelectTrigger>

@@ -46,15 +46,15 @@ func (tac *TradingAccountCreate) SetIP(s string) *TradingAccountCreate {
 	return tac
 }
 
-// SetIdentifier sets the "identifier" field.
-func (tac *TradingAccountCreate) SetIdentifier(s string) *TradingAccountCreate {
-	tac.mutation.SetIdentifier(s)
+// SetKey sets the "key" field.
+func (tac *TradingAccountCreate) SetKey(s string) *TradingAccountCreate {
+	tac.mutation.SetKey(s)
 	return tac
 }
 
-// SetCredential sets the "credential" field.
-func (tac *TradingAccountCreate) SetCredential(s string) *TradingAccountCreate {
-	tac.mutation.SetCredential(s)
+// SetSecret sets the "secret" field.
+func (tac *TradingAccountCreate) SetSecret(s string) *TradingAccountCreate {
+	tac.mutation.SetSecret(s)
 	return tac
 }
 
@@ -190,11 +190,11 @@ func (tac *TradingAccountCreate) check() error {
 	if _, ok := tac.mutation.IP(); !ok {
 		return &ValidationError{Name: "ip", err: errors.New(`ent: missing required field "TradingAccount.ip"`)}
 	}
-	if _, ok := tac.mutation.Identifier(); !ok {
-		return &ValidationError{Name: "identifier", err: errors.New(`ent: missing required field "TradingAccount.identifier"`)}
+	if _, ok := tac.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "TradingAccount.key"`)}
 	}
-	if _, ok := tac.mutation.Credential(); !ok {
-		return &ValidationError{Name: "credential", err: errors.New(`ent: missing required field "TradingAccount.credential"`)}
+	if _, ok := tac.mutation.Secret(); !ok {
+		return &ValidationError{Name: "secret", err: errors.New(`ent: missing required field "TradingAccount.secret"`)}
 	}
 	if _, ok := tac.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "TradingAccount.updated_at"`)}
@@ -254,13 +254,13 @@ func (tac *TradingAccountCreate) createSpec() (*TradingAccount, *sqlgraph.Create
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)
 		_node.IP = value
 	}
-	if value, ok := tac.mutation.Identifier(); ok {
-		_spec.SetField(tradingaccount.FieldIdentifier, field.TypeString, value)
-		_node.Identifier = value
+	if value, ok := tac.mutation.Key(); ok {
+		_spec.SetField(tradingaccount.FieldKey, field.TypeString, value)
+		_node.Key = value
 	}
-	if value, ok := tac.mutation.Credential(); ok {
-		_spec.SetField(tradingaccount.FieldCredential, field.TypeString, value)
-		_node.Credential = value
+	if value, ok := tac.mutation.Secret(); ok {
+		_spec.SetField(tradingaccount.FieldSecret, field.TypeString, value)
+		_node.Secret = value
 	}
 	if value, ok := tac.mutation.Phrase(); ok {
 		_spec.SetField(tradingaccount.FieldPhrase, field.TypeString, value)

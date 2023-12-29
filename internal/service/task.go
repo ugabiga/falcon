@@ -50,7 +50,7 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 	return s.db.Task.Create().
 		SetCurrency(input.Currency).
 		SetSize(input.Size).
-		SetCryptoCurrency(input.CryptoCurrency).
+		SetSymbol(input.Symbol).
 		SetCron(cron).
 		SetType(input.Type).
 		SetTradingAccountID(tradingAccount.ID).
@@ -75,7 +75,7 @@ func (s TaskService) Update(ctx context.Context, userID int, taskID int, input g
 	return s.db.Task.UpdateOneID(taskID).
 		SetCurrency(input.Currency).
 		SetSize(input.Size).
-		SetCryptoCurrency(input.CryptoCurrency).
+		SetSymbol(input.Symbol).
 		SetCron(cron).
 		SetType(input.Type).
 		SetIsActive(input.IsActive).

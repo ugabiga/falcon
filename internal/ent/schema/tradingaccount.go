@@ -26,9 +26,9 @@ func (TradingAccount) Fields() []ent.Field {
 		field.String("name"),
 		field.String("exchange"),
 		field.String("ip"),
-		field.String("identifier").
+		field.String("key").
 			Unique(),
-		field.String("credential").
+		field.String("secret").
 			Sensitive(),
 		field.String("phrase").
 			Sensitive().

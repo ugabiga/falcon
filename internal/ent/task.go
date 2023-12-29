@@ -23,10 +23,10 @@ type Task struct {
 	TradingAccountID int `json:"trading_account_id,omitempty"`
 	// Currency holds the value of the "currency" field.
 	Currency string `json:"currency,omitempty"`
-	// Amount of currency to buy/sell
+	// size of currency to buy/sell
 	Size float64 `json:"size,omitempty"`
-	// CryptoCurrency holds the value of the "crypto_currency" field.
-	CryptoCurrency string `json:"crypto_currency,omitempty"`
+	// symbol of currency to buy/sell
+	Symbol string `json:"symbol,omitempty"`
 	// Cron holds the value of the "cron" field.
 	Cron string `json:"cron,omitempty"`
 	// NextExecutionTime holds the value of the "next_execution_time" field.
@@ -97,7 +97,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case task.FieldID, task.FieldTradingAccountID:
 			values[i] = new(sql.NullInt64)
-		case task.FieldCurrency, task.FieldCryptoCurrency, task.FieldCron, task.FieldType:
+		case task.FieldCurrency, task.FieldSymbol, task.FieldCron, task.FieldType:
 			values[i] = new(sql.NullString)
 		case task.FieldNextExecutionTime, task.FieldUpdatedAt, task.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -140,11 +140,11 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.Size = value.Float64
 			}
-		case task.FieldCryptoCurrency:
+		case task.FieldSymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field crypto_currency", values[i])
+				return fmt.Errorf("unexpected type %T for field symbol", values[i])
 			} else if value.Valid {
-				t.CryptoCurrency = value.String
+				t.Symbol = value.String
 			}
 		case task.FieldCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -245,8 +245,8 @@ func (t *Task) String() string {
 	builder.WriteString("size=")
 	builder.WriteString(fmt.Sprintf("%v", t.Size))
 	builder.WriteString(", ")
-	builder.WriteString("crypto_currency=")
-	builder.WriteString(t.CryptoCurrency)
+	builder.WriteString("symbol=")
+	builder.WriteString(t.Symbol)
 	builder.WriteString(", ")
 	builder.WriteString("cron=")
 	builder.WriteString(t.Cron)

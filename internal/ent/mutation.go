@@ -703,7 +703,7 @@ type TaskMutation struct {
 	currency               *string
 	size                   *float64
 	addsize                *float64
-	crypto_currency        *string
+	symbol                 *string
 	cron                   *string
 	next_execution_time    *time.Time
 	is_active              *bool
@@ -954,40 +954,40 @@ func (m *TaskMutation) ResetSize() {
 	m.addsize = nil
 }
 
-// SetCryptoCurrency sets the "crypto_currency" field.
-func (m *TaskMutation) SetCryptoCurrency(s string) {
-	m.crypto_currency = &s
+// SetSymbol sets the "symbol" field.
+func (m *TaskMutation) SetSymbol(s string) {
+	m.symbol = &s
 }
 
-// CryptoCurrency returns the value of the "crypto_currency" field in the mutation.
-func (m *TaskMutation) CryptoCurrency() (r string, exists bool) {
-	v := m.crypto_currency
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *TaskMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCryptoCurrency returns the old "crypto_currency" field's value of the Task entity.
+// OldSymbol returns the old "symbol" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldCryptoCurrency(ctx context.Context) (v string, err error) {
+func (m *TaskMutation) OldSymbol(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCryptoCurrency is only allowed on UpdateOne operations")
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCryptoCurrency requires an ID field in the mutation")
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCryptoCurrency: %w", err)
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
 	}
-	return oldValue.CryptoCurrency, nil
+	return oldValue.Symbol, nil
 }
 
-// ResetCryptoCurrency resets all changes to the "crypto_currency" field.
-func (m *TaskMutation) ResetCryptoCurrency() {
-	m.crypto_currency = nil
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *TaskMutation) ResetSymbol() {
+	m.symbol = nil
 }
 
 // SetCron sets the "cron" field.
@@ -1393,8 +1393,8 @@ func (m *TaskMutation) Fields() []string {
 	if m.size != nil {
 		fields = append(fields, task.FieldSize)
 	}
-	if m.crypto_currency != nil {
-		fields = append(fields, task.FieldCryptoCurrency)
+	if m.symbol != nil {
+		fields = append(fields, task.FieldSymbol)
 	}
 	if m.cron != nil {
 		fields = append(fields, task.FieldCron)
@@ -1431,8 +1431,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.Currency()
 	case task.FieldSize:
 		return m.Size()
-	case task.FieldCryptoCurrency:
-		return m.CryptoCurrency()
+	case task.FieldSymbol:
+		return m.Symbol()
 	case task.FieldCron:
 		return m.Cron()
 	case task.FieldNextExecutionTime:
@@ -1462,8 +1462,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCurrency(ctx)
 	case task.FieldSize:
 		return m.OldSize(ctx)
-	case task.FieldCryptoCurrency:
-		return m.OldCryptoCurrency(ctx)
+	case task.FieldSymbol:
+		return m.OldSymbol(ctx)
 	case task.FieldCron:
 		return m.OldCron(ctx)
 	case task.FieldNextExecutionTime:
@@ -1508,12 +1508,12 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSize(v)
 		return nil
-	case task.FieldCryptoCurrency:
+	case task.FieldSymbol:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCryptoCurrency(v)
+		m.SetSymbol(v)
 		return nil
 	case task.FieldCron:
 		v, ok := value.(string)
@@ -1652,8 +1652,8 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldSize:
 		m.ResetSize()
 		return nil
-	case task.FieldCryptoCurrency:
-		m.ResetCryptoCurrency()
+	case task.FieldSymbol:
+		m.ResetSymbol()
 		return nil
 	case task.FieldCron:
 		m.ResetCron()
@@ -2342,8 +2342,8 @@ type TradingAccountMutation struct {
 	name          *string
 	exchange      *string
 	ip            *string
-	identifier    *string
-	credential    *string
+	key           *string
+	secret        *string
 	phrase        *string
 	updated_at    *time.Time
 	created_at    *time.Time
@@ -2606,76 +2606,76 @@ func (m *TradingAccountMutation) ResetIP() {
 	m.ip = nil
 }
 
-// SetIdentifier sets the "identifier" field.
-func (m *TradingAccountMutation) SetIdentifier(s string) {
-	m.identifier = &s
+// SetKey sets the "key" field.
+func (m *TradingAccountMutation) SetKey(s string) {
+	m.key = &s
 }
 
-// Identifier returns the value of the "identifier" field in the mutation.
-func (m *TradingAccountMutation) Identifier() (r string, exists bool) {
-	v := m.identifier
+// Key returns the value of the "key" field in the mutation.
+func (m *TradingAccountMutation) Key() (r string, exists bool) {
+	v := m.key
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIdentifier returns the old "identifier" field's value of the TradingAccount entity.
+// OldKey returns the old "key" field's value of the TradingAccount entity.
 // If the TradingAccount object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingAccountMutation) OldIdentifier(ctx context.Context) (v string, err error) {
+func (m *TradingAccountMutation) OldKey(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIdentifier is only allowed on UpdateOne operations")
+		return v, errors.New("OldKey is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIdentifier requires an ID field in the mutation")
+		return v, errors.New("OldKey requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIdentifier: %w", err)
+		return v, fmt.Errorf("querying old value for OldKey: %w", err)
 	}
-	return oldValue.Identifier, nil
+	return oldValue.Key, nil
 }
 
-// ResetIdentifier resets all changes to the "identifier" field.
-func (m *TradingAccountMutation) ResetIdentifier() {
-	m.identifier = nil
+// ResetKey resets all changes to the "key" field.
+func (m *TradingAccountMutation) ResetKey() {
+	m.key = nil
 }
 
-// SetCredential sets the "credential" field.
-func (m *TradingAccountMutation) SetCredential(s string) {
-	m.credential = &s
+// SetSecret sets the "secret" field.
+func (m *TradingAccountMutation) SetSecret(s string) {
+	m.secret = &s
 }
 
-// Credential returns the value of the "credential" field in the mutation.
-func (m *TradingAccountMutation) Credential() (r string, exists bool) {
-	v := m.credential
+// Secret returns the value of the "secret" field in the mutation.
+func (m *TradingAccountMutation) Secret() (r string, exists bool) {
+	v := m.secret
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCredential returns the old "credential" field's value of the TradingAccount entity.
+// OldSecret returns the old "secret" field's value of the TradingAccount entity.
 // If the TradingAccount object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TradingAccountMutation) OldCredential(ctx context.Context) (v string, err error) {
+func (m *TradingAccountMutation) OldSecret(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCredential is only allowed on UpdateOne operations")
+		return v, errors.New("OldSecret is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCredential requires an ID field in the mutation")
+		return v, errors.New("OldSecret requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCredential: %w", err)
+		return v, fmt.Errorf("querying old value for OldSecret: %w", err)
 	}
-	return oldValue.Credential, nil
+	return oldValue.Secret, nil
 }
 
-// ResetCredential resets all changes to the "credential" field.
-func (m *TradingAccountMutation) ResetCredential() {
-	m.credential = nil
+// ResetSecret resets all changes to the "secret" field.
+func (m *TradingAccountMutation) ResetSecret() {
+	m.secret = nil
 }
 
 // SetPhrase sets the "phrase" field.
@@ -2927,11 +2927,11 @@ func (m *TradingAccountMutation) Fields() []string {
 	if m.ip != nil {
 		fields = append(fields, tradingaccount.FieldIP)
 	}
-	if m.identifier != nil {
-		fields = append(fields, tradingaccount.FieldIdentifier)
+	if m.key != nil {
+		fields = append(fields, tradingaccount.FieldKey)
 	}
-	if m.credential != nil {
-		fields = append(fields, tradingaccount.FieldCredential)
+	if m.secret != nil {
+		fields = append(fields, tradingaccount.FieldSecret)
 	}
 	if m.phrase != nil {
 		fields = append(fields, tradingaccount.FieldPhrase)
@@ -2958,10 +2958,10 @@ func (m *TradingAccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Exchange()
 	case tradingaccount.FieldIP:
 		return m.IP()
-	case tradingaccount.FieldIdentifier:
-		return m.Identifier()
-	case tradingaccount.FieldCredential:
-		return m.Credential()
+	case tradingaccount.FieldKey:
+		return m.Key()
+	case tradingaccount.FieldSecret:
+		return m.Secret()
 	case tradingaccount.FieldPhrase:
 		return m.Phrase()
 	case tradingaccount.FieldUpdatedAt:
@@ -2985,10 +2985,10 @@ func (m *TradingAccountMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldExchange(ctx)
 	case tradingaccount.FieldIP:
 		return m.OldIP(ctx)
-	case tradingaccount.FieldIdentifier:
-		return m.OldIdentifier(ctx)
-	case tradingaccount.FieldCredential:
-		return m.OldCredential(ctx)
+	case tradingaccount.FieldKey:
+		return m.OldKey(ctx)
+	case tradingaccount.FieldSecret:
+		return m.OldSecret(ctx)
 	case tradingaccount.FieldPhrase:
 		return m.OldPhrase(ctx)
 	case tradingaccount.FieldUpdatedAt:
@@ -3032,19 +3032,19 @@ func (m *TradingAccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIP(v)
 		return nil
-	case tradingaccount.FieldIdentifier:
+	case tradingaccount.FieldKey:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIdentifier(v)
+		m.SetKey(v)
 		return nil
-	case tradingaccount.FieldCredential:
+	case tradingaccount.FieldSecret:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCredential(v)
+		m.SetSecret(v)
 		return nil
 	case tradingaccount.FieldPhrase:
 		v, ok := value.(string)
@@ -3140,11 +3140,11 @@ func (m *TradingAccountMutation) ResetField(name string) error {
 	case tradingaccount.FieldIP:
 		m.ResetIP()
 		return nil
-	case tradingaccount.FieldIdentifier:
-		m.ResetIdentifier()
+	case tradingaccount.FieldKey:
+		m.ResetKey()
 		return nil
-	case tradingaccount.FieldCredential:
-		m.ResetCredential()
+	case tradingaccount.FieldSecret:
+		m.ResetSecret()
 		return nil
 	case tradingaccount.FieldPhrase:
 		m.ResetPhrase()

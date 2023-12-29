@@ -25,7 +25,7 @@ type CreateTaskInput struct {
 	TradingAccountID int        `json:"tradingAccountID"`
 	Currency         string     `json:"currency"`
 	Size             float64    `json:"size"`
-	CryptoCurrency   string     `json:"cryptoCurrency"`
+	Symbol           string     `json:"symbol"`
 	Days             string     `json:"days"`
 	Hours            string     `json:"hours"`
 	Type             string     `json:"type"`
@@ -37,7 +37,7 @@ type Task struct {
 	TradingAccountID  int             `json:"tradingAccountID"`
 	Currency          string          `json:"currency"`
 	Size              float64         `json:"size"`
-	CryptoCurrency    string          `json:"cryptoCurrency"`
+	Symbol            string          `json:"symbol"`
 	Cron              string          `json:"cron"`
 	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
 	IsActive          bool            `json:"isActive"`
@@ -69,16 +69,16 @@ type TaskIndex struct {
 }
 
 type TradingAccount struct {
-	ID         int       `json:"id"`
-	UserID     int       `json:"userID"`
-	Name       string    `json:"name"`
-	Exchange   string    `json:"exchange"`
-	IP         string    `json:"ip"`
-	Identifier string    `json:"identifier"`
-	UpdatedAt  time.Time `json:"updatedAt"`
-	CreatedAt  time.Time `json:"createdAt"`
-	User       *User     `json:"user"`
-	Tasks      []*Task   `json:"tasks"`
+	ID        int       `json:"id"`
+	UserID    int       `json:"userID"`
+	Name      string    `json:"name"`
+	Exchange  string    `json:"exchange"`
+	IP        string    `json:"ip"`
+	Key       string    `json:"key"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"createdAt"`
+	User      *User     `json:"user"`
+	Tasks     []*Task   `json:"tasks"`
 }
 
 type TradingAccountIndex struct {
@@ -86,14 +86,14 @@ type TradingAccountIndex struct {
 }
 
 type UpdateTaskInput struct {
-	Currency       string     `json:"currency"`
-	Size           float64    `json:"size"`
-	CryptoCurrency string     `json:"cryptoCurrency"`
-	Days           string     `json:"days"`
-	Hours          string     `json:"hours"`
-	Type           string     `json:"type"`
-	IsActive       bool       `json:"isActive"`
-	Params         model.JSON `json:"params"`
+	Currency string     `json:"currency"`
+	Size     float64    `json:"size"`
+	Symbol   string     `json:"symbol"`
+	Days     string     `json:"days"`
+	Hours    string     `json:"hours"`
+	Type     string     `json:"type"`
+	IsActive bool       `json:"isActive"`
+	Params   model.JSON `json:"params"`
 }
 
 type UpdateUserInput struct {

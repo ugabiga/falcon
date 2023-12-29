@@ -26,10 +26,10 @@ type TradingAccount struct {
 	Exchange string `json:"exchange,omitempty"`
 	// IP holds the value of the "ip" field.
 	IP string `json:"ip,omitempty"`
-	// Identifier holds the value of the "identifier" field.
-	Identifier string `json:"identifier,omitempty"`
-	// Credential holds the value of the "credential" field.
-	Credential string `json:"-"`
+	// Key holds the value of the "key" field.
+	Key string `json:"key,omitempty"`
+	// Secret holds the value of the "secret" field.
+	Secret string `json:"-"`
 	// Phrase holds the value of the "phrase" field.
 	Phrase string `json:"-"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -86,7 +86,7 @@ func (*TradingAccount) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case tradingaccount.FieldID, tradingaccount.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case tradingaccount.FieldName, tradingaccount.FieldExchange, tradingaccount.FieldIP, tradingaccount.FieldIdentifier, tradingaccount.FieldCredential, tradingaccount.FieldPhrase:
+		case tradingaccount.FieldName, tradingaccount.FieldExchange, tradingaccount.FieldIP, tradingaccount.FieldKey, tradingaccount.FieldSecret, tradingaccount.FieldPhrase:
 			values[i] = new(sql.NullString)
 		case tradingaccount.FieldUpdatedAt, tradingaccount.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -135,17 +135,17 @@ func (ta *TradingAccount) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				ta.IP = value.String
 			}
-		case tradingaccount.FieldIdentifier:
+		case tradingaccount.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field identifier", values[i])
+				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
-				ta.Identifier = value.String
+				ta.Key = value.String
 			}
-		case tradingaccount.FieldCredential:
+		case tradingaccount.FieldSecret:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field credential", values[i])
+				return fmt.Errorf("unexpected type %T for field secret", values[i])
 			} else if value.Valid {
-				ta.Credential = value.String
+				ta.Secret = value.String
 			}
 		case tradingaccount.FieldPhrase:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -223,10 +223,10 @@ func (ta *TradingAccount) String() string {
 	builder.WriteString("ip=")
 	builder.WriteString(ta.IP)
 	builder.WriteString(", ")
-	builder.WriteString("identifier=")
-	builder.WriteString(ta.Identifier)
+	builder.WriteString("key=")
+	builder.WriteString(ta.Key)
 	builder.WriteString(", ")
-	builder.WriteString("credential=<sensitive>")
+	builder.WriteString("secret=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("phrase=<sensitive>")
 	builder.WriteString(", ")

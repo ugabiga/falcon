@@ -4,7 +4,7 @@ fragment TradingAccount on TradingAccount {
     name
     exchange
     ip
-    identifier
+    key
     updatedAt
     createdAt
 }
@@ -21,14 +21,14 @@ query TradingAccountIndex {
 mutation CreateTradingAccount(
     $name: String!
     $exchange: String!
-    $identifier: String!
-    $credential: String!
+    $key: String!
+    $secret: String!
 ) {
     createTradingAccount(
         name: $name
         exchange: $exchange
-        identifier: $identifier
-        credential: $credential
+        key: $key
+        secret: $secret
     ) {
         ...TradingAccount
     }
@@ -38,14 +38,14 @@ mutation UpdateTradingAccount(
     $id: ID!
     $name: String
     $exchange: String
-    $identifier: String
-    $credential: String
+    $key: String
+    $secret: String
 ) {
     updateTradingAccount(
         id: $id
         name: $name
         exchange: $exchange
-        identifier: $identifier
-        credential: $credential
+        key: $key
+        secret: $secret
     )
 }

@@ -225,9 +225,10 @@ type Task implements Node {
   id: ID!
   tradingAccountID: ID!
   currency: String!
-  """Amount of currency to buy/sell"""
+  """size of currency to buy/sell"""
   size: Float!
-  cryptoCurrency: String!
+  """symbol of currency to buy/sell"""
+  symbol: String!
   cron: String!
   nextExecutionTime: Time
   isActive: Boolean!
@@ -370,20 +371,20 @@ input TaskWhereInput {
   sizeGTE: Float
   sizeLT: Float
   sizeLTE: Float
-  """crypto_currency field predicates"""
-  cryptoCurrency: String
-  cryptoCurrencyNEQ: String
-  cryptoCurrencyIn: [String!]
-  cryptoCurrencyNotIn: [String!]
-  cryptoCurrencyGT: String
-  cryptoCurrencyGTE: String
-  cryptoCurrencyLT: String
-  cryptoCurrencyLTE: String
-  cryptoCurrencyContains: String
-  cryptoCurrencyHasPrefix: String
-  cryptoCurrencyHasSuffix: String
-  cryptoCurrencyEqualFold: String
-  cryptoCurrencyContainsFold: String
+  """symbol field predicates"""
+  symbol: String
+  symbolNEQ: String
+  symbolIn: [String!]
+  symbolNotIn: [String!]
+  symbolGT: String
+  symbolGTE: String
+  symbolLT: String
+  symbolLTE: String
+  symbolContains: String
+  symbolHasPrefix: String
+  symbolHasSuffix: String
+  symbolEqualFold: String
+  symbolContainsFold: String
   """cron field predicates"""
   cron: String
   cronNEQ: String
@@ -457,7 +458,7 @@ type TradingAccount implements Node {
   name: String!
   exchange: String!
   ip: String!
-  identifier: String!
+  key: String!
   updatedAt: Time!
   createdAt: Time!
   user: User!
@@ -543,20 +544,20 @@ input TradingAccountWhereInput {
   ipHasSuffix: String
   ipEqualFold: String
   ipContainsFold: String
-  """identifier field predicates"""
-  identifier: String
-  identifierNEQ: String
-  identifierIn: [String!]
-  identifierNotIn: [String!]
-  identifierGT: String
-  identifierGTE: String
-  identifierLT: String
-  identifierLTE: String
-  identifierContains: String
-  identifierHasPrefix: String
-  identifierHasSuffix: String
-  identifierEqualFold: String
-  identifierContainsFold: String
+  """key field predicates"""
+  key: String
+  keyNEQ: String
+  keyIn: [String!]
+  keyNotIn: [String!]
+  keyGT: String
+  keyGTE: String
+  keyLT: String
+  keyLTE: String
+  keyContains: String
+  keyHasPrefix: String
+  keyHasSuffix: String
+  keyEqualFold: String
+  keyContainsFold: String
   """updated_at field predicates"""
   updatedAt: Time
   updatedAtNEQ: Time

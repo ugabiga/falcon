@@ -22,10 +22,10 @@ const (
 	FieldExchange = "exchange"
 	// FieldIP holds the string denoting the ip field in the database.
 	FieldIP = "ip"
-	// FieldIdentifier holds the string denoting the identifier field in the database.
-	FieldIdentifier = "identifier"
-	// FieldCredential holds the string denoting the credential field in the database.
-	FieldCredential = "credential"
+	// FieldKey holds the string denoting the key field in the database.
+	FieldKey = "key"
+	// FieldSecret holds the string denoting the secret field in the database.
+	FieldSecret = "secret"
 	// FieldPhrase holds the string denoting the phrase field in the database.
 	FieldPhrase = "phrase"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -61,8 +61,8 @@ var Columns = []string{
 	FieldName,
 	FieldExchange,
 	FieldIP,
-	FieldIdentifier,
-	FieldCredential,
+	FieldKey,
+	FieldSecret,
 	FieldPhrase,
 	FieldUpdatedAt,
 	FieldCreatedAt,
@@ -119,14 +119,14 @@ func ByIP(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIP, opts...).ToFunc()
 }
 
-// ByIdentifier orders the results by the identifier field.
-func ByIdentifier(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIdentifier, opts...).ToFunc()
+// ByKey orders the results by the key field.
+func ByKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKey, opts...).ToFunc()
 }
 
-// ByCredential orders the results by the credential field.
-func ByCredential(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCredential, opts...).ToFunc()
+// BySecret orders the results by the secret field.
+func BySecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSecret, opts...).ToFunc()
 }
 
 // ByPhrase orders the results by the phrase field.

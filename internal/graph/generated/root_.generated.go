@@ -49,9 +49,9 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateTask           func(childComplexity int, input CreateTaskInput) int
-		CreateTradingAccount func(childComplexity int, name string, exchange string, identifier string, credential string) int
+		CreateTradingAccount func(childComplexity int, name string, exchange string, key string, secret string) int
 		UpdateTask           func(childComplexity int, id int, input UpdateTaskInput) int
-		UpdateTradingAccount func(childComplexity int, id int, name *string, exchange *string, identifier *string, credential *string) int
+		UpdateTradingAccount func(childComplexity int, id int, name *string, exchange *string, key *string, secret *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
 
@@ -65,13 +65,13 @@ type ComplexityRoot struct {
 	Task struct {
 		CreatedAt         func(childComplexity int) int
 		Cron              func(childComplexity int) int
-		CryptoCurrency    func(childComplexity int) int
 		Currency          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		IsActive          func(childComplexity int) int
 		NextExecutionTime func(childComplexity int) int
 		Params            func(childComplexity int) int
 		Size              func(childComplexity int) int
+		Symbol            func(childComplexity int) int
 		TaskHistories     func(childComplexity int) int
 		TradingAccount    func(childComplexity int) int
 		TradingAccountID  func(childComplexity int) int
@@ -99,16 +99,16 @@ type ComplexityRoot struct {
 	}
 
 	TradingAccount struct {
-		CreatedAt  func(childComplexity int) int
-		Exchange   func(childComplexity int) int
-		ID         func(childComplexity int) int
-		IP         func(childComplexity int) int
-		Identifier func(childComplexity int) int
-		Name       func(childComplexity int) int
-		Tasks      func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
-		User       func(childComplexity int) int
-		UserID     func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		Exchange  func(childComplexity int) int
+		ID        func(childComplexity int) int
+		IP        func(childComplexity int) int
+		Key       func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Tasks     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		User      func(childComplexity int) int
+		UserID    func(childComplexity int) int
 	}
 
 	TradingAccountIndex struct {
@@ -216,7 +216,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTradingAccount(childComplexity, args["name"].(string), args["exchange"].(string), args["identifier"].(string), args["credential"].(string)), true
+		return e.complexity.Mutation.CreateTradingAccount(childComplexity, args["name"].(string), args["exchange"].(string), args["key"].(string), args["secret"].(string)), true
 
 	case "Mutation.updateTask":
 		if e.complexity.Mutation.UpdateTask == nil {
@@ -240,7 +240,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(int), args["name"].(*string), args["exchange"].(*string), args["identifier"].(*string), args["credential"].(*string)), true
+		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(int), args["name"].(*string), args["exchange"].(*string), args["key"].(*string), args["secret"].(*string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -306,13 +306,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Task.Cron(childComplexity), true
 
-	case "Task.cryptoCurrency":
-		if e.complexity.Task.CryptoCurrency == nil {
-			break
-		}
-
-		return e.complexity.Task.CryptoCurrency(childComplexity), true
-
 	case "Task.currency":
 		if e.complexity.Task.Currency == nil {
 			break
@@ -354,6 +347,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Task.Size(childComplexity), true
+
+	case "Task.symbol":
+		if e.complexity.Task.Symbol == nil {
+			break
+		}
+
+		return e.complexity.Task.Symbol(childComplexity), true
 
 	case "Task.taskHistories":
 		if e.complexity.Task.TaskHistories == nil {
@@ -488,12 +488,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TradingAccount.IP(childComplexity), true
 
-	case "TradingAccount.identifier":
-		if e.complexity.TradingAccount.Identifier == nil {
+	case "TradingAccount.key":
+		if e.complexity.TradingAccount.Key == nil {
 			break
 		}
 
-		return e.complexity.TradingAccount.Identifier(childComplexity), true
+		return e.complexity.TradingAccount.Key(childComplexity), true
 
 	case "TradingAccount.name":
 		if e.complexity.TradingAccount.Name == nil {
@@ -694,7 +694,7 @@ input CreateTaskInput {
     tradingAccountID: ID!
     currency: String!
     size: Float!
-    cryptoCurrency: String!
+    symbol: String!
     days: String!
     hours: String!
     type: String!
@@ -704,7 +704,7 @@ input CreateTaskInput {
 input UpdateTaskInput {
     currency: String!
     size: Float!
-    cryptoCurrency: String!
+    symbol: String!
     days: String!
     hours: String!
     type: String!
@@ -723,7 +723,7 @@ type Task {
     tradingAccountID: ID!
     currency: String!
     size: Float!
-    cryptoCurrency: String!
+    symbol: String!
     cron: String!
     nextExecutionTime: Time
     isActive: Boolean!
@@ -763,15 +763,15 @@ extend type Mutation {
     createTradingAccount(
         name: String!
         exchange: String!
-        identifier: String!
-        credential: String!
+        key: String!
+        secret: String!
     ): TradingAccount!
     updateTradingAccount(
         id: ID!
         name: String
         exchange: String
-        identifier: String
-        credential: String
+        key: String
+        secret: String
     ): Boolean!
 }
 
@@ -785,7 +785,7 @@ type TradingAccount {
     name: String!
     exchange: String!
     ip: String!
-    identifier: String!
+    key: String!
     updatedAt: Time!
     createdAt: Time!
     user: User!

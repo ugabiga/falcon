@@ -76,14 +76,14 @@ func IP(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldEQ(FieldIP, v))
 }
 
-// Identifier applies equality check predicate on the "identifier" field. It's identical to IdentifierEQ.
-func Identifier(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldIdentifier, v))
+// Key applies equality check predicate on the "key" field. It's identical to KeyEQ.
+func Key(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldKey, v))
 }
 
-// Credential applies equality check predicate on the "credential" field. It's identical to CredentialEQ.
-func Credential(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldCredential, v))
+// Secret applies equality check predicate on the "secret" field. It's identical to SecretEQ.
+func Secret(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldSecret, v))
 }
 
 // Phrase applies equality check predicate on the "phrase" field. It's identical to PhraseEQ.
@@ -326,134 +326,134 @@ func IPContainsFold(v string) predicate.TradingAccount {
 	return predicate.TradingAccount(sql.FieldContainsFold(FieldIP, v))
 }
 
-// IdentifierEQ applies the EQ predicate on the "identifier" field.
-func IdentifierEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldIdentifier, v))
+// KeyEQ applies the EQ predicate on the "key" field.
+func KeyEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldKey, v))
 }
 
-// IdentifierNEQ applies the NEQ predicate on the "identifier" field.
-func IdentifierNEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNEQ(FieldIdentifier, v))
+// KeyNEQ applies the NEQ predicate on the "key" field.
+func KeyNEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNEQ(FieldKey, v))
 }
 
-// IdentifierIn applies the In predicate on the "identifier" field.
-func IdentifierIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldIn(FieldIdentifier, vs...))
+// KeyIn applies the In predicate on the "key" field.
+func KeyIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldIn(FieldKey, vs...))
 }
 
-// IdentifierNotIn applies the NotIn predicate on the "identifier" field.
-func IdentifierNotIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNotIn(FieldIdentifier, vs...))
+// KeyNotIn applies the NotIn predicate on the "key" field.
+func KeyNotIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNotIn(FieldKey, vs...))
 }
 
-// IdentifierGT applies the GT predicate on the "identifier" field.
-func IdentifierGT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGT(FieldIdentifier, v))
+// KeyGT applies the GT predicate on the "key" field.
+func KeyGT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGT(FieldKey, v))
 }
 
-// IdentifierGTE applies the GTE predicate on the "identifier" field.
-func IdentifierGTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGTE(FieldIdentifier, v))
+// KeyGTE applies the GTE predicate on the "key" field.
+func KeyGTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGTE(FieldKey, v))
 }
 
-// IdentifierLT applies the LT predicate on the "identifier" field.
-func IdentifierLT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLT(FieldIdentifier, v))
+// KeyLT applies the LT predicate on the "key" field.
+func KeyLT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLT(FieldKey, v))
 }
 
-// IdentifierLTE applies the LTE predicate on the "identifier" field.
-func IdentifierLTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLTE(FieldIdentifier, v))
+// KeyLTE applies the LTE predicate on the "key" field.
+func KeyLTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLTE(FieldKey, v))
 }
 
-// IdentifierContains applies the Contains predicate on the "identifier" field.
-func IdentifierContains(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContains(FieldIdentifier, v))
+// KeyContains applies the Contains predicate on the "key" field.
+func KeyContains(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContains(FieldKey, v))
 }
 
-// IdentifierHasPrefix applies the HasPrefix predicate on the "identifier" field.
-func IdentifierHasPrefix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasPrefix(FieldIdentifier, v))
+// KeyHasPrefix applies the HasPrefix predicate on the "key" field.
+func KeyHasPrefix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasPrefix(FieldKey, v))
 }
 
-// IdentifierHasSuffix applies the HasSuffix predicate on the "identifier" field.
-func IdentifierHasSuffix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasSuffix(FieldIdentifier, v))
+// KeyHasSuffix applies the HasSuffix predicate on the "key" field.
+func KeyHasSuffix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasSuffix(FieldKey, v))
 }
 
-// IdentifierEqualFold applies the EqualFold predicate on the "identifier" field.
-func IdentifierEqualFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEqualFold(FieldIdentifier, v))
+// KeyEqualFold applies the EqualFold predicate on the "key" field.
+func KeyEqualFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEqualFold(FieldKey, v))
 }
 
-// IdentifierContainsFold applies the ContainsFold predicate on the "identifier" field.
-func IdentifierContainsFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContainsFold(FieldIdentifier, v))
+// KeyContainsFold applies the ContainsFold predicate on the "key" field.
+func KeyContainsFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContainsFold(FieldKey, v))
 }
 
-// CredentialEQ applies the EQ predicate on the "credential" field.
-func CredentialEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEQ(FieldCredential, v))
+// SecretEQ applies the EQ predicate on the "secret" field.
+func SecretEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEQ(FieldSecret, v))
 }
 
-// CredentialNEQ applies the NEQ predicate on the "credential" field.
-func CredentialNEQ(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNEQ(FieldCredential, v))
+// SecretNEQ applies the NEQ predicate on the "secret" field.
+func SecretNEQ(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNEQ(FieldSecret, v))
 }
 
-// CredentialIn applies the In predicate on the "credential" field.
-func CredentialIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldIn(FieldCredential, vs...))
+// SecretIn applies the In predicate on the "secret" field.
+func SecretIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldIn(FieldSecret, vs...))
 }
 
-// CredentialNotIn applies the NotIn predicate on the "credential" field.
-func CredentialNotIn(vs ...string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldNotIn(FieldCredential, vs...))
+// SecretNotIn applies the NotIn predicate on the "secret" field.
+func SecretNotIn(vs ...string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldNotIn(FieldSecret, vs...))
 }
 
-// CredentialGT applies the GT predicate on the "credential" field.
-func CredentialGT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGT(FieldCredential, v))
+// SecretGT applies the GT predicate on the "secret" field.
+func SecretGT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGT(FieldSecret, v))
 }
 
-// CredentialGTE applies the GTE predicate on the "credential" field.
-func CredentialGTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldGTE(FieldCredential, v))
+// SecretGTE applies the GTE predicate on the "secret" field.
+func SecretGTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldGTE(FieldSecret, v))
 }
 
-// CredentialLT applies the LT predicate on the "credential" field.
-func CredentialLT(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLT(FieldCredential, v))
+// SecretLT applies the LT predicate on the "secret" field.
+func SecretLT(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLT(FieldSecret, v))
 }
 
-// CredentialLTE applies the LTE predicate on the "credential" field.
-func CredentialLTE(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldLTE(FieldCredential, v))
+// SecretLTE applies the LTE predicate on the "secret" field.
+func SecretLTE(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldLTE(FieldSecret, v))
 }
 
-// CredentialContains applies the Contains predicate on the "credential" field.
-func CredentialContains(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContains(FieldCredential, v))
+// SecretContains applies the Contains predicate on the "secret" field.
+func SecretContains(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContains(FieldSecret, v))
 }
 
-// CredentialHasPrefix applies the HasPrefix predicate on the "credential" field.
-func CredentialHasPrefix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasPrefix(FieldCredential, v))
+// SecretHasPrefix applies the HasPrefix predicate on the "secret" field.
+func SecretHasPrefix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasPrefix(FieldSecret, v))
 }
 
-// CredentialHasSuffix applies the HasSuffix predicate on the "credential" field.
-func CredentialHasSuffix(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldHasSuffix(FieldCredential, v))
+// SecretHasSuffix applies the HasSuffix predicate on the "secret" field.
+func SecretHasSuffix(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldHasSuffix(FieldSecret, v))
 }
 
-// CredentialEqualFold applies the EqualFold predicate on the "credential" field.
-func CredentialEqualFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldEqualFold(FieldCredential, v))
+// SecretEqualFold applies the EqualFold predicate on the "secret" field.
+func SecretEqualFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldEqualFold(FieldSecret, v))
 }
 
-// CredentialContainsFold applies the ContainsFold predicate on the "credential" field.
-func CredentialContainsFold(v string) predicate.TradingAccount {
-	return predicate.TradingAccount(sql.FieldContainsFold(FieldCredential, v))
+// SecretContainsFold applies the ContainsFold predicate on the "secret" field.
+func SecretContainsFold(v string) predicate.TradingAccount {
+	return predicate.TradingAccount(sql.FieldContainsFold(FieldSecret, v))
 }
 
 // PhraseEQ applies the EQ predicate on the "phrase" field.

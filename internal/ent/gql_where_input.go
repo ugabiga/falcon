@@ -421,20 +421,20 @@ type TaskWhereInput struct {
 	SizeLT    *float64  `json:"sizeLT,omitempty"`
 	SizeLTE   *float64  `json:"sizeLTE,omitempty"`
 
-	// "crypto_currency" field predicates.
-	CryptoCurrency             *string  `json:"cryptoCurrency,omitempty"`
-	CryptoCurrencyNEQ          *string  `json:"cryptoCurrencyNEQ,omitempty"`
-	CryptoCurrencyIn           []string `json:"cryptoCurrencyIn,omitempty"`
-	CryptoCurrencyNotIn        []string `json:"cryptoCurrencyNotIn,omitempty"`
-	CryptoCurrencyGT           *string  `json:"cryptoCurrencyGT,omitempty"`
-	CryptoCurrencyGTE          *string  `json:"cryptoCurrencyGTE,omitempty"`
-	CryptoCurrencyLT           *string  `json:"cryptoCurrencyLT,omitempty"`
-	CryptoCurrencyLTE          *string  `json:"cryptoCurrencyLTE,omitempty"`
-	CryptoCurrencyContains     *string  `json:"cryptoCurrencyContains,omitempty"`
-	CryptoCurrencyHasPrefix    *string  `json:"cryptoCurrencyHasPrefix,omitempty"`
-	CryptoCurrencyHasSuffix    *string  `json:"cryptoCurrencyHasSuffix,omitempty"`
-	CryptoCurrencyEqualFold    *string  `json:"cryptoCurrencyEqualFold,omitempty"`
-	CryptoCurrencyContainsFold *string  `json:"cryptoCurrencyContainsFold,omitempty"`
+	// "symbol" field predicates.
+	Symbol             *string  `json:"symbol,omitempty"`
+	SymbolNEQ          *string  `json:"symbolNEQ,omitempty"`
+	SymbolIn           []string `json:"symbolIn,omitempty"`
+	SymbolNotIn        []string `json:"symbolNotIn,omitempty"`
+	SymbolGT           *string  `json:"symbolGT,omitempty"`
+	SymbolGTE          *string  `json:"symbolGTE,omitempty"`
+	SymbolLT           *string  `json:"symbolLT,omitempty"`
+	SymbolLTE          *string  `json:"symbolLTE,omitempty"`
+	SymbolContains     *string  `json:"symbolContains,omitempty"`
+	SymbolHasPrefix    *string  `json:"symbolHasPrefix,omitempty"`
+	SymbolHasSuffix    *string  `json:"symbolHasSuffix,omitempty"`
+	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
+	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
 
 	// "cron" field predicates.
 	Cron             *string  `json:"cron,omitempty"`
@@ -681,44 +681,44 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	if i.SizeLTE != nil {
 		predicates = append(predicates, task.SizeLTE(*i.SizeLTE))
 	}
-	if i.CryptoCurrency != nil {
-		predicates = append(predicates, task.CryptoCurrencyEQ(*i.CryptoCurrency))
+	if i.Symbol != nil {
+		predicates = append(predicates, task.SymbolEQ(*i.Symbol))
 	}
-	if i.CryptoCurrencyNEQ != nil {
-		predicates = append(predicates, task.CryptoCurrencyNEQ(*i.CryptoCurrencyNEQ))
+	if i.SymbolNEQ != nil {
+		predicates = append(predicates, task.SymbolNEQ(*i.SymbolNEQ))
 	}
-	if len(i.CryptoCurrencyIn) > 0 {
-		predicates = append(predicates, task.CryptoCurrencyIn(i.CryptoCurrencyIn...))
+	if len(i.SymbolIn) > 0 {
+		predicates = append(predicates, task.SymbolIn(i.SymbolIn...))
 	}
-	if len(i.CryptoCurrencyNotIn) > 0 {
-		predicates = append(predicates, task.CryptoCurrencyNotIn(i.CryptoCurrencyNotIn...))
+	if len(i.SymbolNotIn) > 0 {
+		predicates = append(predicates, task.SymbolNotIn(i.SymbolNotIn...))
 	}
-	if i.CryptoCurrencyGT != nil {
-		predicates = append(predicates, task.CryptoCurrencyGT(*i.CryptoCurrencyGT))
+	if i.SymbolGT != nil {
+		predicates = append(predicates, task.SymbolGT(*i.SymbolGT))
 	}
-	if i.CryptoCurrencyGTE != nil {
-		predicates = append(predicates, task.CryptoCurrencyGTE(*i.CryptoCurrencyGTE))
+	if i.SymbolGTE != nil {
+		predicates = append(predicates, task.SymbolGTE(*i.SymbolGTE))
 	}
-	if i.CryptoCurrencyLT != nil {
-		predicates = append(predicates, task.CryptoCurrencyLT(*i.CryptoCurrencyLT))
+	if i.SymbolLT != nil {
+		predicates = append(predicates, task.SymbolLT(*i.SymbolLT))
 	}
-	if i.CryptoCurrencyLTE != nil {
-		predicates = append(predicates, task.CryptoCurrencyLTE(*i.CryptoCurrencyLTE))
+	if i.SymbolLTE != nil {
+		predicates = append(predicates, task.SymbolLTE(*i.SymbolLTE))
 	}
-	if i.CryptoCurrencyContains != nil {
-		predicates = append(predicates, task.CryptoCurrencyContains(*i.CryptoCurrencyContains))
+	if i.SymbolContains != nil {
+		predicates = append(predicates, task.SymbolContains(*i.SymbolContains))
 	}
-	if i.CryptoCurrencyHasPrefix != nil {
-		predicates = append(predicates, task.CryptoCurrencyHasPrefix(*i.CryptoCurrencyHasPrefix))
+	if i.SymbolHasPrefix != nil {
+		predicates = append(predicates, task.SymbolHasPrefix(*i.SymbolHasPrefix))
 	}
-	if i.CryptoCurrencyHasSuffix != nil {
-		predicates = append(predicates, task.CryptoCurrencyHasSuffix(*i.CryptoCurrencyHasSuffix))
+	if i.SymbolHasSuffix != nil {
+		predicates = append(predicates, task.SymbolHasSuffix(*i.SymbolHasSuffix))
 	}
-	if i.CryptoCurrencyEqualFold != nil {
-		predicates = append(predicates, task.CryptoCurrencyEqualFold(*i.CryptoCurrencyEqualFold))
+	if i.SymbolEqualFold != nil {
+		predicates = append(predicates, task.SymbolEqualFold(*i.SymbolEqualFold))
 	}
-	if i.CryptoCurrencyContainsFold != nil {
-		predicates = append(predicates, task.CryptoCurrencyContainsFold(*i.CryptoCurrencyContainsFold))
+	if i.SymbolContainsFold != nil {
+		predicates = append(predicates, task.SymbolContainsFold(*i.SymbolContainsFold))
 	}
 	if i.Cron != nil {
 		predicates = append(predicates, task.CronEQ(*i.Cron))
@@ -1239,35 +1239,35 @@ type TradingAccountWhereInput struct {
 	IPEqualFold    *string  `json:"ipEqualFold,omitempty"`
 	IPContainsFold *string  `json:"ipContainsFold,omitempty"`
 
-	// "identifier" field predicates.
-	Identifier             *string  `json:"identifier,omitempty"`
-	IdentifierNEQ          *string  `json:"identifierNEQ,omitempty"`
-	IdentifierIn           []string `json:"identifierIn,omitempty"`
-	IdentifierNotIn        []string `json:"identifierNotIn,omitempty"`
-	IdentifierGT           *string  `json:"identifierGT,omitempty"`
-	IdentifierGTE          *string  `json:"identifierGTE,omitempty"`
-	IdentifierLT           *string  `json:"identifierLT,omitempty"`
-	IdentifierLTE          *string  `json:"identifierLTE,omitempty"`
-	IdentifierContains     *string  `json:"identifierContains,omitempty"`
-	IdentifierHasPrefix    *string  `json:"identifierHasPrefix,omitempty"`
-	IdentifierHasSuffix    *string  `json:"identifierHasSuffix,omitempty"`
-	IdentifierEqualFold    *string  `json:"identifierEqualFold,omitempty"`
-	IdentifierContainsFold *string  `json:"identifierContainsFold,omitempty"`
+	// "key" field predicates.
+	Key             *string  `json:"key,omitempty"`
+	KeyNEQ          *string  `json:"keyNEQ,omitempty"`
+	KeyIn           []string `json:"keyIn,omitempty"`
+	KeyNotIn        []string `json:"keyNotIn,omitempty"`
+	KeyGT           *string  `json:"keyGT,omitempty"`
+	KeyGTE          *string  `json:"keyGTE,omitempty"`
+	KeyLT           *string  `json:"keyLT,omitempty"`
+	KeyLTE          *string  `json:"keyLTE,omitempty"`
+	KeyContains     *string  `json:"keyContains,omitempty"`
+	KeyHasPrefix    *string  `json:"keyHasPrefix,omitempty"`
+	KeyHasSuffix    *string  `json:"keyHasSuffix,omitempty"`
+	KeyEqualFold    *string  `json:"keyEqualFold,omitempty"`
+	KeyContainsFold *string  `json:"keyContainsFold,omitempty"`
 
-	// "credential" field predicates.
-	Credential             *string  `json:"credential,omitempty"`
-	CredentialNEQ          *string  `json:"credentialNEQ,omitempty"`
-	CredentialIn           []string `json:"credentialIn,omitempty"`
-	CredentialNotIn        []string `json:"credentialNotIn,omitempty"`
-	CredentialGT           *string  `json:"credentialGT,omitempty"`
-	CredentialGTE          *string  `json:"credentialGTE,omitempty"`
-	CredentialLT           *string  `json:"credentialLT,omitempty"`
-	CredentialLTE          *string  `json:"credentialLTE,omitempty"`
-	CredentialContains     *string  `json:"credentialContains,omitempty"`
-	CredentialHasPrefix    *string  `json:"credentialHasPrefix,omitempty"`
-	CredentialHasSuffix    *string  `json:"credentialHasSuffix,omitempty"`
-	CredentialEqualFold    *string  `json:"credentialEqualFold,omitempty"`
-	CredentialContainsFold *string  `json:"credentialContainsFold,omitempty"`
+	// "secret" field predicates.
+	Secret             *string  `json:"secret,omitempty"`
+	SecretNEQ          *string  `json:"secretNEQ,omitempty"`
+	SecretIn           []string `json:"secretIn,omitempty"`
+	SecretNotIn        []string `json:"secretNotIn,omitempty"`
+	SecretGT           *string  `json:"secretGT,omitempty"`
+	SecretGTE          *string  `json:"secretGTE,omitempty"`
+	SecretLT           *string  `json:"secretLT,omitempty"`
+	SecretLTE          *string  `json:"secretLTE,omitempty"`
+	SecretContains     *string  `json:"secretContains,omitempty"`
+	SecretHasPrefix    *string  `json:"secretHasPrefix,omitempty"`
+	SecretHasSuffix    *string  `json:"secretHasSuffix,omitempty"`
+	SecretEqualFold    *string  `json:"secretEqualFold,omitempty"`
+	SecretContainsFold *string  `json:"secretContainsFold,omitempty"`
 
 	// "phrase" field predicates.
 	Phrase             *string  `json:"phrase,omitempty"`
@@ -1539,83 +1539,83 @@ func (i *TradingAccountWhereInput) P() (predicate.TradingAccount, error) {
 	if i.IPContainsFold != nil {
 		predicates = append(predicates, tradingaccount.IPContainsFold(*i.IPContainsFold))
 	}
-	if i.Identifier != nil {
-		predicates = append(predicates, tradingaccount.IdentifierEQ(*i.Identifier))
+	if i.Key != nil {
+		predicates = append(predicates, tradingaccount.KeyEQ(*i.Key))
 	}
-	if i.IdentifierNEQ != nil {
-		predicates = append(predicates, tradingaccount.IdentifierNEQ(*i.IdentifierNEQ))
+	if i.KeyNEQ != nil {
+		predicates = append(predicates, tradingaccount.KeyNEQ(*i.KeyNEQ))
 	}
-	if len(i.IdentifierIn) > 0 {
-		predicates = append(predicates, tradingaccount.IdentifierIn(i.IdentifierIn...))
+	if len(i.KeyIn) > 0 {
+		predicates = append(predicates, tradingaccount.KeyIn(i.KeyIn...))
 	}
-	if len(i.IdentifierNotIn) > 0 {
-		predicates = append(predicates, tradingaccount.IdentifierNotIn(i.IdentifierNotIn...))
+	if len(i.KeyNotIn) > 0 {
+		predicates = append(predicates, tradingaccount.KeyNotIn(i.KeyNotIn...))
 	}
-	if i.IdentifierGT != nil {
-		predicates = append(predicates, tradingaccount.IdentifierGT(*i.IdentifierGT))
+	if i.KeyGT != nil {
+		predicates = append(predicates, tradingaccount.KeyGT(*i.KeyGT))
 	}
-	if i.IdentifierGTE != nil {
-		predicates = append(predicates, tradingaccount.IdentifierGTE(*i.IdentifierGTE))
+	if i.KeyGTE != nil {
+		predicates = append(predicates, tradingaccount.KeyGTE(*i.KeyGTE))
 	}
-	if i.IdentifierLT != nil {
-		predicates = append(predicates, tradingaccount.IdentifierLT(*i.IdentifierLT))
+	if i.KeyLT != nil {
+		predicates = append(predicates, tradingaccount.KeyLT(*i.KeyLT))
 	}
-	if i.IdentifierLTE != nil {
-		predicates = append(predicates, tradingaccount.IdentifierLTE(*i.IdentifierLTE))
+	if i.KeyLTE != nil {
+		predicates = append(predicates, tradingaccount.KeyLTE(*i.KeyLTE))
 	}
-	if i.IdentifierContains != nil {
-		predicates = append(predicates, tradingaccount.IdentifierContains(*i.IdentifierContains))
+	if i.KeyContains != nil {
+		predicates = append(predicates, tradingaccount.KeyContains(*i.KeyContains))
 	}
-	if i.IdentifierHasPrefix != nil {
-		predicates = append(predicates, tradingaccount.IdentifierHasPrefix(*i.IdentifierHasPrefix))
+	if i.KeyHasPrefix != nil {
+		predicates = append(predicates, tradingaccount.KeyHasPrefix(*i.KeyHasPrefix))
 	}
-	if i.IdentifierHasSuffix != nil {
-		predicates = append(predicates, tradingaccount.IdentifierHasSuffix(*i.IdentifierHasSuffix))
+	if i.KeyHasSuffix != nil {
+		predicates = append(predicates, tradingaccount.KeyHasSuffix(*i.KeyHasSuffix))
 	}
-	if i.IdentifierEqualFold != nil {
-		predicates = append(predicates, tradingaccount.IdentifierEqualFold(*i.IdentifierEqualFold))
+	if i.KeyEqualFold != nil {
+		predicates = append(predicates, tradingaccount.KeyEqualFold(*i.KeyEqualFold))
 	}
-	if i.IdentifierContainsFold != nil {
-		predicates = append(predicates, tradingaccount.IdentifierContainsFold(*i.IdentifierContainsFold))
+	if i.KeyContainsFold != nil {
+		predicates = append(predicates, tradingaccount.KeyContainsFold(*i.KeyContainsFold))
 	}
-	if i.Credential != nil {
-		predicates = append(predicates, tradingaccount.CredentialEQ(*i.Credential))
+	if i.Secret != nil {
+		predicates = append(predicates, tradingaccount.SecretEQ(*i.Secret))
 	}
-	if i.CredentialNEQ != nil {
-		predicates = append(predicates, tradingaccount.CredentialNEQ(*i.CredentialNEQ))
+	if i.SecretNEQ != nil {
+		predicates = append(predicates, tradingaccount.SecretNEQ(*i.SecretNEQ))
 	}
-	if len(i.CredentialIn) > 0 {
-		predicates = append(predicates, tradingaccount.CredentialIn(i.CredentialIn...))
+	if len(i.SecretIn) > 0 {
+		predicates = append(predicates, tradingaccount.SecretIn(i.SecretIn...))
 	}
-	if len(i.CredentialNotIn) > 0 {
-		predicates = append(predicates, tradingaccount.CredentialNotIn(i.CredentialNotIn...))
+	if len(i.SecretNotIn) > 0 {
+		predicates = append(predicates, tradingaccount.SecretNotIn(i.SecretNotIn...))
 	}
-	if i.CredentialGT != nil {
-		predicates = append(predicates, tradingaccount.CredentialGT(*i.CredentialGT))
+	if i.SecretGT != nil {
+		predicates = append(predicates, tradingaccount.SecretGT(*i.SecretGT))
 	}
-	if i.CredentialGTE != nil {
-		predicates = append(predicates, tradingaccount.CredentialGTE(*i.CredentialGTE))
+	if i.SecretGTE != nil {
+		predicates = append(predicates, tradingaccount.SecretGTE(*i.SecretGTE))
 	}
-	if i.CredentialLT != nil {
-		predicates = append(predicates, tradingaccount.CredentialLT(*i.CredentialLT))
+	if i.SecretLT != nil {
+		predicates = append(predicates, tradingaccount.SecretLT(*i.SecretLT))
 	}
-	if i.CredentialLTE != nil {
-		predicates = append(predicates, tradingaccount.CredentialLTE(*i.CredentialLTE))
+	if i.SecretLTE != nil {
+		predicates = append(predicates, tradingaccount.SecretLTE(*i.SecretLTE))
 	}
-	if i.CredentialContains != nil {
-		predicates = append(predicates, tradingaccount.CredentialContains(*i.CredentialContains))
+	if i.SecretContains != nil {
+		predicates = append(predicates, tradingaccount.SecretContains(*i.SecretContains))
 	}
-	if i.CredentialHasPrefix != nil {
-		predicates = append(predicates, tradingaccount.CredentialHasPrefix(*i.CredentialHasPrefix))
+	if i.SecretHasPrefix != nil {
+		predicates = append(predicates, tradingaccount.SecretHasPrefix(*i.SecretHasPrefix))
 	}
-	if i.CredentialHasSuffix != nil {
-		predicates = append(predicates, tradingaccount.CredentialHasSuffix(*i.CredentialHasSuffix))
+	if i.SecretHasSuffix != nil {
+		predicates = append(predicates, tradingaccount.SecretHasSuffix(*i.SecretHasSuffix))
 	}
-	if i.CredentialEqualFold != nil {
-		predicates = append(predicates, tradingaccount.CredentialEqualFold(*i.CredentialEqualFold))
+	if i.SecretEqualFold != nil {
+		predicates = append(predicates, tradingaccount.SecretEqualFold(*i.SecretEqualFold))
 	}
-	if i.CredentialContainsFold != nil {
-		predicates = append(predicates, tradingaccount.CredentialContainsFold(*i.CredentialContainsFold))
+	if i.SecretContainsFold != nil {
+		predicates = append(predicates, tradingaccount.SecretContainsFold(*i.SecretContainsFold))
 	}
 	if i.Phrase != nil {
 		predicates = append(predicates, tradingaccount.PhraseEQ(*i.Phrase))

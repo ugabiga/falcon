@@ -21,8 +21,8 @@ type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTask(ctx context.Context, input CreateTaskInput) (*Task, error)
 	UpdateTask(ctx context.Context, id int, input UpdateTaskInput) (*Task, error)
-	CreateTradingAccount(ctx context.Context, name string, exchange string, identifier string, credential string) (*TradingAccount, error)
-	UpdateTradingAccount(ctx context.Context, id int, name *string, exchange *string, identifier *string, credential *string) (bool, error)
+	CreateTradingAccount(ctx context.Context, name string, exchange string, key string, secret string) (*TradingAccount, error)
+	UpdateTradingAccount(ctx context.Context, id int, name *string, exchange *string, key *string, secret *string) (bool, error)
 }
 type QueryResolver interface {
 	UserIndex(ctx context.Context) (*UserIndex, error)
@@ -72,23 +72,23 @@ func (ec *executionContext) field_Mutation_createTradingAccount_args(ctx context
 	}
 	args["exchange"] = arg1
 	var arg2 string
-	if tmp, ok := rawArgs["identifier"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
+	if tmp, ok := rawArgs["key"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
 		arg2, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["identifier"] = arg2
+	args["key"] = arg2
 	var arg3 string
-	if tmp, ok := rawArgs["credential"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+	if tmp, ok := rawArgs["secret"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secret"))
 		arg3, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["credential"] = arg3
+	args["secret"] = arg3
 	return args, nil
 }
 
@@ -147,23 +147,23 @@ func (ec *executionContext) field_Mutation_updateTradingAccount_args(ctx context
 	}
 	args["exchange"] = arg2
 	var arg3 *string
-	if tmp, ok := rawArgs["identifier"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("identifier"))
+	if tmp, ok := rawArgs["key"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
 		arg3, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["identifier"] = arg3
+	args["key"] = arg3
 	var arg4 *string
-	if tmp, ok := rawArgs["credential"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("credential"))
+	if tmp, ok := rawArgs["secret"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secret"))
 		arg4, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["credential"] = arg4
+	args["secret"] = arg4
 	return args, nil
 }
 
@@ -353,8 +353,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_currency(ctx, field)
 			case "size":
 				return ec.fieldContext_Task_size(ctx, field)
-			case "cryptoCurrency":
-				return ec.fieldContext_Task_cryptoCurrency(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Task_symbol(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -438,8 +438,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_currency(ctx, field)
 			case "size":
 				return ec.fieldContext_Task_size(ctx, field)
-			case "cryptoCurrency":
-				return ec.fieldContext_Task_cryptoCurrency(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Task_symbol(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -490,7 +490,7 @@ func (ec *executionContext) _Mutation_createTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTradingAccount(rctx, fc.Args["name"].(string), fc.Args["exchange"].(string), fc.Args["identifier"].(string), fc.Args["credential"].(string))
+		return ec.resolvers.Mutation().CreateTradingAccount(rctx, fc.Args["name"].(string), fc.Args["exchange"].(string), fc.Args["key"].(string), fc.Args["secret"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -525,8 +525,8 @@ func (ec *executionContext) fieldContext_Mutation_createTradingAccount(ctx conte
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":
@@ -567,7 +567,7 @@ func (ec *executionContext) _Mutation_updateTradingAccount(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(int), fc.Args["name"].(*string), fc.Args["exchange"].(*string), fc.Args["identifier"].(*string), fc.Args["credential"].(*string))
+		return ec.resolvers.Mutation().UpdateTradingAccount(rctx, fc.Args["id"].(int), fc.Args["name"].(*string), fc.Args["exchange"].(*string), fc.Args["key"].(*string), fc.Args["secret"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1275,8 +1275,8 @@ func (ec *executionContext) fieldContext_User_tradingAccounts(ctx context.Contex
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":

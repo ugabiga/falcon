@@ -86,30 +86,30 @@ func (tau *TradingAccountUpdate) SetNillableIP(s *string) *TradingAccountUpdate 
 	return tau
 }
 
-// SetIdentifier sets the "identifier" field.
-func (tau *TradingAccountUpdate) SetIdentifier(s string) *TradingAccountUpdate {
-	tau.mutation.SetIdentifier(s)
+// SetKey sets the "key" field.
+func (tau *TradingAccountUpdate) SetKey(s string) *TradingAccountUpdate {
+	tau.mutation.SetKey(s)
 	return tau
 }
 
-// SetNillableIdentifier sets the "identifier" field if the given value is not nil.
-func (tau *TradingAccountUpdate) SetNillableIdentifier(s *string) *TradingAccountUpdate {
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (tau *TradingAccountUpdate) SetNillableKey(s *string) *TradingAccountUpdate {
 	if s != nil {
-		tau.SetIdentifier(*s)
+		tau.SetKey(*s)
 	}
 	return tau
 }
 
-// SetCredential sets the "credential" field.
-func (tau *TradingAccountUpdate) SetCredential(s string) *TradingAccountUpdate {
-	tau.mutation.SetCredential(s)
+// SetSecret sets the "secret" field.
+func (tau *TradingAccountUpdate) SetSecret(s string) *TradingAccountUpdate {
+	tau.mutation.SetSecret(s)
 	return tau
 }
 
-// SetNillableCredential sets the "credential" field if the given value is not nil.
-func (tau *TradingAccountUpdate) SetNillableCredential(s *string) *TradingAccountUpdate {
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (tau *TradingAccountUpdate) SetNillableSecret(s *string) *TradingAccountUpdate {
 	if s != nil {
-		tau.SetCredential(*s)
+		tau.SetSecret(*s)
 	}
 	return tau
 }
@@ -262,11 +262,11 @@ func (tau *TradingAccountUpdate) sqlSave(ctx context.Context) (n int, err error)
 	if value, ok := tau.mutation.IP(); ok {
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)
 	}
-	if value, ok := tau.mutation.Identifier(); ok {
-		_spec.SetField(tradingaccount.FieldIdentifier, field.TypeString, value)
+	if value, ok := tau.mutation.Key(); ok {
+		_spec.SetField(tradingaccount.FieldKey, field.TypeString, value)
 	}
-	if value, ok := tau.mutation.Credential(); ok {
-		_spec.SetField(tradingaccount.FieldCredential, field.TypeString, value)
+	if value, ok := tau.mutation.Secret(); ok {
+		_spec.SetField(tradingaccount.FieldSecret, field.TypeString, value)
 	}
 	if value, ok := tau.mutation.Phrase(); ok {
 		_spec.SetField(tradingaccount.FieldPhrase, field.TypeString, value)
@@ -427,30 +427,30 @@ func (tauo *TradingAccountUpdateOne) SetNillableIP(s *string) *TradingAccountUpd
 	return tauo
 }
 
-// SetIdentifier sets the "identifier" field.
-func (tauo *TradingAccountUpdateOne) SetIdentifier(s string) *TradingAccountUpdateOne {
-	tauo.mutation.SetIdentifier(s)
+// SetKey sets the "key" field.
+func (tauo *TradingAccountUpdateOne) SetKey(s string) *TradingAccountUpdateOne {
+	tauo.mutation.SetKey(s)
 	return tauo
 }
 
-// SetNillableIdentifier sets the "identifier" field if the given value is not nil.
-func (tauo *TradingAccountUpdateOne) SetNillableIdentifier(s *string) *TradingAccountUpdateOne {
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (tauo *TradingAccountUpdateOne) SetNillableKey(s *string) *TradingAccountUpdateOne {
 	if s != nil {
-		tauo.SetIdentifier(*s)
+		tauo.SetKey(*s)
 	}
 	return tauo
 }
 
-// SetCredential sets the "credential" field.
-func (tauo *TradingAccountUpdateOne) SetCredential(s string) *TradingAccountUpdateOne {
-	tauo.mutation.SetCredential(s)
+// SetSecret sets the "secret" field.
+func (tauo *TradingAccountUpdateOne) SetSecret(s string) *TradingAccountUpdateOne {
+	tauo.mutation.SetSecret(s)
 	return tauo
 }
 
-// SetNillableCredential sets the "credential" field if the given value is not nil.
-func (tauo *TradingAccountUpdateOne) SetNillableCredential(s *string) *TradingAccountUpdateOne {
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (tauo *TradingAccountUpdateOne) SetNillableSecret(s *string) *TradingAccountUpdateOne {
 	if s != nil {
-		tauo.SetCredential(*s)
+		tauo.SetSecret(*s)
 	}
 	return tauo
 }
@@ -633,11 +633,11 @@ func (tauo *TradingAccountUpdateOne) sqlSave(ctx context.Context) (_node *Tradin
 	if value, ok := tauo.mutation.IP(); ok {
 		_spec.SetField(tradingaccount.FieldIP, field.TypeString, value)
 	}
-	if value, ok := tauo.mutation.Identifier(); ok {
-		_spec.SetField(tradingaccount.FieldIdentifier, field.TypeString, value)
+	if value, ok := tauo.mutation.Key(); ok {
+		_spec.SetField(tradingaccount.FieldKey, field.TypeString, value)
 	}
-	if value, ok := tauo.mutation.Credential(); ok {
-		_spec.SetField(tradingaccount.FieldCredential, field.TypeString, value)
+	if value, ok := tauo.mutation.Secret(); ok {
+		_spec.SetField(tradingaccount.FieldSecret, field.TypeString, value)
 	}
 	if value, ok := tauo.mutation.Phrase(); ok {
 		_spec.SetField(tradingaccount.FieldPhrase, field.TypeString, value)

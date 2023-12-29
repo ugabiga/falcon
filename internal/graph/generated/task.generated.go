@@ -205,8 +205,8 @@ func (ec *executionContext) fieldContext_Task_size(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Task_cryptoCurrency(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Task_cryptoCurrency(ctx, field)
+func (ec *executionContext) _Task_symbol(ctx context.Context, field graphql.CollectedField, obj *Task) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Task_symbol(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -219,7 +219,7 @@ func (ec *executionContext) _Task_cryptoCurrency(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CryptoCurrency, nil
+		return obj.Symbol, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -236,7 +236,7 @@ func (ec *executionContext) _Task_cryptoCurrency(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Task_cryptoCurrency(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Task_symbol(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Task",
 		Field:      field,
@@ -600,8 +600,8 @@ func (ec *executionContext) fieldContext_Task_tradingAccount(ctx context.Context
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":
@@ -718,8 +718,8 @@ func (ec *executionContext) fieldContext_TaskIndex_selectedTradingAccount(ctx co
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":
@@ -781,8 +781,8 @@ func (ec *executionContext) fieldContext_TaskIndex_tradingAccounts(ctx context.C
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":
@@ -835,11 +835,11 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "cryptoCurrency":
+		case "symbol":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cryptoCurrency"))
-			it.CryptoCurrency, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			it.Symbol, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -906,11 +906,11 @@ func (ec *executionContext) unmarshalInputUpdateTaskInput(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		case "cryptoCurrency":
+		case "symbol":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cryptoCurrency"))
-			it.CryptoCurrency, err = ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			it.Symbol, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -1006,9 +1006,9 @@ func (ec *executionContext) _Task(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "cryptoCurrency":
+		case "symbol":
 
-			out.Values[i] = ec._Task_cryptoCurrency(ctx, field, obj)
+			out.Values[i] = ec._Task_symbol(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

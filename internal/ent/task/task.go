@@ -20,8 +20,8 @@ const (
 	FieldCurrency = "currency"
 	// FieldSize holds the string denoting the size field in the database.
 	FieldSize = "size"
-	// FieldCryptoCurrency holds the string denoting the crypto_currency field in the database.
-	FieldCryptoCurrency = "crypto_currency"
+	// FieldSymbol holds the string denoting the symbol field in the database.
+	FieldSymbol = "symbol"
 	// FieldCron holds the string denoting the cron field in the database.
 	FieldCron = "cron"
 	// FieldNextExecutionTime holds the string denoting the next_execution_time field in the database.
@@ -64,7 +64,7 @@ var Columns = []string{
 	FieldTradingAccountID,
 	FieldCurrency,
 	FieldSize,
-	FieldCryptoCurrency,
+	FieldSymbol,
 	FieldCron,
 	FieldNextExecutionTime,
 	FieldIsActive,
@@ -124,9 +124,9 @@ func BySize(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSize, opts...).ToFunc()
 }
 
-// ByCryptoCurrency orders the results by the crypto_currency field.
-func ByCryptoCurrency(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCryptoCurrency, opts...).ToFunc()
+// BySymbol orders the results by the symbol field.
+func BySymbol(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbol, opts...).ToFunc()
 }
 
 // ByCron orders the results by the cron field.

@@ -248,8 +248,8 @@ func (ec *executionContext) fieldContext_TradingAccount_ip(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _TradingAccount_identifier(ctx context.Context, field graphql.CollectedField, obj *TradingAccount) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TradingAccount_identifier(ctx, field)
+func (ec *executionContext) _TradingAccount_key(ctx context.Context, field graphql.CollectedField, obj *TradingAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TradingAccount_key(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -262,7 +262,7 @@ func (ec *executionContext) _TradingAccount_identifier(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Identifier, nil
+		return obj.Key, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -279,7 +279,7 @@ func (ec *executionContext) _TradingAccount_identifier(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_TradingAccount_identifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_TradingAccount_key(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TradingAccount",
 		Field:      field,
@@ -484,8 +484,8 @@ func (ec *executionContext) fieldContext_TradingAccount_tasks(ctx context.Contex
 				return ec.fieldContext_Task_currency(ctx, field)
 			case "size":
 				return ec.fieldContext_Task_size(ctx, field)
-			case "cryptoCurrency":
-				return ec.fieldContext_Task_cryptoCurrency(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Task_symbol(ctx, field)
 			case "cron":
 				return ec.fieldContext_Task_cron(ctx, field)
 			case "nextExecutionTime":
@@ -557,8 +557,8 @@ func (ec *executionContext) fieldContext_TradingAccountIndex_tradingAccounts(ctx
 				return ec.fieldContext_TradingAccount_exchange(ctx, field)
 			case "ip":
 				return ec.fieldContext_TradingAccount_ip(ctx, field)
-			case "identifier":
-				return ec.fieldContext_TradingAccount_identifier(ctx, field)
+			case "key":
+				return ec.fieldContext_TradingAccount_key(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TradingAccount_updatedAt(ctx, field)
 			case "createdAt":
@@ -631,9 +631,9 @@ func (ec *executionContext) _TradingAccount(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "identifier":
+		case "key":
 
-			out.Values[i] = ec._TradingAccount_identifier(ctx, field, obj)
+			out.Values[i] = ec._TradingAccount_key(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

@@ -6,15 +6,15 @@ extend type Mutation {
     createTradingAccount(
         name: String!
         exchange: String!
-        identifier: String!
-        credential: String!
+        key: String!
+        secret: String!
     ): TradingAccount!
     updateTradingAccount(
         id: ID!
         name: String
         exchange: String
-        identifier: String
-        credential: String
+        key: String
+        secret: String
     ): Boolean!
 }
 
@@ -28,7 +28,7 @@ type TradingAccount {
     name: String!
     exchange: String!
     ip: String!
-    identifier: String!
+    key: String!
     updatedAt: Time!
     createdAt: Time!
     user: User!

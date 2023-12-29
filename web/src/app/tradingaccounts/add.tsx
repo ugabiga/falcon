@@ -25,8 +25,6 @@ export function AddTradingAccount() {
         defaultValues: {
             name: "",
             exchange: "upbit",
-            identifier: "",
-            credential: "",
         },
     })
 
@@ -35,8 +33,8 @@ export function AddTradingAccount() {
             variables: {
                 name: data.name,
                 exchange: data.exchange,
-                identifier: data.identifier,
-                credential: data.credential,
+                key: data.key,
+                secret: data.secret,
             }
         }).then(() => {
             setOpenDialog(false)
@@ -100,12 +98,12 @@ export function AddTradingAccount() {
 
                         <FormField
                             control={form.control}
-                            name="identifier"
+                            name="key"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Identifier</FormLabel>
+                                    <FormLabel>Key</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Identifier" {...field} />
+                                        <Input placeholder="Key" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -114,12 +112,12 @@ export function AddTradingAccount() {
 
                         <FormField
                             control={form.control}
-                            name="credential"
+                            name="secret"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Credential</FormLabel>
+                                    <FormLabel>Secret</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Credential" {...field} />
+                                        <Input type="password" placeholder="Secret" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

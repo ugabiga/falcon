@@ -73,8 +73,8 @@ func (s UserService) CreateDummy(
 		ta, err := s.db.TradingAccount.Create().
 			SetUserID(u.ID).
 			SetExchange("binance").
-			SetIdentifier(uuid.New().String()).
-			SetCredential(uuid.New().String()).
+			SetKey(uuid.New().String()).
+			SetSecret(uuid.New().String()).
 			SetIP("127.0.0.1").
 			Save(ctx)
 		if err != nil {

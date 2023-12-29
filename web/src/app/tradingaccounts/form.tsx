@@ -15,14 +15,14 @@ export const AddTradingAccountFormSchema = z.object({
         .min(1, {
             message: "Please enter a exchange",
         }),
-    identifier: z
+    key: z
         .string({
             required_error: "Please enter a identifier",
         })
         .min(1, {
             message: "Please enter a identifier",
         }),
-    credential: z
+    secret: z
         .string({
             required_error: "Please enter a credential",
         })
@@ -40,11 +40,11 @@ export const EditTradingAccountFormSchema = z.object({
         .string({
             required_error: "Please enter a exchange",
         }),
-    identifier: z
+    key: z
         .string({
             required_error: "Please enter a identifier",
         }),
-    credential: z
+    secret: z
         .string({
             required_error: "Please enter a credential",
         }),

@@ -25,8 +25,8 @@ func (s TradingAccountService) Create(
 	userID int,
 	name string,
 	exchange string,
-	Identifier string,
-	credential string,
+	key string,
+	secret string,
 	phrase string,
 ) (
 	*ent.TradingAccount, error,
@@ -35,7 +35,7 @@ func (s TradingAccountService) Create(
 		return nil, err
 	}
 
-	encryptedCredential, err := s.encrypt(credential)
+	encryptedSecret, err := s.encrypt(secret)
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +54,8 @@ func (s TradingAccountService) Create(
 		SetName(name).
 		SetExchange(exchange).
 		SetIP(ip).
-		SetIdentifier(Identifier).
-		SetCredential(encryptedCredential)
+		SetKey(key).
+		SetSecret(encryptedSecret)
 
 	if phrase != "" {
 		encryptedPhrase, err := s.encrypt(phrase)
@@ -128,11 +128,11 @@ func (s TradingAccountService) Update(
 	userID int,
 	name *string,
 	exchange *string,
-	Identifier *string,
-	credential *string,
+	key *string,
+	secret *string,
 	phrase *string,
 ) error {
-	if exchange == nil && Identifier == nil && credential == nil && phrase == nil {
+	if exchange == nil && key == nil && secret == nil && phrase == nil {
 		return nil
 	}
 
@@ -153,15 +153,15 @@ func (s TradingAccountService) Update(
 	if exchange != nil {
 		updateQuery.SetExchange(pointer.GetString(exchange))
 	}
-	if Identifier != nil {
-		updateQuery.SetIdentifier(pointer.GetString(Identifier))
+	if key != nil {
+		updateQuery.SetKey(pointer.GetString(key))
 	}
-	if credential != nil {
-		encryptedCredential, err := s.encrypt(pointer.GetString(credential))
+	if secret != nil {
+		encryptedSecret, err := s.encrypt(pointer.GetString(secret))
 		if err != nil {
 			return err
 		}
-		updateQuery.SetCredential(encryptedCredential)
+		updateQuery.SetSecret(encryptedSecret)
 	}
 
 	if phrase != nil {
@@ -211,8 +211,8 @@ func (s TradingAccountService) validateExchange(exchange string) error {
 	}
 }
 
-func (s TradingAccountService) encrypt(credential string) (string, error) {
-	password, err := bcrypt.GenerateFromPassword([]byte(credential), bcrypt.DefaultCost)
+func (s TradingAccountService) encrypt(secret string) (string, error) {
+	password, err := bcrypt.GenerateFromPassword([]byte(secret), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}

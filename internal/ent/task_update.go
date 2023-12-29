@@ -79,16 +79,16 @@ func (tu *TaskUpdate) AddSize(f float64) *TaskUpdate {
 	return tu
 }
 
-// SetCryptoCurrency sets the "crypto_currency" field.
-func (tu *TaskUpdate) SetCryptoCurrency(s string) *TaskUpdate {
-	tu.mutation.SetCryptoCurrency(s)
+// SetSymbol sets the "symbol" field.
+func (tu *TaskUpdate) SetSymbol(s string) *TaskUpdate {
+	tu.mutation.SetSymbol(s)
 	return tu
 }
 
-// SetNillableCryptoCurrency sets the "crypto_currency" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableCryptoCurrency(s *string) *TaskUpdate {
+// SetNillableSymbol sets the "symbol" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableSymbol(s *string) *TaskUpdate {
 	if s != nil {
-		tu.SetCryptoCurrency(*s)
+		tu.SetSymbol(*s)
 	}
 	return tu
 }
@@ -295,8 +295,8 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedSize(); ok {
 		_spec.AddField(task.FieldSize, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.CryptoCurrency(); ok {
-		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
+	if value, ok := tu.mutation.Symbol(); ok {
+		_spec.SetField(task.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := tu.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
@@ -465,16 +465,16 @@ func (tuo *TaskUpdateOne) AddSize(f float64) *TaskUpdateOne {
 	return tuo
 }
 
-// SetCryptoCurrency sets the "crypto_currency" field.
-func (tuo *TaskUpdateOne) SetCryptoCurrency(s string) *TaskUpdateOne {
-	tuo.mutation.SetCryptoCurrency(s)
+// SetSymbol sets the "symbol" field.
+func (tuo *TaskUpdateOne) SetSymbol(s string) *TaskUpdateOne {
+	tuo.mutation.SetSymbol(s)
 	return tuo
 }
 
-// SetNillableCryptoCurrency sets the "crypto_currency" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableCryptoCurrency(s *string) *TaskUpdateOne {
+// SetNillableSymbol sets the "symbol" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableSymbol(s *string) *TaskUpdateOne {
 	if s != nil {
-		tuo.SetCryptoCurrency(*s)
+		tuo.SetSymbol(*s)
 	}
 	return tuo
 }
@@ -711,8 +711,8 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.AddedSize(); ok {
 		_spec.AddField(task.FieldSize, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.CryptoCurrency(); ok {
-		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
+	if value, ok := tuo.mutation.Symbol(); ok {
+		_spec.SetField(task.FieldSymbol, field.TypeString, value)
 	}
 	if value, ok := tuo.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)

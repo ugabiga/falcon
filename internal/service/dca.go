@@ -26,11 +26,11 @@ func NewDcaService(
 }
 
 type TaskOrderInfo struct {
-	Symbol     string
-	Size       float64
-	Exchange   string
-	Identifier string
-	Credential string
+	Symbol   string
+	Size     float64
+	Exchange string
+	Key      string
+	Secret   string
 }
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
@@ -44,11 +44,11 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	for _, task := range tasks {
 		if task.Edges.TradingAccount != nil {
 			taskOrderInfos = append(taskOrderInfos, TaskOrderInfo{
-				Symbol:     task.CryptoCurrency,
-				Size:       task.Size,
-				Exchange:   task.Edges.TradingAccount.Exchange,
-				Identifier: task.Edges.TradingAccount.Identifier,
-				Credential: task.Edges.TradingAccount.Credential,
+				Symbol:   task.Symbol,
+				Size:     task.Size,
+				Exchange: task.Edges.TradingAccount.Exchange,
+				Key:      task.Edges.TradingAccount.Key,
+				Secret:   task.Edges.TradingAccount.Secret,
 			})
 		}
 	}
@@ -63,8 +63,8 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 			context.Background(),
 			orderInfo.Symbol,
 			orderInfo.Size,
-			orderInfo.Identifier,
-			orderInfo.Credential,
+			orderInfo.Key,
+			orderInfo.Secret,
 		)
 	default:
 		return errors.New("exchange not found")

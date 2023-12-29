@@ -27,8 +27,7 @@ export function EditTradingAccount(
         defaultValues: {
             name: tradingAccount.name,
             exchange: tradingAccount.exchange,
-            identifier: tradingAccount.identifier,
-            credential: ""
+            key: tradingAccount.key,
         },
     })
 
@@ -36,10 +35,7 @@ export function EditTradingAccount(
         updateTradingAccount({
             variables: {
                 id: tradingAccount.id,
-                name: data.name,
-                exchange: data.exchange,
-                identifier: data.identifier,
-                credential: data.credential,
+                ...data
             }
         }).then(() => {
             setOpenDialog(false)
@@ -75,7 +71,7 @@ export function EditTradingAccount(
                                     <FormMessage/>
                                 </FormItem>
                             )}
-                            />
+                        />
 
                         <FormField
                             control={form.control}
@@ -101,12 +97,12 @@ export function EditTradingAccount(
 
                         <FormField
                             control={form.control}
-                            name="identifier"
+                            name="key"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Identifier</FormLabel>
+                                    <FormLabel>Key</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Identifier" {...field} />
+                                        <Input placeholder="Key" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
@@ -115,12 +111,12 @@ export function EditTradingAccount(
 
                         <FormField
                             control={form.control}
-                            name="credential"
+                            name="secret"
                             render={({field}) => (
                                 <FormItem>
-                                    <FormLabel>Credential</FormLabel>
+                                    <FormLabel>Secret</FormLabel>
                                     <FormControl>
-                                        <Input type="password" placeholder="Credential" {...field} />
+                                        <Input type="password" placeholder="Secret" {...field} />
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

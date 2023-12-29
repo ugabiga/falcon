@@ -3,7 +3,7 @@ fragment TaskFragment on Task {
     tradingAccountID
     currency
     size
-    cryptoCurrency
+    symbol
     cron
     nextExecutionTime
     isActive
@@ -20,7 +20,7 @@ query GetTaskIndex($tradingAccountID: ID){
             name
             exchange
             ip
-            identifier
+            key
             tasks {
                 ...TaskFragment
             }
@@ -30,7 +30,7 @@ query GetTaskIndex($tradingAccountID: ID){
             name
             exchange
             ip
-            identifier
+            key
             tasks {
                 ...TaskFragment
             }
@@ -40,7 +40,7 @@ query GetTaskIndex($tradingAccountID: ID){
 mutation CreateTask($tradingAccountID: ID!,
     $currency: String!,
     $size: Float!,
-    $cryptoCurrency: String!,
+    $symbol: String!,
     $days: String!,
     $hours: String!,
     $type: String!,
@@ -50,7 +50,7 @@ mutation CreateTask($tradingAccountID: ID!,
         tradingAccountID: $tradingAccountID
         currency: $currency
         size: $size
-        cryptoCurrency: $cryptoCurrency
+        symbol: $symbol
         days: $days
         hours: $hours
         type: $type
@@ -63,7 +63,7 @@ mutation CreateTask($tradingAccountID: ID!,
 mutation UpdateTask($id: ID!,
     $currency: String!,
     $size: Float!,
-    $cryptoCurrency: String!,
+    $symbol: String!,
     $days: String!,
     $hours: String!,
     $type: String!,
@@ -75,7 +75,7 @@ mutation UpdateTask($id: ID!,
         input: {
             currency: $currency
             size: $size
-            cryptoCurrency: $cryptoCurrency
+            symbol: $symbol
             days: $days
             hours: $hours
             type: $type

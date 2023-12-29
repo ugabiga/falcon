@@ -177,10 +177,10 @@ func (t *TaskQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, task.FieldSize)
 				fieldSeen[task.FieldSize] = struct{}{}
 			}
-		case "cryptoCurrency":
-			if _, ok := fieldSeen[task.FieldCryptoCurrency]; !ok {
-				selectedFields = append(selectedFields, task.FieldCryptoCurrency)
-				fieldSeen[task.FieldCryptoCurrency] = struct{}{}
+		case "symbol":
+			if _, ok := fieldSeen[task.FieldSymbol]; !ok {
+				selectedFields = append(selectedFields, task.FieldSymbol)
+				fieldSeen[task.FieldSymbol] = struct{}{}
 			}
 		case "cron":
 			if _, ok := fieldSeen[task.FieldCron]; !ok {
@@ -421,10 +421,10 @@ func (ta *TradingAccountQuery) collectField(ctx context.Context, opCtx *graphql.
 				selectedFields = append(selectedFields, tradingaccount.FieldIP)
 				fieldSeen[tradingaccount.FieldIP] = struct{}{}
 			}
-		case "identifier":
-			if _, ok := fieldSeen[tradingaccount.FieldIdentifier]; !ok {
-				selectedFields = append(selectedFields, tradingaccount.FieldIdentifier)
-				fieldSeen[tradingaccount.FieldIdentifier] = struct{}{}
+		case "key":
+			if _, ok := fieldSeen[tradingaccount.FieldKey]; !ok {
+				selectedFields = append(selectedFields, tradingaccount.FieldKey)
+				fieldSeen[tradingaccount.FieldKey] = struct{}{}
 			}
 		case "updatedAt":
 			if _, ok := fieldSeen[tradingaccount.FieldUpdatedAt]; !ok {

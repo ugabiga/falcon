@@ -48,9 +48,9 @@ func (tc *TaskCreate) SetNillableSize(f *float64) *TaskCreate {
 	return tc
 }
 
-// SetCryptoCurrency sets the "crypto_currency" field.
-func (tc *TaskCreate) SetCryptoCurrency(s string) *TaskCreate {
-	tc.mutation.SetCryptoCurrency(s)
+// SetSymbol sets the "symbol" field.
+func (tc *TaskCreate) SetSymbol(s string) *TaskCreate {
+	tc.mutation.SetSymbol(s)
 	return tc
 }
 
@@ -223,8 +223,8 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Size(); !ok {
 		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "Task.size"`)}
 	}
-	if _, ok := tc.mutation.CryptoCurrency(); !ok {
-		return &ValidationError{Name: "crypto_currency", err: errors.New(`ent: missing required field "Task.crypto_currency"`)}
+	if _, ok := tc.mutation.Symbol(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Task.symbol"`)}
 	}
 	if _, ok := tc.mutation.Cron(); !ok {
 		return &ValidationError{Name: "cron", err: errors.New(`ent: missing required field "Task.cron"`)}
@@ -289,9 +289,9 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldSize, field.TypeFloat64, value)
 		_node.Size = value
 	}
-	if value, ok := tc.mutation.CryptoCurrency(); ok {
-		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
-		_node.CryptoCurrency = value
+	if value, ok := tc.mutation.Symbol(); ok {
+		_spec.SetField(task.FieldSymbol, field.TypeString, value)
+		_node.Symbol = value
 	}
 	if value, ok := tc.mutation.Cron(); ok {
 		_spec.SetField(task.FieldCron, field.TypeString, value)
