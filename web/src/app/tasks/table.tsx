@@ -55,6 +55,13 @@ function convertToNextCronDate(value: string) {
     return formatDate(result)
 }
 
+function convertNumberToCryptoSize(value: number, symbol: string): string {
+    const decimalPlaces = 5
+    return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: decimalPlaces,
+    }).format(value) + ' ' + symbol
+}
+
 function convertNumberToCurrency(value: number, currency: string): string {
     let decimalPlaces = 0
     switch (currency) {
@@ -117,7 +124,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 <TableCell>{task.type}</TableCell>
                                 <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
                                 <TableCell>{task.symbol}</TableCell>
-                                <TableCell>{convertNumberToCurrency(task.size, task.currency)}</TableCell>
+                                <TableCell>{convertNumberToCryptoSize(task.size, task.symbol)}</TableCell>
                                 <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
                                 <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
                                 <TableCell>

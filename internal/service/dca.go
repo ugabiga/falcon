@@ -3,9 +3,7 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/encryption"
-	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
@@ -21,6 +19,7 @@ type TaskOrderInfo struct {
 	TaskID   int
 	Cron     string
 	Symbol   string
+	Currency string
 	Size     float64
 	Exchange string
 	Key      string
@@ -66,6 +65,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 				TaskID:   t.ID,
 				Cron:     t.Cron,
 				Symbol:   t.Symbol,
+				Currency: t.Currency,
 				Size:     t.Size,
 				Exchange: t.Edges.TradingAccount.Exchange,
 				Key:      t.Edges.TradingAccount.Key,
@@ -136,35 +136,35 @@ func (s DcaService) orderUpbitAt(
 	ctx context.Context,
 	orderInfo TaskOrderInfo,
 ) error {
-	symbol := orderInfo.Symbol
-	size := orderInfo.Size
-	key := orderInfo.Key
-	decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
-	if err != nil {
-		return err
-	}
+	//symbol := orderInfo.Currency + "-" + orderInfo.Symbol
+	//size := orderInfo.Size
+	//key := orderInfo.Key
+	//decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//c := client.NewUpbitClient(key, decryptedSecret)
+	//
+	//ticker, err := c.Ticker(ctx, symbol)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//if ticker == nil {
+	//	return ErrTickerNotFound
+	//}
 
-	c := client.NewUpbitClient(key, decryptedSecret)
+	//tradePrice := ticker.TradePrice
+	//tradePriceStr := str.FromFloat64(tradePrice).Val()
+	//sizeStr := str.FromFloat64(size).Val()
 
-	ticker, err := c.Ticker(ctx, symbol)
-	if err != nil {
-		return err
-	}
+	//order, err := c.PlaceLongOrderAt(ctx, symbol, sizeStr, tradePriceStr)
+	//if err != nil {
+	//	return err
+	//}
 
-	if ticker == nil {
-		return ErrTickerNotFound
-	}
-
-	tradePrice := ticker.TradePrice
-	tradePriceStr := str.FromFloat64(tradePrice).Val()
-	sizeStr := str.FromFloat64(size).Val()
-
-	order, err := c.PlaceLongOrderAt(ctx, symbol, sizeStr, tradePriceStr)
-	if err != nil {
-		return err
-	}
-
-	log.Printf("order: %+v", order)
+	//log.Printf("order: %+v", order)
 
 	return nil
 }

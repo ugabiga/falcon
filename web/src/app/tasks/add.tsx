@@ -116,34 +116,6 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="size"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>
-                                        Investing Size
-                                    </FormLabel>
-                                    <FormControl>
-                                        <NumericFormatInput
-                                            value={field.value}
-                                            thousandSeparator={true}
-                                            allowNegative={false}
-                                            allowLeadingZeros={false}
-                                            fixedDecimalScale={false}
-                                            prefix={form.watch("currency") === "KRW" ? "₩" : "$"}
-                                            suffix={""}
-                                            onValueChange={(values) => {
-                                                field.onChange(values.floatValue)
-                                            }}
-                                        />
-
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
                             name="symbol"
                             render={({field}) => (
                                 <FormItem>
@@ -163,6 +135,34 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                                 </FormItem>
                             )}
                         />
+
+                        <FormField
+                            control={form.control}
+                            name="size"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        Investing Size {form.watch("symbol")}
+                                    </FormLabel>
+                                    <FormControl>
+                                        <NumericFormatInput
+                                            value={field.value}
+                                            thousandSeparator={true}
+                                            allowNegative={false}
+                                            allowLeadingZeros={false}
+                                            fixedDecimalScale={false}
+                                            suffix={" " + form.watch("symbol")}
+                                            onValueChange={(values) => {
+                                                field.onChange(values.floatValue)
+                                            }}
+                                        />
+
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
 
                         <FormField
                             control={form.control}

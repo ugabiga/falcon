@@ -26,7 +26,7 @@ func (Task) Fields() []ent.Field {
 		field.String("currency"),
 		field.Float("size").
 			Default(0).
-			Comment("size of currency to buy/sell"),
+			Comment("size of crypto currency to buy/sell"),
 		field.String("symbol").
 			Comment("symbol of currency to buy/sell"),
 		field.String("cron"),
