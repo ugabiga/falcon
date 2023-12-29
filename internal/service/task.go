@@ -56,7 +56,7 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 	}
 
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := s.nextCronExecutionTime(cron, u.Timezone)
+	nextExecutionTime, err := NextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (s TaskService) Update(ctx context.Context, userID int, taskID int, input g
 	}
 
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := s.nextCronExecutionTime(cron, u.Timezone)
+	nextExecutionTime, err := NextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s TaskService) cronExpression(hour string, days string) string {
 	return "0 0 " + hour + " * * " + days
 }
 
-func (s TaskService) nextCronExecutionTime(cron string, timezone string) (time.Time, error) {
+func NextCronExecutionTime(cron string, timezone string) (time.Time, error) {
 	location, err := time.LoadLocation(timezone)
 	if err != nil {
 		return time.Time{}, err
