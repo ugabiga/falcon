@@ -7,6 +7,7 @@ import (
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
+	"github.com/ugabiga/falcon/internal/ent/user"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"time"
 
@@ -35,6 +36,10 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 		return nil, err
 	}
 
+	if err := s.validateHours(input.Hours); err != nil {
+		return nil, err
+	}
+
 	tradingAccount, err := s.db.TradingAccount.Query().
 		Where(
 			tradingaccount.UserID(userID),
@@ -45,12 +50,13 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 		return nil, err
 	}
 
-	if err = s.validateHours(input.Hours); err != nil {
+	u, err := s.db.User.Query().Where(user.ID(userID)).First(ctx)
+	if err != nil {
 		return nil, err
 	}
 
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := s.nextCronExecutionTime(cron)
+	nextExecutionTime, err := s.nextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -79,8 +85,13 @@ func (s TaskService) Update(ctx context.Context, userID int, taskID int, input g
 		return nil, err
 	}
 
+	u, err := s.db.User.Query().Where(user.ID(userID)).First(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := s.nextCronExecutionTime(cron)
+	nextExecutionTime, err := s.nextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -180,8 +191,14 @@ func (s TaskService) cronExpression(hour string, days string) string {
 	return "0 0 " + hour + " * * " + days
 }
 
-func (s TaskService) nextCronExecutionTime(cron string) (time.Time, error) {
-	nextTime, err := gronx.NextTick(cron, true)
+func (s TaskService) nextCronExecutionTime(cron string, timezone string) (time.Time, error) {
+	location, err := time.LoadLocation(timezone)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	localTime := time.Now().In(location)
+	nextTime, err := gronx.NextTickAfter(cron, localTime, true)
 	if err != nil {
 		return time.Time{}, err
 	}

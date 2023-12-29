@@ -64,7 +64,7 @@ func (h DCAMessageHandler) Handle(msg *message.Message) ([]*message.Message, err
 	return nil, nil
 }
 
-func (h DCAMessageHandler) getTarget() ([]DCAMessage, error) {
+func (h DCAMessageHandler) dcaMessages() ([]DCAMessage, error) {
 	orders, err := h.dcaSrv.GetTarget()
 	if err != nil {
 		return nil, err
@@ -80,10 +80,9 @@ func (h DCAMessageHandler) getTarget() ([]DCAMessage, error) {
 	return dcaMessages, nil
 }
 func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
-	for i := 0; i < 1; i++ {
-		log.Printf("Publishing message to topic: %s", DCAIncomingTopic)
-
-		messages, err := h.getTarget()
+	for {
+		log.Printf("Watching for DCA messages...")
+		messages, err := h.dcaMessages()
 		if err != nil {
 			log.Printf("Error occurred during watching. Err: %v", err)
 			continue
@@ -105,6 +104,6 @@ func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
 			}
 		}
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(time.Minute)
 	}
 }

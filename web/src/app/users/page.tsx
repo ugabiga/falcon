@@ -84,7 +84,7 @@ export default function Users() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="default" disabled>Choose your timezone</SelectItem>
-                            <SelectItem value="Asia/Seoul">Seoul</SelectItem>
+                            <SelectItem value="Asia/Seoul">Asia/Seoul</SelectItem>
                             <SelectItem value="UTC">UTC</SelectItem>
                         </SelectContent>
                     </Select>

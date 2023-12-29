@@ -5,7 +5,9 @@ import (
 	"errors"
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/str"
+	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/internal/ent/task"
 	"log"
 )
 
@@ -35,20 +37,30 @@ type TaskOrderInfo struct {
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	ctx := context.Background()
-	tasks, err := s.db.Task.Query().WithTradingAccount().All(ctx)
+	now := timer.NoSeconds()
+
+	log.Printf("Searching for tasks with next execution time: %s", now.String())
+
+	// TODO add pagination
+	tasks, err := s.db.Task.Query().
+		Where(
+			task.NextExecutionTime(now),
+		).
+		WithTradingAccount().
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var taskOrderInfos []TaskOrderInfo
-	for _, task := range tasks {
-		if task.Edges.TradingAccount != nil {
+	for _, t := range tasks {
+		if t.Edges.TradingAccount != nil {
 			taskOrderInfos = append(taskOrderInfos, TaskOrderInfo{
-				Symbol:   task.Symbol,
-				Size:     task.Size,
-				Exchange: task.Edges.TradingAccount.Exchange,
-				Key:      task.Edges.TradingAccount.Key,
-				Secret:   task.Edges.TradingAccount.Secret,
+				Symbol:   t.Symbol,
+				Size:     t.Size,
+				Exchange: t.Edges.TradingAccount.Exchange,
+				Key:      t.Edges.TradingAccount.Key,
+				Secret:   t.Edges.TradingAccount.Secret,
 			})
 		}
 	}
