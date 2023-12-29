@@ -17,6 +17,9 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
+import {NumericFormat} from 'react-number-format';
+import {cn} from "@/lib/utils";
+import {NumericFormatInput} from "@/components/numeric-format";
 
 
 function convertCronToHours(cron: string): string {
@@ -175,13 +178,19 @@ export function EditTask({task}: { task: Task }) {
                                         Amount
                                     </FormLabel>
                                     <FormControl>
-                                        <Input type="number"
-                                               placeholder="Amount"
-                                               value={field.value}
-                                               onChange={(e) => {
-                                                   field.onChange(Number(e.target.value))
-                                               }}
+                                        <NumericFormatInput
+                                            value={field.value}
+                                            thousandSeparator={true}
+                                            allowNegative={false}
+                                            allowLeadingZeros={false}
+                                            fixedDecimalScale={false}
+                                            prefix={form.watch("currency") === "KRW" ? "₩" : "$"}
+                                            suffix={""}
+                                            onValueChange={(values) => {
+                                                field.onChange(values.floatValue)
+                                            }}
                                         />
+
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>

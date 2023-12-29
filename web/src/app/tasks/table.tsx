@@ -6,27 +6,29 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {convertBooleanToYesNo} from "@/lib/converter";
 
-function convertToPastHourString(input: string): string {
-    const hours = input.split(',').map(Number);
 
-    if (hours.length === 0) {
-        return 'No execution times provided.';
+function convertDayOfWeek(value: string): string {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const days = value.split(',').map(Number);
+    if (days.includes(0) && days.includes(7)) {
+        days.splice(days.indexOf(0), 1);
+        days.splice(days.indexOf(7), 1);
+        days.push(0);
     }
-
-    const hoursString = hours.join(', ');
-    const lastHour = hours.pop();
-
-    if (hours.length === 0) {
-        return `At ${lastHour} o'clock.`;
+    if (days.length === 7) {
+        return 'Everyday';
+    } else if (days.length === 5 && !days.some(day => day === 0 || day === 6)) {
+        return 'Every weekday';
+    } else {
+        return 'Every ' + days.map(day => daysOfWeek[day]).join(', ');
     }
-
-    return `At ${hoursString}, and ${lastHour} o'clock.`;
 }
 
 function convertCronToHumanReadable(value: string) {
     const result = parseCronExpression(value)
+    const days = result.fields.dayOfWeek.toString()
     const hours = result.fields.hour.toString()
-    return convertToPastHourString(hours)
+    return `${convertDayOfWeek(days)} at ${hours} o'clock.`
 }
 
 function formatDate(dateTime: Date): string {
@@ -51,6 +53,38 @@ function convertToNextCronDate(value: string) {
         return 'No next execution time.';
     }
     return formatDate(result)
+}
+
+function convertNumberToCurrency(value: number, currency: string): string {
+    let decimalPlaces = 0
+    switch (currency) {
+        case 'KRW':
+            decimalPlaces = 0
+            break
+        case 'BTC':
+            decimalPlaces = 8
+            break
+        case 'ETH':
+            decimalPlaces = 8
+            break
+        case 'USDT':
+            decimalPlaces = 2
+            break
+        default:
+            decimalPlaces = 2
+    }
+
+    try {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: decimalPlaces,
+        }).format(value)
+    } catch (e) {
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: decimalPlaces,
+        }).format(value) + ' ' + currency
+    }
 }
 
 export function TaskTable({tasks}: { tasks?: Task[] }) {
@@ -82,7 +116,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 <TableCell>{task.id}</TableCell>
                                 <TableCell>{task.type}</TableCell>
                                 <TableCell>{convertCronToHumanReadable(task.cron)}</TableCell>
-                                <TableCell>{task.amount} {task.currency}</TableCell>
+                                <TableCell>{convertNumberToCurrency(task.amount, task.currency)}</TableCell>
                                 <TableCell>{task.cryptoCurrency}</TableCell>
                                 <TableCell>{convertToNextCronDate(task.cron)}</TableCell>
                                 <TableCell>{convertBooleanToYesNo(task.isActive)}</TableCell>
