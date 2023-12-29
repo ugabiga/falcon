@@ -76,7 +76,7 @@ export function EditTask({task}: { task: Task }) {
         defaultValues: {
             type: convertStringToTaskType(task.type),
             currency: task.currency,
-            amount: task.amount,
+            size: task.size,
             cryptoCurrency: task.cryptoCurrency,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
@@ -90,7 +90,7 @@ export function EditTask({task}: { task: Task }) {
             variables: {
                 id: task.id,
                 currency: data.currency,
-                amount: data.amount,
+                size: data.size,
                 cryptoCurrency: data.cryptoCurrency,
                 days: data.days,
                 hours: data.hours,
@@ -169,11 +169,11 @@ export function EditTask({task}: { task: Task }) {
 
                         <FormField
                             control={form.control}
-                            name="amount"
+                            name="size"
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Investing Amount
+                                        Investing Size
                                     </FormLabel>
                                     <FormControl>
                                         <NumericFormatInput

@@ -701,8 +701,8 @@ type TaskMutation struct {
 	typ                    string
 	id                     *int
 	currency               *string
-	amount                 *float64
-	addamount              *float64
+	size                   *float64
+	addsize                *float64
 	crypto_currency        *string
 	cron                   *string
 	next_execution_time    *time.Time
@@ -898,60 +898,60 @@ func (m *TaskMutation) ResetCurrency() {
 	m.currency = nil
 }
 
-// SetAmount sets the "amount" field.
-func (m *TaskMutation) SetAmount(f float64) {
-	m.amount = &f
-	m.addamount = nil
+// SetSize sets the "size" field.
+func (m *TaskMutation) SetSize(f float64) {
+	m.size = &f
+	m.addsize = nil
 }
 
-// Amount returns the value of the "amount" field in the mutation.
-func (m *TaskMutation) Amount() (r float64, exists bool) {
-	v := m.amount
+// Size returns the value of the "size" field in the mutation.
+func (m *TaskMutation) Size() (r float64, exists bool) {
+	v := m.size
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAmount returns the old "amount" field's value of the Task entity.
+// OldSize returns the old "size" field's value of the Task entity.
 // If the Task object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskMutation) OldAmount(ctx context.Context) (v float64, err error) {
+func (m *TaskMutation) OldSize(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+		return v, errors.New("OldSize is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAmount requires an ID field in the mutation")
+		return v, errors.New("OldSize requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+		return v, fmt.Errorf("querying old value for OldSize: %w", err)
 	}
-	return oldValue.Amount, nil
+	return oldValue.Size, nil
 }
 
-// AddAmount adds f to the "amount" field.
-func (m *TaskMutation) AddAmount(f float64) {
-	if m.addamount != nil {
-		*m.addamount += f
+// AddSize adds f to the "size" field.
+func (m *TaskMutation) AddSize(f float64) {
+	if m.addsize != nil {
+		*m.addsize += f
 	} else {
-		m.addamount = &f
+		m.addsize = &f
 	}
 }
 
-// AddedAmount returns the value that was added to the "amount" field in this mutation.
-func (m *TaskMutation) AddedAmount() (r float64, exists bool) {
-	v := m.addamount
+// AddedSize returns the value that was added to the "size" field in this mutation.
+func (m *TaskMutation) AddedSize() (r float64, exists bool) {
+	v := m.addsize
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetAmount resets all changes to the "amount" field.
-func (m *TaskMutation) ResetAmount() {
-	m.amount = nil
-	m.addamount = nil
+// ResetSize resets all changes to the "size" field.
+func (m *TaskMutation) ResetSize() {
+	m.size = nil
+	m.addsize = nil
 }
 
 // SetCryptoCurrency sets the "crypto_currency" field.
@@ -1390,8 +1390,8 @@ func (m *TaskMutation) Fields() []string {
 	if m.currency != nil {
 		fields = append(fields, task.FieldCurrency)
 	}
-	if m.amount != nil {
-		fields = append(fields, task.FieldAmount)
+	if m.size != nil {
+		fields = append(fields, task.FieldSize)
 	}
 	if m.crypto_currency != nil {
 		fields = append(fields, task.FieldCryptoCurrency)
@@ -1429,8 +1429,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.TradingAccountID()
 	case task.FieldCurrency:
 		return m.Currency()
-	case task.FieldAmount:
-		return m.Amount()
+	case task.FieldSize:
+		return m.Size()
 	case task.FieldCryptoCurrency:
 		return m.CryptoCurrency()
 	case task.FieldCron:
@@ -1460,8 +1460,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldTradingAccountID(ctx)
 	case task.FieldCurrency:
 		return m.OldCurrency(ctx)
-	case task.FieldAmount:
-		return m.OldAmount(ctx)
+	case task.FieldSize:
+		return m.OldSize(ctx)
 	case task.FieldCryptoCurrency:
 		return m.OldCryptoCurrency(ctx)
 	case task.FieldCron:
@@ -1501,12 +1501,12 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCurrency(v)
 		return nil
-	case task.FieldAmount:
+	case task.FieldSize:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAmount(v)
+		m.SetSize(v)
 		return nil
 	case task.FieldCryptoCurrency:
 		v, ok := value.(string)
@@ -1572,8 +1572,8 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *TaskMutation) AddedFields() []string {
 	var fields []string
-	if m.addamount != nil {
-		fields = append(fields, task.FieldAmount)
+	if m.addsize != nil {
+		fields = append(fields, task.FieldSize)
 	}
 	return fields
 }
@@ -1583,8 +1583,8 @@ func (m *TaskMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case task.FieldAmount:
-		return m.AddedAmount()
+	case task.FieldSize:
+		return m.AddedSize()
 	}
 	return nil, false
 }
@@ -1594,12 +1594,12 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *TaskMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case task.FieldAmount:
+	case task.FieldSize:
 		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddAmount(v)
+		m.AddSize(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -1649,8 +1649,8 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldCurrency:
 		m.ResetCurrency()
 		return nil
-	case task.FieldAmount:
-		m.ResetAmount()
+	case task.FieldSize:
+		m.ResetSize()
 		return nil
 	case task.FieldCryptoCurrency:
 		m.ResetCryptoCurrency()

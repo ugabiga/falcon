@@ -38,7 +38,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
             variables: {
                 tradingAccountID: tradingAccountID!,
                 currency: data.currency,
-                amount: data.amount,
+                size: data.size,
                 cryptoCurrency: data.cryptoCurrency,
                 days: data.days,
                 hours: data.hours,
@@ -116,11 +116,11 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
 
                         <FormField
                             control={form.control}
-                            name="amount"
+                            name="size"
                             render={({field}) => (
                                 <FormItem>
                                     <FormLabel>
-                                        Investing Amount
+                                        Investing Size
                                     </FormLabel>
                                     <FormControl>
                                         <NumericFormatInput

@@ -226,7 +226,7 @@ type Task implements Node {
   tradingAccountID: ID!
   currency: String!
   """Amount of currency to buy/sell"""
-  amount: Float!
+  size: Float!
   cryptoCurrency: String!
   cron: String!
   nextExecutionTime: Time
@@ -361,15 +361,15 @@ input TaskWhereInput {
   currencyHasSuffix: String
   currencyEqualFold: String
   currencyContainsFold: String
-  """amount field predicates"""
-  amount: Float
-  amountNEQ: Float
-  amountIn: [Float!]
-  amountNotIn: [Float!]
-  amountGT: Float
-  amountGTE: Float
-  amountLT: Float
-  amountLTE: Float
+  """size field predicates"""
+  size: Float
+  sizeNEQ: Float
+  sizeIn: [Float!]
+  sizeNotIn: [Float!]
+  sizeGT: Float
+  sizeGTE: Float
+  sizeLT: Float
+  sizeLTE: Float
   """crypto_currency field predicates"""
   cryptoCurrency: String
   cryptoCurrencyNEQ: String

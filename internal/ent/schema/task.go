@@ -24,7 +24,7 @@ func (Task) Fields() []ent.Field {
 			Positive().
 			GoType(int(0)),
 		field.String("currency"),
-		field.Float("amount").
+		field.Float("size").
 			Default(0).
 			Comment("Amount of currency to buy/sell"),
 		field.String("crypto_currency"),

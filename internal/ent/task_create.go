@@ -34,16 +34,16 @@ func (tc *TaskCreate) SetCurrency(s string) *TaskCreate {
 	return tc
 }
 
-// SetAmount sets the "amount" field.
-func (tc *TaskCreate) SetAmount(f float64) *TaskCreate {
-	tc.mutation.SetAmount(f)
+// SetSize sets the "size" field.
+func (tc *TaskCreate) SetSize(f float64) *TaskCreate {
+	tc.mutation.SetSize(f)
 	return tc
 }
 
-// SetNillableAmount sets the "amount" field if the given value is not nil.
-func (tc *TaskCreate) SetNillableAmount(f *float64) *TaskCreate {
+// SetNillableSize sets the "size" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableSize(f *float64) *TaskCreate {
 	if f != nil {
-		tc.SetAmount(*f)
+		tc.SetSize(*f)
 	}
 	return tc
 }
@@ -189,9 +189,9 @@ func (tc *TaskCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TaskCreate) defaults() {
-	if _, ok := tc.mutation.Amount(); !ok {
-		v := task.DefaultAmount
-		tc.mutation.SetAmount(v)
+	if _, ok := tc.mutation.Size(); !ok {
+		v := task.DefaultSize
+		tc.mutation.SetSize(v)
 	}
 	if _, ok := tc.mutation.IsActive(); !ok {
 		v := task.DefaultIsActive
@@ -220,8 +220,8 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Currency(); !ok {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required field "Task.currency"`)}
 	}
-	if _, ok := tc.mutation.Amount(); !ok {
-		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Task.amount"`)}
+	if _, ok := tc.mutation.Size(); !ok {
+		return &ValidationError{Name: "size", err: errors.New(`ent: missing required field "Task.size"`)}
 	}
 	if _, ok := tc.mutation.CryptoCurrency(); !ok {
 		return &ValidationError{Name: "crypto_currency", err: errors.New(`ent: missing required field "Task.crypto_currency"`)}
@@ -285,9 +285,9 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 		_node.Currency = value
 	}
-	if value, ok := tc.mutation.Amount(); ok {
-		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
-		_node.Amount = value
+	if value, ok := tc.mutation.Size(); ok {
+		_spec.SetField(task.FieldSize, field.TypeFloat64, value)
+		_node.Size = value
 	}
 	if value, ok := tc.mutation.CryptoCurrency(); ok {
 		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)

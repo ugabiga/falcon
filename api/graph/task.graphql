@@ -10,7 +10,7 @@ extend type Mutation {
 input CreateTaskInput {
     tradingAccountID: ID!
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     days: String!
     hours: String!
@@ -20,7 +20,7 @@ input CreateTaskInput {
 
 input UpdateTaskInput {
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     days: String!
     hours: String!
@@ -39,7 +39,7 @@ type Task {
     id: ID!
     tradingAccountID: ID!
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     cron: String!
     nextExecutionTime: Time

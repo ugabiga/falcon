@@ -63,7 +63,6 @@ type ComplexityRoot struct {
 	}
 
 	Task struct {
-		Amount            func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Cron              func(childComplexity int) int
 		CryptoCurrency    func(childComplexity int) int
@@ -72,6 +71,7 @@ type ComplexityRoot struct {
 		IsActive          func(childComplexity int) int
 		NextExecutionTime func(childComplexity int) int
 		Params            func(childComplexity int) int
+		Size              func(childComplexity int) int
 		TaskHistories     func(childComplexity int) int
 		TradingAccount    func(childComplexity int) int
 		TradingAccountID  func(childComplexity int) int
@@ -292,13 +292,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.UserIndex(childComplexity), true
 
-	case "Task.amount":
-		if e.complexity.Task.Amount == nil {
-			break
-		}
-
-		return e.complexity.Task.Amount(childComplexity), true
-
 	case "Task.createdAt":
 		if e.complexity.Task.CreatedAt == nil {
 			break
@@ -354,6 +347,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Task.Params(childComplexity), true
+
+	case "Task.size":
+		if e.complexity.Task.Size == nil {
+			break
+		}
+
+		return e.complexity.Task.Size(childComplexity), true
 
 	case "Task.taskHistories":
 		if e.complexity.Task.TaskHistories == nil {
@@ -693,7 +693,7 @@ extend type Mutation {
 input CreateTaskInput {
     tradingAccountID: ID!
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     days: String!
     hours: String!
@@ -703,7 +703,7 @@ input CreateTaskInput {
 
 input UpdateTaskInput {
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     days: String!
     hours: String!
@@ -722,7 +722,7 @@ type Task {
     id: ID!
     tradingAccountID: ID!
     currency: String!
-    amount: Float!
+    size: Float!
     cryptoCurrency: String!
     cron: String!
     nextExecutionTime: Time

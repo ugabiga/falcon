@@ -66,9 +66,9 @@ func Currency(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldCurrency, v))
 }
 
-// Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
-func Amount(v float64) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldAmount, v))
+// Size applies equality check predicate on the "size" field. It's identical to SizeEQ.
+func Size(v float64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldSize, v))
 }
 
 // CryptoCurrency applies equality check predicate on the "crypto_currency" field. It's identical to CryptoCurrencyEQ.
@@ -201,44 +201,44 @@ func CurrencyContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldCurrency, v))
 }
 
-// AmountEQ applies the EQ predicate on the "amount" field.
-func AmountEQ(v float64) predicate.Task {
-	return predicate.Task(sql.FieldEQ(FieldAmount, v))
+// SizeEQ applies the EQ predicate on the "size" field.
+func SizeEQ(v float64) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldSize, v))
 }
 
-// AmountNEQ applies the NEQ predicate on the "amount" field.
-func AmountNEQ(v float64) predicate.Task {
-	return predicate.Task(sql.FieldNEQ(FieldAmount, v))
+// SizeNEQ applies the NEQ predicate on the "size" field.
+func SizeNEQ(v float64) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldSize, v))
 }
 
-// AmountIn applies the In predicate on the "amount" field.
-func AmountIn(vs ...float64) predicate.Task {
-	return predicate.Task(sql.FieldIn(FieldAmount, vs...))
+// SizeIn applies the In predicate on the "size" field.
+func SizeIn(vs ...float64) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldSize, vs...))
 }
 
-// AmountNotIn applies the NotIn predicate on the "amount" field.
-func AmountNotIn(vs ...float64) predicate.Task {
-	return predicate.Task(sql.FieldNotIn(FieldAmount, vs...))
+// SizeNotIn applies the NotIn predicate on the "size" field.
+func SizeNotIn(vs ...float64) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldSize, vs...))
 }
 
-// AmountGT applies the GT predicate on the "amount" field.
-func AmountGT(v float64) predicate.Task {
-	return predicate.Task(sql.FieldGT(FieldAmount, v))
+// SizeGT applies the GT predicate on the "size" field.
+func SizeGT(v float64) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldSize, v))
 }
 
-// AmountGTE applies the GTE predicate on the "amount" field.
-func AmountGTE(v float64) predicate.Task {
-	return predicate.Task(sql.FieldGTE(FieldAmount, v))
+// SizeGTE applies the GTE predicate on the "size" field.
+func SizeGTE(v float64) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldSize, v))
 }
 
-// AmountLT applies the LT predicate on the "amount" field.
-func AmountLT(v float64) predicate.Task {
-	return predicate.Task(sql.FieldLT(FieldAmount, v))
+// SizeLT applies the LT predicate on the "size" field.
+func SizeLT(v float64) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldSize, v))
 }
 
-// AmountLTE applies the LTE predicate on the "amount" field.
-func AmountLTE(v float64) predicate.Task {
-	return predicate.Task(sql.FieldLTE(FieldAmount, v))
+// SizeLTE applies the LTE predicate on the "size" field.
+func SizeLTE(v float64) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldSize, v))
 }
 
 // CryptoCurrencyEQ applies the EQ predicate on the "crypto_currency" field.

@@ -411,15 +411,15 @@ type TaskWhereInput struct {
 	CurrencyEqualFold    *string  `json:"currencyEqualFold,omitempty"`
 	CurrencyContainsFold *string  `json:"currencyContainsFold,omitempty"`
 
-	// "amount" field predicates.
-	Amount      *float64  `json:"amount,omitempty"`
-	AmountNEQ   *float64  `json:"amountNEQ,omitempty"`
-	AmountIn    []float64 `json:"amountIn,omitempty"`
-	AmountNotIn []float64 `json:"amountNotIn,omitempty"`
-	AmountGT    *float64  `json:"amountGT,omitempty"`
-	AmountGTE   *float64  `json:"amountGTE,omitempty"`
-	AmountLT    *float64  `json:"amountLT,omitempty"`
-	AmountLTE   *float64  `json:"amountLTE,omitempty"`
+	// "size" field predicates.
+	Size      *float64  `json:"size,omitempty"`
+	SizeNEQ   *float64  `json:"sizeNEQ,omitempty"`
+	SizeIn    []float64 `json:"sizeIn,omitempty"`
+	SizeNotIn []float64 `json:"sizeNotIn,omitempty"`
+	SizeGT    *float64  `json:"sizeGT,omitempty"`
+	SizeGTE   *float64  `json:"sizeGTE,omitempty"`
+	SizeLT    *float64  `json:"sizeLT,omitempty"`
+	SizeLTE   *float64  `json:"sizeLTE,omitempty"`
 
 	// "crypto_currency" field predicates.
 	CryptoCurrency             *string  `json:"cryptoCurrency,omitempty"`
@@ -657,29 +657,29 @@ func (i *TaskWhereInput) P() (predicate.Task, error) {
 	if i.CurrencyContainsFold != nil {
 		predicates = append(predicates, task.CurrencyContainsFold(*i.CurrencyContainsFold))
 	}
-	if i.Amount != nil {
-		predicates = append(predicates, task.AmountEQ(*i.Amount))
+	if i.Size != nil {
+		predicates = append(predicates, task.SizeEQ(*i.Size))
 	}
-	if i.AmountNEQ != nil {
-		predicates = append(predicates, task.AmountNEQ(*i.AmountNEQ))
+	if i.SizeNEQ != nil {
+		predicates = append(predicates, task.SizeNEQ(*i.SizeNEQ))
 	}
-	if len(i.AmountIn) > 0 {
-		predicates = append(predicates, task.AmountIn(i.AmountIn...))
+	if len(i.SizeIn) > 0 {
+		predicates = append(predicates, task.SizeIn(i.SizeIn...))
 	}
-	if len(i.AmountNotIn) > 0 {
-		predicates = append(predicates, task.AmountNotIn(i.AmountNotIn...))
+	if len(i.SizeNotIn) > 0 {
+		predicates = append(predicates, task.SizeNotIn(i.SizeNotIn...))
 	}
-	if i.AmountGT != nil {
-		predicates = append(predicates, task.AmountGT(*i.AmountGT))
+	if i.SizeGT != nil {
+		predicates = append(predicates, task.SizeGT(*i.SizeGT))
 	}
-	if i.AmountGTE != nil {
-		predicates = append(predicates, task.AmountGTE(*i.AmountGTE))
+	if i.SizeGTE != nil {
+		predicates = append(predicates, task.SizeGTE(*i.SizeGTE))
 	}
-	if i.AmountLT != nil {
-		predicates = append(predicates, task.AmountLT(*i.AmountLT))
+	if i.SizeLT != nil {
+		predicates = append(predicates, task.SizeLT(*i.SizeLT))
 	}
-	if i.AmountLTE != nil {
-		predicates = append(predicates, task.AmountLTE(*i.AmountLTE))
+	if i.SizeLTE != nil {
+		predicates = append(predicates, task.SizeLTE(*i.SizeLTE))
 	}
 	if i.CryptoCurrency != nil {
 		predicates = append(predicates, task.CryptoCurrencyEQ(*i.CryptoCurrency))

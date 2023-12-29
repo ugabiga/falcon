@@ -24,7 +24,7 @@ type Authentication struct {
 type CreateTaskInput struct {
 	TradingAccountID int        `json:"tradingAccountID"`
 	Currency         string     `json:"currency"`
-	Amount           float64    `json:"amount"`
+	Size             float64    `json:"size"`
 	CryptoCurrency   string     `json:"cryptoCurrency"`
 	Days             string     `json:"days"`
 	Hours            string     `json:"hours"`
@@ -36,7 +36,7 @@ type Task struct {
 	ID                int             `json:"id"`
 	TradingAccountID  int             `json:"tradingAccountID"`
 	Currency          string          `json:"currency"`
-	Amount            float64         `json:"amount"`
+	Size              float64         `json:"size"`
 	CryptoCurrency    string          `json:"cryptoCurrency"`
 	Cron              string          `json:"cron"`
 	NextExecutionTime *time.Time      `json:"nextExecutionTime"`
@@ -87,7 +87,7 @@ type TradingAccountIndex struct {
 
 type UpdateTaskInput struct {
 	Currency       string     `json:"currency"`
-	Amount         float64    `json:"amount"`
+	Size           float64    `json:"size"`
 	CryptoCurrency string     `json:"cryptoCurrency"`
 	Days           string     `json:"days"`
 	Hours          string     `json:"hours"`

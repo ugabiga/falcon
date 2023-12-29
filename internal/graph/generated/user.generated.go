@@ -351,8 +351,8 @@ func (ec *executionContext) fieldContext_Mutation_createTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
-			case "amount":
-				return ec.fieldContext_Task_amount(ctx, field)
+			case "size":
+				return ec.fieldContext_Task_size(ctx, field)
 			case "cryptoCurrency":
 				return ec.fieldContext_Task_cryptoCurrency(ctx, field)
 			case "cron":
@@ -436,8 +436,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTask(ctx context.Context
 				return ec.fieldContext_Task_tradingAccountID(ctx, field)
 			case "currency":
 				return ec.fieldContext_Task_currency(ctx, field)
-			case "amount":
-				return ec.fieldContext_Task_amount(ctx, field)
+			case "size":
+				return ec.fieldContext_Task_size(ctx, field)
 			case "cryptoCurrency":
 				return ec.fieldContext_Task_cryptoCurrency(ctx, field)
 			case "cron":

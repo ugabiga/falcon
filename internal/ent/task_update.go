@@ -58,24 +58,24 @@ func (tu *TaskUpdate) SetNillableCurrency(s *string) *TaskUpdate {
 	return tu
 }
 
-// SetAmount sets the "amount" field.
-func (tu *TaskUpdate) SetAmount(f float64) *TaskUpdate {
-	tu.mutation.ResetAmount()
-	tu.mutation.SetAmount(f)
+// SetSize sets the "size" field.
+func (tu *TaskUpdate) SetSize(f float64) *TaskUpdate {
+	tu.mutation.ResetSize()
+	tu.mutation.SetSize(f)
 	return tu
 }
 
-// SetNillableAmount sets the "amount" field if the given value is not nil.
-func (tu *TaskUpdate) SetNillableAmount(f *float64) *TaskUpdate {
+// SetNillableSize sets the "size" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableSize(f *float64) *TaskUpdate {
 	if f != nil {
-		tu.SetAmount(*f)
+		tu.SetSize(*f)
 	}
 	return tu
 }
 
-// AddAmount adds f to the "amount" field.
-func (tu *TaskUpdate) AddAmount(f float64) *TaskUpdate {
-	tu.mutation.AddAmount(f)
+// AddSize adds f to the "size" field.
+func (tu *TaskUpdate) AddSize(f float64) *TaskUpdate {
+	tu.mutation.AddSize(f)
 	return tu
 }
 
@@ -289,11 +289,11 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
-	if value, ok := tu.mutation.Amount(); ok {
-		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
+	if value, ok := tu.mutation.Size(); ok {
+		_spec.SetField(task.FieldSize, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.AddedAmount(); ok {
-		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
+	if value, ok := tu.mutation.AddedSize(); ok {
+		_spec.AddField(task.FieldSize, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.CryptoCurrency(); ok {
 		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)
@@ -444,24 +444,24 @@ func (tuo *TaskUpdateOne) SetNillableCurrency(s *string) *TaskUpdateOne {
 	return tuo
 }
 
-// SetAmount sets the "amount" field.
-func (tuo *TaskUpdateOne) SetAmount(f float64) *TaskUpdateOne {
-	tuo.mutation.ResetAmount()
-	tuo.mutation.SetAmount(f)
+// SetSize sets the "size" field.
+func (tuo *TaskUpdateOne) SetSize(f float64) *TaskUpdateOne {
+	tuo.mutation.ResetSize()
+	tuo.mutation.SetSize(f)
 	return tuo
 }
 
-// SetNillableAmount sets the "amount" field if the given value is not nil.
-func (tuo *TaskUpdateOne) SetNillableAmount(f *float64) *TaskUpdateOne {
+// SetNillableSize sets the "size" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableSize(f *float64) *TaskUpdateOne {
 	if f != nil {
-		tuo.SetAmount(*f)
+		tuo.SetSize(*f)
 	}
 	return tuo
 }
 
-// AddAmount adds f to the "amount" field.
-func (tuo *TaskUpdateOne) AddAmount(f float64) *TaskUpdateOne {
-	tuo.mutation.AddAmount(f)
+// AddSize adds f to the "size" field.
+func (tuo *TaskUpdateOne) AddSize(f float64) *TaskUpdateOne {
+	tuo.mutation.AddSize(f)
 	return tuo
 }
 
@@ -705,11 +705,11 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	if value, ok := tuo.mutation.Currency(); ok {
 		_spec.SetField(task.FieldCurrency, field.TypeString, value)
 	}
-	if value, ok := tuo.mutation.Amount(); ok {
-		_spec.SetField(task.FieldAmount, field.TypeFloat64, value)
+	if value, ok := tuo.mutation.Size(); ok {
+		_spec.SetField(task.FieldSize, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.AddedAmount(); ok {
-		_spec.AddField(task.FieldAmount, field.TypeFloat64, value)
+	if value, ok := tuo.mutation.AddedSize(); ok {
+		_spec.AddField(task.FieldSize, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.CryptoCurrency(); ok {
 		_spec.SetField(task.FieldCryptoCurrency, field.TypeString, value)

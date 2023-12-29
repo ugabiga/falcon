@@ -18,8 +18,8 @@ const (
 	FieldTradingAccountID = "trading_account_id"
 	// FieldCurrency holds the string denoting the currency field in the database.
 	FieldCurrency = "currency"
-	// FieldAmount holds the string denoting the amount field in the database.
-	FieldAmount = "amount"
+	// FieldSize holds the string denoting the size field in the database.
+	FieldSize = "size"
 	// FieldCryptoCurrency holds the string denoting the crypto_currency field in the database.
 	FieldCryptoCurrency = "crypto_currency"
 	// FieldCron holds the string denoting the cron field in the database.
@@ -63,7 +63,7 @@ var Columns = []string{
 	FieldID,
 	FieldTradingAccountID,
 	FieldCurrency,
-	FieldAmount,
+	FieldSize,
 	FieldCryptoCurrency,
 	FieldCron,
 	FieldNextExecutionTime,
@@ -87,8 +87,8 @@ func ValidColumn(column string) bool {
 var (
 	// TradingAccountIDValidator is a validator for the "trading_account_id" field. It is called by the builders before save.
 	TradingAccountIDValidator func(int) error
-	// DefaultAmount holds the default value on creation for the "amount" field.
-	DefaultAmount float64
+	// DefaultSize holds the default value on creation for the "size" field.
+	DefaultSize float64
 	// DefaultIsActive holds the default value on creation for the "is_active" field.
 	DefaultIsActive bool
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -119,9 +119,9 @@ func ByCurrency(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCurrency, opts...).ToFunc()
 }
 
-// ByAmount orders the results by the amount field.
-func ByAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+// BySize orders the results by the size field.
+func BySize(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSize, opts...).ToFunc()
 }
 
 // ByCryptoCurrency orders the results by the crypto_currency field.
