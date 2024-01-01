@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 )
 
 type Config struct {
@@ -40,9 +41,19 @@ func newConfig() (*Config, error) {
 
 	return config, nil
 }
+
 func (c *Config) LoadAutomaticEnv() error {
-	viper.AutomaticEnv()
-	if err := viper.Unmarshal(&c); err != nil {
+	v := viper.New()
+
+	//for loop for config struct
+	result := extractMapStructureTags(*c)
+	for _, value := range result {
+		if err := v.BindEnv(value, value); err != nil {
+			return err
+		}
+	}
+
+	if err := v.Unmarshal(&c); err != nil {
 		return err
 	}
 	return nil
@@ -64,7 +75,6 @@ func (c *Config) Load(path, name *string) error {
 	viper.SetConfigName(*name)
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(*path)
-	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		return err
@@ -97,4 +107,23 @@ func findProjectRoot() (string, error) {
 	}
 
 	return "", os.ErrNotExist
+}
+
+func extractMapStructureTags(configStruct interface{}) map[string]string {
+	t := reflect.TypeOf(configStruct)
+	if t.Kind() != reflect.Struct {
+		panic("Input must be a struct")
+	}
+
+	result := make(map[string]string)
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		tag := field.Tag.Get("mapstructure")
+		if tag != "" {
+			result[field.Name] = tag
+		}
+	}
+
+	return result
 }
