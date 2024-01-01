@@ -4,8 +4,8 @@ import (
 	"context"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/ent"
+	"github.com/ugabiga/falcon/pkg/config"
 	"log"
 	"os"
 )

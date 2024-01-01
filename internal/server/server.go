@@ -7,11 +7,11 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/service"
+	"github.com/ugabiga/falcon/pkg/config"
 )
 
 type Server struct {

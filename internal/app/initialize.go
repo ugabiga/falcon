@@ -3,13 +3,13 @@ package app
 import (
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/encryption"
-	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/graph/helper"
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
+	"github.com/ugabiga/falcon/pkg/config"
 	"go.uber.org/fx"
 )
 

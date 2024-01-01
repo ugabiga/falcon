@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/server"
+	"github.com/ugabiga/falcon/pkg/config"
 )
 
 type App struct {

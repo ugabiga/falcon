@@ -5,8 +5,8 @@ import (
 	"errors"
 	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/client"
-	"github.com/ugabiga/falcon/internal/config"
 	"github.com/ugabiga/falcon/internal/service"
+	"github.com/ugabiga/falcon/pkg/config"
 	"testing"
 )
 

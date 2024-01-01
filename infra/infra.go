@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
-
+	"github.com/ugabiga/falcon/pkg/config"
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
@@ -22,7 +22,7 @@ type InfraStackProps struct {
 	awscdk.StackProps
 }
 
-func NewStack(scope constructs.Construct, id string, props *InfraStackProps) awscdk.Stack {
+func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *InfraStackProps) awscdk.Stack {
 	var stackProps awscdk.StackProps
 	if props != nil {
 		stackProps = props.StackProps
@@ -33,12 +33,11 @@ func NewStack(scope constructs.Construct, id string, props *InfraStackProps) aws
 	u := newUser(stack)
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
-	newLambda(stack, ecr)
+	newLambda(stack, ecr, cfg)
 
 	return stack
 }
-
-func newLambda(stack awscdk.Stack, ecr awsecr.Repository) {
+func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config) {
 	lambdaFunc := awslambda.NewDockerImageFunction(stack, jsii.String(LambdaName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
@@ -46,16 +45,15 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository) {
 		}),
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
-		Environment:  &map[string]*string{
-			//"ENV":               jsii.String(pkg.ENVProd),
-			//"SHEET_ID":          jsii.String(config.SheetID),
-			//"SHEET_URL":         jsii.String(config.SheetURL),
-			//"TOKEN":             jsii.String(config.Token),
-			//"CREDENTIAL":        jsii.String(config.Credential),
-			//"SLACK_WEBHOOK_URL": jsii.String(config.SlackWebhookURL),
-			//"SELLMATE_USERNAME": jsii.String(config.SellmateUserName),
-			//"SELLMATE_PASSWORD": jsii.String(config.SellmatePassword),
-			//"SLACK_TOKEN":       jsii.String(config.SlackToken),
+		Environment: &map[string]*string{
+			"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
+			"DB_SOURCE":            jsii.String(cfg.DBSource),
+			"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
+			"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
+			"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
+			"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
+			"WEB_URL":              jsii.String(cfg.WebURL),
+			"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
 		},
 	})
 
@@ -189,16 +187,33 @@ func newUser(stack awscdk.Stack) awsiam.User {
 	return user
 }
 
+func newConfig() (*config.Config, error) {
+	cfg := config.NewConfigWithoutSetting()
+	if err := cfg.Load(
+		&[]string{"../"}[0],
+		&[]string{"config"}[0],
+	); err != nil {
+		return nil, err
+	}
+
+	return cfg, nil
+}
+
 func main() {
 	defer jsii.Close()
 
+	cfg, err := newConfig()
+	if err != nil {
+		panic(err)
+	}
 	app := awscdk.NewApp(nil)
 
-	NewStack(app, "FalconStack", &InfraStackProps{
-		awscdk.StackProps{
-			Env: env(),
-		},
-	})
+	NewStack(app, "FalconStack", cfg,
+		&InfraStackProps{
+			awscdk.StackProps{
+				Env: env(),
+			},
+		})
 
 	app.Synth(nil)
 }

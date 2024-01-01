@@ -18,12 +18,15 @@ type Config struct {
 	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
 }
 
+func NewConfigWithoutSetting() *Config {
+	return &Config{}
+}
 func NewConfig() (*Config, error) {
 	return newConfig()
 }
 func newConfig() (*Config, error) {
 	config := &Config{}
-	if err := config.Load(); err != nil {
+	if err := config.Load(nil, nil); err != nil {
 		log.Fatalf("failed loading config: %v", err)
 		return nil, err
 	}
@@ -31,16 +34,22 @@ func newConfig() (*Config, error) {
 	return config, nil
 }
 
-func (c *Config) Load() error {
-	projectRoot, err := findProjectRoot()
-	if err != nil {
-		return err
+func (c *Config) Load(path, name *string) error {
+	if path == nil {
+		projectRoot, err := findProjectRoot()
+		if err != nil {
+			return err
+		}
+		path = &projectRoot
 	}
 
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(projectRoot)
+	if name == nil {
+		name = &[]string{"config"}[0]
+	}
 
+	viper.SetConfigName(*name)
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(*path)
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {

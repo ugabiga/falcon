@@ -6,7 +6,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"github.com/ugabiga/falcon/internal/config"
+	"github.com/ugabiga/falcon/pkg/config"
 	"io"
 )
 
