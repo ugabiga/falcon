@@ -21,17 +21,31 @@ type Config struct {
 func NewConfigWithoutSetting() *Config {
 	return &Config{}
 }
+
 func NewConfig() (*Config, error) {
 	return newConfig()
 }
+
 func newConfig() (*Config, error) {
 	config := &Config{}
 	if err := config.Load(nil, nil); err != nil {
-		log.Fatalf("failed loading config: %v", err)
-		return nil, err
+
+		if config.LoadAutomaticEnv() != nil {
+			log.Fatalf("failed loading config: %v", err)
+			return nil, err
+		}
+
+		return config, nil
 	}
 
 	return config, nil
+}
+func (c *Config) LoadAutomaticEnv() error {
+	viper.AutomaticEnv()
+	if err := viper.Unmarshal(&c); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Config) Load(path, name *string) error {
