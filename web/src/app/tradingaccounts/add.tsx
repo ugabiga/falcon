@@ -29,12 +29,17 @@ export function AddTradingAccount() {
     })
 
     function onSubmit(data: z.infer<typeof TradingAccountFormSchema>) {
+        if (data.secret === undefined || data.secret === null) {
+            errorToast(t("trading_account.add.error.secret"))
+            return
+        }
+
         createTradingAccount({
             variables: {
                 name: data.name,
                 exchange: data.exchange,
                 key: data.key,
-                secret: data.secret,
+                secret: data.secret ?? "",
             }
         }).then(() => {
             setOpenDialog(false)

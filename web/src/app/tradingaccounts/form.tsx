@@ -30,12 +30,14 @@ export const TradingAccountFormSchema = z.object({
             message: "Please enter a identifier",
         }),
     secret: z
-        .string({
-            required_error: "Please enter a credential",
-        })
-        .min(1, {
-            message: "Please enter a credential",
-        }),
+        .union([
+            z.string()
+                .length(0),
+            z.string()
+                .min(1)
+        ])
+        .optional()
+        .transform((val) => val === "" ? undefined : val),
 })
 
 export function TradingAccountForm({form}: {

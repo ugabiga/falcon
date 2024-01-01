@@ -52,6 +52,7 @@
   "trading_account.table.key": "키",
   "trading_account.table.ip": "IP",
   "trading_account.table.action": "동작",
+  "trading_account.add.error.secret": "시크릿을 입력하세요",
   "tasks.title": "작업",
   "tasks.select_trading_account.placeholder": "거래 계정 선택",
   "tasks.form.add.btn": "추가",

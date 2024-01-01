@@ -13,8 +13,10 @@ func ToTradingAccount(inputData *ent.TradingAccount) (*generated.TradingAccount,
 	}
 
 	//trim key
-	keyTrimCount := 5
-	result.Key = result.Key[:keyTrimCount]
+	if len(result.Key) > 5 {
+		keyTrimCount := 5
+		result.Key = result.Key[:keyTrimCount]
+	}
 
 	result.Tasks = make([]*generated.Task, 0, len(inputData.Edges.Tasks))
 	for _, v := range inputData.Edges.Tasks {
