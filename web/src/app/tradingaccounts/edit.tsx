@@ -48,7 +48,7 @@ export function EditTradingAccount(
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="ghost">{t("tradingAccounts.edit.btn")}</Button>
+                <Button variant="ghost">{t("trading_account.edit.btn")}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
@@ -56,7 +56,7 @@ export function EditTradingAccount(
                           onSubmit={form.handleSubmit(onSubmit)}
                     >
                         <DialogHeader className="mb-2">
-                            <DialogTitle>{t("tradingAccounts.edit.title")}</DialogTitle>
+                            <DialogTitle>{t("trading_account.edit.title")}</DialogTitle>
                         </DialogHeader>
 
                         <TradingAccountForm form={form}/>

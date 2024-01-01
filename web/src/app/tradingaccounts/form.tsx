@@ -49,9 +49,9 @@ export function TradingAccountForm({form}: {
             name="name"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{t("tradingAccounts.form.name")}</FormLabel>
+                    <FormLabel>{t("trading_account.form.name")}</FormLabel>
                     <FormControl>
-                        <Input placeholder={t("tradingAccounts.form.name")} {...field} />
+                        <Input placeholder={t("trading_account.form.name")} {...field} />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
@@ -63,11 +63,11 @@ export function TradingAccountForm({form}: {
             name="exchange"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{t("tradingAccounts.form.exchange")}</FormLabel>
+                    <FormLabel>{t("trading_account.form.exchange")}</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder={t("tradingAccounts.form.exchange")}/>
+                                <SelectValue placeholder={t("trading_account.form.exchange")}/>
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -85,9 +85,9 @@ export function TradingAccountForm({form}: {
             name="key"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{t("tradingAccounts.form.key")}</FormLabel>
+                    <FormLabel>{t("trading_account.form.key")}</FormLabel>
                     <FormControl>
-                        <Input type="password" placeholder={t("tradingAccounts.form.key")} {...field} />
+                        <Input type="password" placeholder={t("trading_account.form.key")} {...field} />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
@@ -99,9 +99,9 @@ export function TradingAccountForm({form}: {
             name="secret"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{t("tradingAccounts.form.secret")}</FormLabel>
+                    <FormLabel>{t("trading_account.form.secret")}</FormLabel>
                     <FormControl>
-                        <Input type="password" placeholder={t("tradingAccounts.form.secret")} {...field} />
+                        <Input type="password" placeholder={t("trading_account.form.secret")} {...field} />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
@@ -110,7 +110,7 @@ export function TradingAccountForm({form}: {
 
         {/* Submit */}
         <DialogFooter>
-            <Button type="submit" className={"mt-6"}>{t("tradingAccounts.form.submit")}</Button>
+            <Button type="submit" className={"mt-6"}>{t("trading_account.form.submit")}</Button>
         </DialogFooter>
     </>
 }

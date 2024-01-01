@@ -7,8 +7,10 @@ import {Loading} from "@/components/loading";
 import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {Error} from "@/components/error";
+import {useTranslation} from "react-i18next";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
+    const {t} = useTranslation()
     const router = useRouter()
     const {data, loading, error} = useQuery(GetTaskHistoryIndexDocument, {
         variables: {
@@ -35,12 +37,12 @@ export default function TaskHistory({params}: { params: { id: string } }) {
 
                     router.push("/tasks?trading_account_id=" + data.taskHistoryIndex?.task?.tradingAccountID)
                 }}>
-                    Back
+                    {t("task_history.back.btn")}
                 </Button>
             </div>
             <main className="min-h-screen mt-6 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
                 <h1 className="text-3xl font-bold">
-                    Task History (Task ID : {params.id})
+                    {t("task_history.title")}
                 </h1>
                 <div className="mt-6">
                     {/*@ts-ignore*/}

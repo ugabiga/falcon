@@ -12,12 +12,14 @@ import {AddTask} from "@/app/tasks/add";
 import {Loading} from "@/components/loading";
 import {useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
+import {useTranslation} from "react-i18next";
 
-export default function Tasks(){
+export default function Tasks() {
+    const {t} = useTranslation()
     const params = useSearchParams()
     const tradingAccountId = params.get('trading_account_id')
 
-    const {data, loading, refetch, error} = useQuery(GetTaskIndexDocument,{
+    const {data, loading, refetch, error} = useQuery(GetTaskIndexDocument, {
         variables: {
             tradingAccountID: tradingAccountId ?? null
         }
@@ -51,7 +53,9 @@ export default function Tasks(){
 
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
-            <h1 className="text-3xl font-bold">Tasks</h1>
+            <h1 className="text-3xl font-bold">
+                {t('tasks.title')}
+            </h1>
 
             <div className={"mt-6 w-full flex space-x-2"}>
                 <div>

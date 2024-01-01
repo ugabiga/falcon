@@ -39,7 +39,7 @@ export default function TradingAccounts() {
 
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
-            <h1 className="text-3xl font-bold">{t("tradingAccounts.title")}</h1>
+            <h1 className="text-3xl font-bold">{t("trading_account.title")}</h1>
 
             <div className={"w-full flex space-x-2"}>
                 <div className={"flex-grow"}></div>

@@ -2,8 +2,11 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {TaskIndex} from "@/graph/generated/generated";
 import {useDispatch} from "react-redux";
 import {refreshTask} from "@/store/taskSlice";
+import {useTranslation} from "react-i18next";
 
 export function TradingAccountSelector({taskIndex}: { taskIndex?: TaskIndex }) {
+    const {t} = useTranslation()
+
     if (!taskIndex) {
         return null
     }
@@ -20,7 +23,7 @@ export function TradingAccountSelector({taskIndex}: { taskIndex?: TaskIndex }) {
                 }}
         >
             <SelectTrigger>
-                <SelectValue placeholder="Select a Exchange"/>
+                <SelectValue placeholder={t('tasks.select_trading_account.placeholder')}/>
             </SelectTrigger>
             <SelectContent>
                 {

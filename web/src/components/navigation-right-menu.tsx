@@ -7,6 +7,7 @@ import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {useRouter} from "next/navigation";
+import {useTranslation} from "react-i18next";
 
 
 export function NavigationRightMenu() {
@@ -31,6 +32,7 @@ export function NavigationRightMenu() {
 }
 
 function SessionMenu() {
+    const {t} = useTranslation()
     const {data: session} = useSession();
     const router = useRouter()
 
@@ -51,12 +53,12 @@ function SessionMenu() {
                                 router.push("/users")
                             }
                         }>
-                            Profile
+                            {t("nav.profile")}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => signOut({redirect: false}).then(() => {
                             router.push("/")
                         })}>
-                            Sign Out
+                            {t("nav.sign_out")}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
@@ -65,7 +67,7 @@ function SessionMenu() {
     } else {
         return (
             <Button variant="ghost" onClick={() => signIn()}>
-                Sign In
+                {t("nav.sign_in")}
             </Button>
         )
     }

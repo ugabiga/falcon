@@ -18,11 +18,11 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">{t("tradingAccounts.table.name")}</TableHead>
-                    <TableHead>{t("tradingAccounts.table.exchange")}</TableHead>
-                    <TableHead>{t("tradingAccounts.table.key")}</TableHead>
-                    <TableHead>{t("tradingAccounts.table.ip")}</TableHead>
-                    <TableHead>{t("tradingAccounts.table.action")}</TableHead>
+                    <TableHead className="w-[100px]">{t("trading_account.table.name")}</TableHead>
+                    <TableHead>{t("trading_account.table.exchange")}</TableHead>
+                    <TableHead>{t("trading_account.table.key")}</TableHead>
+                    <TableHead>{t("trading_account.table.ip")}</TableHead>
+                    <TableHead>{t("trading_account.table.action")}</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

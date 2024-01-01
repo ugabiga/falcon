@@ -1,47 +1,44 @@
 "use client";
 
 import * as React from "react";
+import {useEffect} from "react";
 import {X} from "lucide-react";
 
 import {Badge} from "@/components/ui/badge";
-import {
-    Command,
-    CommandGroup,
-    CommandItem,
-} from "@/components/ui/command";
+import {Command, CommandGroup, CommandItem,} from "@/components/ui/command";
 import {Command as CommandPrimitive} from "cmdk";
-import {useEffect} from "react";
+import {useTranslation} from "react-i18next";
 
 type Days = Record<"value" | "label", string>;
 
 const DAYS = [
     {
         value: "1",
-        label: "Monday"
+        label: "monday"
     },
     {
         value: "2",
-        label: "Tuesday"
+        label: "tuesday"
     },
     {
         value: "3",
-        label: "Wednesday"
+        label: "wednesday"
     },
     {
         value: "4",
-        label: "Thursday"
+        label: "thursday"
     },
     {
         value: "5",
-        label: "Friday"
+        label: "friday"
     },
     {
         value: "6",
-        label: "Saturday"
+        label: "saturday"
     },
     {
         value: "0",
-        label: "Sunday",
+        label: "sunday",
     }
 ] satisfies Days[];
 
@@ -62,12 +59,15 @@ function convertDaysInStringToDaysArray(daysInString?: string): Days[] {
 export function DaysOfWeekSelector(
     {
         selectedDaysInString,
+        placeholder,
         onChange
     }: {
         selectedDaysInString?: string,
+        placeholder?: string,
         onChange?: (days: string) => void
     }
 ) {
+    const {t} = useTranslation();
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState<Days[]>(convertDaysInStringToDaysArray(selectedDaysInString));
@@ -117,7 +117,7 @@ export function DaysOfWeekSelector(
                     {selected.map((inputValue) => {
                         return (
                             <Badge key={inputValue.value} variant="secondary">
-                                {inputValue.label}
+                                {t("common.days." + inputValue.label)}
                                 <button
                                     className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                     onKeyDown={(e) => {
@@ -143,7 +143,7 @@ export function DaysOfWeekSelector(
                         onValueChange={setInputValue}
                         onBlur={() => setOpen(false)}
                         onFocus={() => setOpen(true)}
-                        placeholder="Select days of week..."
+                        placeholder={placeholder}
                         className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
                     />
                 </div>
@@ -167,7 +167,7 @@ export function DaysOfWeekSelector(
                                         }}
                                         className={"cursor-pointer"}
                                     >
-                                        {inputValue.label}
+                                        {t("common.days." + inputValue.label)}
                                     </CommandItem>
                                 );
                             })}
