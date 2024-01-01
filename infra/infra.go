@@ -33,7 +33,7 @@ func NewStack(scope constructs.Construct, id string, props *InfraStackProps) aws
 	u := newUser(stack)
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
-	//newLambda(stack, ecr)
+	newLambda(stack, ecr)
 
 	return stack
 }

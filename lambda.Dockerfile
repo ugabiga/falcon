@@ -11,5 +11,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /entrypoint cmd/lambda/main.go
 # copy artifacts to a clean image
 FROM public.ecr.aws/lambda/provided:al2 as release-stage
 COPY --from=build-stage /entrypoint /entrypoint
+COPY config.yaml /config.yaml
 ENTRYPOINT ["/entrypoint"]
 
