@@ -17,3 +17,6 @@ dev:
 gql-gen:
 	@go run github.com/99designs/gqlgen generate
 	@cd web && yarn codegen
+
+build:
+	@docker build -t "falcon:latest" -f ./lambda.Dockerfile .

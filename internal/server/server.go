@@ -2,6 +2,7 @@ package server
 
 import (
 	gqlHandler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/akrylysov/algnhsa"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
@@ -103,5 +104,12 @@ func (s *Server) Run() error {
 	s.router()
 
 	s.e.Logger.Fatal(s.e.Start(":8080"))
+	return nil
+}
+func (s *Server) RunLambda() error {
+	s.middleware()
+	s.router()
+
+	algnhsa.ListenAndServe(s.e, nil)
 	return nil
 }

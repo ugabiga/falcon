@@ -31,3 +31,6 @@ func (a App) WatchMessageAndListen() error {
 	go a.messaging.Watch()
 	return a.messaging.Listen()
 }
+func (a App) RunLambdaServer() error {
+	return a.server.RunLambda()
+}
