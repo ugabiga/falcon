@@ -1,6 +1,7 @@
 import {transformErrorMessage} from "@/lib/error";
 import {Button} from "@/components/ui/button";
 import {signIn} from "next-auth/react";
+import {useTranslation} from "react-i18next";
 
 export function Error({message}: { message: string }) {
 
@@ -20,12 +21,13 @@ export function Error({message}: { message: string }) {
 
 
 function UnAuthorizedError() {
+    const {t} = useTranslation()
     return (
         <div className="h-screen w-full flex flex-col justify-center items-center space-y-4">
-            <h1 className="text-3xl font-bold"> You are not authorized to access this page</h1>
-            <h2 className="text-2xl font-bold"> Please sign in to continue</h2>
+            <h1 className="text-3xl font-bold"> {t("error.unauthorized")}</h1>
+            <h2 className="text-2xl font-bold"> {t("error.unauthorized.action")}</h2>
             <Button onClick={() => signIn()}>
-                Sign in
+                {t("error.unauthorized.action.sign_in")}
             </Button>
         </div>
     )

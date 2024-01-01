@@ -1,4 +1,9 @@
 {
+  "SECTION_ERROR": "",
+  "error.unauthorized": "이 페이지에 접근할 권한이 없습니다",
+  "error.unauthorized.action": "계속하려면 로그인하세요",
+  "error.unauthorized.action.sign_in": "로그인",
+  "SECTION_COMMON": "",
   "common.days.monday": "월요일",
   "common.days.tuesday": "화요일",
   "common.days.wednesday": "수요일",
