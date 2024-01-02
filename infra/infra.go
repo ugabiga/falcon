@@ -38,30 +38,46 @@ func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *
 	u := newUser(stack)
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
-	newLambda(stack, ecr, cfg)
-	newDatbaseCluster(stack)
+
+	vpc := lookupVPC(stack)
+	lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
+	databaseSecurityGroup := newDatabaseSecurityGroup(stack, vpc, lambdaSecurityGroup)
+
+	newLambda(stack, ecr, cfg, vpc, lambdaSecurityGroup)
+	newDatabaseCluster(stack, vpc, databaseSecurityGroup)
 
 	return stack
 }
 
-func newDatbaseCluster(stack awscdk.Stack) {
-	parameterGroupName := "falcon-postgresql-parameter-group"
-	auroraClusterName := "falcon-postgresql-cluster"
-	securityGroupName := "falcon-postgresql-security-group"
-	subnetGroupName := "falcon-subnet-group"
-	myIP := "59.12.246.85/32"
-	rdsUserName := "falcon_admin"
-	rdsDBName := "falcon"
-
+func lookupVPC(stack awscdk.Stack) awsec2.IVpc {
 	// Import default VPC.
-	vpc := awsec2.Vpc_FromLookup(stack, jsii.String("DefaultVPC"), &awsec2.VpcLookupOptions{
+	return awsec2.Vpc_FromLookup(stack, jsii.String("DefaultVPC"), &awsec2.VpcLookupOptions{
 		IsDefault: jsii.Bool(true),
 	})
+}
+
+func newLambdaSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc) awsec2.SecurityGroup {
+	lambdaSecurityGroup := "falcon-lambda-security-group"
 
 	// Create PostgreSQL Security Group.
-	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String(securityGroupName), &awsec2.SecurityGroupProps{
+	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String(lambdaSecurityGroup), &awsec2.SecurityGroupProps{
 		Vpc:               vpc,
-		SecurityGroupName: jsii.String(*stack.StackName() + "-" + securityGroupName),
+		SecurityGroupName: jsii.String(*stack.StackName() + "-" + lambdaSecurityGroup),
+		AllowAllOutbound:  jsii.Bool(true),
+		Description:       jsii.String("PostgreSQL Security Group"),
+	})
+
+	return securityGroup
+}
+
+func newDatabaseSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc, lambdaSecurityGroup awsec2.SecurityGroup) awsec2.SecurityGroup {
+	myIP := "59.12.246.85/32"
+	rdsSecurityGroup := "falcon-postgresql-security-group"
+
+	// Create PostgreSQL Security Group.
+	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String(rdsSecurityGroup), &awsec2.SecurityGroupProps{
+		Vpc:               vpc,
+		SecurityGroupName: jsii.String(*stack.StackName() + "-" + rdsSecurityGroup),
 		AllowAllOutbound:  jsii.Bool(true),
 		Description:       jsii.String("PostgreSQL Security Group"),
 	})
@@ -77,6 +93,28 @@ func newDatbaseCluster(stack awscdk.Stack) {
 		jsii.String("Allow requests to Postgres DB instance."),
 		jsii.Bool(false),
 	)
+
+	securityGroup.AddIngressRule(
+		lambdaSecurityGroup,
+		awsec2.NewPort(&awsec2.PortProps{
+			Protocol:             awsec2.Protocol_TCP,
+			FromPort:             jsii.Number(5432),
+			ToPort:               jsii.Number(5432),
+			StringRepresentation: jsii.String("Standard Postgres"),
+		}),
+		jsii.String("Allow requests to Postgres DB instance."),
+		jsii.Bool(false),
+	)
+
+	return securityGroup
+}
+
+func newDatabaseCluster(stack awscdk.Stack, vpc awsec2.IVpc, securityGroup awsec2.SecurityGroup) {
+	parameterGroupName := "falcon-postgresql-parameter-group"
+	auroraClusterName := "falcon-postgresql-cluster"
+	subnetGroupName := "falcon-subnet-group"
+	rdsUserName := "falcon_admin"
+	rdsDBName := "falcon"
 
 	subnetGrp := awsrds.NewSubnetGroup(stack, jsii.String(subnetGroupName), &awsrds.SubnetGroupProps{
 		Vpc:             vpc,
@@ -135,14 +173,19 @@ func newDatbaseCluster(stack awscdk.Stack) {
 	})
 }
 
-func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config) {
+func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vpc awsec2.IVpc, securityGroup awsec2.ISecurityGroup) {
 	lambdaFunc := awslambda.NewDockerImageFunction(stack, jsii.String(LambdaName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
 			Cmd:         &[]*string{jsii.String("lambda")},
 		}),
-		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
-		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
+		Timeout:           awscdk.Duration_Seconds(jsii.Number(500)),
+		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
+		AllowPublicSubnet: jsii.Bool(true),
+		Vpc:               vpc,
+		SecurityGroups: &[]awsec2.ISecurityGroup{
+			securityGroup,
+		},
 		Environment: &map[string]*string{
 			"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
 			"DB_SOURCE":            jsii.String(cfg.DBSource),
@@ -161,6 +204,7 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config) {
 			jsii.String("logs:CreateLogGroup"),
 			jsii.String("logs:CreateLogStream"),
 			jsii.String("logs:PutLogEvents"),
+			//	AWSLambdaVPCAccessExecutionRole
 		},
 	})
 	lambdaPolicy.AddAllResources()
