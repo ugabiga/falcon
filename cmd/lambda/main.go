@@ -7,7 +7,7 @@ import (
 
 func main() {
 	a := app.InitializeApplication()
-	if err := a.RunServer(); err != nil {
+	if err := a.RunLambdaServer(); err != nil {
 		log.Fatal(err)
 	}
 }
