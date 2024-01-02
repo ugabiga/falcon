@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsec2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsrds"
+	secretmgr "github.com/aws/aws-cdk-go/awscdk/v2/awssecretsmanager"
 	"github.com/ugabiga/falcon/pkg/config"
+
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
@@ -34,9 +39,102 @@ func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
 	newLambda(stack, ecr, cfg)
+	newDatbaseCluster(stack)
 
 	return stack
 }
+
+func newDatbaseCluster(stack awscdk.Stack) {
+	parameterGroupName := "falcon-postgresql-parameter-group"
+	auroraClusterName := "falcon-postgresql-cluster"
+	securityGroupName := "falcon-postgresql-security-group"
+	subnetGroupName := "falcon-subnet-group"
+	myIP := "59.12.246.85/32"
+	rdsUserName := "falcon_admin"
+	rdsDBName := "falcon"
+
+	// Import default VPC.
+	vpc := awsec2.Vpc_FromLookup(stack, jsii.String("DefaultVPC"), &awsec2.VpcLookupOptions{
+		IsDefault: jsii.Bool(true),
+	})
+
+	// Create PostgreSQL Security Group.
+	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String(securityGroupName), &awsec2.SecurityGroupProps{
+		Vpc:               vpc,
+		SecurityGroupName: jsii.String(*stack.StackName() + "-" + securityGroupName),
+		AllowAllOutbound:  jsii.Bool(true),
+		Description:       jsii.String("PostgreSQL Security Group"),
+	})
+
+	securityGroup.AddIngressRule(
+		awsec2.Peer_Ipv4(jsii.String(myIP)),
+		awsec2.NewPort(&awsec2.PortProps{
+			Protocol:             awsec2.Protocol_TCP,
+			FromPort:             jsii.Number(5432),
+			ToPort:               jsii.Number(5432),
+			StringRepresentation: jsii.String("Standard Postgres"),
+		}),
+		jsii.String("Allow requests to Postgres DB instance."),
+		jsii.Bool(false),
+	)
+
+	subnetGrp := awsrds.NewSubnetGroup(stack, jsii.String(subnetGroupName), &awsrds.SubnetGroupProps{
+		Vpc:             vpc,
+		RemovalPolicy:   awscdk.RemovalPolicy_DESTROY,
+		SubnetGroupName: jsii.String(*stack.StackName() + "-" + subnetGroupName),
+		VpcSubnets:      &awsec2.SubnetSelection{SubnetType: awsec2.SubnetType_PUBLIC},
+		Description:     jsii.String("RDS SubnetGroup"),
+	})
+
+	engine := awsrds.DatabaseClusterEngine_AuroraPostgres(&awsrds.AuroraPostgresClusterEngineProps{
+		Version: awsrds.AuroraPostgresEngineVersion_VER_15_2(),
+	})
+
+	parameterGroup := awsrds.NewParameterGroup(stack, jsii.String(parameterGroupName), &awsrds.ParameterGroupProps{
+		Engine:      engine,
+		Description: jsii.String("falcon RDS ParameterGroup"),
+		Parameters:  &map[string]*string{},
+	})
+
+	secret := secretmgr.NewSecret(stack, jsii.String("falcon-postgresql-secret"), &secretmgr.SecretProps{
+		SecretName: jsii.String("falcon-postgresql-secret"),
+		GenerateSecretString: &secretmgr.SecretStringGenerator{
+			SecretStringTemplate: jsii.String(fmt.Sprintf(`{"username": "%s"}`, rdsUserName)),
+			ExcludePunctuation:   jsii.Bool(true),
+			IncludeSpace:         jsii.Bool(false),
+			GenerateStringKey:    jsii.String("password"),
+		},
+		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
+	})
+
+	databaseCluster := awsrds.NewDatabaseCluster(stack, jsii.String(auroraClusterName), &awsrds.DatabaseClusterProps{
+		Engine: engine,
+		Writer: awsrds.ClusterInstance_ServerlessV2(jsii.String("writer"), &awsrds.ServerlessV2ClusterInstanceProps{
+			PubliclyAccessible:       jsii.Bool(true),
+			AllowMajorVersionUpgrade: jsii.Bool(false),
+			AutoMinorVersionUpgrade:  jsii.Bool(true),
+		}),
+		ParameterGroup:      parameterGroup,
+		DefaultDatabaseName: jsii.String(rdsDBName),
+		Credentials:         awsrds.Credentials_FromSecret(secret, jsii.String(rdsUserName)),
+		Backup: &awsrds.BackupProps{
+			Retention: awscdk.Duration_Days(jsii.Number(7)),
+		},
+		Vpc:                     vpc,
+		SubnetGroup:             subnetGrp,
+		SecurityGroups:          &[]awsec2.ISecurityGroup{securityGroup},
+		ServerlessV2MinCapacity: jsii.Number(0.5),
+		ServerlessV2MaxCapacity: jsii.Number(2),
+	})
+
+	awscdk.NewCfnOutput(stack, jsii.String("AuroraClusterName"), &awscdk.CfnOutputProps{
+		Value: databaseCluster.ClusterIdentifier(),
+	})
+	awscdk.NewCfnOutput(stack, jsii.String("AuroraClusterEndpoint"), &awscdk.CfnOutputProps{
+		Value: databaseCluster.ClusterEndpoint().Hostname(),
+	})
+}
+
 func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config) {
 	lambdaFunc := awslambda.NewDockerImageFunction(stack, jsii.String(LambdaName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
@@ -221,19 +319,13 @@ func main() {
 // env determines the AWS environment (account+region) in which our stack is to
 // be deployed. For more information see: https://docs.aws.amazon.com/cdk/latest/guide/environments.html
 func env() *awscdk.Environment {
-	// If unspecified, this stack will be "environment-agnostic".
-	// Account/Region-dependent features and context lookups will not work, but a
-	// single synthesized template can be deployed anywhere.
-	//---------------------------------------------------------------------------
-	return nil
-
 	// Uncomment if you know exactly what account and region you want to deploy
 	// the stack to. This is the recommendation for production stacks.
 	//---------------------------------------------------------------------------
-	// return &awscdk.Environment{
-	//  Account: jsii.String("123456789012"),
-	//  Region:  jsii.String("us-east-1"),
-	// }
+	return &awscdk.Environment{
+		Account: jsii.String("358059338173"),
+		Region:  jsii.String("ap-northeast-2"),
+	}
 
 	// Uncomment to specialize this stack for the AWS Account and Region that are
 	// implied by the current CLI configuration. This is recommended for dev
