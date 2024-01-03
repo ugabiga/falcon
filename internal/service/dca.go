@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/encryption"
+	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
@@ -137,35 +139,35 @@ func (s DcaService) orderUpbitAt(
 	ctx context.Context,
 	orderInfo TaskOrderInfo,
 ) error {
-	//symbol := orderInfo.Currency + "-" + orderInfo.Symbol
-	//size := orderInfo.Size
-	//key := orderInfo.Key
-	//decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//c := client.NewUpbitClient(key, decryptedSecret)
-	//
-	//ticker, err := c.Ticker(ctx, symbol)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//if ticker == nil {
-	//	return ErrTickerNotFound
-	//}
+	symbol := orderInfo.Currency + "-" + orderInfo.Symbol
+	size := orderInfo.Size
+	key := orderInfo.Key
+	decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
+	if err != nil {
+		return err
+	}
 
-	//tradePrice := ticker.TradePrice
-	//tradePriceStr := str.FromFloat64(tradePrice).Val()
-	//sizeStr := str.FromFloat64(size).Val()
+	c := client.NewUpbitClient(key, decryptedSecret)
 
-	//order, err := c.PlaceLongOrderAt(ctx, symbol, sizeStr, tradePriceStr)
-	//if err != nil {
-	//	return err
-	//}
+	ticker, err := c.Ticker(ctx, symbol)
+	if err != nil {
+		return err
+	}
 
-	//log.Printf("order: %+v", order)
+	if ticker == nil {
+		return ErrTickerNotFound
+	}
+
+	tradePrice := ticker.TradePrice
+	tradePriceStr := str.FromFloat64(tradePrice).Val()
+	sizeStr := str.FromFloat64(size).Val()
+
+	order, err := c.PlaceLongOrderAt(ctx, symbol, sizeStr, tradePriceStr)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("order: %+v", order)
 
 	return nil
 }
