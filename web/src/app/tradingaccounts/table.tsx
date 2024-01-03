@@ -28,7 +28,11 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
             <TableBody>
                 {
                     !tradingAccounts || tradingAccounts?.length === 0
-                        ? <NoData/>
+                        ? <TableRow>
+                            <TableCell colSpan={6} className="font-medium text-center">
+                                {t("trading_account.table.empty")}
+                            </TableCell>
+                        </TableRow>
                         : tradingAccounts?.map((tradingAccount) => (
                             <TableRow key={tradingAccount.id}>
                                 <TableCell className="font-medium">{tradingAccount.name}</TableCell>
@@ -43,15 +47,5 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                 }
             </TableBody>
         </Table>
-    )
-}
-
-function NoData() {
-    return (
-        <TableRow>
-            <TableCell colSpan={6} className="font-medium text-center">
-                No Trading Account found.
-            </TableCell>
-        </TableRow>
     )
 }
