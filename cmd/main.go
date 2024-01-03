@@ -43,8 +43,9 @@ func main() {
 		Name: "falcon",
 		Commands: []*cli.Command{
 			serverCmd,
-			lambdaCmd,
 			workerCmd,
+			lambdaCmd,
+			lambdaWorkerCmd,
 		},
 	}
 	if err := application.Run(os.Args); err != nil {
