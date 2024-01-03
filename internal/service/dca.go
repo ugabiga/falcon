@@ -45,7 +45,7 @@ func NewDcaService(
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	ctx := context.Background()
-	now := timer.NoSeconds()
+	now := timer.NowNoMinuteAndSeconds()
 
 	log.Printf("Searching for tasks with next execution time: %s", now.String())
 
