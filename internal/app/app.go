@@ -51,3 +51,6 @@ func (a App) RunLambdaServer() error {
 func (a App) RunLambdaSQS(newMsg messaging.DCAMessage) error {
 	return a.messaging.LambdaSQS(newMsg)
 }
+func (a App) RunLambdaCron() error {
+	return a.messaging.WatchSQS()
+}
