@@ -76,5 +76,17 @@ function SessionMenu() {
 
 function convertToInitials(name: string) {
     const [first, last] = name.split(" ")
-    return `${first[0]}${last[0]}`
+
+    let initial = "User"
+    try {
+        initial = first[0] + last[0]
+    } catch (e) {
+        try {
+            initial = first[0]
+        } catch (e) {
+            return initial
+        }
+    }
+
+    return initial
 }
