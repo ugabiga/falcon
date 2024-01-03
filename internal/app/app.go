@@ -4,6 +4,7 @@ import (
 	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/pkg/config"
+	"log"
 )
 
 type App struct {
@@ -27,9 +28,19 @@ func NewApp(
 func (a App) RunServer() error {
 	return a.server.Run()
 }
-func (a App) WatchMessageAndListen() error {
-	go a.messaging.Watch()
-	return a.messaging.Listen()
+func (a App) Worker() error {
+	//go a.messaging.Watch()
+	//return a.messaging.Listen()
+	go func() {
+		err := a.messaging.Listen()
+		if err != nil {
+			log.Fatalf("Error occurred during listening. Err: %v", err)
+		}
+	}()
+
+	a.messaging.Watch()
+
+	return nil
 }
 func (a App) RunLambdaServer() error {
 	return a.server.RunLambda()

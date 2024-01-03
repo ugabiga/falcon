@@ -7,7 +7,7 @@ import (
 
 func main() {
 	a := app.InitializeApplication()
-	if err := a.WatchMessageAndListen(); err != nil {
+	if err := a.Worker(); err != nil {
 		log.Fatal(err)
 	}
 }
