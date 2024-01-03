@@ -7,8 +7,10 @@ import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
+import {useTranslation} from "react-i18next";
 
 export function NavigationMobileBar() {
+    const {t} = useTranslation()
     const [open, setOpen] = useState(false)
 
     return (
@@ -66,13 +68,13 @@ export function NavigationMobileBar() {
                                 href={"/tradingaccounts"}
                                 onOpenChange={setOpen}
                             >
-                                Trading Accounts
+                                {t("nav.trading-accounts")}
                             </MobileLink>
                             <MobileLink
                                 href={"/tasks"}
                                 onOpenChange={setOpen}
                             >
-                                Tasks
+                                {t("nav.tasks")}
                             </MobileLink>
                         </div>
                     </ScrollArea>
