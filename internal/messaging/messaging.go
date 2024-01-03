@@ -84,6 +84,11 @@ func (m *Messaging) addHandler(router *message.Router, handlerInfo HandlerInfo) 
 	)
 }
 
+func (m *Messaging) WatchSQS() error {
+	m.dcaMessageHandler.WatchSQS()
+	return nil
+}
+
 func publish(pubSub *gochannel.GoChannel, topic string, data []byte) error {
 	newMsg := message.NewMessage(watermill.NewUUID(), data)
 

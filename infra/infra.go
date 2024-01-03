@@ -411,9 +411,9 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vp
 	lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
 
 	cronRule := awsevents.NewRule(stack, jsii.String("cat-cron-rule"), &awsevents.RuleProps{
-		//Schedule every 5 minutes
+		//Schedule every 1 hour.
 		Schedule: awsevents.Schedule_Cron(&awsevents.CronOptions{
-			Minute: jsii.String("*/5"),
+			Minute: jsii.String("0"),
 		}),
 	})
 	cronRule.AddTarget(awseventstargets.NewLambdaFunction(lambdaCronFunc, nil))
