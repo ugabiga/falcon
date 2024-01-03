@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/ugabiga/falcon/internal/app"
+	"github.com/ugabiga/falcon/internal/lambda"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
@@ -26,6 +27,13 @@ var workerCmd = &cli.Command{
 	Action: func(context *cli.Context) error {
 		a := app.InitializeApplication()
 		return a.Worker()
+	},
+}
+
+var lambdaWorkerCmd = &cli.Command{
+	Name: "lambda-worker",
+	Action: func(context *cli.Context) error {
+		return lambda.RunLambdaWorker()
 	},
 }
 
