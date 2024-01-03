@@ -15,18 +15,20 @@ var serverCmd = &cli.Command{
 		return a.RunServer()
 	},
 }
-var lambdaCmd = &cli.Command{
-	Name: "lambda",
-	Action: func(context *cli.Context) error {
-		a := app.InitializeApplication()
-		return a.RunLambdaServer()
-	},
-}
+
 var workerCmd = &cli.Command{
 	Name: "worker",
 	Action: func(context *cli.Context) error {
 		a := app.InitializeApplication()
 		return a.Worker()
+	},
+}
+
+var lambdaCmd = &cli.Command{
+	Name: "lambda",
+	Action: func(context *cli.Context) error {
+		a := app.InitializeApplication()
+		return a.RunLambdaServer()
 	},
 }
 

@@ -3,14 +3,16 @@ package lambda
 import (
 	"context"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/ugabiga/falcon/internal/app"
+	"log"
 )
 
 func HandleRequest(ctx context.Context) (string, error) {
-	a := app.InitializeApplication()
-	if err := a.RunLambdaServer(); err != nil {
-		return "", err
-	}
+	log.Println("HandleRequest")
+	log.Printf("ctx: %+v", ctx)
+	//a := app.InitializeApplication()
+	//if err := a.RunLambdaServer(); err != nil {
+	//	return "", err
+	//}
 
 	return "ok", nil
 }
