@@ -49,6 +49,31 @@ type Sample struct {
 
 func getServerIP(c echo.Context) error {
 	log.Println("getServerIP")
+	resp, err := http.Get("https://jsonip.io")
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	var ipResponse IPResponse
+	err = json.Unmarshal(body, &ipResponse)
+	if err != nil {
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	return c.JSON(http.StatusOK, ipResponse)
+}
+
+func getSampleAPICall(c echo.Context) error {
+	log.Println("getServerIP")
 	resp, err := http.Get("https://api.coindesk.com/v1/bpi/currentprice.json")
 	if err != nil {
 		log.Println(err)
@@ -75,7 +100,8 @@ func getServerIP(c echo.Context) error {
 func main() {
 	e := echo.New()
 
-	e.GET("/", getServerIP)
+	e.GET("/", getSampleAPICall)
+	e.GET("/ip", getServerIP)
 
 	//e.Start(":8080")
 	algnhsa.ListenAndServe(e, nil)
