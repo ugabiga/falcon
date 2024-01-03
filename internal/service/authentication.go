@@ -133,6 +133,12 @@ func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.Middlew
 
 			return false
 		},
+		ErrorHandler: func(c echo.Context, err error) error {
+			return c.JSON(401, map[string]string{
+				"message": "Unauthorized",
+				"error":   err.Error(),
+			})
+		},
 	})
 }
 
