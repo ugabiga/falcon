@@ -35,7 +35,13 @@ var lambdaCmd = &cli.Command{
 var lambdaWorkerCmd = &cli.Command{
 	Name: "lambda-worker",
 	Action: func(context *cli.Context) error {
-		return lambda.RunLambdaWorker()
+		return lambda.RunLambdaReceiver()
+	},
+}
+var lambdaCronCmd = &cli.Command{
+	Name: "lambda-cron",
+	Action: func(context *cli.Context) error {
+		return lambda.RunLambdaCron()
 	},
 }
 
@@ -48,6 +54,7 @@ func main() {
 			workerCmd,
 			lambdaCmd,
 			lambdaWorkerCmd,
+			lambdaCronCmd,
 		},
 	}
 	if err := application.Run(os.Args); err != nil {

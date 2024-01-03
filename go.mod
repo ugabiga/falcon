@@ -11,6 +11,8 @@ require (
 	github.com/adhocore/gronx v1.6.6
 	github.com/akrylysov/algnhsa v1.1.0
 	github.com/antlabs/deepcopy v0.0.10
+	github.com/aws/aws-lambda-go v1.43.0
+	github.com/aws/aws-sdk-go v1.49.13
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/google/uuid v1.5.0
@@ -22,14 +24,15 @@ require (
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
 	github.com/markbates/goth v1.78.0
-	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/rs/zerolog v1.31.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.18.2
+	github.com/urfave/cli/v2 v2.4.0
 	github.com/vektah/gqlparser/v2 v2.4.3-0.20220508162109-d3d9eb001575
 	go.uber.org/fx v1.20.1
 	golang.org/x/oauth2 v0.15.0
 	golang.org/x/sync v0.5.0
+	modernc.org/sqlite v1.28.0
 )
 
 require (
@@ -39,7 +42,6 @@ require (
 	github.com/agext/levenshtein v1.2.1 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
-	github.com/aws/aws-lambda-go v1.43.0 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -56,6 +58,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
@@ -78,7 +81,6 @@ require (
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
-	github.com/urfave/cli/v2 v2.4.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9 // indirect
@@ -108,7 +110,6 @@ require (
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.7.2 // indirect
 	modernc.org/opt v0.1.3 // indirect
-	modernc.org/sqlite v1.28.0 // indirect
 	modernc.org/strutil v1.1.3 // indirect
 	modernc.org/token v1.0.1 // indirect
 )
