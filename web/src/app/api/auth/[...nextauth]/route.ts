@@ -19,6 +19,9 @@ const handler = NextAuth({
         GoogleProvider({
             clientId: googleClientId,
             clientSecret: googleClientSecret,
+            httpOptions: {
+                timeout: 40000
+            },
             authorization: {
                 params: {
                     prompt: "consent",
