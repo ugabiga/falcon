@@ -54,6 +54,9 @@ func (m *Messaging) Watch() {
 	m.dcaMessageHandler.Watch(&m.pubSub)
 }
 
+func (m *Messaging) LambdaSQS(newMsg DCAMessage) error {
+	return m.dcaMessageHandler.HandleSQS(newMsg)
+}
 func (m *Messaging) Listen() error {
 	ctx := context.Background()
 

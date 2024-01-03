@@ -27,14 +27,17 @@ type DCAMessage struct {
 }
 
 type DCAMessageHandler struct {
-	dcaSrv *service.DcaService
+	dcaSrv     *service.DcaService
+	sqsMessage *SQSMessage
 }
 
 func NewDCAHandler(
 	dcaSrv *service.DcaService,
+	sqsMessage *SQSMessage,
 ) *DCAMessageHandler {
 	return &DCAMessageHandler{
-		dcaSrv: dcaSrv,
+		dcaSrv:     dcaSrv,
+		sqsMessage: sqsMessage,
 	}
 }
 
@@ -63,21 +66,6 @@ func (h DCAMessageHandler) Handle(msg *message.Message) ([]*message.Message, err
 	return nil, nil
 }
 
-func (h DCAMessageHandler) dcaMessages() ([]DCAMessage, error) {
-	orders, err := h.dcaSrv.GetTarget()
-	if err != nil {
-		return nil, err
-	}
-
-	var dcaMessages []DCAMessage
-	for _, order := range orders {
-		dcaMessages = append(dcaMessages, DCAMessage{
-			TaskOrderInfo: order,
-		})
-	}
-
-	return dcaMessages, nil
-}
 func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
 	//for {
 	log.Printf("Watching for DCA messages...")
@@ -105,6 +93,44 @@ func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
 
 	log.Printf("Watching for DCA messages... Done")
 
-	//	time.Sleep(time.Minute)
 	//}
+}
+
+func (h DCAMessageHandler) WatchSQS() {
+	messages, err := h.dcaMessages()
+	if err != nil {
+		log.Printf("Error occurred during watching. Err: %v", err)
+		return
+	}
+	for _, msg := range messages {
+		if err := h.sqsMessage.Publish(msg); err != nil {
+			log.Printf("Error occurred during publishing. Err: %v", err)
+			continue
+		}
+	}
+}
+
+func (h DCAMessageHandler) HandleSQS(newMsg DCAMessage) error {
+	if err := h.dcaSrv.Order(newMsg.TaskOrderInfo); err != nil {
+		log.Printf("Error occurred during order. Err: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (h DCAMessageHandler) dcaMessages() ([]DCAMessage, error) {
+	orders, err := h.dcaSrv.GetTarget()
+	if err != nil {
+		return nil, err
+	}
+
+	var dcaMessages []DCAMessage
+	for _, order := range orders {
+		dcaMessages = append(dcaMessages, DCAMessage{
+			TaskOrderInfo: order,
+		})
+	}
+
+	return dcaMessages, nil
 }

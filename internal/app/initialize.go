@@ -45,6 +45,7 @@ func provider() fx.Option {
 
 		//Messaging Handler
 		messaging.NewDCAHandler,
+		messaging.NewSQSMessage,
 
 		//Messaging
 		messaging.NewMessaging,

@@ -48,3 +48,6 @@ func (a App) Worker() error {
 func (a App) RunLambdaServer() error {
 	return a.server.RunLambda()
 }
+func (a App) RunLambdaSQS(newMsg messaging.DCAMessage) error {
+	return a.messaging.LambdaSQS(newMsg)
+}
