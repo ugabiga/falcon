@@ -3,8 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awscertificatemanager"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awscloudfront"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awscloudfrontorigins"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsec2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsecs"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsecspatterns"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
@@ -40,20 +45,106 @@ func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *
 	newUserPolicy(stack, u, ecr)
 
 	vpc := lookupVPC(stack)
+	//newNetworks(stack, vpc)
 	lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
-	databaseSecurityGroup := newDatabaseSecurityGroup(stack, vpc, lambdaSecurityGroup)
-
 	newLambda(stack, ecr, cfg, vpc, lambdaSecurityGroup)
+	//newLambda(stack, ecr, cfg, vpc)
+
+	databaseSecurityGroup := newDatabaseSecurityGroup(stack, vpc, lambdaSecurityGroup)
 	newDatabaseCluster(stack, vpc, databaseSecurityGroup)
+	//newECSCluster(stack, cfg, vpc, ecr)
 
 	return stack
+}
+
+func newNetworks(stack awscdk.Stack, vpc awsec2.IVpc) {
+	//privateSubnetName := "falcon-private-subnet"
+	//publicSubnetName := "falcon-public-subnet"
+	natGatewayName := "falcon-nat-gateway"
+	elasticIPName := "falcon-elastic-ip"
+
+	//privateSubnet := awsec2.NewSubnet(stack, jsii.String(privateSubnetName), &awsec2.SubnetProps{
+	//	CidrBlock:        jsii.String("10.0.0.0/16"),
+	//	AvailabilityZone: jsii.String("ap-northeast-2a"),
+	//	VpcId:            vpc.VpcId(),
+	//})
+
+	//publicSubnet := awsec2.NewSubnet(stack, jsii.String(publicSubnetName), &awsec2.SubnetProps{
+	//	CidrBlock:        jsii.String("10.0.0.0/24"),
+	//	AvailabilityZone: jsii.String("ap-northeast-2a"),
+	//	VpcId:            vpc.VpcId(),
+	//})
+
+	subnet := awsec2.Subnet_FromSubnetId(
+		stack, jsii.String("falcon-subnet"), jsii.String("subnet-0fc09c378f7e23e85"),
+	)
+
+	elasticIP := awsec2.NewCfnEIP(stack, jsii.String(elasticIPName), &awsec2.CfnEIPProps{
+		Domain: jsii.String("vpc"),
+	})
+
+	awsec2.NewCfnNatGateway(stack, jsii.String(natGatewayName), &awsec2.CfnNatGatewayProps{
+		SubnetId:         subnet.SubnetId(),
+		AllocationId:     elasticIP.AttrAllocationId(),
+		ConnectivityType: jsii.String("public"),
+		Tags: &[]*awscdk.CfnTag{
+			{
+				Key:   jsii.String("Name"),
+				Value: jsii.String("falcon-nat-gateway"),
+			},
+		},
+	})
+
+	awscdk.NewCfnOutput(stack, jsii.String("ElasticIP"), &awscdk.CfnOutputProps{
+		Value: elasticIP.AttrAllocationId(),
+	})
+
 }
 
 func lookupVPC(stack awscdk.Stack) awsec2.IVpc {
 	// Import default VPC.
 	return awsec2.Vpc_FromLookup(stack, jsii.String("DefaultVPC"), &awsec2.VpcLookupOptions{
-		IsDefault: jsii.Bool(true),
+		VpcId: jsii.String("vpc-06b43122d657875bc"),
 	})
+}
+
+func newECSCluster(stack awscdk.Stack, cfg *config.Config, vpc awsec2.IVpc, imageRepository awsecr.Repository) {
+	clusterName := "falcon-ecs-cluster"
+	loadBalancerName := "falcon-ecs-service-lb"
+
+	cluster := awsecs.NewCluster(stack, jsii.String(clusterName), &awsecs.ClusterProps{
+		Vpc: vpc,
+	})
+
+	awsecspatterns.NewApplicationLoadBalancedFargateService(stack, jsii.String("falcon-ecs-service"),
+		&awsecspatterns.ApplicationLoadBalancedFargateServiceProps{
+			Cluster:        cluster,
+			DesiredCount:   jsii.Number(1),
+			Cpu:            jsii.Number(512),
+			MemoryLimitMiB: jsii.Number(1024),
+			TaskImageOptions: &awsecspatterns.ApplicationLoadBalancedTaskImageOptions{
+				Image:         awsecs.EcrImage_FromEcrRepository(imageRepository, jsii.String("latest")),
+				ContainerPort: jsii.Number(8080),
+				Environment: &map[string]*string{
+					"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
+					"DB_SOURCE":            jsii.String(cfg.DBSource),
+					"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
+					"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
+					"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
+					"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
+					"WEB_URL":              jsii.String(cfg.WebURL),
+					"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
+				},
+				EnableLogging: jsii.Bool(true),
+				LogDriver: awsecs.AwsLogDriver_AwsLogs(&awsecs.AwsLogDriverProps{
+					StreamPrefix: jsii.String("falcon"),
+				}),
+			},
+			AssignPublicIp:     jsii.Bool(true),
+			LoadBalancerName:   jsii.String(loadBalancerName),
+			PublicLoadBalancer: jsii.Bool(true),
+		},
+	)
 }
 
 func newLambdaSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc) awsec2.SecurityGroup {
@@ -67,6 +158,15 @@ func newLambdaSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc) awsec2.Security
 		Description:       jsii.String("PostgreSQL Security Group"),
 	})
 
+	securityGroup.AddIngressRule(
+		securityGroup,
+		awsec2.NewPort(&awsec2.PortProps{
+			Protocol:             awsec2.Protocol_ALL,
+			StringRepresentation: jsii.String("Self Traffic"),
+		}),
+		jsii.String("Allow requests"),
+		jsii.Bool(false),
+	)
 	return securityGroup
 }
 
@@ -173,7 +273,7 @@ func newDatabaseCluster(stack awscdk.Stack, vpc awsec2.IVpc, securityGroup awsec
 	})
 }
 
-func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vpc awsec2.IVpc, securityGroup awsec2.ISecurityGroup) {
+func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vpc awsec2.IVpc, securityGroup awsec2.SecurityGroup) {
 	lambdaFunc := awslambda.NewDockerImageFunction(stack, jsii.String(LambdaName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
@@ -183,9 +283,15 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vp
 		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
 		AllowPublicSubnet: jsii.Bool(true),
 		Vpc:               vpc,
-		SecurityGroups: &[]awsec2.ISecurityGroup{
-			securityGroup,
+		VpcSubnets: &awsec2.SubnetSelection{
+			SubnetFilters: &[]awsec2.SubnetFilter{
+				awsec2.SubnetFilter_ByIds(&[]*string{
+					jsii.String("subnet-0901a7e554e09d234"),
+					jsii.String("subnet-041de806aee128a88"),
+				}),
+			},
 		},
+		SecurityGroups: &[]awsec2.ISecurityGroup{securityGroup},
 		Environment: &map[string]*string{
 			"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
 			"DB_SOURCE":            jsii.String(cfg.DBSource),
@@ -213,9 +319,45 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vp
 	lambdaURL := lambdaFunc.AddFunctionUrl(&awslambda.FunctionUrlOptions{
 		AuthType: awslambda.FunctionUrlAuthType_NONE,
 	})
+
+	// Add a CloudFront distribution to route between the public directory and the Lambda function URL.
+	lambdaURLDomain := awscdk.Fn_Select(jsii.Number(2), awscdk.Fn_Split(jsii.String("/"), lambdaURL.Url(), nil))
+	lambdaOrigin := awscloudfrontorigins.NewHttpOrigin(lambdaURLDomain, &awscloudfrontorigins.HttpOriginProps{
+		ProtocolPolicy: awscloudfront.OriginProtocolPolicy_HTTPS_ONLY,
+	})
+
+	publicDomainName := "api-falcon.vultor.xyz"
+	publicDomainCertificateArn := "arn:aws:acm:us-east-1:358059338173:certificate/e74a2c12-794d-4ae4-849b-977baadf9965"
+
+	cf := awscloudfront.NewDistribution(stack, jsii.String("customerFacing"), &awscloudfront.DistributionProps{
+		DefaultBehavior: &awscloudfront.BehaviorOptions{
+			AllowedMethods:       awscloudfront.AllowedMethods_ALLOW_ALL(),
+			Origin:               lambdaOrigin,
+			CachedMethods:        awscloudfront.CachedMethods_CACHE_GET_HEAD(),
+			OriginRequestPolicy:  awscloudfront.OriginRequestPolicy_ALL_VIEWER_EXCEPT_HOST_HEADER(),
+			CachePolicy:          awscloudfront.CachePolicy_CACHING_DISABLED(),
+			ViewerProtocolPolicy: awscloudfront.ViewerProtocolPolicy_REDIRECT_TO_HTTPS,
+		},
+		Certificate: awscertificatemanager.Certificate_FromCertificateArn(stack,
+			jsii.String("Certificate"),
+			jsii.String(publicDomainCertificateArn),
+		),
+		DomainNames: &[]*string{
+			jsii.String(publicDomainName),
+		},
+	})
+
 	awscdk.NewCfnOutput(stack, jsii.String("lambdaFunctionUrl"), &awscdk.CfnOutputProps{
 		ExportName: jsii.String("lambdaFunctionUrl"),
 		Value:      lambdaURL.Url(),
+	})
+	awscdk.NewCfnOutput(stack, jsii.String("lambdaFunctionName"), &awscdk.CfnOutputProps{
+		ExportName: jsii.String("lambdaFunctionName"),
+		Value:      lambdaFunc.FunctionName(),
+	})
+	awscdk.NewCfnOutput(stack, jsii.String("cloudFrontDomainName"), &awscdk.CfnOutputProps{
+		ExportName: jsii.String("cloudFrontDomainName"),
+		Value:      cf.DomainName(),
 	})
 }
 
