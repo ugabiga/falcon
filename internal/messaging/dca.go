@@ -7,7 +7,6 @@ import (
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
-	"time"
 )
 
 const (
@@ -80,30 +79,32 @@ func (h DCAMessageHandler) dcaMessages() ([]DCAMessage, error) {
 	return dcaMessages, nil
 }
 func (h DCAMessageHandler) Watch(pubSub **gochannel.GoChannel) {
-	for {
-		log.Printf("Watching for DCA messages...")
-		messages, err := h.dcaMessages()
+	//for {
+	log.Printf("Watching for DCA messages...")
+	messages, err := h.dcaMessages()
+	if err != nil {
+		log.Printf("Error occurred during watching. Err: %v", err)
+		return
+	}
+
+	for _, msg := range messages {
+		data, err := json.Marshal(msg)
 		if err != nil {
-			log.Printf("Error occurred during watching. Err: %v", err)
+			log.Printf("Error occurred during marshalling. Err: %v", err)
 			continue
 		}
 
-		for _, msg := range messages {
-			data, err := json.Marshal(msg)
-			if err != nil {
-				log.Printf("Error occurred during marshalling. Err: %v", err)
-				continue
-			}
-
-			if err := publish(*pubSub, DCAIncomingTopic, data); err != nil {
-				log.Printf("Error occurred during publishing. Err: %v", err)
-				continue
-			}
-			if err != nil {
-				log.Printf("Error occurred during publishing. Err: %v", err)
-			}
+		if err := publish(*pubSub, DCAIncomingTopic, data); err != nil {
+			log.Printf("Error occurred during publishing. Err: %v", err)
+			continue
 		}
-
-		time.Sleep(time.Minute)
+		if err != nil {
+			log.Printf("Error occurred during publishing. Err: %v", err)
+		}
 	}
+
+	log.Printf("Watching for DCA messages... Done")
+
+	//	time.Sleep(time.Minute)
+	//}
 }

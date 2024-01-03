@@ -51,7 +51,7 @@ func (m *Messaging) route() error {
 }
 
 func (m *Messaging) Watch() {
-	go m.dcaMessageHandler.Watch(&m.pubSub)
+	m.dcaMessageHandler.Watch(&m.pubSub)
 }
 
 func (m *Messaging) Listen() error {
