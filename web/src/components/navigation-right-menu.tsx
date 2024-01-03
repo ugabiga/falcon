@@ -79,13 +79,24 @@ function convertToInitials(name: string) {
 
     let initial = "User"
     try {
-        initial = first[0] + last[0]
-    } catch (e) {
-        try {
-            initial = first[0]
-        } catch (e) {
+        if (!first) {
             return initial
         }
+
+        if (!last) {
+            return first[0]
+        }
+
+        if (first.length > 1 && last.length > 1) {
+            return first[0] + last[0]
+        }
+
+        if (first.length > 1) {
+            return first[0]
+        }
+    } catch (e) {
+        console.log("Error while converting name to initials", e)
+        return initial
     }
 
     return initial
