@@ -45,3 +45,6 @@ go.work
 
 # OS
 .DS_Store
+
+# Local database
+.dynamodb-data
