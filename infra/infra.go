@@ -10,11 +10,15 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecr"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecs"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsecspatterns"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsevents"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awseventstargets"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awslambdaeventsources"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslogs"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsrds"
 	secretmgr "github.com/aws/aws-cdk-go/awscdk/v2/awssecretsmanager"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/ugabiga/falcon/pkg/config"
 
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
@@ -304,17 +308,115 @@ func newLambda(stack awscdk.Stack, ecr awsecr.Repository, cfg *config.Config, vp
 		},
 	})
 
+	lambdaName := "falcon-cron"
+
+	lambdaCronFunc := awslambda.NewDockerImageFunction(stack, jsii.String(lambdaName), &awslambda.DockerImageFunctionProps{
+		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
+			TagOrDigest: jsii.String("latest"),
+			Cmd:         &[]*string{jsii.String("lambda-cron")},
+		}),
+		Timeout:           awscdk.Duration_Seconds(jsii.Number(500)),
+		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
+		AllowPublicSubnet: jsii.Bool(true),
+		Vpc:               vpc,
+		VpcSubnets: &awsec2.SubnetSelection{
+			SubnetFilters: &[]awsec2.SubnetFilter{
+				awsec2.SubnetFilter_ByIds(&[]*string{
+					jsii.String("subnet-0901a7e554e09d234"),
+					jsii.String("subnet-041de806aee128a88"),
+				}),
+			},
+		},
+		SecurityGroups: &[]awsec2.ISecurityGroup{securityGroup},
+		Environment: &map[string]*string{
+			"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
+			"DB_SOURCE":            jsii.String(cfg.DBSource),
+			"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
+			"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
+			"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
+			"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
+			"WEB_URL":              jsii.String(cfg.WebURL),
+			"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
+		},
+	})
+
+	workerSQS := awssqs.NewQueue(stack, jsii.String("falcon-worker-sqs"), &awssqs.QueueProps{
+		QueueName:         jsii.String("falcon-worker-sqs"),
+		VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(500)),
+	})
+
+	lambdaWorkerName := "falcon-worker"
+	lambdaWorkerFunc := awslambda.NewDockerImageFunction(stack, jsii.String(lambdaWorkerName), &awslambda.DockerImageFunctionProps{
+		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
+			TagOrDigest: jsii.String("latest"),
+			Cmd:         &[]*string{jsii.String("lambda-worker")},
+		}),
+		Timeout:           awscdk.Duration_Seconds(jsii.Number(500)),
+		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
+		AllowPublicSubnet: jsii.Bool(true),
+		Vpc:               vpc,
+		VpcSubnets: &awsec2.SubnetSelection{
+			SubnetFilters: &[]awsec2.SubnetFilter{
+				awsec2.SubnetFilter_ByIds(&[]*string{
+					jsii.String("subnet-0901a7e554e09d234"),
+					jsii.String("subnet-041de806aee128a88"),
+				}),
+			},
+		},
+		SecurityGroups: &[]awsec2.ISecurityGroup{securityGroup},
+		Environment: &map[string]*string{
+			"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
+			"DB_SOURCE":            jsii.String(cfg.DBSource),
+			"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
+			"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
+			"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
+			"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
+			"WEB_URL":              jsii.String(cfg.WebURL),
+			"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
+		},
+	})
+
+	awscdk.NewCfnOutput(stack, jsii.String("lambdaWorkerName"), &awscdk.CfnOutputProps{
+		Value: lambdaWorkerFunc.FunctionName(),
+	})
+	awscdk.NewCfnOutput(stack, jsii.String("sqsQueueName"), &awscdk.CfnOutputProps{
+		Value: workerSQS.QueueName(),
+	})
+	awscdk.NewCfnOutput(stack, jsii.String("sqsQueueURL"), &awscdk.CfnOutputProps{
+		Value: workerSQS.QueueUrl(),
+	})
+
+	// After create sqs and lambda func then add event source.
+	eventSource := awslambdaeventsources.NewSqsEventSource(workerSQS, &awslambdaeventsources.SqsEventSourceProps{})
+	lambdaWorkerFunc.AddEventSource(eventSource)
+
 	lambdaPolicy := awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
 		Effect: awsiam.Effect_ALLOW,
 		Actions: &[]*string{
 			jsii.String("logs:CreateLogGroup"),
 			jsii.String("logs:CreateLogStream"),
 			jsii.String("logs:PutLogEvents"),
+			jsii.String("sqs:ChangeMessageVisibility"),
+			jsii.String("sqs:DeleteMessage"),
+			jsii.String("sqs:SendMessage"),
+			jsii.String("sqs:GetQueueAttributes"),
+			jsii.String("sqs:GetQueueUrl"),
+			jsii.String("sqs:ReceiveMessage"),
 			//	AWSLambdaVPCAccessExecutionRole
 		},
 	})
 	lambdaPolicy.AddAllResources()
 	lambdaFunc.AddToRolePolicy(lambdaPolicy)
+	lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
+	lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
+
+	cronRule := awsevents.NewRule(stack, jsii.String("cat-cron-rule"), &awsevents.RuleProps{
+		//Schedule every 5 minutes
+		Schedule: awsevents.Schedule_Cron(&awsevents.CronOptions{
+			Minute: jsii.String("*/5"),
+		}),
+	})
+	cronRule.AddTarget(awseventstargets.NewLambdaFunction(lambdaCronFunc, nil))
 
 	lambdaURL := lambdaFunc.AddFunctionUrl(&awslambda.FunctionUrlOptions{
 		AuthType: awslambda.FunctionUrlAuthType_NONE,
