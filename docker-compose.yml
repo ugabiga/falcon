@@ -1,5 +1,15 @@
 version: "3.3"
 services:
+  falcon-dynamodb:
+    container_name: falcon-dynamodb
+    image: amazon/dynamodb-local
+    #    restart: always
+    restart: always
+    volumes:
+      - ./.dynamodb-data:/home/dynamodblocal/data
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
   falcon-db:
     container_name: falcon-db
     image: postgres:12
