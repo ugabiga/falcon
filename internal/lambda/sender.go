@@ -16,9 +16,10 @@ type MyStruct struct {
 }
 
 func Run() {
-	sqsURL := ""
+	sqsURL := "https://sqs.ap-northeast-2.amazonaws.com/358059338173/falcon-worker-sqs"
+	region := "ap-northeast-2"
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-west-2")},
+		Region: aws.String(region)},
 	)
 
 	if err != nil {
