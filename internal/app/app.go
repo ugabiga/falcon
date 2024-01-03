@@ -5,6 +5,7 @@ import (
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/pkg/config"
 	"log"
+	"time"
 )
 
 type App struct {
@@ -39,6 +40,8 @@ func (a App) Worker() error {
 	}()
 
 	a.messaging.Watch()
+
+	time.Sleep(60 * time.Second)
 
 	return nil
 }
