@@ -14,15 +14,10 @@ import {TaskFromSchema, TaskForm} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 
 export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
-    if (!tradingAccountID) {
-        return null
-    }
-
     const {t} = useTranslation();
     const [createTask] = useMutation(CreateTaskDocument);
     const [openDialog, setOpenDialog] = useState(false)
     const dispatch = useAppDispatch()
-
     const form = useForm<z.infer<typeof TaskFromSchema>>({
         resolver: zodResolver(TaskFromSchema),
         defaultValues: {
@@ -31,6 +26,10 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
             isActive: true,
         },
     })
+
+    if (!tradingAccountID) {
+        return null
+    }
 
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
         console.log("data", data)

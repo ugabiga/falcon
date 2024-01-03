@@ -6,12 +6,11 @@ import {useTranslation} from "react-i18next";
 
 export function TradingAccountSelector({taskIndex}: { taskIndex?: TaskIndex }) {
     const {t} = useTranslation()
+    const dispatch = useDispatch()
 
     if (!taskIndex) {
         return null
     }
-
-    const dispatch = useDispatch()
 
     return (
         <Select defaultValue={taskIndex.selectedTradingAccount?.id}
