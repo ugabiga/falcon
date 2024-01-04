@@ -1,0 +1,33 @@
+package repository
+
+import (
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+)
+
+func UnmarshalItem[T any](item map[string]types.AttributeValue) (*T, error) {
+	result := new(T)
+
+	if err := attributevalue.UnmarshalMapWithOptions(item, result,
+		func(options *attributevalue.DecoderOptions) {
+			options.TagKey = "json"
+		}); err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func MarshalItem(item interface{}) (map[string]types.AttributeValue, error) {
+	av, err := attributevalue.MarshalMapWithOptions(item,
+		func(options *attributevalue.EncoderOptions) {
+			options.TagKey = "json"
+		},
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return av, nil
+}

@@ -7,6 +7,7 @@ import (
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/messaging"
+	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
@@ -19,6 +20,10 @@ func provider() fx.Option {
 
 		// Client
 		client.NewEntClient,
+		client.NewDynamoClient,
+
+		// Repository
+		repository.NewAuthenticationDynamoRepository,
 
 		// Service
 		service.NewUserService,

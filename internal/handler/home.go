@@ -37,7 +37,6 @@ type CurrentPrice struct {
 	Time struct {
 		Updated    string    `json:"updated"`
 		UpdatedISO time.Time `json:"updatedISO"`
-		Updateduk  string    `json:"updateduk"`
 	} `json:"time"`
 	Disclaimer string `json:"disclaimer"`
 	ChartName  string `json:"chartName"`
