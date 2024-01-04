@@ -4,17 +4,15 @@ import (
 	"context"
 	"errors"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/gorilla/sessions"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/gothic"
-	"github.com/markbates/goth/providers/google"
 	auth "github.com/ugabiga/falcon/internal/authentication"
 	"github.com/ugabiga/falcon/internal/ent"
-	"github.com/ugabiga/falcon/internal/ent/authentication"
+	"github.com/ugabiga/falcon/internal/model"
+	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/pkg/config"
 	"golang.org/x/oauth2"
+	"log"
 	"strings"
 	"time"
 )
@@ -26,7 +24,7 @@ const (
 )
 
 type JWTClaim struct {
-	UserID  int    `json:"user_id"`
+	UserID  string `json:"user_id"`
 	Name    string `json:"name"`
 	IsAdmin bool   `json:"is_admin"`
 	jwt.RegisteredClaims
@@ -45,45 +43,107 @@ type WhiteList struct {
 }
 
 type AuthenticationService struct {
-	db  *ent.Client
-	cfg *config.Config
+	db                 *ent.Client
+	cfg                *config.Config
+	authenticationRepo *repository.AuthenticationDynamoRepository
+	userRepo           *repository.UserDynamoRepository
 }
 
-func NewAuthenticationService(db *ent.Client, cfg *config.Config) *AuthenticationService {
+func NewAuthenticationService(
+	db *ent.Client,
+	cfg *config.Config,
+	authenticationRepo *repository.AuthenticationDynamoRepository,
+	userRepo *repository.UserDynamoRepository,
+
+) *AuthenticationService {
 	a := &AuthenticationService{
-		db:  db,
-		cfg: cfg,
+		db:                 db,
+		cfg:                cfg,
+		authenticationRepo: authenticationRepo,
+		userRepo:           userRepo,
 	}
-	a.InitializeOAuthProviders()
 
 	return a
 }
 
-func (s AuthenticationService) InitializeOAuthProviders() {
-	secretKey := s.cfg.SessionSecretKey
-	googleClientID := s.cfg.GoogleClientID
-	googleClientSecret := s.cfg.GoogleClientSecret
-
-	store := sessions.NewCookieStore([]byte(secretKey))
-	store.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   maxAge,
-		HttpOnly: true,
-		Secure:   false,
+func (s AuthenticationService) Test() error {
+	created, err := s.authenticationRepo.Create(context.Background(), model.Authentication{
+		ID:         "1",
+		UserID:     "1",
+		Identifier: "1",
+		Provider:   "1",
+		Credential: "1",
+	})
+	if err != nil {
+		return err
 	}
 
-	gothic.Store = store
-	goth.UseProviders(
-		google.New(
-			googleClientID,
-			googleClientSecret,
-			s.cfg.WebURL+callbackURL,
-			"email", "profile",
-		),
-	)
+	log.Printf("created: %+v", created)
+
+	return nil
 }
 
-func (s AuthenticationService) CreateJWTToken(userID int, name string, isAdmin bool) (string, error) {
+func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
+	p, err := s.provider(loginType)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := p.GetUserData(ctx, &oauth2.Token{
+		TokenType:    "Bearer",
+		AccessToken:  token,
+		RefreshToken: "",
+	})
+
+	return user, err
+}
+
+func (s AuthenticationService) SignInOrSignUp(
+	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
+) (
+	*model.Authentication, *model.User, error,
+) {
+	a, err := s.authenticationRepo.GetItem(ctx, identifier, authenticationProvider)
+	u, err := s.userRepo.Get(ctx, a.UserID)
+	if err != nil {
+		//TODO check if error is not found
+		return s.SignUp(ctx, authenticationProvider, identifier, credential, name)
+	}
+
+	return a, u, nil
+}
+
+func (s AuthenticationService) SignUp(
+	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
+) (
+	*model.Authentication, *model.User, error,
+) {
+	inputUser := model.User{}
+	if name != "" {
+		inputUser.Name = name
+	}
+	createdUser, err := s.userRepo.Create(ctx, inputUser)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	inputAuthentication := model.Authentication{
+		Identifier: identifier,
+		Provider:   authenticationProvider,
+		Credential: credential,
+		UserID:     createdUser.ID,
+		User:       createdUser,
+	}
+
+	createdAuthentication, err := s.authenticationRepo.Create(ctx, inputAuthentication)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return createdAuthentication, createdUser, nil
+}
+
+func (s AuthenticationService) CreateJWTToken(userID string, name string, isAdmin bool) (string, error) {
 	secretKey := s.cfg.JWTSecretKey
 	claims := &JWTClaim{
 		userID,
@@ -179,21 +239,6 @@ func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
 
 }
 
-func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
-	p, err := s.provider(loginType)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := p.GetUserData(ctx, &oauth2.Token{
-		TokenType:    "Bearer",
-		AccessToken:  token,
-		RefreshToken: "",
-	})
-
-	return user, err
-}
-
 func (s AuthenticationService) provider(loginType string) (auth.OAuthProvider, error) {
 	switch loginType {
 	case "google":
@@ -201,66 +246,4 @@ func (s AuthenticationService) provider(loginType string) (auth.OAuthProvider, e
 	default:
 		return nil, errors.New("unknown login type")
 	}
-}
-
-func (s AuthenticationService) SignInOrSignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
-) (
-	*ent.Authentication, error,
-) {
-	a, err := s.db.Authentication.Query().
-		Where(
-			authentication.ProviderEQ(authentication.Provider(authenticationProvider)),
-			authentication.IdentifierEQ(identifier),
-		).
-		WithUser().
-		Only(ctx)
-	if err != nil {
-		if ent.IsNotFound(err) {
-			return s.SignUp(ctx, authenticationProvider, identifier, credential, name)
-		}
-
-		return nil, err
-	}
-
-	return a, nil
-}
-
-func (s AuthenticationService) SignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
-) (
-	*ent.Authentication, error,
-) {
-	tx, err := s.db.Tx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	userCreateQuery := s.db.User.Create()
-	if name != "" {
-		userCreateQuery = userCreateQuery.SetName(name)
-	}
-
-	u, err := userCreateQuery.Save(ctx)
-	if err != nil {
-		return nil, dbRollback(tx, err)
-	}
-
-	a, err := s.db.Authentication.Create().
-		SetProvider(authentication.Provider(authenticationProvider)).
-		SetIdentifier(identifier).
-		SetCredential(credential).
-		SetUserID(u.ID).
-		Save(ctx)
-	if err != nil {
-		return nil, dbRollback(tx, err)
-	}
-
-	a.Edges.User = u
-
-	if err := tx.Commit(); err != nil {
-		return nil, err
-	}
-
-	return a, nil
 }

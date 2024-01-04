@@ -12,8 +12,8 @@ import (
 )
 
 type Authentication struct {
-	ID         int                    `json:"id"`
-	UserID     int                    `json:"userID"`
+	ID         string                 `json:"id"`
+	UserID     string                 `json:"userID"`
 	Provider   AuthenticationProvider `json:"provider"`
 	Identifier string                 `json:"identifier"`
 	UpdatedAt  time.Time              `json:"updatedAt"`
@@ -22,7 +22,7 @@ type Authentication struct {
 }
 
 type CreateTaskInput struct {
-	TradingAccountID int        `json:"tradingAccountID"`
+	TradingAccountID string     `json:"tradingAccountID"`
 	Currency         string     `json:"currency"`
 	Size             float64    `json:"size"`
 	Symbol           string     `json:"symbol"`
@@ -33,8 +33,8 @@ type CreateTaskInput struct {
 }
 
 type Task struct {
-	ID                int             `json:"id"`
-	TradingAccountID  int             `json:"tradingAccountID"`
+	ID                string          `json:"id"`
+	TradingAccountID  string          `json:"tradingAccountID"`
 	Currency          string          `json:"currency"`
 	Size              float64         `json:"size"`
 	Symbol            string          `json:"symbol"`
@@ -50,8 +50,8 @@ type Task struct {
 }
 
 type TaskHistory struct {
-	ID        int       `json:"id"`
-	TaskID    int       `json:"taskID"`
+	ID        string    `json:"id"`
+	TaskID    string    `json:"taskID"`
 	IsSuccess bool      `json:"isSuccess"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -69,8 +69,8 @@ type TaskIndex struct {
 }
 
 type TradingAccount struct {
-	ID        int       `json:"id"`
-	UserID    int       `json:"userID"`
+	ID        string    `json:"id"`
+	UserID    string    `json:"userID"`
 	Name      string    `json:"name"`
 	Exchange  string    `json:"exchange"`
 	IP        string    `json:"ip"`
@@ -102,7 +102,7 @@ type UpdateUserInput struct {
 }
 
 type User struct {
-	ID              int               `json:"id"`
+	ID              string            `json:"id"`
 	Name            string            `json:"name"`
 	Timezone        string            `json:"timezone"`
 	UpdatedAt       time.Time         `json:"updatedAt"`
@@ -122,14 +122,14 @@ type UserWhereInput struct {
 	And []*UserWhereInput `json:"and"`
 	Or  []*UserWhereInput `json:"or"`
 	// id field predicates
-	ID      *int  `json:"id"`
-	IDNeq   *int  `json:"idNEQ"`
-	IDIn    []int `json:"idIn"`
-	IDNotIn []int `json:"idNotIn"`
-	IDGt    *int  `json:"idGT"`
-	IDGte   *int  `json:"idGTE"`
-	IDLt    *int  `json:"idLT"`
-	IDLte   *int  `json:"idLTE"`
+	ID      *string  `json:"id"`
+	IDNeq   *string  `json:"idNEQ"`
+	IDIn    []string `json:"idIn"`
+	IDNotIn []string `json:"idNotIn"`
+	IDGt    *string  `json:"idGT"`
+	IDGte   *string  `json:"idGTE"`
+	IDLt    *string  `json:"idLT"`
+	IDLte   *string  `json:"idLTE"`
 	// name field predicates
 	Name             *string  `json:"name"`
 	NameNeq          *string  `json:"nameNEQ"`
