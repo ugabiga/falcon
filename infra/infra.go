@@ -41,15 +41,16 @@ func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
 
-	vpc := lookupVPC(stack)
-	vpSubnets := lookupVPCSubnets(stack)
-	lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
+	//vpc := lookupVPC(stack)
+	//vpSubnets := lookupVPCSubnets(stack)
+	//lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
 
 	environment := newLambdaEnvironment(cfg)
 	lambdaServerFunc := newLambdaServer(stack, ecr, environment)
-	lambdaCronFunc := newLambdaCron(stack, ecr, environment)
-	lambdaWorkerFunc := newLambdaWorker(stack, ecr, vpc, vpSubnets, lambdaSecurityGroup, environment)
-	newLambdaPolicy(stack, lambdaServerFunc, lambdaCronFunc, lambdaWorkerFunc)
+	//lambdaCronFunc := newLambdaCron(stack, ecr, environment)
+	//lambdaWorkerFunc := newLambdaWorker(stack, ecr, vpc, vpSubnets, lambdaSecurityGroup, environment)
+	//newLambdaPolicy(stack, lambdaServerFunc, lambdaCronFunc, lambdaWorkerFunc)
+	newLambdaPolicy(stack, lambdaServerFunc, nil, nil)
 
 	return stack
 }
@@ -72,8 +73,8 @@ func newLambdaPolicy(stack awscdk.Stack, lambdaServerFunc awslambda.DockerImageF
 	lambdaPolicy.AddAllResources()
 
 	lambdaServerFunc.AddToRolePolicy(lambdaPolicy)
-	lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
-	lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
+	//lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
+	//lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
 }
 
 func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc, vpcSubnets *awsec2.SubnetSelection, securityGroup awsec2.SecurityGroup, environment map[string]*string) awslambda.DockerImageFunction {
