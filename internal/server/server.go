@@ -77,6 +77,7 @@ func (s *Server) middleware() {
 	s.e.Use(session.Middleware(sessions.NewCookieStore([]byte("secret"))))
 	s.e.Use(s.authenticationService.JWTMiddleware([]service.WhiteList{
 		{Type: service.WhiteListTypeExact, Path: "/"},
+		{Type: service.WhiteListTypeExact, Path: "/current"},
 		{Type: service.WhiteListTypeExact, Path: "/auth/signin"},
 		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
 	}))
