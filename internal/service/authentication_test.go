@@ -15,7 +15,6 @@ func Initialize(t *testing.T) app.Tester {
 
 func TestAuthenticationService_SignUp(t *testing.T) {
 	tester := Initialize(t)
-	defer tester.CleanUp(t)
 	srv := tester.AuthenticationSrv
 
 	t.Run("should create a new user", func(t *testing.T) {
@@ -45,7 +44,6 @@ func TestAuthenticationService_SignUp(t *testing.T) {
 
 func TestAuthenticationService_SignInOrSignUp(t *testing.T) {
 	tester := Initialize(t)
-	defer tester.CleanUp(t)
 	srv := tester.AuthenticationSrv
 
 	t.Run("should create a new authentication and user", func(t *testing.T) {
