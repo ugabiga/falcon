@@ -20,10 +20,7 @@ type Server struct {
 	authenticationService *service.AuthenticationService
 	homeHandler           *handler.HomeHandler
 	authenticationHandler *handler.AuthenticationHandler
-	userHandler           *handler.UserHandler
 	errorHandler          *handler.ErrorHandler
-	tradingAccountHandler *handler.TradingAccountHandler
-	taskHandler           *handler.TaskHandler
 	graphServer           *gqlHandler.Server
 }
 
@@ -32,10 +29,7 @@ func NewServer(
 	authenticationService *service.AuthenticationService,
 	homeHandler *handler.HomeHandler,
 	authenticationHandler *handler.AuthenticationHandler,
-	userHandler *handler.UserHandler,
 	errorHandler *handler.ErrorHandler,
-	tradingAccountHandler *handler.TradingAccountHandler,
-	taskHandler *handler.TaskHandler,
 	graphServer *gqlHandler.Server,
 ) *Server {
 	return &Server{
@@ -44,25 +38,17 @@ func NewServer(
 		authenticationService: authenticationService,
 		homeHandler:           homeHandler,
 		authenticationHandler: authenticationHandler,
-		userHandler:           userHandler,
 		errorHandler:          errorHandler,
-		tradingAccountHandler: tradingAccountHandler,
-		taskHandler:           taskHandler,
 		graphServer:           graphServer,
 	}
 }
 
 func (s *Server) router() {
-	s.e.Static("/static", "template/static")
-
 	s.e.HTTPErrorHandler = s.errorHandler.DebugErrorHandler
 
 	r := s.e.Group("")
 	s.homeHandler.SetRoutes(r)
 	s.authenticationHandler.SetRoutes(r)
-	s.userHandler.SetRoutes(r)
-	s.tradingAccountHandler.SetRoutes(r)
-	s.taskHandler.SetRoutes(r)
 
 	s.e.POST("/graph", func(c echo.Context) error {
 		ctx := helper.NewJWTClaimContext(c)
@@ -93,7 +79,6 @@ func (s *Server) middleware() {
 		{Type: service.WhiteListTypeExact, Path: "/"},
 		{Type: service.WhiteListTypeExact, Path: "/auth/signin"},
 		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
-		{Type: service.WhiteListTypePrefix, Path: "/static"},
 	}))
 	s.e.Use(s.authenticationService.UngradedJWTMiddleware())
 	s.e.Use(falconMiddleware.LayoutMiddleware())
