@@ -8,7 +8,6 @@ import (
 	"github.com/antlabs/deepcopy"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
-	"github.com/ugabiga/falcon/internal/model"
 )
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input generated.UpdateUserInput) (*generated.User, error) {
@@ -17,10 +16,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input generated.Updat
 	user, err := r.userSrv.Update(
 		ctx,
 		claim.UserID,
-		&model.User{
-			Name:     input.Name,
-			Timezone: input.Timezone,
-		},
+		input,
 	)
 	if err != nil {
 		return nil, err

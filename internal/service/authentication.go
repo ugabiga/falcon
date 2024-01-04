@@ -196,7 +196,11 @@ func (s AuthenticationService) SignUp(
 ) (
 	*model.Authentication, *model.User, error,
 ) {
-	inputUser := model.User{}
+	defaultTimezone := "Asia/Seoul"
+
+	inputUser := model.User{
+		Timezone: defaultTimezone,
+	}
 	if name != "" {
 		inputUser.Name = name
 	}
