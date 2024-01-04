@@ -53,29 +53,29 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
 
-      - name: Update lambda function
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: >
-          aws lambda update-function-code
-          --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
-          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-          --region ${{ env.AWS_REGION }}
-
-      - name: Update lambda cron function
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: >
-          aws lambda update-function-code
-          --function-name ${{ secrets.AWS_LAMBDA_CRON_FUNCTION_NAME }}
-          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-          --region ${{ env.AWS_REGION }}
-
-      - name: Update lambda worker function
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: >
-          aws lambda update-function-code
-          --function-name ${{ secrets.AWS_LAMBDA_WORKER_FUNCTION_NAME }}
-          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-          --region ${{ env.AWS_REGION }}
+#      - name: Update lambda function
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        run: >
+#          aws lambda update-function-code
+#          --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
+#          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+#          --region ${{ env.AWS_REGION }}
+#
+#      - name: Update lambda cron function
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        run: >
+#          aws lambda update-function-code
+#          --function-name ${{ secrets.AWS_LAMBDA_CRON_FUNCTION_NAME }}
+#          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+#          --region ${{ env.AWS_REGION }}
+#
+#      - name: Update lambda worker function
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#        run: >
+#          aws lambda update-function-code
+#          --function-name ${{ secrets.AWS_LAMBDA_WORKER_FUNCTION_NAME }}
+#          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+#          --region ${{ env.AWS_REGION }}
