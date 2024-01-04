@@ -7,6 +7,7 @@ import (
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/messaging"
+	"github.com/ugabiga/falcon/internal/migration"
 	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/internal/server"
 	"github.com/ugabiga/falcon/internal/service"
@@ -21,6 +22,9 @@ func provider() fx.Option {
 		// Client
 		client.NewEntClient,
 		client.NewDynamoClient,
+
+		// Migration
+		migration.NewMigration,
 
 		// Repository
 		repository.NewAuthenticationDynamoRepository,
@@ -58,6 +62,9 @@ func provider() fx.Option {
 
 		// App
 		NewApp,
+
+		//Tester
+		NewTester,
 	)
 }
 
@@ -73,4 +80,18 @@ func InitializeApplication() App {
 	)
 
 	return newApp
+}
+
+func InitializeTestApplication() Tester {
+	var newTester Tester
+
+	fx.New(
+		fx.NopLogger,
+		provider(),
+		fx.Invoke(func(lifecycle fx.Lifecycle, tester Tester) {
+			newTester = tester
+		}),
+	)
+
+	return newTester
 }
