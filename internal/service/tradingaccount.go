@@ -6,6 +6,8 @@ import (
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
+	"github.com/ugabiga/falcon/internal/model"
+	"github.com/ugabiga/falcon/internal/repository"
 )
 
 const (
@@ -13,31 +15,24 @@ const (
 )
 
 type TradingAccountService struct {
-	db         *ent.Client
-	encryption *encryption.Encryption
+	db                 *ent.Client
+	encryption         *encryption.Encryption
+	tradingAccountRepo *repository.TradingAccountDynamoRepository
 }
 
 func NewTradingAccountService(
 	db *ent.Client,
 	encryption *encryption.Encryption,
+	tradingaccountRepo *repository.TradingAccountDynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
-		db:         db,
-		encryption: encryption,
+		db:                 db,
+		encryption:         encryption,
+		tradingAccountRepo: tradingaccountRepo,
 	}
 }
 
-func (s TradingAccountService) Create(
-	ctx context.Context,
-	userID int,
-	name string,
-	exchange string,
-	key string,
-	secret string,
-	phrase string,
-) (
-	*ent.TradingAccount, error,
-) {
+func (s TradingAccountService) Create(ctx context.Context, userID string, name string, exchange string, key string, secret string, phrase string) (*model.TradingAccount, error) {
 	if err := s.validateExchange(exchange); err != nil {
 		return nil, err
 	}
@@ -56,34 +51,37 @@ func (s TradingAccountService) Create(
 		return nil, err
 	}
 
-	createQuery := s.db.TradingAccount.Create().
-		SetUserID(userID).
-		SetName(name).
-		SetExchange(exchange).
-		SetIP(ip).
-		SetKey(key).
-		SetSecret(encryptedSecret)
+	tradingAccount := model.TradingAccount{
+		UserID:   userID,
+		Name:     name,
+		Exchange: exchange,
+		IP:       ip,
+		Key:      key,
+		Secret:   encryptedSecret,
+	}
 
 	if phrase != "" {
 		encryptedPhrase, err := s.encrypt(phrase)
 		if err != nil {
 			return nil, err
 		}
-		createQuery.SetPhrase(encryptedPhrase)
+		tradingAccount.Phrase = encryptedPhrase
 	}
 
-	t, err := createQuery.Save(ctx)
+	newTradingAccount, err := s.tradingAccountRepo.Create(
+		ctx,
+		tradingAccount,
+	)
 	if err != nil {
 		return nil, err
 	}
-	return t, nil
+
+	return newTradingAccount, nil
 
 }
 
-func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID int) error {
-	count, err := s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(userID),
-	).Count(ctx)
+func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID string) error {
+	count, err := s.tradingAccountRepo.Count(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -95,12 +93,82 @@ func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID i
 	return nil
 }
 
-func (s TradingAccountService) Get(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
-	return s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(userID),
-	).
-		Order(ent.Desc(tradingaccount.FieldID)).
-		All(ctx)
+func (s TradingAccountService) GetByUserID(ctx context.Context, userID string) ([]model.TradingAccount, error) {
+	tradingAccounts, err := s.tradingAccountRepo.GetByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return tradingAccounts, nil
+}
+
+func (s TradingAccountService) Update(
+	ctx context.Context,
+	tradingAccountID string,
+	userID string,
+	name *string,
+	exchange *string,
+	key *string,
+	secret *string,
+	phrase *string,
+) error {
+	if exchange == nil && key == nil && secret == nil && phrase == nil {
+		return nil
+	}
+
+	if exchange != nil {
+		if err := s.validateExchange(pointer.GetString(exchange)); err != nil {
+			return err
+		}
+	}
+
+	tradingAccount, err := s.tradingAccountRepo.GetByID(ctx, tradingAccountID)
+	if err != nil {
+		return err
+	}
+
+	if tradingAccount.UserID != userID {
+		return ErrUnauthorized
+	}
+
+	inputTradingAccount := model.TradingAccount{
+		ID:        tradingAccountID,
+		UserID:    userID,
+		IP:        tradingAccount.IP,
+		Secret:    tradingAccount.Secret,
+		CreatedAt: tradingAccount.CreatedAt,
+	}
+
+	if name != nil {
+		inputTradingAccount.Name = *name
+	}
+	if exchange != nil {
+		inputTradingAccount.Exchange = *exchange
+	}
+	if key != nil {
+		inputTradingAccount.Key = *key
+	}
+	if secret != nil {
+		encryptedSecret, err := s.encrypt(pointer.GetString(secret))
+		if err != nil {
+			return err
+		}
+		inputTradingAccount.Secret = encryptedSecret
+	}
+	if phrase != nil {
+		encryptedPhrase, err := s.encrypt(pointer.GetString(phrase))
+		if err != nil {
+			return err
+		}
+		inputTradingAccount.Phrase = encryptedPhrase
+	}
+
+	_, err = s.tradingAccountRepo.Update(ctx, tradingAccountID, inputTradingAccount)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s TradingAccountService) GetWithTask(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
@@ -127,68 +195,6 @@ func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccou
 		tradingaccount.UserIDEQ(userID),
 		tradingaccount.IDEQ(tradingAccountID),
 	).First(ctx)
-}
-
-func (s TradingAccountService) Update(
-	ctx context.Context,
-	tradingAccountID int,
-	userID int,
-	name *string,
-	exchange *string,
-	key *string,
-	secret *string,
-	phrase *string,
-) error {
-	if exchange == nil && key == nil && secret == nil && phrase == nil {
-		return nil
-	}
-
-	if exchange != nil {
-		if err := s.validateExchange(pointer.GetString(exchange)); err != nil {
-			return err
-		}
-	}
-
-	updateQuery := s.db.TradingAccount.Update().
-		Where(
-			tradingaccount.IDEQ(tradingAccountID),
-			tradingaccount.UserIDEQ(userID),
-		)
-	if name != nil {
-		updateQuery.SetName(pointer.GetString(name))
-	}
-	if exchange != nil {
-		updateQuery.SetExchange(pointer.GetString(exchange))
-	}
-	if key != nil {
-		updateQuery.SetKey(pointer.GetString(key))
-	}
-	if secret != nil {
-		encryptedSecret, err := s.encrypt(pointer.GetString(secret))
-		if err != nil {
-			return err
-		}
-		updateQuery.SetSecret(encryptedSecret)
-	}
-
-	if phrase != nil {
-		encryptedPhrase, err := s.encrypt(pointer.GetString(phrase))
-		if err != nil {
-			return err
-		}
-		updateQuery.SetPhrase(encryptedPhrase)
-	}
-
-	updateCount, err := updateQuery.Save(ctx)
-	if err != nil {
-		return err
-	}
-
-	if updateCount <= 0 {
-		return ErrorNoRows
-	}
-
-	return nil
 }
 
 func (s TradingAccountService) Delete(ctx context.Context, userID, tradingAccountID int) error {
