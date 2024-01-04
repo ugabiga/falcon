@@ -210,7 +210,6 @@ func (s AuthenticationService) SignUp(
 		Provider:   authenticationProvider,
 		Credential: credential,
 		UserID:     createdUser.ID,
-		User:       createdUser,
 	}
 
 	createdAuthentication, err := s.authenticationRepo.Create(ctx, inputAuthentication)
