@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"testing"
@@ -70,7 +71,7 @@ func TestUserService_EditUser(t *testing.T) {
 		u, err := srv.Update(
 			ctx,
 			targetUser.ID,
-			&model.User{
+			generated.UpdateUserInput{
 				Name:     "new name",
 				Timezone: "new timezone",
 			},
