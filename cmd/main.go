@@ -24,8 +24,8 @@ var workerCmd = &cli.Command{
 	},
 }
 
-var lambdaCmd = &cli.Command{
-	Name: "lambda",
+var lambdaServerCmd = &cli.Command{
+	Name: "lambda-server",
 	Action: func(context *cli.Context) error {
 		a := app.InitializeApplication()
 		return a.RunLambdaServer()
@@ -52,7 +52,7 @@ func main() {
 		Commands: []*cli.Command{
 			serverCmd,
 			workerCmd,
-			lambdaCmd,
+			lambdaServerCmd,
 			lambdaWorkerCmd,
 			lambdaCronCmd,
 		},
