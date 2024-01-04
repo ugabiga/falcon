@@ -18,17 +18,20 @@ type TradingAccountService struct {
 	db                 *ent.Client
 	encryption         *encryption.Encryption
 	tradingAccountRepo *repository.TradingAccountDynamoRepository
+	taskRepo           *repository.TaskDynamoRepository
 }
 
 func NewTradingAccountService(
 	db *ent.Client,
 	encryption *encryption.Encryption,
 	tradingaccountRepo *repository.TradingAccountDynamoRepository,
+	taskRepo *repository.TaskDynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
 		db:                 db,
 		encryption:         encryption,
 		tradingAccountRepo: tradingaccountRepo,
+		taskRepo:           taskRepo,
 	}
 }
 
@@ -171,9 +174,19 @@ func (s TradingAccountService) Update(
 	return nil
 }
 
-func (s TradingAccountService) GetWithTask(ctx context.Context, userID int) ([]*ent.TradingAccount, error) {
+func (s TradingAccountService) GetWithTask(ctx context.Context, userID string) ([]*ent.TradingAccount, error) {
+	//ta, err := s.tradingAccountRepo.GetByUserID(ctx, userID)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//tasks, err := s.taskRepo.GetByTradingAccountID(ctx, ta.ID)
+	//if err != nil {
+	//	return nil, err
+	//}
+
 	query := s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(userID),
+		tradingaccount.UserIDEQ(1),
 	)
 
 	return query.

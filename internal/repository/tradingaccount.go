@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-const (
-	TradingAccountTableName = "trading_account"
-)
-
 type TradingAccountDynamoRepository struct {
 	tableName string
 	db        *dynamodb.Client
