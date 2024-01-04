@@ -17,6 +17,8 @@ type Config struct {
 	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 	WebURL             string `mapstructure:"WEB_URL"`
 	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
+	AWSRegion          string `mapstructure:"AWS_REGION"`
+	DynamoIsLocal      bool   `mapstructure:"DYNAMO_IS_LOCAL"`
 }
 
 func NewConfigWithoutSetting() *Config {
