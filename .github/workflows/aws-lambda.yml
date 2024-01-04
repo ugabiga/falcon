@@ -7,6 +7,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: falcon-ecr-repository
+  AWS_LAMBDA_SERVER_FUNCTION_NAME: FalconStack-falconserverAE38D27F-dQkq6Dyn6z0q
 
 permissions:
   contents: read
@@ -53,14 +54,14 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
 
-#      - name: Update lambda function
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#        run: >
-#          aws lambda update-function-code
-#          --function-name ${{ secrets.AWS_LAMBDA_FUNCTION_NAME }}
-#          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-#          --region ${{ env.AWS_REGION }}
+      - name: Update lambda function
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: >
+          aws lambda update-function-code
+          --function-name ${{ env.AWS_LAMBDA_SERVER_FUNCTION_NAME }}
+          --image-uri ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+          --region ${{ env.AWS_REGION }}
 #
 #      - name: Update lambda cron function
 #        env:
