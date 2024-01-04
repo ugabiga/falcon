@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/ugabiga/falcon/internal/model"
+	"time"
 )
 
 const (
@@ -26,6 +27,8 @@ func NewAuthenticationDynamoRepository(db *dynamodb.Client) *AuthenticationDynam
 
 func (r AuthenticationDynamoRepository) Create(ctx context.Context, authentication model.Authentication) (*model.Authentication, error) {
 	authentication.ID = r.encodeID(authentication.Provider, authentication.Identifier)
+	authentication.CreatedAt = time.Now()
+	authentication.UpdatedAt = time.Now()
 
 	av, err := MarshalItem(authentication)
 	if err != nil {

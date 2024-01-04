@@ -70,7 +70,7 @@ const handler = NextAuth({
                 jwtCookieName,
                 token,
                 {
-                    domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN,
+                    domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN ?? "",
                     httpOnly: true,
                     maxAge: 36000,
                 }
