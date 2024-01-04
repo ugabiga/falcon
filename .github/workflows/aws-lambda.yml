@@ -6,7 +6,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: falcon
+  ECR_REPOSITORY: falcon-ecr-repository
 
 permissions:
   contents: read
