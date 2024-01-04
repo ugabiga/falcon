@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-const (
-	UserTableName = "user"
-)
-
 type UserDynamoRepository struct {
 	tableName string
 	db        *dynamodb.Client

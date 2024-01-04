@@ -31,6 +31,7 @@ func (m *Migration) Migrate(afterDelete bool) error {
 	err = m.createUserTable(ctx)
 	err = m.createAuthenticationTable(ctx)
 	err = m.createTradingAccountTable(ctx)
+	err = m.createTaskTable(ctx)
 	if err != nil {
 		return err
 	}
@@ -42,6 +43,7 @@ func (m *Migration) DeleteAllTables(ctx context.Context) error {
 		repository.AuthenticationTableName,
 		repository.UserTableName,
 		repository.TradingAccountTableName,
+		repository.TaskTableName,
 	}
 
 	for _, table := range tables {
@@ -207,6 +209,65 @@ func (m *Migration) createTradingAccountTable(ctx context.Context) error {
 		//		},
 		//	},
 		//},
+		BillingMode: types.BillingModePayPerRequest,
+	})
+	if err != nil {
+		log.Printf("error creating table %s: %s", tableName, err)
+		return err
+	}
+	return nil
+}
+
+func (m *Migration) createTaskTable(ctx context.Context) error {
+	tableName := repository.TaskTableName
+	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
+		TableName: aws.String(tableName),
+		AttributeDefinitions: []types.AttributeDefinition{
+			{
+				AttributeName: aws.String("id"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+			{
+				AttributeName: aws.String("user_id"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+			{
+				AttributeName: aws.String("trading_account_id"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+		},
+		KeySchema: []types.KeySchemaElement{
+			{
+				AttributeName: aws.String("id"),
+				KeyType:       types.KeyTypeHash,
+			},
+		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String("user-index"),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("user_id"),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
+			},
+			{
+				IndexName: aws.String("trading-account-index"),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("trading_account_id"),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
+			},
+		},
 		BillingMode: types.BillingModePayPerRequest,
 	})
 	if err != nil {

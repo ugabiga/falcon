@@ -9,10 +9,6 @@ import (
 	"time"
 )
 
-const (
-	AuthenticationTableName = "authentication"
-)
-
 type AuthenticationDynamoRepository struct {
 	tableName string
 	db        *dynamodb.Client
