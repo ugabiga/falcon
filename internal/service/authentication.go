@@ -12,7 +12,6 @@ import (
 	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/pkg/config"
 	"golang.org/x/oauth2"
-	"log"
 	"strings"
 	"time"
 )
@@ -64,104 +63,6 @@ func NewAuthenticationService(
 	}
 
 	return a
-}
-
-func (s AuthenticationService) Test() error {
-	created, err := s.authenticationRepo.Create(context.Background(), model.Authentication{
-		ID:         "1",
-		UserID:     "1",
-		Identifier: "1",
-		Provider:   "1",
-		Credential: "1",
-	})
-	if err != nil {
-		return err
-	}
-
-	log.Printf("created: %+v", created)
-
-	return nil
-}
-
-func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
-	p, err := s.provider(loginType)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := p.GetUserData(ctx, &oauth2.Token{
-		TokenType:    "Bearer",
-		AccessToken:  token,
-		RefreshToken: "",
-	})
-
-	return user, err
-}
-
-func (s AuthenticationService) SignInOrSignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
-) (
-	*model.Authentication, *model.User, error,
-) {
-	a, err := s.authenticationRepo.GetItem(ctx, identifier, authenticationProvider)
-	u, err := s.userRepo.Get(ctx, a.UserID)
-	if err != nil {
-		//TODO check if error is not found
-		return s.SignUp(ctx, authenticationProvider, identifier, credential, name)
-	}
-
-	return a, u, nil
-}
-
-func (s AuthenticationService) SignUp(
-	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
-) (
-	*model.Authentication, *model.User, error,
-) {
-	inputUser := model.User{}
-	if name != "" {
-		inputUser.Name = name
-	}
-	createdUser, err := s.userRepo.Create(ctx, inputUser)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	inputAuthentication := model.Authentication{
-		Identifier: identifier,
-		Provider:   authenticationProvider,
-		Credential: credential,
-		UserID:     createdUser.ID,
-		User:       createdUser,
-	}
-
-	createdAuthentication, err := s.authenticationRepo.Create(ctx, inputAuthentication)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return createdAuthentication, createdUser, nil
-}
-
-func (s AuthenticationService) CreateJWTToken(userID string, name string, isAdmin bool) (string, error) {
-	secretKey := s.cfg.JWTSecretKey
-	claims := &JWTClaim{
-		userID,
-		name,
-		isAdmin,
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	t, err := token.SignedString([]byte(secretKey))
-	if err != nil {
-		return "", err
-	}
-
-	return t, nil
 }
 
 func (s AuthenticationService) JWTMiddleware(whiteList []WhiteList) echo.MiddlewareFunc {
@@ -237,6 +138,87 @@ func (s AuthenticationService) UngradedJWTMiddleware() echo.MiddlewareFunc {
 		}
 	}
 
+}
+
+func (s AuthenticationService) CreateJWTToken(userID string, name string, isAdmin bool) (string, error) {
+	secretKey := s.cfg.JWTSecretKey
+	claims := &JWTClaim{
+		userID,
+		name,
+		isAdmin,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		return "", err
+	}
+
+	return t, nil
+}
+
+func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
+	p, err := s.provider(loginType)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := p.GetUserData(ctx, &oauth2.Token{
+		TokenType:    "Bearer",
+		AccessToken:  token,
+		RefreshToken: "",
+	})
+
+	return user, err
+}
+
+func (s AuthenticationService) SignInOrSignUp(
+	ctx context.Context, provider string, identifier string, credential string, name string,
+) (
+	*model.Authentication, *model.User, error,
+) {
+	a, err := s.authenticationRepo.GetItem(ctx, provider, identifier)
+	u, err := s.userRepo.Get(ctx, a.UserID)
+	if err != nil {
+		//TODO check if error is not found
+		return s.SignUp(ctx, provider, identifier, credential, name)
+	}
+
+	return a, u, nil
+}
+
+func (s AuthenticationService) SignUp(
+	ctx context.Context, authenticationProvider string, identifier string, credential string, name string,
+) (
+	*model.Authentication, *model.User, error,
+) {
+	inputUser := model.User{}
+	if name != "" {
+		inputUser.Name = name
+	}
+	createdUser, err := s.userRepo.Create(ctx, inputUser)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	inputAuthentication := model.Authentication{
+		Identifier: identifier,
+		Provider:   authenticationProvider,
+		Credential: credential,
+		UserID:     createdUser.ID,
+		User:       createdUser,
+	}
+
+	createdAuthentication, err := s.authenticationRepo.Create(ctx, inputAuthentication)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return createdAuthentication, createdUser, nil
 }
 
 func (s AuthenticationService) provider(loginType string) (auth.OAuthProvider, error) {

@@ -25,7 +25,7 @@ func (m *Migration) Migrate(afterDelete bool) error {
 	ctx := context.Background()
 
 	if afterDelete {
-		err = m.deleteTables(ctx)
+		err = m.DeleteAllTables(ctx)
 	}
 
 	err = m.createUserTable(ctx)
@@ -36,8 +36,24 @@ func (m *Migration) Migrate(afterDelete bool) error {
 	return nil
 }
 
-func DeleteTable(ctx context.Context, db *dynamodb.Client, tableName string) error {
-	_, err := db.DeleteTable(ctx, &dynamodb.DeleteTableInput{
+func (m *Migration) DeleteAllTables(ctx context.Context) error {
+	tables := []string{
+		repository.AuthenticationTableName,
+		repository.UserTableName,
+	}
+
+	for _, table := range tables {
+		if err := m.deleteTable(ctx, table); err != nil {
+			log.Printf("error deleting table %s: %s", table, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Migration) deleteTable(ctx context.Context, tableName string) error {
+	_, err := m.dynamoDB.DeleteTable(ctx, &dynamodb.DeleteTableInput{
 		TableName: aws.String(tableName),
 	})
 	if err != nil {
@@ -47,21 +63,6 @@ func DeleteTable(ctx context.Context, db *dynamodb.Client, tableName string) err
 	return nil
 }
 
-func (m *Migration) deleteTables(ctx context.Context) error {
-	tables := []string{
-		repository.AuthenticationTableName,
-		repository.UserTableName,
-	}
-
-	for _, table := range tables {
-		if err := DeleteTable(ctx, m.dynamoDB, table); err != nil {
-			log.Printf("error deleting table %s: %s", table, err)
-			return err
-		}
-	}
-
-	return nil
-}
 func (m *Migration) createAuthenticationTable(ctx context.Context) error {
 	tableName := repository.AuthenticationTableName
 	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{

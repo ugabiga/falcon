@@ -71,6 +71,29 @@ func (r UserDynamoRepository) Get(ctx context.Context, id string) (*model.User, 
 	return user, nil
 }
 
+func (r UserDynamoRepository) Update(ctx context.Context, id string, user *model.User) (*model.User, error) {
+	user.ID = id
+	user.UpdatedAt = time.Now()
+
+	av, err := MarshalItem(user)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
 func (r UserDynamoRepository) encodeID() string {
 	return uuid.New().String()
 }
