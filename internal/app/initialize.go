@@ -24,6 +24,7 @@ func provider() fx.Option {
 
 		// Repository
 		repository.NewAuthenticationDynamoRepository,
+		repository.NewUserDynamoRepository,
 
 		// Service
 		service.NewUserService,

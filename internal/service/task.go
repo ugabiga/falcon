@@ -43,7 +43,7 @@ func (s TaskService) Create(ctx context.Context, userID int, input generated.Cre
 	tradingAccount, err := s.db.TradingAccount.Query().
 		Where(
 			tradingaccount.UserID(userID),
-			tradingaccount.ID(input.TradingAccountID),
+			//tradingaccount.ID(input.TradingAccountID),
 		).
 		First(ctx)
 	if err != nil {

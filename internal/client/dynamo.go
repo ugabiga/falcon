@@ -37,6 +37,8 @@ func newDynamoConfig(ctx context.Context, region string, isLocal bool) (aws.Conf
 		sessionToken := "sessionToken"
 		endpoint := "http://localhost:8000"
 
+		log.Printf("Connecting to local DynamoDB at: %v", endpoint)
+
 		dynamoClientConfig, err = config.LoadDefaultConfig(
 			ctx,
 			config.WithRegion(region),
@@ -60,6 +62,7 @@ func newDynamoConfig(ctx context.Context, region string, isLocal bool) (aws.Conf
 
 	case false:
 		//Remote AWS
+		log.Printf("Connecting to AWS region: %v", region)
 		dynamoClientConfig, err = config.LoadDefaultConfig(
 			ctx,
 			config.WithRegion(region),

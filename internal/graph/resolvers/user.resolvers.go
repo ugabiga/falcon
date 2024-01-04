@@ -6,47 +6,48 @@ package resolvers
 import (
 	"context"
 
-	"github.com/ugabiga/falcon/internal/ent"
-	"github.com/ugabiga/falcon/internal/graph/converter"
 	"github.com/ugabiga/falcon/internal/graph/generated"
-	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
 func (r *mutationResolver) UpdateUser(ctx context.Context, input generated.UpdateUserInput) (*generated.User, error) {
-	r.logger.Printf("Input: %+v", input)
-	claim := helper.MustJWTClaimInResolver(ctx)
-
-	updateUser, err := r.userSrv.Update(
-		ctx,
-		claim.UserID,
-		&ent.User{
-			Name:     input.Name,
-			Timezone: input.Timezone,
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return converter.ToUser(updateUser)
+	//r.logger.Printf("Input: %+v", input)
+	//claim := helper.MustJWTClaimInResolver(ctx)
+	//
+	//updateUser, err := r.userSrv.Update(
+	//	ctx,
+	//	claim.UserID,
+	//	&ent.User{
+	//		Name:     input.Name,
+	//		Timezone: input.Timezone,
+	//	},
+	//)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//return converter.ToUser(updateUser)
+	//
+	return nil, nil
 }
 
 func (r *queryResolver) UserIndex(ctx context.Context) (*generated.UserIndex, error) {
-	claim := helper.MustJWTClaimInResolver(ctx)
+	//claim := helper.MustJWTClaimInResolver(ctx)
+	//
+	//user, err := r.userSrv.GetByID(ctx, claim.UserID)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//respUser, err := converter.ToUser(user)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//return &generated.UserIndex{
+	//	User: respUser,
+	//}, nil
 
-	user, err := r.userSrv.GetByID(ctx, claim.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	respUser, err := converter.ToUser(user)
-	if err != nil {
-		return nil, err
-	}
-
-	return &generated.UserIndex{
-		User: respUser,
-	}, nil
+	return nil, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

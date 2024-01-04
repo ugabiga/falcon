@@ -55,9 +55,9 @@ func (ec *executionContext) _Task_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Task_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -99,9 +99,9 @@ func (ec *executionContext) _Task_tradingAccountID(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNID2int(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Task_tradingAccountID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -815,7 +815,7 @@ func (ec *executionContext) unmarshalInputCreateTaskInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradingAccountID"))
-			it.TradingAccountID, err = ec.unmarshalNID2int(ctx, v)
+			it.TradingAccountID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

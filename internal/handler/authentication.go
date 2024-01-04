@@ -2,10 +2,8 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 	"github.com/ugabiga/falcon/internal/service"
-	"log"
 	"net/http"
 )
 
@@ -22,7 +20,7 @@ func NewAuthenticationHandler(
 }
 
 func (h AuthenticationHandler) SetRoutes(e *echo.Group) {
-	e.POST("/auth/signin", h.NewSignIn)
+	e.POST("/auth/signin", h.Signin)
 	e.GET("/auth/protected", h.Protected)
 }
 
@@ -36,16 +34,11 @@ type SignInResponse struct {
 	Token string `json:"token"`
 }
 
-func (h AuthenticationHandler) NewSignIn(c echo.Context) error {
-	log.Printf("Request: %+v", c.Request())
-	//request get token in json
-
+func (h AuthenticationHandler) Signin(c echo.Context) error {
 	var req SignInRequest
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
-
-	log.Printf("Request: %+v", req)
 
 	providerUser, err := h.authenticationService.VerifyUser(
 		c.Request().Context(),
@@ -56,9 +49,7 @@ func (h AuthenticationHandler) NewSignIn(c echo.Context) error {
 		return err
 	}
 
-	log.Printf("User: %+v", debug.ToJSONStr(providerUser))
-
-	a, err := h.authenticationService.SignInOrSignUp(
+	a, u, err := h.authenticationService.SignInOrSignUp(
 		c.Request().Context(),
 		req.Type,
 		req.AccountID,
@@ -71,7 +62,7 @@ func (h AuthenticationHandler) NewSignIn(c echo.Context) error {
 
 	token, err := h.authenticationService.CreateJWTToken(
 		a.UserID,
-		a.Edges.User.Name,
+		u.Name,
 		false,
 	)
 	if err != nil {

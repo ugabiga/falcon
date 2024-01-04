@@ -50,14 +50,14 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateTask           func(childComplexity int, input CreateTaskInput) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, key string, secret string) int
-		UpdateTask           func(childComplexity int, id int, input UpdateTaskInput) int
-		UpdateTradingAccount func(childComplexity int, id int, name *string, exchange *string, key *string, secret *string) int
+		UpdateTask           func(childComplexity int, id string, input UpdateTaskInput) int
+		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, key *string, secret *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
 	}
 
 	Query struct {
-		TaskHistoryIndex    func(childComplexity int, taskID int) int
-		TaskIndex           func(childComplexity int, tradingAccountID *int) int
+		TaskHistoryIndex    func(childComplexity int, taskID string) int
+		TaskIndex           func(childComplexity int, tradingAccountID *string) int
 		TradingAccountIndex func(childComplexity int) int
 		UserIndex           func(childComplexity int) int
 	}
@@ -228,7 +228,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(int), args["input"].(UpdateTaskInput)), true
+		return e.complexity.Mutation.UpdateTask(childComplexity, args["id"].(string), args["input"].(UpdateTaskInput)), true
 
 	case "Mutation.updateTradingAccount":
 		if e.complexity.Mutation.UpdateTradingAccount == nil {
@@ -240,7 +240,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(int), args["name"].(*string), args["exchange"].(*string), args["key"].(*string), args["secret"].(*string)), true
+		return e.complexity.Mutation.UpdateTradingAccount(childComplexity, args["id"].(string), args["name"].(*string), args["exchange"].(*string), args["key"].(*string), args["secret"].(*string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -264,7 +264,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TaskHistoryIndex(childComplexity, args["taskID"].(int)), true
+		return e.complexity.Query.TaskHistoryIndex(childComplexity, args["taskID"].(string)), true
 
 	case "Query.taskIndex":
 		if e.complexity.Query.TaskIndex == nil {
@@ -276,7 +276,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TaskIndex(childComplexity, args["tradingAccountID"].(*int)), true
+		return e.complexity.Query.TaskIndex(childComplexity, args["tradingAccountID"].(*string)), true
 
 	case "Query.tradingAccountIndex":
 		if e.complexity.Query.TradingAccountIndex == nil {
