@@ -29,12 +29,9 @@ func provider() fx.Option {
 		service.NewDcaService,
 
 		// Handler
-		handler.NewAuthenticationHandler,
-		handler.NewUserHandler,
 		handler.NewHomeHandler,
+		handler.NewAuthenticationHandler,
 		handler.NewErrorHandler,
-		handler.NewTradingAccountHandler,
-		handler.NewTaskHandler,
 
 		// GraphQL
 		helper.NewNodeResolver,
