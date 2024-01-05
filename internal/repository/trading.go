@@ -283,7 +283,9 @@ func (r TradingDynamoRepository) GetTasksByTradingAccountID(ctx context.Context,
 	return tasks, nil
 }
 
-func (r TradingDynamoRepository) GetTasksByNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
+func (r TradingDynamoRepository) GetTasksByActiveNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
+	formattedNextExecutionTime := nextExecutionTime.Format(time.RFC3339)
+
 	result, err := r.db.Query(
 		ctx,
 		&dynamodb.QueryInput{
@@ -293,12 +295,17 @@ func (r TradingDynamoRepository) GetTasksByNextExecutionTime(ctx context.Context
 				"next_execution_time": {
 					ComparisonOperator: types.ComparisonOperatorEq,
 					AttributeValueList: []types.AttributeValue{
-						//&types.AttributeValueMemberS{Value: nextExecutionTime.Format(time.RFC3339)},
-						//&types.AttributeValueMemberS{Value: nextExecutionTime.Format(time.RFC3339)},
-						//2024-01-05T16:53:42.165271+09:00
-						&types.AttributeValueMemberS{Value: nextExecutionTime.Format("2006-01-02T15:04:05.999999-07:00")},
+						&types.AttributeValueMemberS{Value: formattedNextExecutionTime},
 					},
 				},
+			},
+			//Is Active?
+			FilterExpression: &[]string{"#v = :is_active"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "is_active",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":is_active": &types.AttributeValueMemberBOOL{Value: true},
 			},
 		},
 	)

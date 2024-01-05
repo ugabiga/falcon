@@ -25,5 +25,5 @@ func nextCronExecutionTime(cron string, timezone string) (time.Time, error) {
 		return time.Time{}, err
 	}
 
-	return nextTime.UTC().Truncate(time.Second), nil
+	return nextTime.UTC().Truncate(time.Minute), nil
 }

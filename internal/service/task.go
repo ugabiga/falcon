@@ -94,6 +94,8 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 		return nil, err
 	}
 
+	//nextExecutionTime = time.Now().UTC().Add(time.Minute * 1).Truncate(time.Minute)
+
 	t, err := s.tradingRepo.GetTask(ctx, tradingAccountID, taskID)
 	if err != nil {
 		return nil, err
