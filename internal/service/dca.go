@@ -10,6 +10,7 @@ import (
 	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/ent/task"
 	"github.com/ugabiga/falcon/internal/ent/user"
+	"github.com/ugabiga/falcon/internal/repository"
 	"log"
 )
 
@@ -29,17 +30,20 @@ type TaskOrderInfo struct {
 }
 
 type DcaService struct {
-	db         *ent.Client
-	encryption *encryption.Encryption
+	db          *ent.Client
+	tradingRepo *repository.TradingDynamoRepository
+	encryption  *encryption.Encryption
 }
 
 func NewDcaService(
 	db *ent.Client,
+	tradingRepo *repository.TradingDynamoRepository,
 	encryption *encryption.Encryption,
 ) *DcaService {
 	return &DcaService{
-		db:         db,
-		encryption: encryption,
+		db:          db,
+		tradingRepo: tradingRepo,
+		encryption:  encryption,
 	}
 }
 
