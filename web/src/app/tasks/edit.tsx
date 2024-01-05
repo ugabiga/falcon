@@ -39,7 +39,8 @@ export function EditTask({task}: { task: Task }) {
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
         updateTask({
             variables: {
-                id: task.id,
+                tradingAccountID: task.tradingAccountID,
+                taskID: task.id,
                 currency: data.currency,
                 size: data.size,
                 symbol: data.symbol,

@@ -26,10 +26,10 @@ func (r *mutationResolver) CreateTask(ctx context.Context, input generated.Creat
 	return respTask, nil
 }
 
-func (r *mutationResolver) UpdateTask(ctx context.Context, id string, input generated.UpdateTaskInput) (*generated.Task, error) {
+func (r *mutationResolver) UpdateTask(ctx context.Context, tradingAccountID string, taskID string, input generated.UpdateTaskInput) (*generated.Task, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
-	task, err := r.taskSrv.Update(ctx, claim.UserID, id, input)
+	task, err := r.taskSrv.Update(ctx, claim.UserID, tradingAccountID, taskID, input)
 	if err != nil {
 		return nil, err
 	}
