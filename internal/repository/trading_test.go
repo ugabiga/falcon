@@ -13,7 +13,7 @@ import (
 
 func TestTradingRepository(t *testing.T) {
 	tester := app.InitializeTestApplication()
-	defer tester.ResetTables(t)
+	tester.ResetTables(t)
 	repo := tester.TradingRepository
 
 	ctx := context.Background()
@@ -111,4 +111,14 @@ func TestTradingRepository(t *testing.T) {
 		t.Fatal("task count is not equal")
 	}
 
+	tasksByNextExecutionTime, err := repo.GetTasksByNextExecutionTime(ctx, targetTask.NextExecutionTime)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	log.Printf("tasksByNextExecutionTime: %+v", debug.ToJSONStr(tasksByNextExecutionTime))
+
+	if len(tasksByNextExecutionTime) != 10 {
+		t.Fatal("tasks count is not equal")
+	}
 }

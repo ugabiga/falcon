@@ -30,9 +30,6 @@ func (m *Migration) Migrate(afterDelete bool) error {
 
 	err = m.createUserTable(ctx)
 	err = m.createAuthenticationTable(ctx)
-	//err = m.createTradingAccountTable(ctx)
-	//err = m.createTaskTable(ctx)
-	//err = m.createTaskHistoryTable(ctx)
 	err = m.createTradingTable(ctx)
 	if err != nil {
 		return err
@@ -42,11 +39,8 @@ func (m *Migration) Migrate(afterDelete bool) error {
 
 func (m *Migration) DeleteAllTables(ctx context.Context) error {
 	tables := []string{
-		repository.AuthenticationTableName,
 		repository.UserTableName,
-		repository.TradingAccountTableName,
-		repository.TaskTableName,
-		repository.TaskHistoryTableName,
+		repository.AuthenticationTableName,
 		repository.TradingTableName,
 	}
 
@@ -353,6 +347,10 @@ func (m *Migration) createTradingTable(ctx context.Context) error {
 				AttributeName: aws.String("sk"),
 				AttributeType: types.ScalarAttributeTypeS,
 			},
+			{
+				AttributeName: aws.String("next_execution_time"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
 		},
 		KeySchema: []types.KeySchemaElement{
 			{
@@ -362,6 +360,20 @@ func (m *Migration) createTradingTable(ctx context.Context) error {
 			{
 				AttributeName: aws.String("sk"),
 				KeyType:       types.KeyTypeRange,
+			},
+		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String(repository.IndexNextExecutionTime),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String(repository.IndexNextExecutionTimeKey),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
 			},
 		},
 		BillingMode: types.BillingModePayPerRequest,

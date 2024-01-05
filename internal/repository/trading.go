@@ -6,18 +6,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/google/uuid"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/model"
+	"log"
 	"time"
 )
 
 const (
-	Separator             = "-"
-	KeyPrefixTaskAccount  = "ta"
-	KeyPrefixTask         = "task"
-	KeyPrefixTaskHistory  = "th"
-	EntityTypeTaskAccount = "trading_account"
-	EntityTypeTask        = "task"
-	EntityTypeTaskHistory = "task_history"
+	Separator                 = "-"
+	IndexNextExecutionTime    = "next_execution_time_index"
+	IndexNextExecutionTimeKey = "next_execution_time"
+	KeyPrefixTaskAccount      = "ta"
+	KeyPrefixTask             = "task"
+	KeyPrefixTaskHistory      = "th"
+	EntityTypeTaskAccount     = "trading_account"
+	EntityTypeTask            = "task"
+	EntityTypeTaskHistory     = "task_history"
 )
 
 type TradingDynamoRepository struct {
@@ -34,8 +38,8 @@ func NewTradingDynamoRepository(db *dynamodb.Client) *TradingDynamoRepository {
 
 func (r TradingDynamoRepository) CreateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
 	tradingAccount.ID = r.encodeTradingAccountID(KeyPrefixTaskAccount, tradingAccount.UserID, tradingAccount.Exchange, tradingAccount.Key)
-	tradingAccount.UpdatedAt = time.Now()
-	tradingAccount.CreatedAt = time.Now()
+	tradingAccount.UpdatedAt = r.timeNow()
+	tradingAccount.CreatedAt = r.timeNow()
 
 	av, err := MarshalItem(tradingAccount)
 	if err != nil {
@@ -61,7 +65,7 @@ func (r TradingDynamoRepository) CreateTradingAccount(ctx context.Context, tradi
 }
 
 func (r TradingDynamoRepository) UpdateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
-	tradingAccount.UpdatedAt = time.Now()
+	tradingAccount.UpdatedAt = r.timeNow()
 
 	av, err := MarshalItem(tradingAccount)
 	if err != nil {
@@ -165,8 +169,11 @@ func (r TradingDynamoRepository) CountTradingAccountsByUserID(ctx context.Contex
 
 func (r TradingDynamoRepository) CreateTask(ctx context.Context, task model.Task) (*model.Task, error) {
 	task.ID = r.encoding("task")
-	task.UpdatedAt = time.Now()
-	task.CreatedAt = time.Now()
+	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
+	task.UpdatedAt = r.timeNow()
+	task.CreatedAt = r.timeNow()
+
+	log.Printf("task: %+v", debug.ToJSONStr(task))
 
 	av, err := MarshalItem(task)
 	if err != nil {
@@ -193,7 +200,8 @@ func (r TradingDynamoRepository) CreateTask(ctx context.Context, task model.Task
 }
 
 func (r TradingDynamoRepository) UpdateTask(ctx context.Context, task model.Task) (*model.Task, error) {
-	task.UpdatedAt = time.Now()
+	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
+	task.UpdatedAt = r.timeNow()
 
 	av, err := MarshalItem(task)
 	if err != nil {
@@ -275,6 +283,43 @@ func (r TradingDynamoRepository) GetTasksByTradingAccountID(ctx context.Context,
 	return tasks, nil
 }
 
+func (r TradingDynamoRepository) GetTasksByNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName: &r.tableName,
+			IndexName: &[]string{IndexNextExecutionTime}[0],
+			KeyConditions: map[string]types.Condition{
+				"next_execution_time": {
+					ComparisonOperator: types.ComparisonOperatorEq,
+					AttributeValueList: []types.AttributeValue{
+						//&types.AttributeValueMemberS{Value: nextExecutionTime.Format(time.RFC3339)},
+						//&types.AttributeValueMemberS{Value: nextExecutionTime.Format(time.RFC3339)},
+						//2024-01-05T16:53:42.165271+09:00
+						&types.AttributeValueMemberS{Value: nextExecutionTime.Format("2006-01-02T15:04:05.999999-07:00")},
+					},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []model.Task
+
+	for _, item := range result.Items {
+		task, err := UnmarshalItem[model.Task](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, *task)
+	}
+
+	return tasks, nil
+}
+
 func (r TradingDynamoRepository) CountTasksByTradingID(ctx context.Context, tradingAccountID string) (int, error) {
 	result, err := r.db.Query(
 		ctx,
@@ -297,8 +342,8 @@ func (r TradingDynamoRepository) CountTasksByTradingID(ctx context.Context, trad
 
 func (r TradingDynamoRepository) CreateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
 	taskHistory.ID = r.encoding(KeyPrefixTaskHistory)
-	taskHistory.UpdatedAt = time.Now()
-	taskHistory.CreatedAt = time.Now()
+	taskHistory.UpdatedAt = r.timeNow()
+	taskHistory.CreatedAt = r.timeNow()
 
 	av, err := MarshalItem(taskHistory)
 	if err != nil {
@@ -324,7 +369,7 @@ func (r TradingDynamoRepository) CreateTaskHistory(ctx context.Context, taskHist
 }
 
 func (r TradingDynamoRepository) UpdateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
-	taskHistory.UpdatedAt = time.Now()
+	taskHistory.UpdatedAt = r.timeNow()
 
 	av, err := MarshalItem(taskHistory)
 	if err != nil {
@@ -412,4 +457,8 @@ func (r TradingDynamoRepository) encodeTradingAccountID(prefix, id, exchange, ke
 
 func (r TradingDynamoRepository) encoding(prefix string) string {
 	return prefix + Separator + uuid.New().String()
+}
+
+func (r TradingDynamoRepository) timeNow() time.Time {
+	return time.Now().Truncate(time.Second)
 }
