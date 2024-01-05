@@ -108,6 +108,7 @@ func (r TaskHistoryDynamoRepository) GetByTaskID(ctx context.Context, taskID str
 					},
 				},
 			},
+			Limit: &[]int32{10}[0],
 		},
 	)
 	if err != nil {
