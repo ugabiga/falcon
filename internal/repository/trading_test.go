@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+func TestTradingRepository_Migration(t *testing.T) {
+	tester := app.InitializeTestApplication()
+	tester.ResetTables(t)
+}
+
 func TestTradingRepository(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
