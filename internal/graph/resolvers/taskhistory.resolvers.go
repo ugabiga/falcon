@@ -6,15 +6,14 @@ package resolvers
 import (
 	"context"
 	"github.com/antlabs/deepcopy"
-	"github.com/ugabiga/falcon/internal/handler/helper"
-
 	"github.com/ugabiga/falcon/internal/graph/generated"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
-func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID string) (*generated.TaskHistoryIndex, error) {
+func (r *queryResolver) TaskHistoryIndex(ctx context.Context, tradingAccountID string, taskID string) (*generated.TaskHistoryIndex, error) {
 	claim := helper.MustJWTClaimInResolver(ctx)
 
-	task, err := r.taskSrv.Get(ctx, claim.UserID, taskID)
+	task, taskHistories, err := r.taskHistorySrv.GetTaskHistoryByTaskId(ctx, claim.UserID, tradingAccountID, taskID)
 	if err != nil {
 		return nil, err
 	}
@@ -24,10 +23,7 @@ func (r *queryResolver) TaskHistoryIndex(ctx context.Context, taskID string) (*g
 		return nil, err
 	}
 
-	taskHistories, err := r.taskHistorySrv.GetTaskHistoryByTaskId(ctx, taskID)
-	if err != nil {
-		return nil, err
-	}
+	r.logger.Printf("taskHistories: %+v", taskHistories)
 
 	var respTaskHistories []*generated.TaskHistory
 	for _, taskHistory := range taskHistories {

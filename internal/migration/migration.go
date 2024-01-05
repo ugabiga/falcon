@@ -30,9 +30,10 @@ func (m *Migration) Migrate(afterDelete bool) error {
 
 	err = m.createUserTable(ctx)
 	err = m.createAuthenticationTable(ctx)
-	err = m.createTradingAccountTable(ctx)
-	err = m.createTaskTable(ctx)
-	err = m.createTaskHistoryTable(ctx)
+	//err = m.createTradingAccountTable(ctx)
+	//err = m.createTaskTable(ctx)
+	//err = m.createTaskHistoryTable(ctx)
+	err = m.createTradingTable(ctx)
 	if err != nil {
 		return err
 	}
@@ -46,12 +47,13 @@ func (m *Migration) DeleteAllTables(ctx context.Context) error {
 		repository.TradingAccountTableName,
 		repository.TaskTableName,
 		repository.TaskHistoryTableName,
+		repository.TradingTableName,
 	}
 
 	for _, table := range tables {
 		if err := m.deleteTable(ctx, table); err != nil {
 			log.Printf("error deleting table %s: %s", table, err)
-			return err
+			continue
 		}
 	}
 
@@ -327,6 +329,39 @@ func (m *Migration) createTaskHistoryTable(ctx context.Context) error {
 				Projection: &types.Projection{
 					ProjectionType: types.ProjectionTypeAll,
 				},
+			},
+		},
+		BillingMode: types.BillingModePayPerRequest,
+	})
+	if err != nil {
+		log.Printf("error creating table %s: %s", tableName, err)
+		return err
+	}
+	return nil
+}
+
+func (m *Migration) createTradingTable(ctx context.Context) error {
+	tableName := repository.TradingTableName
+	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
+		TableName: aws.String(tableName),
+		AttributeDefinitions: []types.AttributeDefinition{
+			{
+				AttributeName: aws.String("pk"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+			{
+				AttributeName: aws.String("sk"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+		},
+		KeySchema: []types.KeySchemaElement{
+			{
+				AttributeName: aws.String("pk"),
+				KeyType:       types.KeyTypeHash,
+			},
+			{
+				AttributeName: aws.String("sk"),
+				KeyType:       types.KeyTypeRange,
 			},
 		},
 		BillingMode: types.BillingModePayPerRequest,

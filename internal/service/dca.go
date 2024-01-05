@@ -120,7 +120,7 @@ func (s DcaService) updateNextTaskExecutionTime(orderInfo TaskOrderInfo) error {
 		return err
 	}
 
-	nextCronExecutionTime, err := NextCronExecutionTime(t.Cron, u.Timezone)
+	nextCronExecutionTime, err := nextCronExecutionTime(t.Cron, u.Timezone)
 	if err != nil {
 		return err
 	}

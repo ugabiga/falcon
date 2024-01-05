@@ -32,6 +32,7 @@ func provider() fx.Option {
 		repository.NewTradingAccountDynamoRepository,
 		repository.NewTaskDynamoRepository,
 		repository.NewTaskHistoryDynamoRepository,
+		repository.NewTradingDynamoRepository,
 
 		// Service
 		service.NewUserService,

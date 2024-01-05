@@ -6,8 +6,8 @@ fragment TaskHistoryFragment on TaskHistory {
     createdAt
 }
 
-query GetTaskHistoryIndex($taskID: ID!){
-    taskHistoryIndex(taskID: $taskID){
+query GetTaskHistoryIndex($tradingAccountID: ID!, $taskID: ID!){
+    taskHistoryIndex(tradingAccountID: $tradingAccountID, taskID: $taskID) {
         task {
             ...TaskFragment
         }

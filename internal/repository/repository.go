@@ -11,6 +11,7 @@ const (
 	TradingAccountTableName = "trading_account"
 	TaskTableName           = "task"
 	TaskHistoryTableName    = "task_history"
+	TradingTableName        = "trading"
 )
 
 func UnmarshalItem[T any](item map[string]types.AttributeValue) (*T, error) {

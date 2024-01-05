@@ -10,18 +10,35 @@ import (
 type TaskHistoryService struct {
 	db              *ent.Client
 	taskHistoryRepo *repository.TaskHistoryDynamoRepository
+	tradingRepo     *repository.TradingDynamoRepository
 }
 
-func NewTaskHistoryService(db *ent.Client, taskHistoryRepo *repository.TaskHistoryDynamoRepository) *TaskHistoryService {
+func NewTaskHistoryService(
+	db *ent.Client,
+	taskHistoryRepo *repository.TaskHistoryDynamoRepository,
+	tradingRepo *repository.TradingDynamoRepository,
+) *TaskHistoryService {
 	return &TaskHistoryService{
 		db:              db,
 		taskHistoryRepo: taskHistoryRepo,
+		tradingRepo:     tradingRepo,
 	}
 }
 
-func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, taskId string) ([]model.TaskHistory, error) {
-	return s.taskHistoryRepo.GetByTaskID(
-		ctx,
-		taskId,
-	)
+func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, userID, tradingAccountID, taskID string) (*model.Task, []model.TaskHistory, error) {
+	task, err := s.tradingRepo.GetTask(ctx, tradingAccountID, taskID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if task.UserID != userID {
+		return nil, nil, ErrDoNotHaveAccess
+	}
+
+	taskHistories, err := s.tradingRepo.GetTaskHistoriesByTaskID(ctx, task.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return task, taskHistories, nil
 }

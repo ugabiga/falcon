@@ -56,7 +56,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		TaskHistoryIndex    func(childComplexity int, taskID string) int
+		TaskHistoryIndex    func(childComplexity int, tradingAccountID string, taskID string) int
 		TaskIndex           func(childComplexity int, tradingAccountID *string) int
 		TradingAccountIndex func(childComplexity int) int
 		UserIndex           func(childComplexity int) int
@@ -264,7 +264,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.TaskHistoryIndex(childComplexity, args["taskID"].(string)), true
+		return e.complexity.Query.TaskHistoryIndex(childComplexity, args["tradingAccountID"].(string), args["taskID"].(string)), true
 
 	case "Query.taskIndex":
 		if e.complexity.Query.TaskIndex == nil {
@@ -738,7 +738,7 @@ type Task {
 scalar JSON
 `, BuiltIn: false},
 	{Name: "api/graph/taskhistory.graphql", Input: `extend type Query {
-    taskHistoryIndex(taskID: ID!): TaskHistoryIndex!
+    taskHistoryIndex(tradingAccountID: ID!, taskID: ID!): TaskHistoryIndex!
 }
 
 type TaskHistoryIndex{

@@ -5,10 +5,10 @@ package resolvers
 
 import (
 	"context"
-	"github.com/antlabs/deepcopy"
-	"github.com/ugabiga/falcon/internal/handler/helper"
 
+	"github.com/antlabs/deepcopy"
 	"github.com/ugabiga/falcon/internal/graph/generated"
+	"github.com/ugabiga/falcon/internal/handler/helper"
 )
 
 func (r *mutationResolver) CreateTask(ctx context.Context, input generated.CreateTaskInput) (*generated.Task, error) {
@@ -96,5 +96,4 @@ func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string)
 		TradingAccounts:        respTradingAccounts,
 		SelectedTradingAccount: selectedRespTradingAccount,
 	}, nil
-
 }
