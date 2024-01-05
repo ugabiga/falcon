@@ -2,23 +2,19 @@ package service
 
 import (
 	"context"
-	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 )
 
 type UserService struct {
-	db       *ent.Client
 	userRepo *repository.UserDynamoRepository
 }
 
 func NewUserService(
-	db *ent.Client,
 	userRepo *repository.UserDynamoRepository,
 ) *UserService {
 	return &UserService{
-		db:       db,
 		userRepo: userRepo,
 	}
 }

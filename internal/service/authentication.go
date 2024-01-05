@@ -7,7 +7,6 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	auth "github.com/ugabiga/falcon/internal/authentication"
-	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/pkg/config"
@@ -42,21 +41,18 @@ type WhiteList struct {
 }
 
 type AuthenticationService struct {
-	db                 *ent.Client
 	cfg                *config.Config
 	authenticationRepo *repository.AuthenticationDynamoRepository
 	userRepo           *repository.UserDynamoRepository
 }
 
 func NewAuthenticationService(
-	db *ent.Client,
 	cfg *config.Config,
 	authenticationRepo *repository.AuthenticationDynamoRepository,
 	userRepo *repository.UserDynamoRepository,
 
 ) *AuthenticationService {
 	a := &AuthenticationService{
-		db:                 db,
 		cfg:                cfg,
 		authenticationRepo: authenticationRepo,
 		userRepo:           userRepo,

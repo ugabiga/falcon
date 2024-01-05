@@ -4,8 +4,6 @@ import (
 	"context"
 	"github.com/AlekSi/pointer"
 	"github.com/ugabiga/falcon/internal/common/encryption"
-	"github.com/ugabiga/falcon/internal/ent"
-	"github.com/ugabiga/falcon/internal/ent/tradingaccount"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 )
@@ -15,20 +13,17 @@ const (
 )
 
 type TradingAccountService struct {
-	db                 *ent.Client
 	encryption         *encryption.Encryption
 	tradingAccountRepo *repository.TradingAccountDynamoRepository
 	taskRepo           *repository.TaskDynamoRepository
 }
 
 func NewTradingAccountService(
-	db *ent.Client,
 	encryption *encryption.Encryption,
 	tradingaccountRepo *repository.TradingAccountDynamoRepository,
 	taskRepo *repository.TaskDynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
-		db:                 db,
 		encryption:         encryption,
 		tradingAccountRepo: tradingaccountRepo,
 		taskRepo:           taskRepo,
@@ -169,58 +164,6 @@ func (s TradingAccountService) Update(
 	_, err = s.tradingAccountRepo.Update(ctx, tradingAccountID, inputTradingAccount)
 	if err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (s TradingAccountService) GetWithTask(ctx context.Context, userID string) ([]*ent.TradingAccount, error) {
-	//ta, err := s.tradingAccountRepo.GetByUserID(ctx, userID)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//tasks, err := s.taskRepo.GetByTradingAccountID(ctx, ta.ID)
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	query := s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(1),
-	)
-
-	return query.
-		Order(ent.Desc(tradingaccount.FieldID)).
-		WithTasks().
-		All(ctx)
-}
-
-func (s TradingAccountService) First(ctx context.Context, userID int) (*ent.TradingAccount, error) {
-	return s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(userID),
-	).
-		Order(ent.Desc(tradingaccount.FieldID)).
-		First(ctx)
-}
-
-func (s TradingAccountService) GetByID(ctx context.Context, userID, tradingAccountID int) (*ent.TradingAccount, error) {
-	return s.db.TradingAccount.Query().Where(
-		tradingaccount.UserIDEQ(userID),
-		tradingaccount.IDEQ(tradingAccountID),
-	).First(ctx)
-}
-
-func (s TradingAccountService) Delete(ctx context.Context, userID, tradingAccountID int) error {
-	deleteCount, err := s.db.TradingAccount.Delete().Where(
-		tradingaccount.IDEQ(tradingAccountID),
-		tradingaccount.UserIDEQ(userID),
-	).Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	if deleteCount <= 0 {
-		return ErrorNoRows
 	}
 
 	return nil
