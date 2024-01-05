@@ -1,5 +1,5 @@
 extend type Query {
-    taskHistoryIndex(taskID: ID!): TaskHistoryIndex!
+    taskHistoryIndex(tradingAccountID: ID!, taskID: ID!): TaskHistoryIndex!
 }
 
 type TaskHistoryIndex{

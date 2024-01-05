@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/ugabiga/falcon/internal/migration"
+	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/internal/service"
 	"testing"
 )
@@ -14,6 +15,7 @@ type Tester struct {
 	TaskHistorySrv    *service.TaskHistoryService
 	DcaSrv            *service.DcaService
 	Migration         *migration.Migration
+	TradingRepository *repository.TradingDynamoRepository
 }
 
 func NewTester(
@@ -24,6 +26,7 @@ func NewTester(
 	taskHistorySrv *service.TaskHistoryService,
 	dcaSrv *service.DcaService,
 	mg *migration.Migration,
+	tradingRepository *repository.TradingDynamoRepository,
 ) Tester {
 	return Tester{
 		UserSrv:           userSrv,
@@ -33,6 +36,7 @@ func NewTester(
 		TaskHistorySrv:    taskHistorySrv,
 		DcaSrv:            dcaSrv,
 		Migration:         mg,
+		TradingRepository: tradingRepository,
 	}
 }
 

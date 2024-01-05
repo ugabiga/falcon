@@ -151,7 +151,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 </TableCell>
                                 <TableCell>
                                     <Button variant="link" asChild>
-                                        <Link href={`/tasks/${task.id}/history`} legacyBehavior>
+                                        <Link href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`} legacyBehavior>
                                             <a>{t("tasks.table.history")}</a>
                                         </Link>
                                     </Button>

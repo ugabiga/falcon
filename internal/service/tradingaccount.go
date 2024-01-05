@@ -16,17 +16,20 @@ type TradingAccountService struct {
 	encryption         *encryption.Encryption
 	tradingAccountRepo *repository.TradingAccountDynamoRepository
 	taskRepo           *repository.TaskDynamoRepository
+	tradingRepo        *repository.TradingDynamoRepository
 }
 
 func NewTradingAccountService(
 	encryption *encryption.Encryption,
 	tradingaccountRepo *repository.TradingAccountDynamoRepository,
 	taskRepo *repository.TaskDynamoRepository,
+	tradingRepo *repository.TradingDynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
 		encryption:         encryption,
 		tradingAccountRepo: tradingaccountRepo,
 		taskRepo:           taskRepo,
+		tradingRepo:        tradingRepo,
 	}
 }
 
@@ -66,7 +69,7 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 		tradingAccount.Phrase = encryptedPhrase
 	}
 
-	newTradingAccount, err := s.tradingAccountRepo.Create(
+	newTradingAccount, err := s.tradingRepo.CreateTradingAccount(
 		ctx,
 		tradingAccount,
 	)
@@ -79,7 +82,7 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 }
 
 func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID string) error {
-	count, err := s.tradingAccountRepo.Count(ctx, userID)
+	count, err := s.tradingRepo.CountTradingAccountsByUserID(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -92,7 +95,7 @@ func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID s
 }
 
 func (s TradingAccountService) GetByUserID(ctx context.Context, userID string) ([]model.TradingAccount, error) {
-	tradingAccounts, err := s.tradingAccountRepo.GetByUserID(ctx, userID)
+	tradingAccounts, err := s.tradingRepo.GetTradingAccountsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +123,7 @@ func (s TradingAccountService) Update(
 		}
 	}
 
-	tradingAccount, err := s.tradingAccountRepo.GetByID(ctx, tradingAccountID)
+	tradingAccount, err := s.tradingRepo.GetTradingAccount(ctx, userID, tradingAccountID)
 	if err != nil {
 		return err
 	}
@@ -161,7 +164,7 @@ func (s TradingAccountService) Update(
 		inputTradingAccount.Phrase = encryptedPhrase
 	}
 
-	_, err = s.tradingAccountRepo.Update(ctx, tradingAccountID, inputTradingAccount)
+	_, err = s.tradingRepo.UpdateTradingAccount(ctx, inputTradingAccount)
 	if err != nil {
 		return err
 	}

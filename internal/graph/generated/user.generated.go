@@ -27,7 +27,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	UserIndex(ctx context.Context) (*UserIndex, error)
 	TaskIndex(ctx context.Context, tradingAccountID *string) (*TaskIndex, error)
-	TaskHistoryIndex(ctx context.Context, taskID string) (*TaskHistoryIndex, error)
+	TaskHistoryIndex(ctx context.Context, tradingAccountID string, taskID string) (*TaskHistoryIndex, error)
 	TradingAccountIndex(ctx context.Context) (*TradingAccountIndex, error)
 }
 
@@ -201,14 +201,23 @@ func (ec *executionContext) field_Query_taskHistoryIndex_args(ctx context.Contex
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["taskID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taskID"))
+	if tmp, ok := rawArgs["tradingAccountID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradingAccountID"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["taskID"] = arg0
+	args["tradingAccountID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["taskID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taskID"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["taskID"] = arg1
 	return args, nil
 }
 
@@ -728,7 +737,7 @@ func (ec *executionContext) _Query_taskHistoryIndex(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TaskHistoryIndex(rctx, fc.Args["taskID"].(string))
+		return ec.resolvers.Query().TaskHistoryIndex(rctx, fc.Args["tradingAccountID"].(string), fc.Args["taskID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

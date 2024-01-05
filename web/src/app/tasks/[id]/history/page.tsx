@@ -5,15 +5,18 @@ import {useQuery} from "@apollo/client";
 import {GetTaskHistoryIndexDocument} from "@/graph/generated/generated";
 import {Loading} from "@/components/loading";
 import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
+    const searchParams = useSearchParams()
+    const tradingAccountId = searchParams.get('trading_account_id')
     const {t} = useTranslation()
     const router = useRouter()
     const {data, loading, error} = useQuery(GetTaskHistoryIndexDocument, {
         variables: {
+            tradingAccountID: tradingAccountId ?? "",
             taskID: params.id
         }
     })

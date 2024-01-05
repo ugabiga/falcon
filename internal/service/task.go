@@ -3,12 +3,9 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/adhocore/gronx"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
-	"time"
-
 	"strconv"
 	"strings"
 )
@@ -18,22 +15,25 @@ const (
 )
 
 type TaskService struct {
-	taskRepo *repository.TaskDynamoRepository
-	userRepo *repository.UserDynamoRepository
+	taskRepo    *repository.TaskDynamoRepository
+	userRepo    *repository.UserDynamoRepository
+	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewTaskService(
 	taskRepo *repository.TaskDynamoRepository,
 	userRepo *repository.UserDynamoRepository,
+	tradingRepo *repository.TradingDynamoRepository,
 ) *TaskService {
 	return &TaskService{
-		taskRepo: taskRepo,
-		userRepo: userRepo,
+		taskRepo:    taskRepo,
+		userRepo:    userRepo,
+		tradingRepo: tradingRepo,
 	}
 }
 
 func (s TaskService) Create(ctx context.Context, userID string, input generated.CreateTaskInput) (*model.Task, error) {
-	if err := s.validateExceedLimit(ctx, userID); err != nil {
+	if err := s.validateExceedLimit(ctx, input.TradingAccountID); err != nil {
 		return nil, err
 	}
 
@@ -51,7 +51,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 	}
 
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := NextCronExecutionTime(cron, u.Timezone)
+	nextExecutionTime, err := nextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 		Params:            input.Params,
 	}
 
-	t, err := s.taskRepo.Create(ctx, newTask)
+	t, err := s.tradingRepo.CreateTask(ctx, newTask)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (s TaskService) Update(ctx context.Context, userID string, taskID string, i
 	}
 
 	cron := s.cronExpression(input.Hours, input.Days)
-	nextExecutionTime, err := NextCronExecutionTime(cron, u.Timezone)
+	nextExecutionTime, err := nextCronExecutionTime(cron, u.Timezone)
 	if err != nil {
 		return nil, err
 	}
@@ -121,11 +121,11 @@ func (s TaskService) Update(ctx context.Context, userID string, taskID string, i
 		CreatedAt:         t.CreatedAt,
 	}
 
-	return s.taskRepo.Update(ctx, taskID, updateTask)
+	return s.tradingRepo.UpdateTask(ctx, updateTask)
 }
 
 func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID string) ([]model.Task, error) {
-	tasks, err := s.taskRepo.GetByTradingAccountID(ctx, tradingAccountID)
+	tasks, err := s.tradingRepo.GetTasksByTradingAccountID(ctx, tradingAccountID)
 	if err != nil {
 		return nil, err
 	}
@@ -133,21 +133,21 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID s
 	return tasks, nil
 }
 
-func (s TaskService) Get(ctx context.Context, userID string, taskID string) (*model.Task, error) {
-	t, err := s.taskRepo.Get(ctx, taskID)
-	if err != nil {
-		return nil, err
-	}
+//func (s TaskService) Get(ctx context.Context, userID string, taskID string) (*model.Task, error) {
+//	t, err := s.tradingRepo.GetTask(ctx, taskID)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	if t.UserID != userID {
+//		return nil, ErrDoNotHaveAccess
+//	}
+//
+//	return t, nil
+//}
 
-	if t.UserID != userID {
-		return nil, ErrDoNotHaveAccess
-	}
-
-	return t, nil
-}
-
-func (s TaskService) validateExceedLimit(ctx context.Context, userID string) error {
-	count, err := s.taskRepo.CountByUserID(ctx, userID)
+func (s TaskService) validateExceedLimit(ctx context.Context, tradingAccountID string) error {
+	count, err := s.tradingRepo.CountTasksByTradingID(ctx, tradingAccountID)
 	if err != nil {
 		return err
 	}
@@ -187,19 +187,4 @@ func (s TaskService) validateCurrency(currency string) error {
 
 func (s TaskService) cronExpression(hour string, days string) string {
 	return "0 0 " + hour + " * * " + days
-}
-
-func NextCronExecutionTime(cron string, timezone string) (time.Time, error) {
-	location, err := time.LoadLocation(timezone)
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	localTime := time.Now().In(location)
-	nextTime, err := gronx.NextTickAfter(cron, localTime, true)
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	return nextTime.UTC(), nil
 }
