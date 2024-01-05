@@ -158,6 +158,19 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID s
 	//	All(ctx)
 }
 
+func (s TaskService) Get(ctx context.Context, userID string, taskID string) (*model.Task, error) {
+	t, err := s.taskRepo.Get(ctx, taskID)
+	if err != nil {
+		return nil, err
+	}
+
+	if t.UserID != userID {
+		return nil, ErrDoNotHaveAccess
+	}
+
+	return t, nil
+}
+
 func (s TaskService) validateExceedLimit(ctx context.Context, userID string) error {
 	count, err := s.taskRepo.CountByUserID(ctx, userID)
 	if err != nil {
