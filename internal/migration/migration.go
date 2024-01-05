@@ -32,6 +32,7 @@ func (m *Migration) Migrate(afterDelete bool) error {
 	err = m.createAuthenticationTable(ctx)
 	err = m.createTradingAccountTable(ctx)
 	err = m.createTaskTable(ctx)
+	err = m.createTaskHistoryTable(ctx)
 	if err != nil {
 		return err
 	}
@@ -44,6 +45,7 @@ func (m *Migration) DeleteAllTables(ctx context.Context) error {
 		repository.UserTableName,
 		repository.TradingAccountTableName,
 		repository.TaskTableName,
+		repository.TaskHistoryTableName,
 	}
 
 	for _, table := range tables {
@@ -235,6 +237,10 @@ func (m *Migration) createTaskTable(ctx context.Context) error {
 				AttributeName: aws.String("trading_account_id"),
 				AttributeType: types.ScalarAttributeTypeS,
 			},
+			{
+				AttributeName: aws.String("next_execution_time"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
 		},
 		KeySchema: []types.KeySchemaElement{
 			{
@@ -260,6 +266,61 @@ func (m *Migration) createTaskTable(ctx context.Context) error {
 				KeySchema: []types.KeySchemaElement{
 					{
 						AttributeName: aws.String("trading_account_id"),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
+			},
+			{
+				IndexName: aws.String("next-execution-time-index"),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("next_execution_time"),
+						KeyType:       types.KeyTypeHash,
+					},
+				},
+				Projection: &types.Projection{
+					ProjectionType: types.ProjectionTypeAll,
+				},
+			},
+		},
+		BillingMode: types.BillingModePayPerRequest,
+	})
+	if err != nil {
+		log.Printf("error creating table %s: %s", tableName, err)
+		return err
+	}
+	return nil
+}
+
+func (m *Migration) createTaskHistoryTable(ctx context.Context) error {
+	tableName := repository.TaskHistoryTableName
+	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
+		TableName: aws.String(tableName),
+		AttributeDefinitions: []types.AttributeDefinition{
+			{
+				AttributeName: aws.String("id"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+			{
+				AttributeName: aws.String("task_id"),
+				AttributeType: types.ScalarAttributeTypeS,
+			},
+		},
+		KeySchema: []types.KeySchemaElement{
+			{
+				AttributeName: aws.String("id"),
+				KeyType:       types.KeyTypeHash,
+			},
+		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
+			{
+				IndexName: aws.String("task-index"),
+				KeySchema: []types.KeySchemaElement{
+					{
+						AttributeName: aws.String("task_id"),
 						KeyType:       types.KeyTypeHash,
 					},
 				},

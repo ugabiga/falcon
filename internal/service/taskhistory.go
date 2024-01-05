@@ -3,20 +3,25 @@ package service
 import (
 	"context"
 	"github.com/ugabiga/falcon/internal/ent"
-	"github.com/ugabiga/falcon/internal/ent/taskhistory"
+	"github.com/ugabiga/falcon/internal/model"
+	"github.com/ugabiga/falcon/internal/repository"
 )
 
 type TaskHistoryService struct {
-	db *ent.Client
+	db              *ent.Client
+	taskHistoryRepo *repository.TaskHistoryDynamoRepository
 }
 
-func NewTaskHistoryService(db *ent.Client) *TaskHistoryService {
-	return &TaskHistoryService{db: db}
+func NewTaskHistoryService(db *ent.Client, taskHistoryRepo *repository.TaskHistoryDynamoRepository) *TaskHistoryService {
+	return &TaskHistoryService{
+		db:              db,
+		taskHistoryRepo: taskHistoryRepo,
+	}
 }
 
-func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, taskId int) ([]*ent.TaskHistory, error) {
-	return s.db.TaskHistory.Query().
-		Where(taskhistory.TaskID(taskId)).
-		WithTask().
-		All(ctx)
+func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, taskId string) ([]model.TaskHistory, error) {
+	return s.taskHistoryRepo.GetByTaskID(
+		ctx,
+		taskId,
+	)
 }
