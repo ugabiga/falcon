@@ -4,7 +4,7 @@ extend type Query {
 
 extend type Mutation {
     createTask(input: CreateTaskInput!): Task!
-    updateTask(id: ID!, input: UpdateTaskInput!): Task!
+    updateTask(tradingAccountID: ID! taskID: ID! input: UpdateTaskInput!): Task!
 }
 
 input CreateTaskInput {

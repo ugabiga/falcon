@@ -15,18 +15,15 @@ const (
 )
 
 type TaskService struct {
-	taskRepo    *repository.TaskDynamoRepository
 	userRepo    *repository.UserDynamoRepository
 	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewTaskService(
-	taskRepo *repository.TaskDynamoRepository,
 	userRepo *repository.UserDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 ) *TaskService {
 	return &TaskService{
-		taskRepo:    taskRepo,
 		userRepo:    userRepo,
 		tradingRepo: tradingRepo,
 	}
@@ -77,7 +74,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 	return t, nil
 }
 
-func (s TaskService) Update(ctx context.Context, userID string, taskID string, input generated.UpdateTaskInput) (*model.Task, error) {
+func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID string, taskID string, input generated.UpdateTaskInput) (*model.Task, error) {
 	if err := s.validateHours(input.Hours); err != nil {
 		return nil, err
 	}
@@ -97,7 +94,7 @@ func (s TaskService) Update(ctx context.Context, userID string, taskID string, i
 		return nil, err
 	}
 
-	t, err := s.taskRepo.Get(ctx, taskID)
+	t, err := s.tradingRepo.GetTask(ctx, tradingAccountID, taskID)
 	if err != nil {
 		return nil, err
 	}
@@ -132,19 +129,6 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID s
 
 	return tasks, nil
 }
-
-//func (s TaskService) Get(ctx context.Context, userID string, taskID string) (*model.Task, error) {
-//	t, err := s.tradingRepo.GetTask(ctx, taskID)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	if t.UserID != userID {
-//		return nil, ErrDoNotHaveAccess
-//	}
-//
-//	return t, nil
-//}
 
 func (s TaskService) validateExceedLimit(ctx context.Context, tradingAccountID string) error {
 	count, err := s.tradingRepo.CountTasksByTradingID(ctx, tradingAccountID)

@@ -60,7 +60,9 @@ mutation CreateTask($tradingAccountID: ID!,
     }
 }
 
-mutation UpdateTask($id: ID!,
+mutation UpdateTask(
+    $taskID: ID!,
+    $tradingAccountID: ID!,
     $currency: String!,
     $size: Float!,
     $symbol: String!,
@@ -71,7 +73,8 @@ mutation UpdateTask($id: ID!,
     $isActive: Boolean!,
 ){
     updateTask(
-        id: $id
+        taskID: $taskID
+        tradingAccountID: $tradingAccountID
         input: {
             currency: $currency
             size: $size

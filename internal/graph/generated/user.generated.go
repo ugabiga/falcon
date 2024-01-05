@@ -20,7 +20,7 @@ import (
 type MutationResolver interface {
 	UpdateUser(ctx context.Context, input UpdateUserInput) (*User, error)
 	CreateTask(ctx context.Context, input CreateTaskInput) (*Task, error)
-	UpdateTask(ctx context.Context, id string, input UpdateTaskInput) (*Task, error)
+	UpdateTask(ctx context.Context, tradingAccountID string, taskID string, input UpdateTaskInput) (*Task, error)
 	CreateTradingAccount(ctx context.Context, name string, exchange string, key string, secret string) (*TradingAccount, error)
 	UpdateTradingAccount(ctx context.Context, id string, name *string, exchange *string, key *string, secret *string) (bool, error)
 }
@@ -96,23 +96,32 @@ func (ec *executionContext) field_Mutation_updateTask_args(ctx context.Context, 
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["tradingAccountID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tradingAccountID"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
-	var arg1 UpdateTaskInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateTaskInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUpdateTaskInput(ctx, tmp)
+	args["tradingAccountID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["taskID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taskID"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg1
+	args["taskID"] = arg1
+	var arg2 UpdateTaskInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg2, err = ec.unmarshalNUpdateTaskInput2githubᚗcomᚋugabigaᚋfalconᚋinternalᚋgraphᚋgeneratedᚐUpdateTaskInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg2
 	return args, nil
 }
 
@@ -414,7 +423,7 @@ func (ec *executionContext) _Mutation_updateTask(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["id"].(string), fc.Args["input"].(UpdateTaskInput))
+		return ec.resolvers.Mutation().UpdateTask(rctx, fc.Args["tradingAccountID"].(string), fc.Args["taskID"].(string), fc.Args["input"].(UpdateTaskInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
