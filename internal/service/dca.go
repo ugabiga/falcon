@@ -8,8 +8,7 @@ import (
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/ent"
-	"github.com/ugabiga/falcon/internal/ent/task"
-	"github.com/ugabiga/falcon/internal/ent/user"
+	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
 )
@@ -19,29 +18,27 @@ var (
 )
 
 type TaskOrderInfo struct {
-	TaskID   int
-	Cron     string
-	Symbol   string
-	Currency string
-	Size     float64
-	Exchange string
-	Key      string
-	Secret   string
+	TaskID           string
+	TradingAccountID string
+	UserID           string
 }
 
 type DcaService struct {
 	db          *ent.Client
+	userRepo    *repository.UserDynamoRepository
 	tradingRepo *repository.TradingDynamoRepository
 	encryption  *encryption.Encryption
 }
 
 func NewDcaService(
 	db *ent.Client,
+	userRepo *repository.UserDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 	encryption *encryption.Encryption,
 ) *DcaService {
 	return &DcaService{
 		db:          db,
+		userRepo:    userRepo,
 		tradingRepo: tradingRepo,
 		encryption:  encryption,
 	}
@@ -49,49 +46,50 @@ func NewDcaService(
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	ctx := context.Background()
-	now := timer.NowNoMinuteAndSeconds()
+	now := timer.NoSeconds()
 
 	log.Printf("Searching for tasks with next execution time: %s", now.String())
 
 	// TODO add pagination
-	tasks, err := s.db.Task.Query().
-		Where(
-			task.NextExecutionTime(now),
-			task.IsActive(true),
-		).
-		WithTradingAccount().
-		All(ctx)
+	tasks, err := s.tradingRepo.GetTasksByActiveNextExecutionTime(ctx, now)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("Found %d tasks", len(tasks))
+
 	var taskOrderInfos []TaskOrderInfo
 	for _, t := range tasks {
-		if t.Edges.TradingAccount != nil {
-			taskOrderInfos = append(taskOrderInfos, TaskOrderInfo{
-				TaskID:   t.ID,
-				Cron:     t.Cron,
-				Symbol:   t.Symbol,
-				Currency: t.Currency,
-				Size:     t.Size,
-				Exchange: t.Edges.TradingAccount.Exchange,
-				Key:      t.Edges.TradingAccount.Key,
-				Secret:   t.Edges.TradingAccount.Secret,
-			})
-		}
+		taskOrderInfos = append(taskOrderInfos, TaskOrderInfo{
+			TaskID:           t.ID,
+			TradingAccountID: t.TradingAccountID,
+			UserID:           t.UserID,
+		})
 	}
 
 	return taskOrderInfos, nil
 }
 
 func (s DcaService) Order(orderInfo TaskOrderInfo) error {
+	ctx := context.Background()
 	var err error
 
-	switch orderInfo.Exchange {
+	tradingAccount, err := s.tradingRepo.GetTradingAccount(ctx, orderInfo.UserID, orderInfo.TradingAccountID)
+	if err != nil {
+		return err
+	}
+
+	t, err := s.tradingRepo.GetTask(ctx, orderInfo.TradingAccountID, orderInfo.TaskID)
+	if err != nil {
+		return err
+	}
+
+	switch tradingAccount.Exchange {
 	case "upbit":
 		err = s.orderUpbitAt(
-			context.Background(),
-			orderInfo,
+			ctx,
+			tradingAccount,
+			t,
 		)
 	default:
 		return errors.New("exchange not found")
@@ -101,25 +99,10 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 		return err
 	}
 
-	return s.updateNextTaskExecutionTime(orderInfo)
+	return s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t)
 }
-func (s DcaService) updateNextTaskExecutionTime(orderInfo TaskOrderInfo) error {
-	ctx := context.Background()
-	t, err := s.db.Task.Query().
-		Where(
-			task.ID(orderInfo.TaskID),
-		).
-		WithTradingAccount().
-		First(ctx)
-	if err != nil {
-		return err
-	}
-
-	u, err := s.db.User.Query().
-		Where(
-			user.IDEQ(t.Edges.TradingAccount.UserID),
-		).
-		First(ctx)
+func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
+	u, err := s.userRepo.Get(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -128,10 +111,9 @@ func (s DcaService) updateNextTaskExecutionTime(orderInfo TaskOrderInfo) error {
 	if err != nil {
 		return err
 	}
+	t.NextExecutionTime = nextCronExecutionTime
 
-	_, err = s.db.Task.UpdateOneID(orderInfo.TaskID).
-		SetNextExecutionTime(nextCronExecutionTime).
-		Save(ctx)
+	_, err = s.tradingRepo.UpdateTask(ctx, *t)
 	if err != nil {
 		return err
 	}
@@ -141,15 +123,19 @@ func (s DcaService) updateNextTaskExecutionTime(orderInfo TaskOrderInfo) error {
 
 func (s DcaService) orderUpbitAt(
 	ctx context.Context,
-	orderInfo TaskOrderInfo,
+	tradingAccount *model.TradingAccount,
+	t *model.Task,
 ) error {
-	symbol := orderInfo.Currency + "-" + orderInfo.Symbol
-	size := orderInfo.Size
-	key := orderInfo.Key
-	decryptedSecret, err := s.encryption.Decrypt(orderInfo.Secret)
+	symbol := t.Currency + "-" + t.Symbol
+	size := t.Size
+	key := tradingAccount.Key
+	decryptedSecret, err := s.encryption.Decrypt(tradingAccount.Secret)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("key: %s, size: %f, symbol: %s", key, size, symbol)
+	return nil
 
 	c := client.NewUpbitClient(key, decryptedSecret)
 
