@@ -27,12 +27,7 @@ func provider() fx.Option {
 		migration.NewMigration,
 
 		// Repository
-		repository.NewAuthenticationDynamoRepository,
-		repository.NewUserDynamoRepository,
-		repository.NewTradingAccountDynamoRepository,
-		repository.NewTaskDynamoRepository,
-		repository.NewTaskHistoryDynamoRepository,
-		repository.NewTradingDynamoRepository,
+		repository.NewDynamoRepository,
 
 		// Service
 		service.NewUserService,

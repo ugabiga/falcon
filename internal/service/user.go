@@ -8,11 +8,11 @@ import (
 )
 
 type UserService struct {
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 }
 
 func NewUserService(
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 ) *UserService {
 	return &UserService{
 		tradingRepo: tradingRepo,
