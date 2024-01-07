@@ -25,20 +25,17 @@ type TaskOrderInfo struct {
 
 type DcaService struct {
 	db          *ent.Client
-	userRepo    *repository.UserDynamoRepository
 	tradingRepo *repository.TradingDynamoRepository
 	encryption  *encryption.Encryption
 }
 
 func NewDcaService(
 	db *ent.Client,
-	userRepo *repository.UserDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 	encryption *encryption.Encryption,
 ) *DcaService {
 	return &DcaService{
 		db:          db,
-		userRepo:    userRepo,
 		tradingRepo: tradingRepo,
 		encryption:  encryption,
 	}
@@ -102,7 +99,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	return s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t)
 }
 func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
-	u, err := s.userRepo.Get(ctx, userID)
+	u, err := s.tradingRepo.GetUser(ctx, userID)
 	if err != nil {
 		return err
 	}

@@ -40,7 +40,7 @@ func (h AuthenticationHandler) Signin(c echo.Context) error {
 		return err
 	}
 
-	providerUser, err := h.authenticationService.VerifyUser(
+	providerUser, err := h.authenticationService.VerifyOauthUser(
 		c.Request().Context(),
 		req.Type,
 		req.AccessToken,

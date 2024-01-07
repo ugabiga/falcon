@@ -8,20 +8,17 @@ import (
 )
 
 type TaskHistoryService struct {
-	db              *ent.Client
-	taskHistoryRepo *repository.TaskHistoryDynamoRepository
-	tradingRepo     *repository.TradingDynamoRepository
+	db          *ent.Client
+	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewTaskHistoryService(
 	db *ent.Client,
-	taskHistoryRepo *repository.TaskHistoryDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 ) *TaskHistoryService {
 	return &TaskHistoryService{
-		db:              db,
-		taskHistoryRepo: taskHistoryRepo,
-		tradingRepo:     tradingRepo,
+		db:          db,
+		tradingRepo: tradingRepo,
 	}
 }
 

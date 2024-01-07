@@ -28,8 +28,8 @@ func (m *Migration) Migrate(afterDelete bool) error {
 		err = m.DeleteAllTables(ctx)
 	}
 
-	err = m.createUserTable(ctx)
-	err = m.createAuthenticationTable(ctx)
+	//err = m.createUserTable(ctx)
+	//err = m.createAuthenticationTable(ctx)
 	err = m.createTradingTable(ctx)
 	if err != nil {
 		return err
@@ -39,8 +39,8 @@ func (m *Migration) Migrate(afterDelete bool) error {
 
 func (m *Migration) DeleteAllTables(ctx context.Context) error {
 	tables := []string{
-		repository.UserTableName,
-		repository.AuthenticationTableName,
+		//repository.UserTableName,
+		//repository.AuthenticationTableName,
 		repository.TradingTableName,
 	}
 
@@ -181,7 +181,7 @@ func (m *Migration) createTradingTable(ctx context.Context) error {
 		},
 		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
 			{
-				IndexName: aws.String(repository.IndexNextExecutionTime),
+				IndexName: aws.String(repository.GISNextExecutionTime),
 				KeySchema: []types.KeySchemaElement{
 					{
 						AttributeName: aws.String(repository.IndexNextExecutionTimeKey),

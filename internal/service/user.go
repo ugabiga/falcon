@@ -8,14 +8,14 @@ import (
 )
 
 type UserService struct {
-	userRepo *repository.UserDynamoRepository
+	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewUserService(
-	userRepo *repository.UserDynamoRepository,
+	tradingRepo *repository.TradingDynamoRepository,
 ) *UserService {
 	return &UserService{
-		userRepo: userRepo,
+		tradingRepo: tradingRepo,
 	}
 }
 
@@ -25,7 +25,7 @@ type UserWithOptions struct {
 }
 
 func (s UserService) GetByID(ctx context.Context, userID string) (*model.User, error) {
-	u, err := s.userRepo.Get(ctx, userID)
+	u, err := s.tradingRepo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (s UserService) GetByID(ctx context.Context, userID string) (*model.User, e
 	return u, nil
 }
 func (s UserService) Update(ctx context.Context, userID string, userInput generated.UpdateUserInput) (*model.User, error) {
-	u, err := s.userRepo.Get(ctx, userID)
+	u, err := s.tradingRepo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (s UserService) Update(ctx context.Context, userID string, userInput genera
 	u.Name = userInput.Name
 	u.Timezone = userInput.Timezone
 
-	updateUser, err := s.userRepo.Update(ctx, userID, u)
+	updateUser, err := s.tradingRepo.UpdateUser(ctx, *u)
 	if err != nil {
 		return nil, err
 	}

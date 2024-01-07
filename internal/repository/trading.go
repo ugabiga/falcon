@@ -13,12 +13,16 @@ import (
 )
 
 const (
-	Separator                 = "-"
-	IndexNextExecutionTime    = "next_execution_time_index"
-	IndexNextExecutionTimeKey = "next_execution_time"
+	KeyPrefixUser             = "user"
+	KeyPrefixAuthentication   = "auth"
 	KeyPrefixTaskAccount      = "ta"
 	KeyPrefixTask             = "task"
 	KeyPrefixTaskHistory      = "th"
+	Separator                 = "-"
+	GISNextExecutionTime      = "next_execution_time_GSI"
+	IndexNextExecutionTimeKey = "next_execution_time"
+	EntityTypeUser            = "user"
+	EntityTypeAuthentication  = "authentication"
 	EntityTypeTaskAccount     = "trading_account"
 	EntityTypeTask            = "task"
 	EntityTypeTaskHistory     = "task_history"
@@ -34,6 +38,170 @@ func NewTradingDynamoRepository(db *dynamodb.Client) *TradingDynamoRepository {
 		tableName: TradingTableName,
 		db:        db,
 	}
+}
+
+func (r TradingDynamoRepository) CreateUser(ctx context.Context, user model.User) (*model.User, error) {
+	user.ID = r.encoding(KeyPrefixUser)
+	user.UpdatedAt = r.timeNow()
+	user.CreatedAt = r.timeNow()
+
+	av, err := MarshalItem(user)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeUser}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r TradingDynamoRepository) UpdateUser(ctx context.Context, user model.User) (*model.User, error) {
+	user.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(user)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeUser}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r TradingDynamoRepository) GetUser(ctx context.Context, userID string) (*model.User, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: userID},
+				"sk": &types.AttributeValueMemberS{Value: userID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	user, err := UnmarshalItem[model.User](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r TradingDynamoRepository) CreateAuthentication(ctx context.Context, authentication model.Authentication) (*model.Authentication, error) {
+	authentication.ID = r.encodeAuthenticationID(KeyPrefixAuthentication, authentication.Provider, authentication.Identifier)
+	authentication.CreatedAt = r.timeNow()
+	authentication.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(authentication)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeAuthentication}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authentication, nil
+}
+
+func (r TradingDynamoRepository) UpdateAuthentication(ctx context.Context, authentication model.Authentication) (*model.Authentication, error) {
+	authentication.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(authentication)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeAuthentication}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authentication, nil
+}
+
+func (r TradingDynamoRepository) GetAuthentication(ctx context.Context, provider, identifier string) (*model.Authentication, error) {
+	authenticationID := r.encodeAuthenticationID(KeyPrefixAuthentication, provider, identifier)
+
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: authenticationID},
+				"sk": &types.AttributeValueMemberS{Value: authenticationID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	authentication, err := UnmarshalItem[model.Authentication](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return authentication, nil
 }
 
 func (r TradingDynamoRepository) CreateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
@@ -168,7 +336,7 @@ func (r TradingDynamoRepository) CountTradingAccountsByUserID(ctx context.Contex
 }
 
 func (r TradingDynamoRepository) CreateTask(ctx context.Context, task model.Task) (*model.Task, error) {
-	task.ID = r.encoding("task")
+	task.ID = r.encoding(KeyPrefixTask)
 	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
 	task.UpdatedAt = r.timeNow()
 	task.CreatedAt = r.timeNow()
@@ -290,7 +458,7 @@ func (r TradingDynamoRepository) GetTasksByActiveNextExecutionTime(ctx context.C
 		ctx,
 		&dynamodb.QueryInput{
 			TableName: &r.tableName,
-			IndexName: &[]string{IndexNextExecutionTime}[0],
+			IndexName: &[]string{GISNextExecutionTime}[0],
 			KeyConditions: map[string]types.Condition{
 				"next_execution_time": {
 					ComparisonOperator: types.ComparisonOperatorEq,
@@ -456,6 +624,10 @@ func (r TradingDynamoRepository) GetTaskHistoriesByTaskID(ctx context.Context, t
 	}
 
 	return taskHistories, nil
+}
+
+func (r TradingDynamoRepository) encodeAuthenticationID(prefix, provider, identifier string) string {
+	return fmt.Sprintf("%s%s%s%s%s", prefix, Separator, provider, Separator, identifier)
 }
 
 func (r TradingDynamoRepository) encodeTradingAccountID(prefix, id, exchange, key string) string {
