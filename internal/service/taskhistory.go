@@ -2,28 +2,24 @@ package service
 
 import (
 	"context"
-	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 )
 
 type TaskHistoryService struct {
-	db          *ent.Client
-	tradingRepo *repository.DynamoRepository
+	repo *repository.DynamoRepository
 }
 
 func NewTaskHistoryService(
-	db *ent.Client,
 	tradingRepo *repository.DynamoRepository,
 ) *TaskHistoryService {
 	return &TaskHistoryService{
-		db:          db,
-		tradingRepo: tradingRepo,
+		repo: tradingRepo,
 	}
 }
 
 func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, userID, tradingAccountID, taskID string) (*model.Task, []model.TaskHistory, error) {
-	task, err := s.tradingRepo.GetTask(ctx, tradingAccountID, taskID)
+	task, err := s.repo.GetTask(ctx, tradingAccountID, taskID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -32,7 +28,7 @@ func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, userID,
 		return nil, nil, ErrDoNotHaveAccess
 	}
 
-	taskHistories, err := s.tradingRepo.GetTaskHistoriesByTaskID(ctx, task.ID)
+	taskHistories, err := s.repo.GetTaskHistoriesByTaskID(ctx, task.ID)
 	if err != nil {
 		return nil, nil, err
 	}

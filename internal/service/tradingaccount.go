@@ -13,17 +13,17 @@ const (
 )
 
 type TradingAccountService struct {
-	encryption  *encryption.Encryption
-	tradingRepo *repository.DynamoRepository
+	encryption *encryption.Encryption
+	repo       *repository.DynamoRepository
 }
 
 func NewTradingAccountService(
 	encryption *encryption.Encryption,
-	tradingRepo *repository.DynamoRepository,
+	repo *repository.DynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
-		encryption:  encryption,
-		tradingRepo: tradingRepo,
+		encryption: encryption,
+		repo:       repo,
 	}
 }
 
@@ -63,7 +63,7 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 		tradingAccount.Phrase = encryptedPhrase
 	}
 
-	newTradingAccount, err := s.tradingRepo.CreateTradingAccount(
+	newTradingAccount, err := s.repo.CreateTradingAccount(
 		ctx,
 		tradingAccount,
 	)
@@ -76,7 +76,7 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 }
 
 func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID string) error {
-	count, err := s.tradingRepo.CountTradingAccountsByUserID(ctx, userID)
+	count, err := s.repo.CountTradingAccountsByUserID(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (s TradingAccountService) validateExceedLimit(ctx context.Context, userID s
 }
 
 func (s TradingAccountService) GetByUserID(ctx context.Context, userID string) ([]model.TradingAccount, error) {
-	tradingAccounts, err := s.tradingRepo.GetTradingAccountsByUserID(ctx, userID)
+	tradingAccounts, err := s.repo.GetTradingAccountsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (s TradingAccountService) Update(
 		}
 	}
 
-	tradingAccount, err := s.tradingRepo.GetTradingAccount(ctx, userID, tradingAccountID)
+	tradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccountID)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func (s TradingAccountService) Update(
 		inputTradingAccount.Phrase = encryptedPhrase
 	}
 
-	_, err = s.tradingRepo.UpdateTradingAccount(ctx, inputTradingAccount)
+	_, err = s.repo.UpdateTradingAccount(ctx, inputTradingAccount)
 	if err != nil {
 		return err
 	}

@@ -5,10 +5,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-const (
-	TableName = "falcon"
-)
-
 func UnmarshalItem[T any](item map[string]types.AttributeValue) (*T, error) {
 	result := new(T)
 
