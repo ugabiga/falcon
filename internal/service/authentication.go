@@ -42,12 +42,12 @@ type WhiteList struct {
 
 type AuthenticationService struct {
 	cfg         *config.Config
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 }
 
 func NewAuthenticationService(
 	cfg *config.Config,
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 ) *AuthenticationService {
 	a := &AuthenticationService{
 		cfg:         cfg,

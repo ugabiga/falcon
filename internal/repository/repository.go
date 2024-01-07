@@ -1,57 +1,643 @@
 package repository
 
 import (
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"context"
+	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/google/uuid"
+	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/model"
+	"log"
+	"time"
 )
 
 const (
-	UserTableName           = "user"
-	AuthenticationTableName = "authentication"
-	TradingAccountTableName = "trading_account"
-	TaskTableName           = "task"
-	TaskHistoryTableName    = "task_history"
-	TradingTableName        = "trading"
+	KeyPrefixUser             = "user"
+	KeyPrefixAuthentication   = "auth"
+	KeyPrefixTaskAccount      = "ta"
+	KeyPrefixTask             = "task"
+	KeyPrefixTaskHistory      = "th"
+	Separator                 = "-"
+	GISNextExecutionTime      = "next_execution_time_GSI"
+	IndexNextExecutionTimeKey = "next_execution_time"
+	EntityTypeUser            = "user"
+	EntityTypeAuthentication  = "authentication"
+	EntityTypeTaskAccount     = "trading_account"
+	EntityTypeTask            = "task"
+	EntityTypeTaskHistory     = "task_history"
 )
 
-func UnmarshalItem[T any](item map[string]types.AttributeValue) (*T, error) {
-	result := new(T)
-
-	if err := attributevalue.UnmarshalMapWithOptions(item, result,
-		func(options *attributevalue.DecoderOptions) {
-			options.TagKey = "json"
-		}); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+type DynamoRepository struct {
+	tableName string
+	db        *dynamodb.Client
 }
 
-func UnmarshalItems[T any](items []map[string]types.AttributeValue) ([]T, error) {
-	result := make([]T, len(items))
-
-	for i, item := range items {
-		if err := attributevalue.UnmarshalMapWithOptions(item, &result[i],
-			func(options *attributevalue.DecoderOptions) {
-				options.TagKey = "json"
-			}); err != nil {
-			return nil, err
-		}
+func NewDynamoRepository(db *dynamodb.Client) *DynamoRepository {
+	return &DynamoRepository{
+		tableName: TableName,
+		db:        db,
 	}
-
-	return result, nil
 }
 
-func MarshalItem(item interface{}) (map[string]types.AttributeValue, error) {
-	av, err := attributevalue.MarshalMapWithOptions(item,
-		func(options *attributevalue.EncoderOptions) {
-			options.TagKey = "json"
-		},
-	)
+func (r DynamoRepository) CreateUser(ctx context.Context, user model.User) (*model.User, error) {
+	user.ID = r.encoding(KeyPrefixUser)
+	user.UpdatedAt = r.timeNow()
+	user.CreatedAt = r.timeNow()
 
+	av, err := MarshalItem(user)
 	if err != nil {
 		return nil, err
 	}
 
-	return av, nil
+	av["pk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeUser}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r DynamoRepository) UpdateUser(ctx context.Context, user model.User) (*model.User, error) {
+	user.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(user)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: user.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeUser}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r DynamoRepository) GetUser(ctx context.Context, userID string) (*model.User, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: userID},
+				"sk": &types.AttributeValueMemberS{Value: userID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	user, err := UnmarshalItem[model.User](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (r DynamoRepository) CreateAuthentication(ctx context.Context, authentication model.Authentication) (*model.Authentication, error) {
+	authentication.ID = r.encodeAuthenticationID(KeyPrefixAuthentication, authentication.Provider, authentication.Identifier)
+	authentication.CreatedAt = r.timeNow()
+	authentication.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(authentication)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeAuthentication}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authentication, nil
+}
+
+func (r DynamoRepository) UpdateAuthentication(ctx context.Context, authentication model.Authentication) (*model.Authentication, error) {
+	authentication.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(authentication)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: authentication.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeAuthentication}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &authentication, nil
+}
+
+func (r DynamoRepository) GetAuthentication(ctx context.Context, provider, identifier string) (*model.Authentication, error) {
+	authenticationID := r.encodeAuthenticationID(KeyPrefixAuthentication, provider, identifier)
+
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: authenticationID},
+				"sk": &types.AttributeValueMemberS{Value: authenticationID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	authentication, err := UnmarshalItem[model.Authentication](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return authentication, nil
+}
+
+func (r DynamoRepository) CreateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
+	tradingAccount.ID = r.encodeTradingAccountID(KeyPrefixTaskAccount, tradingAccount.UserID, tradingAccount.Exchange, tradingAccount.Key)
+	tradingAccount.UpdatedAt = r.timeNow()
+	tradingAccount.CreatedAt = r.timeNow()
+
+	av, err := MarshalItem(tradingAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: tradingAccount.UserID}
+	av["sk"] = &types.AttributeValueMemberS{Value: tradingAccount.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskAccount}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tradingAccount, nil
+}
+
+func (r DynamoRepository) UpdateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
+	tradingAccount.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(tradingAccount)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: tradingAccount.UserID}
+	av["sk"] = &types.AttributeValueMemberS{Value: tradingAccount.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskAccount}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &tradingAccount, nil
+}
+
+func (r DynamoRepository) GetTradingAccount(ctx context.Context, userID, tradingAccountID string) (*model.TradingAccount, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: userID},
+				"sk": &types.AttributeValueMemberS{Value: tradingAccountID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	tradingAccount, err := UnmarshalItem[model.TradingAccount](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return tradingAccount, nil
+}
+
+func (r DynamoRepository) GetTradingAccountsByUserID(ctx context.Context, userID string) ([]model.TradingAccount, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:              &r.tableName,
+			KeyConditionExpression: &[]string{"pk = :pk AND begins_with(sk, :sk)"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk": &types.AttributeValueMemberS{Value: userID},
+				":sk": &types.AttributeValueMemberS{Value: KeyPrefixTaskAccount},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tradingAccounts []model.TradingAccount
+
+	for _, item := range result.Items {
+		tradingAccount, err := UnmarshalItem[model.TradingAccount](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tradingAccounts = append(tradingAccounts, *tradingAccount)
+	}
+
+	return tradingAccounts, nil
+}
+
+func (r DynamoRepository) CountTradingAccountsByUserID(ctx context.Context, userID string) (int, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:              &r.tableName,
+			KeyConditionExpression: &[]string{"pk = :pk AND begins_with(sk, :sk)"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk": &types.AttributeValueMemberS{Value: userID},
+				":sk": &types.AttributeValueMemberS{Value: KeyPrefixTaskAccount},
+			},
+			Select: types.SelectCount,
+		},
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(result.Count), nil
+}
+
+func (r DynamoRepository) CreateTask(ctx context.Context, task model.Task) (*model.Task, error) {
+	task.ID = r.encoding(KeyPrefixTask)
+	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
+	task.UpdatedAt = r.timeNow()
+	task.CreatedAt = r.timeNow()
+
+	log.Printf("task: %+v", debug.ToJSONStr(task))
+
+	av, err := MarshalItem(task)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: task.TradingAccountID}
+	av["sk"] = &types.AttributeValueMemberS{Value: task.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTask}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &task, nil
+
+}
+
+func (r DynamoRepository) UpdateTask(ctx context.Context, task model.Task) (*model.Task, error) {
+	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
+	task.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(task)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: task.TradingAccountID}
+	av["sk"] = &types.AttributeValueMemberS{Value: task.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTask}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &task, nil
+}
+
+func (r DynamoRepository) GetTask(ctx context.Context, tradingAccountID, taskID string) (*model.Task, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: tradingAccountID},
+				"sk": &types.AttributeValueMemberS{Value: taskID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	task, err := UnmarshalItem[model.Task](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
+func (r DynamoRepository) GetTasksByTradingAccountID(ctx context.Context, tradingAccountID string) ([]model.Task, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:              &r.tableName,
+			KeyConditionExpression: &[]string{"pk = :pk AND begins_with(sk, :sk)"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk": &types.AttributeValueMemberS{Value: tradingAccountID},
+				":sk": &types.AttributeValueMemberS{Value: KeyPrefixTask},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []model.Task
+
+	for _, item := range result.Items {
+		task, err := UnmarshalItem[model.Task](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, *task)
+	}
+
+	return tasks, nil
+}
+
+func (r DynamoRepository) GetTasksByActiveNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
+	formattedNextExecutionTime := nextExecutionTime.Format(time.RFC3339)
+
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName: &r.tableName,
+			IndexName: &[]string{GISNextExecutionTime}[0],
+			KeyConditions: map[string]types.Condition{
+				"next_execution_time": {
+					ComparisonOperator: types.ComparisonOperatorEq,
+					AttributeValueList: []types.AttributeValue{
+						&types.AttributeValueMemberS{Value: formattedNextExecutionTime},
+					},
+				},
+			},
+			//Is Active?
+			FilterExpression: &[]string{"#v = :is_active"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "is_active",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":is_active": &types.AttributeValueMemberBOOL{Value: true},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []model.Task
+
+	for _, item := range result.Items {
+		task, err := UnmarshalItem[model.Task](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, *task)
+	}
+
+	return tasks, nil
+}
+
+func (r DynamoRepository) CountTasksByTradingID(ctx context.Context, tradingAccountID string) (int, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:              &r.tableName,
+			KeyConditionExpression: &[]string{"pk = :pk AND begins_with(sk, :sk)"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk": &types.AttributeValueMemberS{Value: tradingAccountID},
+				":sk": &types.AttributeValueMemberS{Value: "task"},
+			},
+			Select: types.SelectCount,
+		},
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(result.Count), nil
+}
+
+func (r DynamoRepository) CreateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
+	taskHistory.ID = r.encoding(KeyPrefixTaskHistory)
+	taskHistory.UpdatedAt = r.timeNow()
+	taskHistory.CreatedAt = r.timeNow()
+
+	av, err := MarshalItem(taskHistory)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: taskHistory.TaskID}
+	av["sk"] = &types.AttributeValueMemberS{Value: taskHistory.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskHistory}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &taskHistory, nil
+}
+
+func (r DynamoRepository) UpdateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
+	taskHistory.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(taskHistory)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: taskHistory.TaskID}
+	av["sk"] = &types.AttributeValueMemberS{Value: taskHistory.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskHistory}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &taskHistory, nil
+}
+
+func (r DynamoRepository) GetTaskHistory(ctx context.Context, taskID, taskHistoryID string) (*model.TaskHistory, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: taskID},
+				"sk": &types.AttributeValueMemberS{Value: taskHistoryID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, nil
+	}
+
+	taskHistory, err := UnmarshalItem[model.TaskHistory](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return taskHistory, nil
+}
+
+func (r DynamoRepository) GetTaskHistoriesByTaskID(ctx context.Context, taskID string) ([]model.TaskHistory, error) {
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName:              &r.tableName,
+			KeyConditionExpression: &[]string{"pk = :pk AND begins_with(sk, :sk)"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk": &types.AttributeValueMemberS{Value: taskID},
+				":sk": &types.AttributeValueMemberS{Value: KeyPrefixTaskHistory},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var taskHistories []model.TaskHistory
+
+	for _, item := range result.Items {
+		taskHistory, err := UnmarshalItem[model.TaskHistory](item)
+		if err != nil {
+			return nil, err
+		}
+
+		taskHistories = append(taskHistories, *taskHistory)
+	}
+
+	return taskHistories, nil
+}
+
+func (r DynamoRepository) encodeAuthenticationID(prefix, provider, identifier string) string {
+	return fmt.Sprintf("%s%s%s%s%s", prefix, Separator, provider, Separator, identifier)
+}
+
+func (r DynamoRepository) encodeTradingAccountID(prefix, id, exchange, key string) string {
+	return fmt.Sprintf("%s%s%s%s%s%s%s", prefix, Separator, id, Separator, exchange, Separator, key)
+}
+
+func (r DynamoRepository) encoding(prefix string) string {
+	return prefix + Separator + uuid.New().String()
+}
+
+func (r DynamoRepository) timeNow() time.Time {
+	return time.Now().Truncate(time.Second)
 }

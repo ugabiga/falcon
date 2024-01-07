@@ -25,13 +25,13 @@ type TaskOrderInfo struct {
 
 type DcaService struct {
 	db          *ent.Client
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 	encryption  *encryption.Encryption
 }
 
 func NewDcaService(
 	db *ent.Client,
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 	encryption *encryption.Encryption,
 ) *DcaService {
 	return &DcaService{

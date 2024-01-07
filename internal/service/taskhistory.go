@@ -9,12 +9,12 @@ import (
 
 type TaskHistoryService struct {
 	db          *ent.Client
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 }
 
 func NewTaskHistoryService(
 	db *ent.Client,
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 ) *TaskHistoryService {
 	return &TaskHistoryService{
 		db:          db,

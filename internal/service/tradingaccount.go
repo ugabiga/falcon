@@ -14,12 +14,12 @@ const (
 
 type TradingAccountService struct {
 	encryption  *encryption.Encryption
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 }
 
 func NewTradingAccountService(
 	encryption *encryption.Encryption,
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
 		encryption:  encryption,

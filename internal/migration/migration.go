@@ -28,9 +28,7 @@ func (m *Migration) Migrate(afterDelete bool) error {
 		err = m.DeleteAllTables(ctx)
 	}
 
-	//err = m.createUserTable(ctx)
-	//err = m.createAuthenticationTable(ctx)
-	err = m.createTradingTable(ctx)
+	err = m.createTable(ctx)
 	if err != nil {
 		return err
 	}
@@ -39,9 +37,7 @@ func (m *Migration) Migrate(afterDelete bool) error {
 
 func (m *Migration) DeleteAllTables(ctx context.Context) error {
 	tables := []string{
-		//repository.UserTableName,
-		//repository.AuthenticationTableName,
-		repository.TradingTableName,
+		repository.TableName,
 	}
 
 	for _, table := range tables {
@@ -65,94 +61,8 @@ func (m *Migration) deleteTable(ctx context.Context, tableName string) error {
 	return nil
 }
 
-func (m *Migration) createAuthenticationTable(ctx context.Context) error {
-	tableName := repository.AuthenticationTableName
-	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
-		TableName: aws.String(tableName),
-		AttributeDefinitions: []types.AttributeDefinition{
-			{
-				AttributeName: aws.String("id"),
-				AttributeType: types.ScalarAttributeTypeS,
-			},
-			{
-				AttributeName: aws.String("user_id"),
-				AttributeType: types.ScalarAttributeTypeS,
-			},
-		},
-		KeySchema: []types.KeySchemaElement{
-			{
-				AttributeName: aws.String("id"),
-				KeyType:       types.KeyTypeHash,
-			},
-		},
-		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
-			{
-				IndexName: aws.String("user-index"),
-				KeySchema: []types.KeySchemaElement{
-					{
-						AttributeName: aws.String("user_id"),
-						KeyType:       types.KeyTypeHash,
-					},
-				},
-				Projection: &types.Projection{
-					ProjectionType: types.ProjectionTypeAll,
-				},
-			},
-		},
-		BillingMode: types.BillingModePayPerRequest,
-	})
-	if err != nil {
-		log.Printf("error creating table %s: %s", tableName, err)
-		return err
-	}
-	return nil
-}
-
-func (m *Migration) createUserTable(ctx context.Context) error {
-	tableName := repository.UserTableName
-	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
-		TableName: aws.String(tableName),
-		AttributeDefinitions: []types.AttributeDefinition{
-			{
-				AttributeName: aws.String("id"),
-				AttributeType: types.ScalarAttributeTypeS,
-			},
-			{
-				AttributeName: aws.String("name"),
-				AttributeType: types.ScalarAttributeTypeS,
-			},
-		},
-		KeySchema: []types.KeySchemaElement{
-			{
-				AttributeName: aws.String("id"),
-				KeyType:       types.KeyTypeHash,
-			},
-		},
-		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{
-			{
-				IndexName: aws.String("name-index"),
-				KeySchema: []types.KeySchemaElement{
-					{
-						AttributeName: aws.String("name"),
-						KeyType:       types.KeyTypeHash,
-					},
-				},
-				Projection: &types.Projection{
-					ProjectionType: types.ProjectionTypeAll,
-				},
-			},
-		},
-		BillingMode: types.BillingModePayPerRequest,
-	})
-	if err != nil {
-		log.Printf("error creating table %s: %s", tableName, err)
-		return err
-	}
-	return nil
-}
-
-func (m *Migration) createTradingTable(ctx context.Context) error {
-	tableName := repository.TradingTableName
+func (m *Migration) createTable(ctx context.Context) error {
+	tableName := repository.TableName
 	_, err := m.dynamoDB.CreateTable(ctx, &dynamodb.CreateTableInput{
 		TableName: aws.String(tableName),
 		AttributeDefinitions: []types.AttributeDefinition{

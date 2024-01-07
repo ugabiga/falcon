@@ -15,7 +15,7 @@ type Tester struct {
 	TaskHistorySrv    *service.TaskHistoryService
 	DcaSrv            *service.DcaService
 	Migration         *migration.Migration
-	TradingRepository *repository.TradingDynamoRepository
+	TradingRepository *repository.DynamoRepository
 }
 
 func NewTester(
@@ -26,7 +26,7 @@ func NewTester(
 	taskHistorySrv *service.TaskHistoryService,
 	dcaSrv *service.DcaService,
 	mg *migration.Migration,
-	tradingRepository *repository.TradingDynamoRepository,
+	tradingRepository *repository.DynamoRepository,
 ) Tester {
 	return Tester{
 		UserSrv:           userSrv,

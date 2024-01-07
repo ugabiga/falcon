@@ -15,11 +15,11 @@ const (
 )
 
 type TaskService struct {
-	tradingRepo *repository.TradingDynamoRepository
+	tradingRepo *repository.DynamoRepository
 }
 
 func NewTaskService(
-	tradingRepo *repository.TradingDynamoRepository,
+	tradingRepo *repository.DynamoRepository,
 ) *TaskService {
 	return &TaskService{
 		tradingRepo: tradingRepo,
