@@ -175,15 +175,15 @@ func (s AuthenticationService) SignInOrSignUp(
 ) {
 	a, err := s.repo.GetAuthentication(ctx, provider, identifier)
 	if err != nil {
-		return s.SignUp(ctx, provider, identifier, credential, name)
+		if errors.Is(err, repository.ErrNotFound) {
+			return s.SignUp(ctx, provider, identifier, credential, name)
+		}
+		return nil, nil, err
 	}
-	if a == nil {
-		return s.SignUp(ctx, provider, identifier, credential, name)
-	}
+
 	u, err := s.repo.GetUser(ctx, a.UserID)
 	if err != nil {
-		//TODO check if error is not found
-		return s.SignUp(ctx, provider, identifier, credential, name)
+		return nil, nil, err
 	}
 
 	return a, u, nil

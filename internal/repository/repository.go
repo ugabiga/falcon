@@ -12,6 +12,10 @@ import (
 	"time"
 )
 
+var (
+	ErrNotFound = fmt.Errorf("not_found")
+)
+
 const (
 	TableName                 = "falcon"
 	KeyPrefixUser             = "user"
@@ -111,7 +115,7 @@ func (r DynamoRepository) GetUser(ctx context.Context, userID string) (*model.Us
 	}
 
 	if result.Item == nil {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 
 	user, err := UnmarshalItem[model.User](result.Item)
@@ -194,7 +198,7 @@ func (r DynamoRepository) GetAuthentication(ctx context.Context, provider, ident
 	}
 
 	if result.Item == nil {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 
 	authentication, err := UnmarshalItem[model.Authentication](result.Item)
@@ -275,7 +279,7 @@ func (r DynamoRepository) GetTradingAccount(ctx context.Context, userID, trading
 	}
 
 	if result.Item == nil {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 
 	tradingAccount, err := UnmarshalItem[model.TradingAccount](result.Item)
@@ -411,7 +415,7 @@ func (r DynamoRepository) GetTask(ctx context.Context, tradingAccountID, taskID 
 	}
 
 	if result.Item == nil {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 
 	task, err := UnmarshalItem[model.Task](result.Item)
@@ -586,7 +590,7 @@ func (r DynamoRepository) GetTaskHistory(ctx context.Context, taskID, taskHistor
 	}
 
 	if result.Item == nil {
-		return nil, nil
+		return nil, ErrNotFound
 	}
 
 	taskHistory, err := UnmarshalItem[model.TaskHistory](result.Item)
