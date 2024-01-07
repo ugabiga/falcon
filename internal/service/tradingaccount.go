@@ -13,23 +13,17 @@ const (
 )
 
 type TradingAccountService struct {
-	encryption         *encryption.Encryption
-	tradingAccountRepo *repository.TradingAccountDynamoRepository
-	taskRepo           *repository.TaskDynamoRepository
-	tradingRepo        *repository.TradingDynamoRepository
+	encryption  *encryption.Encryption
+	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewTradingAccountService(
 	encryption *encryption.Encryption,
-	tradingaccountRepo *repository.TradingAccountDynamoRepository,
-	taskRepo *repository.TaskDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 ) *TradingAccountService {
 	return &TradingAccountService{
-		encryption:         encryption,
-		tradingAccountRepo: tradingaccountRepo,
-		taskRepo:           taskRepo,
-		tradingRepo:        tradingRepo,
+		encryption:  encryption,
+		tradingRepo: tradingRepo,
 	}
 }
 

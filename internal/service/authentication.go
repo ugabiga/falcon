@@ -41,21 +41,17 @@ type WhiteList struct {
 }
 
 type AuthenticationService struct {
-	cfg                *config.Config
-	authenticationRepo *repository.AuthenticationDynamoRepository
-	userRepo           *repository.UserDynamoRepository
+	cfg         *config.Config
+	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewAuthenticationService(
 	cfg *config.Config,
-	authenticationRepo *repository.AuthenticationDynamoRepository,
-	userRepo *repository.UserDynamoRepository,
-
+	tradingRepo *repository.TradingDynamoRepository,
 ) *AuthenticationService {
 	a := &AuthenticationService{
-		cfg:                cfg,
-		authenticationRepo: authenticationRepo,
-		userRepo:           userRepo,
+		cfg:         cfg,
+		tradingRepo: tradingRepo,
 	}
 
 	return a
@@ -157,7 +153,7 @@ func (s AuthenticationService) CreateJWTToken(userID string, name string, isAdmi
 	return t, nil
 }
 
-func (s AuthenticationService) VerifyUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
+func (s AuthenticationService) VerifyOauthUser(ctx context.Context, loginType, token string) (*auth.UserProvidedData, error) {
 	p, err := s.provider(loginType)
 	if err != nil {
 		return nil, err
@@ -177,8 +173,14 @@ func (s AuthenticationService) SignInOrSignUp(
 ) (
 	*model.Authentication, *model.User, error,
 ) {
-	a, err := s.authenticationRepo.GetItem(ctx, provider, identifier)
-	u, err := s.userRepo.Get(ctx, a.UserID)
+	a, err := s.tradingRepo.GetAuthentication(ctx, provider, identifier)
+	if err != nil {
+		return s.SignUp(ctx, provider, identifier, credential, name)
+	}
+	if a == nil {
+		return s.SignUp(ctx, provider, identifier, credential, name)
+	}
+	u, err := s.tradingRepo.GetUser(ctx, a.UserID)
 	if err != nil {
 		//TODO check if error is not found
 		return s.SignUp(ctx, provider, identifier, credential, name)
@@ -200,7 +202,7 @@ func (s AuthenticationService) SignUp(
 	if name != "" {
 		inputUser.Name = name
 	}
-	createdUser, err := s.userRepo.Create(ctx, inputUser)
+	createdUser, err := s.tradingRepo.CreateUser(ctx, inputUser)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -212,7 +214,7 @@ func (s AuthenticationService) SignUp(
 		UserID:     createdUser.ID,
 	}
 
-	createdAuthentication, err := s.authenticationRepo.Create(ctx, inputAuthentication)
+	createdAuthentication, err := s.tradingRepo.CreateAuthentication(ctx, inputAuthentication)
 	if err != nil {
 		return nil, nil, err
 	}

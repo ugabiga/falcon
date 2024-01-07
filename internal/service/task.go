@@ -15,16 +15,13 @@ const (
 )
 
 type TaskService struct {
-	userRepo    *repository.UserDynamoRepository
 	tradingRepo *repository.TradingDynamoRepository
 }
 
 func NewTaskService(
-	userRepo *repository.UserDynamoRepository,
 	tradingRepo *repository.TradingDynamoRepository,
 ) *TaskService {
 	return &TaskService{
-		userRepo:    userRepo,
 		tradingRepo: tradingRepo,
 	}
 }
@@ -42,7 +39,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 		return nil, err
 	}
 
-	u, err := s.userRepo.Get(ctx, userID)
+	u, err := s.tradingRepo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +80,7 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 		return nil, err
 	}
 
-	u, err := s.userRepo.Get(ctx, userID)
+	u, err := s.tradingRepo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
