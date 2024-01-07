@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	TableName                 = "falcon"
 	KeyPrefixUser             = "user"
 	KeyPrefixAuthentication   = "auth"
 	KeyPrefixTaskAccount      = "ta"

@@ -7,7 +7,6 @@ import (
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
-	"github.com/ugabiga/falcon/internal/ent"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
@@ -24,20 +23,17 @@ type TaskOrderInfo struct {
 }
 
 type DcaService struct {
-	db          *ent.Client
-	tradingRepo *repository.DynamoRepository
-	encryption  *encryption.Encryption
+	repo       *repository.DynamoRepository
+	encryption *encryption.Encryption
 }
 
 func NewDcaService(
-	db *ent.Client,
-	tradingRepo *repository.DynamoRepository,
+	repo *repository.DynamoRepository,
 	encryption *encryption.Encryption,
 ) *DcaService {
 	return &DcaService{
-		db:          db,
-		tradingRepo: tradingRepo,
-		encryption:  encryption,
+		repo:       repo,
+		encryption: encryption,
 	}
 }
 
@@ -48,7 +44,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	log.Printf("Searching for tasks with next execution time: %s", now.String())
 
 	// TODO add pagination
-	tasks, err := s.tradingRepo.GetTasksByActiveNextExecutionTime(ctx, now)
+	tasks, err := s.repo.GetTasksByActiveNextExecutionTime(ctx, now)
 	if err != nil {
 		return nil, err
 	}
@@ -71,12 +67,12 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	ctx := context.Background()
 	var err error
 
-	tradingAccount, err := s.tradingRepo.GetTradingAccount(ctx, orderInfo.UserID, orderInfo.TradingAccountID)
+	tradingAccount, err := s.repo.GetTradingAccount(ctx, orderInfo.UserID, orderInfo.TradingAccountID)
 	if err != nil {
 		return err
 	}
 
-	t, err := s.tradingRepo.GetTask(ctx, orderInfo.TradingAccountID, orderInfo.TaskID)
+	t, err := s.repo.GetTask(ctx, orderInfo.TradingAccountID, orderInfo.TaskID)
 	if err != nil {
 		return err
 	}
@@ -99,7 +95,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	return s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t)
 }
 func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
-	u, err := s.tradingRepo.GetUser(ctx, userID)
+	u, err := s.repo.GetUser(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -110,7 +106,7 @@ func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID stri
 	}
 	t.NextExecutionTime = nextCronExecutionTime
 
-	_, err = s.tradingRepo.UpdateTask(ctx, *t)
+	_, err = s.repo.UpdateTask(ctx, *t)
 	if err != nil {
 		return err
 	}

@@ -15,14 +15,14 @@ const (
 )
 
 type TaskService struct {
-	tradingRepo *repository.DynamoRepository
+	repo *repository.DynamoRepository
 }
 
 func NewTaskService(
-	tradingRepo *repository.DynamoRepository,
+	repo *repository.DynamoRepository,
 ) *TaskService {
 	return &TaskService{
-		tradingRepo: tradingRepo,
+		repo: repo,
 	}
 }
 
@@ -39,7 +39,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 		return nil, err
 	}
 
-	u, err := s.tradingRepo.GetUser(ctx, userID)
+	u, err := s.repo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 		Params:            input.Params,
 	}
 
-	t, err := s.tradingRepo.CreateTask(ctx, newTask)
+	t, err := s.repo.CreateTask(ctx, newTask)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 		return nil, err
 	}
 
-	u, err := s.tradingRepo.GetUser(ctx, userID)
+	u, err := s.repo.GetUser(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 
 	//nextExecutionTime = time.Now().UTC().Add(time.Minute * 1).Truncate(time.Minute)
 
-	t, err := s.tradingRepo.GetTask(ctx, tradingAccountID, taskID)
+	t, err := s.repo.GetTask(ctx, tradingAccountID, taskID)
 	if err != nil {
 		return nil, err
 	}
@@ -117,11 +117,11 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 		CreatedAt:         t.CreatedAt,
 	}
 
-	return s.tradingRepo.UpdateTask(ctx, updateTask)
+	return s.repo.UpdateTask(ctx, updateTask)
 }
 
 func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID string) ([]model.Task, error) {
-	tasks, err := s.tradingRepo.GetTasksByTradingAccountID(ctx, tradingAccountID)
+	tasks, err := s.repo.GetTasksByTradingAccountID(ctx, tradingAccountID)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID s
 }
 
 func (s TaskService) validateExceedLimit(ctx context.Context, tradingAccountID string) error {
-	count, err := s.tradingRepo.CountTasksByTradingID(ctx, tradingAccountID)
+	count, err := s.repo.CountTasksByTradingID(ctx, tradingAccountID)
 	if err != nil {
 		return err
 	}

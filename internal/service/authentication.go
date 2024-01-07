@@ -41,17 +41,17 @@ type WhiteList struct {
 }
 
 type AuthenticationService struct {
-	cfg         *config.Config
-	tradingRepo *repository.DynamoRepository
+	cfg  *config.Config
+	repo *repository.DynamoRepository
 }
 
 func NewAuthenticationService(
 	cfg *config.Config,
-	tradingRepo *repository.DynamoRepository,
+	repo *repository.DynamoRepository,
 ) *AuthenticationService {
 	a := &AuthenticationService{
-		cfg:         cfg,
-		tradingRepo: tradingRepo,
+		cfg:  cfg,
+		repo: repo,
 	}
 
 	return a
@@ -173,14 +173,14 @@ func (s AuthenticationService) SignInOrSignUp(
 ) (
 	*model.Authentication, *model.User, error,
 ) {
-	a, err := s.tradingRepo.GetAuthentication(ctx, provider, identifier)
+	a, err := s.repo.GetAuthentication(ctx, provider, identifier)
 	if err != nil {
 		return s.SignUp(ctx, provider, identifier, credential, name)
 	}
 	if a == nil {
 		return s.SignUp(ctx, provider, identifier, credential, name)
 	}
-	u, err := s.tradingRepo.GetUser(ctx, a.UserID)
+	u, err := s.repo.GetUser(ctx, a.UserID)
 	if err != nil {
 		//TODO check if error is not found
 		return s.SignUp(ctx, provider, identifier, credential, name)
@@ -202,7 +202,7 @@ func (s AuthenticationService) SignUp(
 	if name != "" {
 		inputUser.Name = name
 	}
-	createdUser, err := s.tradingRepo.CreateUser(ctx, inputUser)
+	createdUser, err := s.repo.CreateUser(ctx, inputUser)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -214,7 +214,7 @@ func (s AuthenticationService) SignUp(
 		UserID:     createdUser.ID,
 	}
 
-	createdAuthentication, err := s.tradingRepo.CreateAuthentication(ctx, inputAuthentication)
+	createdAuthentication, err := s.repo.CreateAuthentication(ctx, inputAuthentication)
 	if err != nil {
 		return nil, nil, err
 	}
