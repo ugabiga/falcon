@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/ugabiga/falcon/internal/app"
-	"github.com/ugabiga/falcon/internal/lambda"
 	"github.com/urfave/cli/v2"
 	"log"
 	"os"
@@ -16,14 +15,6 @@ var serverCmd = &cli.Command{
 	},
 }
 
-var workerCmd = &cli.Command{
-	Name: "worker",
-	Action: func(context *cli.Context) error {
-		a := app.InitializeApplication()
-		return a.Worker()
-	},
-}
-
 var lambdaServerCmd = &cli.Command{
 	Name: "lambda-server",
 	Action: func(context *cli.Context) error {
@@ -32,16 +23,17 @@ var lambdaServerCmd = &cli.Command{
 	},
 }
 
-var lambdaWorkerCmd = &cli.Command{
-	Name: "lambda-worker",
+var subscriberCmd = &cli.Command{
+	Name: "subscriber",
 	Action: func(context *cli.Context) error {
-		return lambda.RunLambdaReceiver()
+		return app.InitializeApplication().RunSubscriber()
 	},
 }
-var lambdaCronCmd = &cli.Command{
-	Name: "lambda-cron",
+
+var publisherCmd = &cli.Command{
+	Name: "publisher",
 	Action: func(context *cli.Context) error {
-		return lambda.RunLambdaCron()
+		return app.InitializeApplication().RunPublisher()
 	},
 }
 
@@ -51,10 +43,9 @@ func main() {
 		Name: "falcon",
 		Commands: []*cli.Command{
 			serverCmd,
-			workerCmd,
 			lambdaServerCmd,
-			lambdaWorkerCmd,
-			lambdaCronCmd,
+			subscriberCmd,
+			publisherCmd,
 		},
 	}
 	if err := application.Run(os.Args); err != nil {

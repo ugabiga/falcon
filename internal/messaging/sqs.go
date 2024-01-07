@@ -1,21 +1,46 @@
 package messaging
 
 import (
+	"context"
 	"encoding/json"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/ugabiga/falcon/internal/service"
 	"log"
 )
 
-type SQSMessage struct {
+type SQSMessageHandler struct {
+	dcaSrv *service.DcaService
 }
 
-func NewSQSMessage() *SQSMessage {
-	return &SQSMessage{}
+func NewSQSMessageHandler(
+	dcaSrv *service.DcaService,
+) *SQSMessageHandler {
+	return &SQSMessageHandler{
+		dcaSrv: dcaSrv,
+	}
 }
 
-func (m *SQSMessage) Publish(data interface{}) error {
+func (h SQSMessageHandler) Publish() error {
+	messages, err := h.dcaMessages()
+	if err != nil {
+		log.Printf("Error occurred during watching. Err: %v", err)
+		return err
+	}
+	for _, msg := range messages {
+		if err := h.publish(msg); err != nil {
+			log.Printf("Error occurred during publishing. Err: %v", err)
+			continue
+		}
+	}
+
+	return nil
+}
+
+func (h SQSMessageHandler) publish(data interface{}) error {
 	sqsURL := "https://sqs.ap-northeast-2.amazonaws.com/358059338173/falcon-worker-sqs"
 	region := "ap-northeast-2"
 	sess, err := session.NewSession(&aws.Config{
@@ -51,4 +76,40 @@ func (m *SQSMessage) Publish(data interface{}) error {
 
 	log.Println("Successfully sent message to SQS queue")
 	return nil
+}
+
+func (h SQSMessageHandler) Subscribe() error {
+	lambda.Start(h.HandleReceiveRequest)
+	return nil
+}
+
+func (h SQSMessageHandler) HandleReceiveRequest(ctx context.Context, sqsEvent events.SQSEvent) (string, error) {
+	for _, message := range sqsEvent.Records {
+		var reqData DCAMessage
+		err := json.Unmarshal([]byte(message.Body), &reqData)
+		if err != nil {
+			log.Println("Error unmarshalling message,", err)
+			continue
+		}
+
+		log.Printf("Received message: %+v\n", reqData)
+		if err := h.subscribe(reqData); err != nil {
+			log.Println("Error subscribing message,", err)
+			continue
+		}
+	}
+
+	return "Successfully processed SQS event", nil
+}
+
+func (h SQSMessageHandler) subscribe(reqMsg DCAMessage) error {
+	if err := h.dcaSrv.Order(reqMsg.TaskOrderInfo); err != nil {
+		log.Printf("Error occurred during order. Err: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (h SQSMessageHandler) dcaMessages() ([]DCAMessage, error) {
+	return nil, nil
 }

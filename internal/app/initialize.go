@@ -49,12 +49,13 @@ func provider() fx.Option {
 		// Server
 		server.NewServer,
 
-		//Messaging Handler
-		messaging.NewDCAHandler,
-		messaging.NewSQSMessage,
+		//MessagingPlatform Handler
+		messaging.NewMessageHandler,
+		//messaging.NewDCAHandler,
+		//messaging.NewSQSMessage,
 
-		//Messaging
-		messaging.NewMessaging,
+		//MessagingPlatform
+		//messaging.NewMessaging,
 
 		//Others
 		encryption.NewEncryption,

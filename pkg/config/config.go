@@ -19,6 +19,7 @@ type Config struct {
 	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
 	AWSRegion          string `mapstructure:"AWS_REGION"`
 	DynamoIsLocal      bool   `mapstructure:"DYNAMO_IS_LOCAL"`
+	MessagingPlatform  string `mapstructure:"MESSAGING_PLATFORM"`
 }
 
 func NewConfigWithoutSetting() *Config {
