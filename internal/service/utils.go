@@ -1,18 +1,21 @@
 package service
 
 import (
-	"fmt"
+	"errors"
 	"github.com/adhocore/gronx"
-	"github.com/ugabiga/falcon/internal/ent"
 	"time"
 )
 
-func dbRollback(tx *ent.Tx, err error) error {
-	if rollbackErr := tx.Rollback(); rollbackErr != nil {
-		err = fmt.Errorf("%w: %v", err, rollbackErr)
-	}
-	return err
-}
+var (
+	ErrTickerNotFound  = errors.New("ticker not found")
+	ErrExceedLimit     = errors.New("exceed_limit")
+	ErrWrongExchange   = errors.New("wrong_exchange")
+	ErrWrongCurrency   = errors.New("wrong_currency")
+	ErrorNoRows        = errors.New("no_rows")
+	ErrDoNotHaveAccess = errors.New("do_not_have_access")
+	ErrUnauthorized    = errors.New("unauthorized")
+)
+
 func nextCronExecutionTime(cron string, timezone string) (time.Time, error) {
 	location, err := time.LoadLocation(timezone)
 	if err != nil {

@@ -12,10 +12,6 @@ import (
 	"log"
 )
 
-var (
-	ErrTickerNotFound = errors.New("ticker not found")
-)
-
 type TaskOrderInfo struct {
 	TaskID           string
 	TradingAccountID string
