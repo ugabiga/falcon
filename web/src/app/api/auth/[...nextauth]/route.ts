@@ -28,7 +28,7 @@ const handler = NextAuth({
                     access_type: "offline",
                     response_type: "code"
                 }
-            }
+            },
         })
     ],
     events: {
@@ -72,7 +72,7 @@ const handler = NextAuth({
                 {
                     domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN ?? "",
                     httpOnly: true,
-                    maxAge: 36000,
+                    maxAge: 60 * 60 * 24, //24 hours
                 }
             );
             return true;
