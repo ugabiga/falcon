@@ -26,6 +26,7 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
+	log.Printf("Run lambda cron")
 	lambda.Start(h.HandlePublish)
 	return nil
 }

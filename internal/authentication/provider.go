@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -73,7 +73,7 @@ type OAuthProvider interface {
 
 func SafeClose(closer io.Closer) {
 	if err := closer.Close(); err != nil {
-		logrus.WithError(err).Warn("Close operation failed")
+		log.Printf("Close operation failed")
 	}
 }
 
