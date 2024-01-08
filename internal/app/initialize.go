@@ -51,11 +51,6 @@ func provider() fx.Option {
 
 		//MessagingPlatform Handler
 		messaging.NewMessageHandler,
-		//messaging.NewDCAHandler,
-		//messaging.NewSQSMessage,
-
-		//MessagingPlatform
-		//messaging.NewMessaging,
 
 		//Others
 		encryption.NewEncryption,
@@ -72,7 +67,7 @@ func InitializeApplication() App {
 	var newApp App
 
 	fx.New(
-		//fx.NopLogger,
+		fx.NopLogger,
 		provider(),
 		fx.Invoke(func(lifecycle fx.Lifecycle, app App) {
 			newApp = app
