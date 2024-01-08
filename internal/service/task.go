@@ -120,6 +120,19 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 	return s.repo.UpdateTask(ctx, updateTask)
 }
 
+func (s TaskService) Delete(ctx context.Context, userID string, tradingAccountID string, taskID string) error {
+	t, err := s.repo.GetTask(ctx, tradingAccountID, taskID)
+	if err != nil {
+		return err
+	}
+
+	if t.UserID != userID {
+		return ErrUnAuthorizedAction
+	}
+
+	return s.repo.DeleteTask(ctx, tradingAccountID, taskID)
+}
+
 func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID string) ([]model.Task, error) {
 	tasks, err := s.repo.GetTasksByTradingAccountID(ctx, tradingAccountID)
 	if err != nil {

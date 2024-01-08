@@ -1,39 +1,42 @@
-import {DeleteTradingAccountDocument, TradingAccount} from "@/graph/generated/generated";
-import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
-import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
+import {useAppDispatch} from "@/store";
+import {useMutation} from "@apollo/client";
+import {DeleteTaskDocument, Task} from "@/graph/generated/generated";
+import React, {useState} from "react";
+import {refreshTask} from "@/store/taskSlice";
+import {errorToast} from "@/components/toast";
 import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import {useMutation} from "@apollo/client";
-import {errorToast} from "@/components/toast";
-import {useAppDispatch} from "@/store";
-import {refreshTradingAccount} from "@/store/tradingAccountSlice";
+import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 
-export function DeleteTradingAccount(
-    {tradingAccount}: { tradingAccount: TradingAccount }
+export function DeleteTask(
+    {task}: { task: Task }
 ) {
     const {t} = useTranslation();
-    const [openDialog, setOpenDialog] = useState(false)
-    const [deleteTradingAccount] = useMutation(DeleteTradingAccountDocument);
     const dispatch = useAppDispatch()
+    const [deleteTask] = useMutation(DeleteTaskDocument);
+    const [openDialog, setOpenDialog] = useState(false)
 
     const handleDelete = () => {
-        deleteTradingAccount({
+        deleteTask({
             variables: {
-                id: tradingAccount.id
+                taskID: task.id,
+                tradingAccountID: task.tradingAccountID
             }
         }).then(() => {
             setOpenDialog(false)
-            dispatch(refreshTradingAccount(true))
+            dispatch(refreshTask({
+                tradingAccountID: task.tradingAccountID,
+                refresh: true
+            }))
         }).catch(error => {
             errorToast(error.message)
         })
@@ -43,28 +46,25 @@ export function DeleteTradingAccount(
         <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
             <AlertDialogTrigger asChild>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    {t("trading_account.delete.btn")}
+                    {t("task.delete.btn")}
                 </DropdownMenuItem>
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>
-                        {t("trading_account.delete.title")}
+                        {t("task.delete.title")}
                     </AlertDialogTitle>
-                    <AlertDialogDescription>
-                        {t("trading_account.delete.description")}
-                    </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex">
                     <AlertDialogCancel>
-                        {t("trading_account.delete.cancel")}
+                        {t("task.delete.cancel")}
                     </AlertDialogCancel>
                     <div className="flex-grow"/>
                     <AlertDialogAction
                         className="btn btn-danger"
                         onClick={() => handleDelete()}
                     >
-                        {t("trading_account.delete.yes")}
+                        {t("task.delete.yes")}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

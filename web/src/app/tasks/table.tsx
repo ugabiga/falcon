@@ -4,8 +4,10 @@ import {nextCronDate, parseCronExpression} from "@/lib/cron-parser";
 import {EditTask} from "@/app/tasks/edit";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
-import {convertBooleanToYesNo} from "@/lib/converter";
 import {useTranslation} from "react-i18next";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {MoreHorizontal} from "lucide-react";
+import {DeleteTask} from "@/app/tasks/delete";
 
 
 function convertDayOfWeek(value: string): string {
@@ -147,11 +149,23 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                 <TableCell>{convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}</TableCell>
                                 <TableCell>{t("task.table.is_active.boolean." + task.isActive)}</TableCell>
                                 <TableCell>
-                                    <EditTask task={task}/>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                <MoreHorizontal className={"h-4 w-4"}/>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <EditTask task={task}/>
+                                            <DeleteTask task={task}/>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                                 <TableCell>
+
                                     <Button variant="link" asChild>
-                                        <Link href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`} legacyBehavior>
+                                        <Link href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`}
+                                              legacyBehavior>
                                             <a>{t("tasks.table.history")}</a>
                                         </Link>
                                     </Button>
