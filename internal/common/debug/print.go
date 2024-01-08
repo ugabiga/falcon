@@ -14,3 +14,12 @@ func ToJSONStr(obj interface{}) string {
 
 	return "\n" + string(bytes)
 }
+func ToJSONInlineStr(obj interface{}) string {
+	bytes, err := json.MarshalIndent(obj, "", "\t")
+	if err != nil {
+		log.Println("Error marshalling JSON:", err)
+		return ""
+	}
+
+	return " " + string(bytes)
+}
