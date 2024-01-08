@@ -26,23 +26,22 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
-	log.Printf("Run lambda cron")
 	lambda.Start(h.HandlePublish)
 	return nil
 }
 
 func (h SQSMessageHandler) HandlePublish(ctx context.Context) (string, error) {
-	log.Printf("Start watching messages from DCA")
+	log.Printf("Start publishing messages to SQS")
 
 	messages, err := h.dcaMessages()
 	if err != nil {
-		log.Printf("Error occurred during watching. Err: %v", err)
+		log.Printf("Error occurred during getting messages. Err: %v", err)
 		return "", err
 	}
-	log.Printf("DCA messages count: %d", len(messages))
-	log.Printf("DCA messages: %+v", debug.ToJSONStr(messages))
 
-	log.Printf("Start publishing messages to SQS")
+	log.Printf("DCA messages count: %d", len(messages))
+	log.Printf("DCA messages: %+v", debug.ToJSONInlineStr(messages))
+
 	for _, msg := range messages {
 		if err := h.publish(msg); err != nil {
 			log.Printf("Error occurred during publishing. Err: %v", err)
@@ -54,15 +53,14 @@ func (h SQSMessageHandler) HandlePublish(ctx context.Context) (string, error) {
 }
 
 func (h SQSMessageHandler) publish(data interface{}) error {
-	log.Printf("Publishing message to SQS: %+v", data)
-	log.Printf("Publishing message to SQS: %+v", debug.ToJSONStr(data))
-
 	sqsURL := "https://sqs.ap-northeast-2.amazonaws.com/358059338173/falcon-worker-sqs"
 	region := "ap-northeast-2"
+
+	log.Printf("Publishing message to SQS: %+v", debug.ToJSONInlineStr(data))
+
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(region)},
 	)
-
 	if err != nil {
 		log.Println("Error creating session,", err)
 		return err
@@ -78,17 +76,14 @@ func (h SQSMessageHandler) publish(data interface{}) error {
 
 	jsonStr := string(jsonData)
 
-	log.Printf("jsonStr: %s", jsonStr)
-
 	params := &sqs.SendMessageInput{
 		MessageBody: aws.String(jsonStr),
 		QueueUrl:    aws.String(sqsURL),
-		//DelaySeconds: aws.Int64(1),
 	}
 
 	_, err = svc.SendMessage(params)
 	if err != nil {
-		log.Println("Error", err)
+		log.Println("Error sending message to SQS queue,", err)
 		return err
 	}
 

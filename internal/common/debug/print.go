@@ -15,7 +15,18 @@ func ToJSONStr(obj interface{}) string {
 
 	return "\n" + string(bytes)
 }
-func ToJSONInlineStr(obj []byte) string {
+func ToJSONInlineStr(obj interface{}) string {
+	bytes, err := json.Marshal(obj)
+	if err != nil {
+		log.Println("Error marshalling JSON:", err)
+		return ""
+	}
+	formattedStr := string(bytes)
+	formattedStr = strings.ReplaceAll(formattedStr, `\n`, "")
+
+	return " " + formattedStr
+}
+func FromByteToJSONInLineStr(obj []byte) string {
 	var target map[string]interface{}
 	if err := json.Unmarshal(obj, &target); err != nil {
 		log.Println(err)
@@ -30,13 +41,5 @@ func ToJSONInlineStr(obj []byte) string {
 	formattedStr := string(bytes)
 	formattedStr = strings.ReplaceAll(formattedStr, `\n`, "")
 
-	//log.Printf("Raw JSON: %s", inputString)
-
-	//formattedBytes, err := json.MarshalIndent(inputString, "", "\t")
-	//if err != nil {
-	//	log.Println("Error marshalling JSON:", err)
-	//	return ""
-	//}
-	//
 	return " " + formattedStr
 }
