@@ -25,11 +25,22 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
-	messages, err := h.dcaMessages()
-	if err != nil {
-		log.Printf("Error occurred during watching. Err: %v", err)
-		return err
+	//messages, err := h.dcaMessages()
+	//if err != nil {
+	//	log.Printf("Error occurred during watching. Err: %v", err)
+	//	return err
+	//}
+
+	messages := []DCAMessage{
+		{
+			TaskOrderInfo: service.TaskOrderInfo{
+				TaskID:           "1",
+				TradingAccountID: "1",
+				UserID:           "1",
+			},
+		},
 	}
+
 	for _, msg := range messages {
 		if err := h.publish(msg); err != nil {
 			log.Printf("Error occurred during publishing. Err: %v", err)
