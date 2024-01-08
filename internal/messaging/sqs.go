@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/service"
 	"log"
 )
@@ -46,6 +47,9 @@ func (h SQSMessageHandler) Publish() error {
 }
 
 func (h SQSMessageHandler) publish(data interface{}) error {
+	log.Printf("Publishing message to SQS: %+v", data)
+	log.Printf("Publishing message to SQS: %+v", debug.ToJSONStr(data))
+
 	sqsURL := "https://sqs.ap-northeast-2.amazonaws.com/358059338173/falcon-worker-sqs"
 	region := "ap-northeast-2"
 	sess, err := session.NewSession(&aws.Config{
