@@ -34,6 +34,7 @@ func (h SQSMessageHandler) Publish() error {
 		return err
 	}
 	log.Printf("DCA messages count: %d", len(messages))
+	log.Printf("DCA messages: %+v", debug.ToJSONStr(messages))
 
 	log.Printf("Start publishing messages to SQS")
 	for _, msg := range messages {
@@ -70,6 +71,8 @@ func (h SQSMessageHandler) publish(data interface{}) error {
 	}
 
 	jsonStr := string(jsonData)
+
+	log.Printf("jsonStr: %s", jsonStr)
 
 	params := &sqs.SendMessageInput{
 		MessageBody: aws.String(jsonStr),
@@ -125,8 +128,12 @@ func (h SQSMessageHandler) dcaMessages() ([]DCAMessage, error) {
 		return nil, err
 	}
 
+	log.Printf("Found %d messages", len(messages))
+	log.Printf("Found messages: %+v", debug.ToJSONStr(messages))
+
 	var dcaMessages []DCAMessage
 	for _, msg := range messages {
+		log.Printf("Found message: %+v", debug.ToJSONStr(msg))
 		dcaMessages = append(dcaMessages, DCAMessage{
 			TaskOrderInfo: msg,
 		})
