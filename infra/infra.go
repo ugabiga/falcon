@@ -79,10 +79,11 @@ func newLambdaPolicy(stack awscdk.Stack, lambdaServerFunc awslambda.DockerImageF
 func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc, vpcSubnets *awsec2.SubnetSelection, securityGroup awsec2.SecurityGroup, environment map[string]*string) awslambda.DockerImageFunction {
 	lambdaWorkerName := "falcon-worker"
 	workerSQSName := "falcon-worker-sqs"
+	lambdaWorkerCmd := "worker"
 	lambdaWorkerFunc := awslambda.NewDockerImageFunction(stack, jsii.String(lambdaWorkerName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
-			Cmd:         &[]*string{jsii.String("lambda-worker")},
+			Cmd:         &[]*string{jsii.String(lambdaWorkerCmd)},
 		}),
 		Timeout:           awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
@@ -115,10 +116,11 @@ func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc,
 func newLambdaCron(stack awscdk.Stack, ecr awsecr.Repository, environment map[string]*string) awslambda.DockerImageFunction {
 	lambdaCronName := "falcon-cron"
 	lambdaCronRuleName := "falcon-cron-rule"
+	lambdaCronCmd := "cron"
 	lambdaCronFunc := awslambda.NewDockerImageFunction(stack, jsii.String(lambdaCronName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
-			Cmd:         &[]*string{jsii.String("lambda-cron")},
+			Cmd:         &[]*string{jsii.String(lambdaCronCmd)},
 		}),
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
