@@ -29,6 +29,7 @@ go.work
 /.idea/vcs.xml
 /.idea/dataSources.xml
 /.idea/inspectionProfiles/Project_Default.xml
+/.idea/aws.xml
 
 # configuration
 /config.yaml
