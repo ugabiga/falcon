@@ -11,6 +11,28 @@ import {DeleteTask} from "@/app/tasks/delete";
 
 export function TaskTable({tasks}: { tasks?: Task[] }) {
     const {t} = useTranslation();
+
+    function convertDayOfWeek(value: string): string {
+        const result = parseCronExpression(value)
+        const daysRaw = result.fields.dayOfWeek.toString()
+        const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const days = daysRaw.split(',').map(Number);
+        if (days.includes(0) && days.includes(7)) {
+            days.splice(days.indexOf(0), 1);
+            days.splice(days.indexOf(7), 1);
+            days.push(0);
+        }
+        if (days.length === 7) {
+            return t("tasks.table.next_execution_time.everyday")
+        } else if (days.length === 5 && !days.some(day => day === 0 || day === 6)) {
+            return t("tasks.table.next_execution_time.every_weekday")
+        } else {
+            return t("tasks.table.next_execution_time.every_week")
+                + ' '
+                + days.map(day => t("common.days." + daysOfWeek[day])).join(', ');
+        }
+    }
+
     return (
         <Table>
             <TableHeader>
@@ -84,27 +106,6 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
     )
 }
 
-function convertDayOfWeek(value: string): string {
-    const {t} = useTranslation();
-    const result = parseCronExpression(value)
-    const daysRaw = result.fields.dayOfWeek.toString()
-    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const days = daysRaw.split(',').map(Number);
-    if (days.includes(0) && days.includes(7)) {
-        days.splice(days.indexOf(0), 1);
-        days.splice(days.indexOf(7), 1);
-        days.push(0);
-    }
-    if (days.length === 7) {
-        return t("tasks.table.next_execution_time.everyday")
-    } else if (days.length === 5 && !days.some(day => day === 0 || day === 6)) {
-        return t("tasks.table.next_execution_time.every_weekday")
-    } else {
-        return t("tasks.table.next_execution_time.every_week")
-            + ' '
-            + days.map(day => t("common.days." + daysOfWeek[day])).join(', ');
-    }
-}
 
 function convertHours(value: string): string {
     const result = parseCronExpression(value)
