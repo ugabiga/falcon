@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/ugabiga/falcon/internal/client"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
@@ -46,6 +47,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	}
 
 	log.Printf("Found %d tasks", len(tasks))
+	log.Printf("Tasks: %+v", debug.ToJSONStr(tasks))
 
 	var taskOrderInfos []TaskOrderInfo
 	for _, t := range tasks {
@@ -55,6 +57,8 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 			UserID:           t.UserID,
 		})
 	}
+
+	log.Printf("TaskOrderInfos: %+v", debug.ToJSONStr(taskOrderInfos))
 
 	return taskOrderInfos, nil
 }
