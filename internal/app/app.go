@@ -30,21 +30,10 @@ func (a App) RunLambdaServer() error {
 func (a App) RunServer() error {
 	return a.server.Run()
 }
-func (a App) RunPublisher() error {
+func (a App) RunCron() error {
 	return a.messaging.Publish()
 }
 
-func (a App) RunSubscriber() error {
+func (a App) RunWorker() error {
 	return a.messaging.Subscribe()
 }
-
-//func (a App) Worker() error {
-//	go a.messaging.Watch()
-//	return a.messaging.Listen()
-//}
-//func (a App) RunLambdaSQS(newMsg messaging.DCAMessage) error {
-//	return a.messaging.LambdaSQS(newMsg)
-//}
-//func (a App) RunLambdaCron() error {
-//	return a.messaging.WatchSQS()
-//}
