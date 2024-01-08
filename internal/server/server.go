@@ -7,11 +7,13 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/handler/helper"
 	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
+	"log"
 )
 
 type Server struct {
@@ -66,8 +68,9 @@ func (s *Server) middleware() {
 		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
 		Output: s.e.Logger.Output(),
 	}))
-	s.e.Use(middleware.BodyDumpWithConfig(middleware.BodyDumpConfig{
-		Skipper: middleware.DefaultSkipper,
+	s.e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+		log.Printf(c.Path() + "Request Body:" + debug.ToJSONInlineStr(reqBody))
+		log.Printf(c.Path() + "Response Body:" + debug.ToJSONInlineStr(resBody))
 	}))
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{s.cfg.WebURL},
