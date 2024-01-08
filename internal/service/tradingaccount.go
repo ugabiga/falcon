@@ -6,6 +6,7 @@ import (
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
+	"log"
 )
 
 const (
@@ -123,7 +124,7 @@ func (s TradingAccountService) Update(
 	}
 
 	if tradingAccount.UserID != userID {
-		return ErrUnauthorized
+		return ErrUnAuthorizedAction
 	}
 
 	inputTradingAccount := model.TradingAccount{
@@ -160,6 +161,39 @@ func (s TradingAccountService) Update(
 
 	_, err = s.repo.UpdateTradingAccount(ctx, inputTradingAccount)
 	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s TradingAccountService) Delete(ctx context.Context, userID string, tradingAccountID string) error {
+	log.Printf("delete trading account: %s, %s", userID, tradingAccountID)
+	tradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccountID)
+	if err != nil {
+		log.Printf("failed to get trading account: %v", err)
+		return err
+	}
+
+	if tradingAccount.UserID != userID {
+		return ErrUnAuthorizedAction
+	}
+
+	tasks, err := s.repo.GetTasksByTradingAccountID(ctx, tradingAccountID)
+	if err != nil {
+		log.Printf("failed to get tasks: %v", err)
+		return err
+	}
+
+	for _, task := range tasks {
+		if err := s.repo.DeleteTask(ctx, tradingAccountID, task.ID); err != nil {
+			log.Printf("failed to delete task: %v", err)
+			return err
+		}
+	}
+
+	if err := s.repo.DeleteTradingAccount(ctx, userID, tradingAccountID); err != nil {
+		log.Printf("failed to delete trading account: %v", err)
 		return err
 	}
 

@@ -104,5 +104,11 @@
   "task_history.table.is_success.boolean.false": "아니오",
   "task_history.table.updated_at": "업데이트 시간",
   "task_history.table.created_at": "생성 시간",
-  "task_history.table.empty": "이력이 없습니다"
+  "task_history.table.empty": "이력이 없습니다",
+  "trading_account.delete.btn": "삭제",
+  "trading_account.delete.title": "이 거래 계정을 삭제하시겠습니까?",
+  "trading_account.delete.description": "이 작업은 취소할 수 없습니다.",
+  "trading_account.delete.cancel": "취소",
+  "trading_account.delete.yes": "예"
+
 }

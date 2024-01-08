@@ -3,6 +3,16 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {EditTradingAccount} from "@/app/tradingaccounts/edit";
 import {camelize} from "@/lib/str";
 import {useTranslation} from "react-i18next";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {MoreHorizontal} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {DeleteTradingAccount} from "@/app/tradingaccounts/delete";
 
 function trim(str: string, length: number) {
     if (str.length <= length) {
@@ -40,7 +50,17 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                                 <TableCell>{trim(tradingAccount.key, 4)}</TableCell>
                                 <TableCell>{tradingAccount.ip}</TableCell>
                                 <TableCell>
-                                    <EditTradingAccount tradingAccount={tradingAccount}/>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                <MoreHorizontal className={"h-4 w-4"}/>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <EditTradingAccount tradingAccount={tradingAccount}/>
+                                            <DeleteTradingAccount tradingAccount={tradingAccount}/>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </TableCell>
                             </TableRow>
                         ))

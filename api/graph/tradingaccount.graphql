@@ -16,6 +16,7 @@ extend type Mutation {
         key: String
         secret: String
     ): Boolean!
+    deleteTradingAccount(id: ID!): Boolean!
 }
 
 type TradingAccountIndex {

@@ -340,6 +340,24 @@ func (r DynamoRepository) CountTradingAccountsByUserID(ctx context.Context, user
 	return int(result.Count), nil
 }
 
+func (r DynamoRepository) DeleteTradingAccount(ctx context.Context, userID, tradingAccountID string) error {
+	_, err := r.db.DeleteItem(
+		ctx,
+		&dynamodb.DeleteItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: userID},
+				"sk": &types.AttributeValueMemberS{Value: tradingAccountID},
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r DynamoRepository) CreateTask(ctx context.Context, task model.Task) (*model.Task, error) {
 	task.ID = r.encoding(KeyPrefixTask)
 	task.NextExecutionTime = task.NextExecutionTime.Truncate(time.Second)
@@ -518,6 +536,24 @@ func (r DynamoRepository) CountTasksByTradingID(ctx context.Context, tradingAcco
 	}
 
 	return int(result.Count), nil
+}
+
+func (r DynamoRepository) DeleteTask(ctx context.Context, tradingAccountID, taskID string) error {
+	_, err := r.db.DeleteItem(
+		ctx,
+		&dynamodb.DeleteItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: tradingAccountID},
+				"sk": &types.AttributeValueMemberS{Value: taskID},
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r DynamoRepository) CreateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
