@@ -87,12 +87,33 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	default:
 		return errors.New("exchange not found")
 	}
-
 	if err != nil {
 		return err
 	}
 
-	return s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t)
+	if err := s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t); err != nil {
+		return err
+	}
+
+	if err := s.createTaskHistory(ctx, orderInfo.UserID, t); err != nil {
+		return err
+	}
+
+	return nil
+}
+func (s DcaService) createTaskHistory(ctx context.Context, userID string, t *model.Task) error {
+	_, err := s.repo.CreateTaskHistory(ctx, model.TaskHistory{
+		TaskID:           t.ID,
+		TradingAccountID: t.TradingAccountID,
+		UserID:           t.UserID,
+		IsSuccess:        true,
+		Log:              "task executed successfully",
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
 	u, err := s.repo.GetUser(ctx, userID)
