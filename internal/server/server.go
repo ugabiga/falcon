@@ -66,6 +66,9 @@ func (s *Server) middleware() {
 		Format: "[${time_rfc3339}] ${status} ${method} ${path} (${remote_ip}) ${latency_human}\n",
 		Output: s.e.Logger.Output(),
 	}))
+	s.e.Use(middleware.BodyDumpWithConfig(middleware.BodyDumpConfig{
+		Skipper: middleware.DefaultSkipper,
+	}))
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{s.cfg.WebURL},
 		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS, echo.PATCH},
