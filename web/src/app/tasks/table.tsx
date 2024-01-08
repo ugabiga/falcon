@@ -9,8 +9,83 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/componen
 import {MoreHorizontal} from "lucide-react";
 import {DeleteTask} from "@/app/tasks/delete";
 
+export function TaskTable({tasks}: { tasks?: Task[] }) {
+    const {t} = useTranslation();
+    return (
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="w-[100px]">{t("tasks.table.id")}</TableHead>
+                    <TableHead>{t("tasks.table.type")}</TableHead>
+                    <TableHead>{t("tasks.table.schedule")}</TableHead>
+                    <TableHead>{t("tasks.table.symbol")}</TableHead>
+                    <TableHead>{t("tasks.table.size")}</TableHead>
+                    <TableHead>{t("tasks.table.next_execution_time")}</TableHead>
+                    <TableHead>{t("tasks.table.is_active")}</TableHead>
+                    <TableHead>{t("tasks.table.action")}</TableHead>
+                    <TableHead>{t("tasks.table.more")}</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {
+                    !tasks || tasks?.length === 0
+                        ? (
+                            <TableRow>
+                                <TableCell colSpan={9} className="font-medium text-center">
+                                    {t("tasks.table.empty")}
+                                </TableCell>
+                            </TableRow>
+                        )
+                        : tasks?.map((task) => (
+                                <TableRow key={task.id}>
+                                    <TableCell>{task.id}</TableCell>
+                                    <TableCell>{task.type}</TableCell>
+                                    <TableCell>
+                                        {t("tasks.table.next_execution_time.encoded", {
+                                            days: convertDayOfWeek(task.cron),
+                                            hours: convertHours(task.cron)
+                                        })}
+                                    </TableCell>
+                                    <TableCell>{task.symbol}</TableCell>
+                                    <TableCell>
+                                        {convertNumberToCryptoSize(task.size, task.symbol)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}
+                                    </TableCell>
+                                    <TableCell>{t("task.table.is_active.boolean." + task.isActive)}</TableCell>
+                                    <TableCell>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                                    <MoreHorizontal className={"h-4 w-4"}/>
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <EditTask task={task}/>
+                                                <DeleteTask task={task}/>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button variant="link" asChild>
+                                            <Link href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`}
+                                                  legacyBehavior>
+                                                {t("tasks.table.history")}
+                                            </Link>
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        )
+                }
+            </TableBody>
+        </Table>
+    )
+}
 
 function convertDayOfWeek(value: string): string {
+    const {t} = useTranslation();
     const result = parseCronExpression(value)
     const daysRaw = result.fields.dayOfWeek.toString()
     const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -21,27 +96,19 @@ function convertDayOfWeek(value: string): string {
         days.push(0);
     }
     if (days.length === 7) {
-        return 'everyday';
+        return t("tasks.table.next_execution_time.everyday")
     } else if (days.length === 5 && !days.some(day => day === 0 || day === 6)) {
-        return 'every_weekday';
+        return t("tasks.table.next_execution_time.every_weekday")
     } else {
-        return 'every_' + days.map(day => daysOfWeek[day]).join(', ');
+        return t("tasks.table.next_execution_time.every_week")
+            + ' '
+            + days.map(day => t("common.days." + daysOfWeek[day])).join(', ');
     }
 }
 
 function convertHours(value: string): string {
     const result = parseCronExpression(value)
     return result.fields.hour.toString()
-}
-
-function convertCronToHumanReadable(value: string): { days: string, hours: string } {
-    const result = parseCronExpression(value)
-    const days = result.fields.dayOfWeek.toString()
-    const hours = result.fields.hour.toString()
-    return {
-        days: convertDayOfWeek(days),
-        hours: hours
-    }
 }
 
 function formatDate(dateTime: Date): string {
@@ -105,75 +172,4 @@ function convertNumberToCurrency(value: number, currency: string): string {
             minimumFractionDigits: decimalPlaces,
         }).format(value) + ' ' + currency
     }
-}
-
-export function TaskTable({tasks}: { tasks?: Task[] }) {
-    const {t} = useTranslation();
-    return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-[100px]">{t("tasks.table.id")}</TableHead>
-                    <TableHead>{t("tasks.table.type")}</TableHead>
-                    <TableHead>{t("tasks.table.schedule")}</TableHead>
-                    <TableHead>{t("tasks.table.symbol")}</TableHead>
-                    <TableHead>{t("tasks.table.size")}</TableHead>
-                    <TableHead>{t("tasks.table.next_execution_time")}</TableHead>
-                    <TableHead>{t("tasks.table.is_active")}</TableHead>
-                    <TableHead>{t("tasks.table.action")}</TableHead>
-                    <TableHead>{t("tasks.table.more")}</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {
-                    !tasks || tasks?.length === 0
-                        ? (
-                            <TableRow>
-                                <TableCell colSpan={9} className="font-medium text-center">
-                                    {t("tasks.table.empty")}
-                                </TableCell>
-                            </TableRow>
-                        )
-                        : tasks?.map((task) => (
-                            <TableRow key={task.id}>
-                                <TableCell>{task.id}</TableCell>
-                                <TableCell>{task.type}</TableCell>
-                                <TableCell>
-                                    {t("tasks.table.next_execution_time.encoded", {
-                                        days: t("tasks.table.next_execution_time." + convertDayOfWeek(task.cron)),
-                                        hours: convertHours(task.cron)
-                                    })}
-                                </TableCell>
-                                <TableCell>{task.symbol}</TableCell>
-                                <TableCell>{convertNumberToCryptoSize(task.size, task.symbol)}</TableCell>
-                                <TableCell>{convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}</TableCell>
-                                <TableCell>{t("task.table.is_active.boolean." + task.isActive)}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                                <MoreHorizontal className={"h-4 w-4"}/>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <EditTask task={task}/>
-                                            <DeleteTask task={task}/>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                                <TableCell>
-                                    <Button variant="link" asChild>
-                                        <Link href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`}
-                                              legacyBehavior>
-                                            {t("tasks.table.history")}
-                                        </Link>
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))
-
-                }
-            </TableBody>
-        </Table>
-    )
 }
