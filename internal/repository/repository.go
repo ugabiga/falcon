@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/model"
 	"log"
+	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -676,9 +677,18 @@ func (r DynamoRepository) encodeTradingAccountID(prefix, id, exchange, key strin
 }
 
 func (r DynamoRepository) encoding(prefix string) string {
-	return prefix + Separator + uuid.New().String()
+	return prefix + Separator + strconv.FormatInt(generateRowId(), 10)
 }
-
 func (r DynamoRepository) timeNow() time.Time {
 	return time.Now().Truncate(time.Second)
+}
+
+func generateRowId() int64 {
+	const customEpoch = 1300000000000
+	shardId := rand.Intn(65) // Generates a random number between 0 and 64
+	ts := time.Now().UnixNano()/int64(time.Millisecond) - customEpoch
+	randID := rand.Intn(512)
+	ts = ts << 6
+	ts = ts + int64(shardId)
+	return (ts * 512) + int64(randID)
 }
