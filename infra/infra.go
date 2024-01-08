@@ -106,6 +106,7 @@ func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc,
 			TagOrDigest: jsii.String("latest"),
 			Cmd:         &[]*string{jsii.String(lambdaWorkerCmd)},
 		}),
+		Architecture:      awslambda.Architecture_ARM_64(),
 		Timeout:           awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention:      awslogs.RetentionDays_FIVE_DAYS,
 		AllowPublicSubnet: jsii.Bool(true),
@@ -143,6 +144,7 @@ func newLambdaCron(stack awscdk.Stack, ecr awsecr.Repository, environment map[st
 			TagOrDigest: jsii.String("latest"),
 			Cmd:         &[]*string{jsii.String(lambdaCronCmd)},
 		}),
+		Architecture: awslambda.Architecture_ARM_64(),
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
 		Environment:  &environment,
@@ -178,6 +180,9 @@ func newLambdaServer(stack awscdk.Stack, ecr awsecr.Repository, environment map[
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
 		Environment:  &environment,
+	})
+	lambdaServerFunc.AddAlias(jsii.String("current"), &awslambda.AliasOptions{
+		ProvisionedConcurrentExecutions: jsii.Number(1),
 	})
 	lambdaURL := lambdaServerFunc.AddFunctionUrl(&awslambda.FunctionUrlOptions{
 		AuthType: awslambda.FunctionUrlAuthType_NONE,

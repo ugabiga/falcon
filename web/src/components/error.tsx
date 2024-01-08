@@ -1,6 +1,6 @@
 import {transformErrorMessage} from "@/lib/error";
 import {Button} from "@/components/ui/button";
-import {signIn} from "next-auth/react";
+import {signIn, signOut} from "next-auth/react";
 import {useTranslation} from "react-i18next";
 
 export function Error({message}: { message: string }) {
@@ -21,6 +21,8 @@ export function Error({message}: { message: string }) {
 
 
 function UnAuthorizedError() {
+    signOut({redirect: false}).then()
+
     const {t} = useTranslation()
     return (
         <div className="h-screen w-full flex flex-col justify-center items-center space-y-4">
