@@ -26,7 +26,7 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
-	lambda.Start(h.HandleReceiveRequest)
+	lambda.Start(h.HandlePublish)
 	return nil
 }
 
