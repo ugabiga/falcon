@@ -15,7 +15,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">{t("tasks.table.id")}</TableHead>
+                    <TableHead>{t("tasks.table.id")}</TableHead>
                     <TableHead>{t("tasks.table.type")}</TableHead>
                     <TableHead>{t("tasks.table.schedule")}</TableHead>
                     <TableHead>{t("tasks.table.symbol")}</TableHead>

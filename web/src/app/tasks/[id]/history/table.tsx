@@ -9,7 +9,7 @@ export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">{t("task_history.table.id")}</TableHead>
+                    <TableHead>{t("task_history.table.id")}</TableHead>
                     <TableHead>{t("task_history.table.is_success")}</TableHead>
                     <TableHead>{t("task_history.table.updated_at")}</TableHead>
                     <TableHead>{t("task_history.table.created_at")}</TableHead>
