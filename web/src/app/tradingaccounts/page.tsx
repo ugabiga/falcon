@@ -14,9 +14,11 @@ import {useTranslation} from "react-i18next";
 
 export default function TradingAccounts() {
     const {t} = useTranslation();
-    const {data, loading, refetch, error} = useQuery(TradingAccountIndexDocument);
-    const tradingAccount = useAppSelector((state) => state.tradingAccount);
     const dispatch = useAppDispatch()
+    const tradingAccount = useAppSelector((state) => state.tradingAccount);
+    const {data, loading, refetch, error} = useQuery(TradingAccountIndexDocument, {
+        fetchPolicy: "no-cache"
+    });
 
     useEffect(() => {
         if (tradingAccount?.refresh) {

@@ -17,16 +17,15 @@ import {useTranslation} from "react-i18next";
 export default function Tasks() {
     const {t} = useTranslation()
     const params = useSearchParams()
+    const dispatch = useDispatch()
     const tradingAccountId = params.get('trading_account_id')
-
+    const task = useAppSelector((state) => state.task)
     const {data, loading, refetch, error} = useQuery(GetTaskIndexDocument, {
         variables: {
             tradingAccountID: tradingAccountId ?? null
-        }
+        },
+        fetchPolicy: "no-cache"
     })
-
-    const task = useAppSelector((state) => state.task)
-    const dispatch = useDispatch()
 
     useEffect(() => {
         if (task?.refresh) {
