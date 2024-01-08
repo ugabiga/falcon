@@ -5,6 +5,7 @@ extend type Query {
 extend type Mutation {
     createTask(input: CreateTaskInput!): Task!
     updateTask(tradingAccountID: ID! taskID: ID! input: UpdateTaskInput!): Task!
+    deleteTask(tradingAccountID: ID! taskID: ID!): Boolean!
 }
 
 input CreateTaskInput {

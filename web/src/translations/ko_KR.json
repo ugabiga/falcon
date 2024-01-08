@@ -109,6 +109,9 @@
   "trading_account.delete.title": "이 거래 계정을 삭제하시겠습니까?",
   "trading_account.delete.description": "이 작업은 취소할 수 없습니다.",
   "trading_account.delete.cancel": "취소",
-  "trading_account.delete.yes": "예"
-
+  "trading_account.delete.yes": "예",
+  "task.delete.btn": "삭제",
+  "task.delete.title": "이 작업을 삭제하시겠습니까?",
+  "task.delete.cancel": "취소",
+  "task.delete.yes": "예"
 }

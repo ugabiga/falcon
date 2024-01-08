@@ -88,3 +88,7 @@ mutation UpdateTask(
         ...TaskFragment
     }
 }
+
+mutation DeleteTask($tradingAccountID: ID!, $taskID: ID!){
+    deleteTask(tradingAccountID: $tradingAccountID, taskID: $taskID)
+}

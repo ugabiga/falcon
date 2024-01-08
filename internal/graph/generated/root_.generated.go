@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateTask           func(childComplexity int, input CreateTaskInput) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, key string, secret string) int
+		DeleteTask           func(childComplexity int, tradingAccountID string, taskID string) int
 		DeleteTradingAccount func(childComplexity int, id string) int
 		UpdateTask           func(childComplexity int, tradingAccountID string, taskID string, input UpdateTaskInput) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, key *string, secret *string) int
@@ -218,6 +219,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateTradingAccount(childComplexity, args["name"].(string), args["exchange"].(string), args["key"].(string), args["secret"].(string)), true
+
+	case "Mutation.deleteTask":
+		if e.complexity.Mutation.DeleteTask == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteTask_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteTask(childComplexity, args["tradingAccountID"].(string), args["taskID"].(string)), true
 
 	case "Mutation.deleteTradingAccount":
 		if e.complexity.Mutation.DeleteTradingAccount == nil {
@@ -701,6 +714,7 @@ enum AuthenticationProvider {
 extend type Mutation {
     createTask(input: CreateTaskInput!): Task!
     updateTask(tradingAccountID: ID! taskID: ID! input: UpdateTaskInput!): Task!
+    deleteTask(tradingAccountID: ID! taskID: ID!): Boolean!
 }
 
 input CreateTaskInput {

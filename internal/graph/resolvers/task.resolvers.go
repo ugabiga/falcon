@@ -5,7 +5,6 @@ package resolvers
 
 import (
 	"context"
-
 	"github.com/antlabs/deepcopy"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
@@ -40,6 +39,16 @@ func (r *mutationResolver) UpdateTask(ctx context.Context, tradingAccountID stri
 	}
 
 	return respTask, nil
+}
+
+func (r *mutationResolver) DeleteTask(ctx context.Context, tradingAccountID string, taskID string) (bool, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+
+	if err := r.taskSrv.Delete(ctx, claim.UserID, tradingAccountID, taskID); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (r *queryResolver) TaskIndex(ctx context.Context, tradingAccountID *string) (*generated.TaskIndex, error) {

@@ -5,19 +5,19 @@ import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import {refreshTask} from "@/store/taskSlice";
 import {errorToast} from "@/components/toast";
-import {TaskFromSchema, TaskForm} from "@/app/tasks/form";
+import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 
 export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
     const {t} = useTranslation();
+    const dispatch = useAppDispatch()
     const [createTask] = useMutation(CreateTaskDocument);
     const [openDialog, setOpenDialog] = useState(false)
-    const dispatch = useAppDispatch()
     const form = useForm<z.infer<typeof TaskFromSchema>>({
         resolver: zodResolver(TaskFromSchema),
         defaultValues: {

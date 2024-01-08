@@ -6,7 +6,6 @@ import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
@@ -15,6 +14,7 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
+import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 
 export function EditTask({task}: { task: Task }) {
     const {t} = useTranslation();
@@ -64,9 +64,9 @@ export function EditTask({task}: { task: Task }) {
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="ghost">
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     {t("tasks.form.edit.btn")}
-                </Button>
+                </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
