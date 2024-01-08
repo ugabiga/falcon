@@ -41,16 +41,15 @@ func NewStack(scope constructs.Construct, id string, cfg *config.Config, props *
 	ecr := newECRRepository(stack)
 	newUserPolicy(stack, u, ecr)
 
-	//vpc := lookupVPC(stack)
-	//vpSubnets := lookupVPCSubnets(stack)
-	//lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
+	vpc := lookupVPC(stack)
+	vpSubnets := lookupVPCSubnets(stack)
+	lambdaSecurityGroup := newLambdaSecurityGroup(stack, vpc)
 
 	environment := newLambdaEnvironment(cfg)
 	lambdaServerFunc := newLambdaServer(stack, ecr, environment)
-	//lambdaCronFunc := newLambdaCron(stack, ecr, environment)
-	//lambdaWorkerFunc := newLambdaWorker(stack, ecr, vpc, vpSubnets, lambdaSecurityGroup, environment)
-	//newLambdaPolicy(stack, lambdaServerFunc, lambdaCronFunc, lambdaWorkerFunc)
-	newLambdaPolicy(stack, lambdaServerFunc, nil, nil)
+	lambdaCronFunc := newLambdaCron(stack, ecr, environment)
+	lambdaWorkerFunc := newLambdaWorker(stack, ecr, vpc, vpSubnets, lambdaSecurityGroup, environment)
+	newLambdaPolicy(stack, lambdaServerFunc, lambdaCronFunc, lambdaWorkerFunc)
 
 	return stack
 }
@@ -73,8 +72,8 @@ func newLambdaPolicy(stack awscdk.Stack, lambdaServerFunc awslambda.DockerImageF
 	lambdaPolicy.AddAllResources()
 
 	lambdaServerFunc.AddToRolePolicy(lambdaPolicy)
-	//lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
-	//lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
+	lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
+	lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
 }
 
 func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc, vpcSubnets *awsec2.SubnetSelection, securityGroup awsec2.SecurityGroup, environment map[string]*string) awslambda.DockerImageFunction {
@@ -199,6 +198,12 @@ func newLambdaServer(stack awscdk.Stack, ecr awsecr.Repository, environment map[
 }
 
 func newLambdaEnvironment(cfg *config.Config) map[string]*string {
+	//boot to string
+	dynamoIsLocalStr := "false"
+	if cfg.DynamoIsLocal {
+		dynamoIsLocalStr = "true"
+	}
+
 	return map[string]*string{
 		"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
 		"DB_SOURCE":            jsii.String(cfg.DBSource),
@@ -207,7 +212,8 @@ func newLambdaEnvironment(cfg *config.Config) map[string]*string {
 		"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
 		"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
 		"WEB_URL":              jsii.String(cfg.WebURL),
-		"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
+		"DYNAMO_IS_LOCAL":      jsii.String(dynamoIsLocalStr),
+		"MESSAGING_PLATFORM":   jsii.String(cfg.MessagingPlatform),
 	}
 }
 
@@ -218,7 +224,7 @@ func newLambdaSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc) awsec2.Security
 		Vpc:               vpc,
 		SecurityGroupName: jsii.String(*stack.StackName() + "-" + lambdaSecurityGroup),
 		AllowAllOutbound:  jsii.Bool(true),
-		Description:       jsii.String("PostgreSQL Security Group"),
+		Description:       jsii.String("Allow Lambda functions to access resources"),
 	})
 
 	securityGroup.AddIngressRule(
@@ -233,22 +239,26 @@ func newLambdaSecurityGroup(stack awscdk.Stack, vpc awsec2.IVpc) awsec2.Security
 	return securityGroup
 }
 
-func lookupVPCSubnets(stack awscdk.Stack) *awsec2.SubnetSelection {
-	return &awsec2.SubnetSelection{
-		SubnetFilters: &[]awsec2.SubnetFilter{
-			awsec2.SubnetFilter_ByIds(&[]*string{
-				jsii.String("subnet-0901a7e554e09d234"),
-				jsii.String("subnet-041de806aee128a88"),
-			}),
-		},
-	}
-}
-
 func lookupVPC(stack awscdk.Stack) awsec2.IVpc {
-	VpcID := "vpc-06b43122d657875bc"
+	VpcID := "vpc-07fe0ad3ccddd451c"
 	return awsec2.Vpc_FromLookup(stack, jsii.String("DefaultVPC"), &awsec2.VpcLookupOptions{
 		VpcId: jsii.String(VpcID),
 	})
+}
+
+func lookupVPCSubnets(stack awscdk.Stack) *awsec2.SubnetSelection {
+	// Use Private Subnets
+	subNet1 := "subnet-05a0867a2d76c57d1"
+	subNet2 := "subnet-08af91935c2a2c89a"
+
+	return &awsec2.SubnetSelection{
+		SubnetFilters: &[]awsec2.SubnetFilter{
+			awsec2.SubnetFilter_ByIds(&[]*string{
+				jsii.String(subNet1),
+				jsii.String(subNet2),
+			}),
+		},
+	}
 }
 
 func newUserPolicy(stack awscdk.Stack, user awsiam.User, ecr awsecr.Repository) []awsiam.Policy {
