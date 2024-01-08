@@ -5,7 +5,6 @@ package resolvers
 
 import (
 	"context"
-
 	"github.com/antlabs/deepcopy"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/handler/helper"
@@ -44,6 +43,20 @@ func (r *mutationResolver) UpdateTradingAccount(ctx context.Context, id string, 
 		key,
 		secret,
 		nil,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (r *mutationResolver) DeleteTradingAccount(ctx context.Context, id string) (bool, error) {
+	claim := helper.MustJWTClaimInResolver(ctx)
+	err := r.tradingAccountSrv.Delete(
+		ctx,
+		claim.UserID,
+		id,
 	)
 	if err != nil {
 		return false, err

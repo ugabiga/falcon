@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateTask           func(childComplexity int, input CreateTaskInput) int
 		CreateTradingAccount func(childComplexity int, name string, exchange string, key string, secret string) int
+		DeleteTradingAccount func(childComplexity int, id string) int
 		UpdateTask           func(childComplexity int, tradingAccountID string, taskID string, input UpdateTaskInput) int
 		UpdateTradingAccount func(childComplexity int, id string, name *string, exchange *string, key *string, secret *string) int
 		UpdateUser           func(childComplexity int, input UpdateUserInput) int
@@ -217,6 +218,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateTradingAccount(childComplexity, args["name"].(string), args["exchange"].(string), args["key"].(string), args["secret"].(string)), true
+
+	case "Mutation.deleteTradingAccount":
+		if e.complexity.Mutation.DeleteTradingAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteTradingAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteTradingAccount(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateTask":
 		if e.complexity.Mutation.UpdateTask == nil {
@@ -773,6 +786,7 @@ extend type Mutation {
         key: String
         secret: String
     ): Boolean!
+    deleteTradingAccount(id: ID!): Boolean!
 }
 
 type TradingAccountIndex {

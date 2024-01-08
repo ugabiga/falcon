@@ -49,3 +49,7 @@ mutation UpdateTradingAccount(
         secret: $secret
     )
 }
+
+mutation DeleteTradingAccount($id: ID!) {
+    deleteTradingAccount(id: $id)
+}

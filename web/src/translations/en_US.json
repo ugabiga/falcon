@@ -105,5 +105,10 @@
   "task_history.table.is_success.boolean.false": "No",
   "task_history.table.updated_at": "Updated At",
   "task_history.table.created_at": "Created At",
-  "task_history.table.empty": "No History found"
+  "task_history.table.empty": "No History found",
+  "trading_account.delete.btn" : "Delete",
+  "trading_account.delete.title" : "Are you sure you want to delete this trading account?",
+  "trading_account.delete.description" : "This action cannot be undone.",
+  "trading_account.delete.cancel" : "Cancel",
+  "trading_account.delete.yes" : "Yes"
 }

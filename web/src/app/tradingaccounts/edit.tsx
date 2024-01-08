@@ -12,6 +12,7 @@ import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {TradingAccountForm, TradingAccountFormSchema} from "@/app/tradingaccounts/form";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
+import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 
 
 export function EditTradingAccount(
@@ -48,7 +49,9 @@ export function EditTradingAccount(
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="ghost">{t("trading_account.edit.btn")}</Button>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    {t("trading_account.edit.btn")}
+                </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <Form {...form}>
@@ -66,3 +69,4 @@ export function EditTradingAccount(
         </Dialog>
     )
 }
+
