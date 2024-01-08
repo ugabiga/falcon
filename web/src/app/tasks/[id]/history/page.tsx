@@ -10,15 +10,16 @@ import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
-    const searchParams = useSearchParams()
-    const tradingAccountId = searchParams.get('trading_account_id')
     const {t} = useTranslation()
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const tradingAccountId = searchParams.get('trading_account_id')
     const {data, loading, error} = useQuery(GetTaskHistoryIndexDocument, {
         variables: {
             tradingAccountID: tradingAccountId ?? "",
             taskID: params.id
-        }
+        },
+        fetchPolicy: "no-cache"
     })
 
     if (loading) {
@@ -29,17 +30,18 @@ export default function TaskHistory({params}: { params: { id: string } }) {
         return <Error message={error.message}/>
     }
 
+    const handleBack = () => {
+        if (data?.taskHistoryIndex?.task?.tradingAccountID == null) {
+            router.push("/tasks")
+            return
+        }
+        router.push("/tasks?trading_account_id=" + data.taskHistoryIndex?.task?.tradingAccountID)
+    }
+
     return (
         <>
-            <div className={"mt-2 w-full flex"}>
-                <Button variant="link" onClick={() => {
-                    if (data?.taskHistoryIndex?.task?.tradingAccountID == null) {
-                        router.push("/tasks")
-                        return
-                    }
-
-                    router.push("/tasks?trading_account_id=" + data.taskHistoryIndex?.task?.tradingAccountID)
-                }}>
+            <div className="mt-6 md:max-w-[1200px] overflow-auto w-full mx-auto">
+                <Button variant="link" onClick={handleBack}>
                     {t("task_history.back.btn")}
                 </Button>
             </div>

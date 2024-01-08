@@ -81,7 +81,7 @@
   "tasks.table.is_active": "활성화됨",
   "tasks.table.action": "동작",
   "tasks.table.more": "더 보기",
-  "tasks.table.history": "이력",
+  "tasks.table.history": "이력 보기",
   "tasks.table.empty": "작업이 없습니다",
   "tasks.table.next_execution_time.fail": "다음 실행 시간 없음",
   "tasks.table.next_execution_time.encoded": "{{days}} {{hours}}시",
