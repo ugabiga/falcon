@@ -6,6 +6,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
+import React from "react";
 
 export const TradingAccountFormSchema = z.object({
     name: z

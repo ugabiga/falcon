@@ -13,7 +13,6 @@ import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
 
-
 export function AddTradingAccount() {
     const {t} = useTranslation();
     const [createTradingAccount] = useMutation(CreateTradingAccountDocument);
@@ -25,6 +24,8 @@ export function AddTradingAccount() {
         defaultValues: {
             name: "",
             exchange: "upbit",
+            key: "",
+            secret: "",
         },
     })
 
@@ -43,7 +44,6 @@ export function AddTradingAccount() {
             }
         }).then(() => {
             setOpenDialog(false)
-            form.reset()
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
             errorToast(e.message)

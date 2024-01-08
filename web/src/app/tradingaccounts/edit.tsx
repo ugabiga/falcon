@@ -29,6 +29,7 @@ export function EditTradingAccount(
             name: tradingAccount.name,
             exchange: tradingAccount.exchange,
             key: tradingAccount.key,
+            secret: "",
         },
     })
 
