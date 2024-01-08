@@ -23,17 +23,17 @@ var lambdaServerCmd = &cli.Command{
 	},
 }
 
-var subscriberCmd = &cli.Command{
-	Name: "subscriber",
+var workerCmd = &cli.Command{
+	Name: "worker",
 	Action: func(context *cli.Context) error {
-		return app.InitializeApplication().RunSubscriber()
+		return app.InitializeApplication().RunWorker()
 	},
 }
 
-var publisherCmd = &cli.Command{
-	Name: "publisher",
+var cronCmd = &cli.Command{
+	Name: "cron",
 	Action: func(context *cli.Context) error {
-		return app.InitializeApplication().RunPublisher()
+		return app.InitializeApplication().RunCron()
 	},
 }
 
@@ -44,8 +44,8 @@ func main() {
 		Commands: []*cli.Command{
 			serverCmd,
 			lambdaServerCmd,
-			subscriberCmd,
-			publisherCmd,
+			workerCmd,
+			cronCmd,
 		},
 	}
 	if err := application.Run(os.Args); err != nil {
