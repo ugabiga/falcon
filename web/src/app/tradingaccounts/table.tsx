@@ -28,7 +28,7 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">{t("trading_account.table.name")}</TableHead>
+                    <TableHead>{t("trading_account.table.name")}</TableHead>
                     <TableHead>{t("trading_account.table.exchange")}</TableHead>
                     <TableHead>{t("trading_account.table.key")}</TableHead>
                     <TableHead>{t("trading_account.table.ip")}</TableHead>
