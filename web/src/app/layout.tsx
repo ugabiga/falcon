@@ -4,7 +4,7 @@ import './globals.css'
 import React from "react";
 import Providers from "@/app/providers";
 import {NavigationBar} from "@/components/navigation-bar";
-import { Toaster } from "@/components/ui/sonner"
+import {Toaster} from "@/components/ui/sonner"
 import {getServerSession} from "next-auth";
 import SessionProvider from "@/lib/session"
 
@@ -13,6 +13,34 @@ const inter = Inter({subsets: ['latin']})
 export const metadata: Metadata = {
     title: 'Falcon',
     description: 'Falcon is a crypto trading platform',
+    icons: [
+        {
+            rel: 'icon',
+            type: 'image/png',
+            sizes: '32x32',
+            url: process.env.PUBLIC_URL + '/favicon-32x32.png',
+        },
+        {
+            rel: 'icon',
+            type: 'image/png',
+            sizes: '16x16',
+            url: process.env.PUBLIC_URL + '/favicon-16x16.png',
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '180x180',
+            url: process.env.PUBLIC_URL + '/apple-touch-icon.png',
+        },
+        {
+            rel: 'manifest',
+            url: process.env.PUBLIC_URL + '/site.webmanifest',
+        },
+        {
+            rel: 'mask-icon',
+            url: process.env.PUBLIC_URL + '/safari-pinned-tab.svg',
+            color: '#5bbad5',
+        },
+    ],
 }
 
 
