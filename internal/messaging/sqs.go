@@ -26,12 +26,17 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
+	lambda.Start(h.HandleReceiveRequest)
+	return nil
+}
+
+func (h SQSMessageHandler) HandlePublish(ctx context.Context) (string, error) {
 	log.Printf("Start watching messages from DCA")
 
 	messages, err := h.dcaMessages()
 	if err != nil {
 		log.Printf("Error occurred during watching. Err: %v", err)
-		return err
+		return "", err
 	}
 	log.Printf("DCA messages count: %d", len(messages))
 	log.Printf("DCA messages: %+v", debug.ToJSONStr(messages))
@@ -44,7 +49,7 @@ func (h SQSMessageHandler) Publish() error {
 		}
 	}
 
-	return nil
+	return "ok", nil
 }
 
 func (h SQSMessageHandler) publish(data interface{}) error {
