@@ -167,12 +167,14 @@ func newLambdaServer(stack awscdk.Stack, ecr awsecr.Repository, environment map[
 	publicDomainName := "api-falcon.vultor.xyz"
 	publicDomainCertificateArn := "arn:aws:acm:us-east-1:358059338173:certificate/e74a2c12-794d-4ae4-849b-977baadf9965"
 	lambdaServerName := "falcon-server"
+	lambdaServerCmd := "lambda-server"
 
 	lambdaServerFunc := awslambda.NewDockerImageFunction(stack, jsii.String(lambdaServerName), &awslambda.DockerImageFunctionProps{
 		Code: awslambda.DockerImageCode_FromEcr(ecr, &awslambda.EcrImageCodeProps{
 			TagOrDigest: jsii.String("latest"),
-			Cmd:         &[]*string{jsii.String("lambda-server")},
+			Cmd:         &[]*string{jsii.String(lambdaServerCmd)},
 		}),
+		Architecture: awslambda.Architecture_ARM_64(),
 		Timeout:      awscdk.Duration_Seconds(jsii.Number(500)),
 		LogRetention: awslogs.RetentionDays_FIVE_DAYS,
 		Environment:  &environment,
