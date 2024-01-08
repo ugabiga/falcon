@@ -377,7 +377,7 @@ func newConfig() (*config.Config, error) {
 	cfg := config.NewConfigWithoutSetting()
 	if err := cfg.Load(
 		&[]string{"../"}[0],
-		&[]string{"config"}[0],
+		&[]string{"config.prod"}[0],
 	); err != nil {
 		return nil, err
 	}
