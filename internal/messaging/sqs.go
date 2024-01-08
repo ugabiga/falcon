@@ -25,22 +25,16 @@ func NewSQSMessageHandler(
 }
 
 func (h SQSMessageHandler) Publish() error {
+	log.Printf("Start watching messages from DCA")
+
 	messages, err := h.dcaMessages()
 	if err != nil {
 		log.Printf("Error occurred during watching. Err: %v", err)
 		return err
 	}
+	log.Printf("DCA messages count: %d", len(messages))
 
-	//messages := []DCAMessage{
-	//	{
-	//		TaskOrderInfo: service.TaskOrderInfo{
-	//			TaskID:           "1",
-	//			TradingAccountID: "1",
-	//			UserID:           "1",
-	//		},
-	//	},
-	//}
-
+	log.Printf("Start publishing messages to SQS")
 	for _, msg := range messages {
 		if err := h.publish(msg); err != nil {
 			log.Printf("Error occurred during publishing. Err: %v", err)
@@ -122,5 +116,17 @@ func (h SQSMessageHandler) subscribe(reqMsg DCAMessage) error {
 }
 
 func (h SQSMessageHandler) dcaMessages() ([]DCAMessage, error) {
-	return nil, nil
+	messages, err := h.dcaSrv.GetTarget()
+	if err != nil {
+		return nil, err
+	}
+
+	var dcaMessages []DCAMessage
+	for _, msg := range messages {
+		dcaMessages = append(dcaMessages, DCAMessage{
+			TaskOrderInfo: msg,
+		})
+	}
+
+	return dcaMessages, nil
 }
