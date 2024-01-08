@@ -69,8 +69,8 @@ func (s *Server) middleware() {
 		Output: s.e.Logger.Output(),
 	}))
 	s.e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		log.Printf(c.Path() + "Request Body:" + debug.ToJSONInlineStr(reqBody))
-		log.Printf(c.Path() + "Response Body:" + debug.ToJSONInlineStr(resBody))
+		log.Printf(c.Path() + "Request Body:" + debug.FromByteToJSONInLineStr(reqBody))
+		log.Printf(c.Path() + "Response Body:" + debug.FromByteToJSONInLineStr(resBody))
 	}))
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{s.cfg.WebURL},

@@ -45,9 +45,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	log.Printf("Found %d tasks", len(tasks))
-	log.Printf("Tasks: %+v", debug.ToJSONStr(tasks))
+	log.Printf("Tasks: %+v", debug.ToJSONInlineStr(tasks))
 
 	var taskOrderInfos []TaskOrderInfo
 	for _, t := range tasks {
@@ -57,8 +55,6 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 			UserID:           t.UserID,
 		})
 	}
-
-	log.Printf("TaskOrderInfos: %+v", debug.ToJSONStr(taskOrderInfos))
 
 	return taskOrderInfos, nil
 }
