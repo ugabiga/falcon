@@ -14,6 +14,7 @@ var (
 	ErrorNoRows           = errors.New("no_rows")
 	ErrDoNotHaveAccess    = errors.New("do_not_have_access")
 	ErrUnAuthorizedAction = errors.New("unauthorized_action")
+	ErrAlreadyExist       = errors.New("trading_account_already_exist")
 )
 
 func nextCronExecutionTime(cron string, timezone string) (time.Time, error) {
