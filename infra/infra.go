@@ -74,6 +74,27 @@ func newLambdaPolicy(stack awscdk.Stack, lambdaServerFunc awslambda.DockerImageF
 	lambdaServerFunc.AddToRolePolicy(lambdaPolicy)
 	lambdaCronFunc.AddToRolePolicy(lambdaPolicy)
 	lambdaWorkerFunc.AddToRolePolicy(lambdaPolicy)
+
+	lambdaDynamoPolicy := awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+		Effect: awsiam.Effect_ALLOW,
+		Actions: &[]*string{
+			jsii.String("dynamodb:BatchGetItem"),
+			jsii.String("dynamodb:BatchWriteItem"),
+			jsii.String("dynamodb:DeleteItem"),
+			jsii.String("dynamodb:GetItem"),
+			jsii.String("dynamodb:PutItem"),
+			jsii.String("dynamodb:Query"),
+			jsii.String("dynamodb:Scan"),
+			jsii.String("dynamodb:UpdateItem"),
+		},
+	})
+	lambdaDynamoPolicy.AddResources(
+		jsii.String("arn:aws:dynamodb:ap-northeast-2:358059338173:table/falcon"),
+		jsii.String("arn:aws:dynamodb:ap-northeast-2:358059338173:table/falcon/index/*"),
+	)
+	lambdaServerFunc.AddToRolePolicy(lambdaDynamoPolicy)
+	lambdaCronFunc.AddToRolePolicy(lambdaDynamoPolicy)
+	lambdaWorkerFunc.AddToRolePolicy(lambdaDynamoPolicy)
 }
 
 func newLambdaWorker(stack awscdk.Stack, ecr awsecr.Repository, vpc awsec2.IVpc, vpcSubnets *awsec2.SubnetSelection, securityGroup awsec2.SecurityGroup, environment map[string]*string) awslambda.DockerImageFunction {
@@ -127,9 +148,9 @@ func newLambdaCron(stack awscdk.Stack, ecr awsecr.Repository, environment map[st
 		Environment:  &environment,
 	})
 	cronRule := awsevents.NewRule(stack, jsii.String(lambdaCronRuleName), &awsevents.RuleProps{
-		//Schedule every 1 hour.
+		//Schedule every 5 minutes
 		Schedule: awsevents.Schedule_Cron(&awsevents.CronOptions{
-			Minute: jsii.String("0"),
+			Minute: jsii.String("*/5"),
 		}),
 	})
 	cronRule.AddTarget(awseventstargets.NewLambdaFunction(lambdaCronFunc, nil))
@@ -209,13 +230,15 @@ func newLambdaEnvironment(cfg *config.Config) map[string]*string {
 	return map[string]*string{
 		"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
 		"DB_SOURCE":            jsii.String(cfg.DBSource),
-		"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
-		"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
 		"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
 		"GOOGLE_CLIENT_SECRET": jsii.String(cfg.GoogleClientSecret),
+		"SESSION_SECRET_KEY":   jsii.String(cfg.SessionSecretKey),
+		"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
 		"WEB_URL":              jsii.String(cfg.WebURL),
-		"DYNAMO_IS_LOCAL":      jsii.String(dynamoIsLocalStr),
-		"MESSAGING_PLATFORM":   jsii.String(cfg.MessagingPlatform),
+		"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
+		//"AWS_REGION":           jsii.String(cfg.AWSRegion), //do not use this
+		"DYNAMO_IS_LOCAL":    jsii.String(dynamoIsLocalStr),
+		"MESSAGING_PLATFORM": jsii.String(cfg.MessagingPlatform),
 	}
 }
 
