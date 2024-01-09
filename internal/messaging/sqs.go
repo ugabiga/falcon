@@ -130,11 +130,11 @@ func (h SQSMessageHandler) dcaMessages() ([]DCAMessage, error) {
 	}
 
 	log.Printf("Found %d messages", len(messages))
-	log.Printf("Found messages: %+v", debug.ToJSONStr(messages))
+	log.Printf("Found messages: %+v", debug.ToJSONInlineStr(messages))
 
 	var dcaMessages []DCAMessage
 	for _, msg := range messages {
-		log.Printf("Found message: %+v", debug.ToJSONStr(msg))
+		log.Printf("Found message: %+v", debug.ToJSONInlineStr(msg))
 		dcaMessages = append(dcaMessages, DCAMessage{
 			TaskOrderInfo: msg,
 		})
