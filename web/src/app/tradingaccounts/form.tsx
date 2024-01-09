@@ -75,7 +75,7 @@ export function TradingAccountForm({form}: {
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="upbit">Upbit</SelectItem>
-                            <SelectItem value="binance">Binance</SelectItem>
+                            <SelectItem value="binance" disabled>Binance</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>

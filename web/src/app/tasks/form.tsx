@@ -78,7 +78,7 @@ export function TaskForm({form}: {
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="DCA">DCA</SelectItem>
-                            <SelectItem value="Grid">Grid</SelectItem>
+                            <SelectItem value="Grid" disabled>Grid</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -102,7 +102,7 @@ export function TaskForm({form}: {
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="KRW">KRW</SelectItem>
-                            <SelectItem value="USD">USD</SelectItem>
+                            <SelectItem value="USD" disabled>USD</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -126,7 +126,7 @@ export function TaskForm({form}: {
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="BTC">BTC</SelectItem>
-                            <SelectItem value="ETH">ETH</SelectItem>
+                            <SelectItem value="ETH" disabled>ETH</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>

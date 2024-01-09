@@ -57,7 +57,7 @@ export function EditTask({task}: { task: Task }) {
                 refresh: true
             }))
         }).catch((e) => {
-            errorToast(e.message)
+            errorToast(t("error."+ e.message))
         })
     }
 

@@ -4,6 +4,7 @@
 import {toast} from "sonner";
 import {transformErrorMessage} from "@/lib/error";
 import {useTranslation} from "react-i18next";
+import {signOut} from "next-auth/react";
 
 export function normalToast({message}: { message: string }) {
     toast(message, {
@@ -26,6 +27,14 @@ export function errorToast(message: string) {
             }
         },
         duration: 2000,
+        onAutoClose: () => {
+            switch (message) {
+                case "Response not successful: Received status code 401":
+                    return signOut({redirect: true}).then()
+                default:
+                    return
+            }
+        }
     })
 }
 
