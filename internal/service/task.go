@@ -6,6 +6,7 @@ import (
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -41,6 +42,7 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 
 	u, err := s.repo.GetUser(ctx, userID)
 	if err != nil {
+		log.Printf("Error getting user: %s", err.Error())
 		return nil, err
 	}
 

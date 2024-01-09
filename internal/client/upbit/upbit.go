@@ -8,7 +8,9 @@ import (
 	"errors"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"hash"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -56,16 +58,21 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 
 	req, err := c.newRequest(http.MethodGet, "/v1/ticker", params)
 	if err != nil {
+		log.Printf("Error creating request: %s", err.Error())
 		return nil, err
 	}
 
 	resp, err := c.Do(req)
 	if err != nil {
+		log.Printf("Error doing request: %s", err.Error())
 		return nil, err
 	}
 
+	log.Printf("resp: %+v", debug.ToJSONInlineStr(resp))
+
 	var ticker []Ticker
 	if err = json.NewDecoder(resp.Body).Decode(&ticker); err != nil {
+		log.Printf("Error decoding response: %s", err.Error())
 		return nil, err
 	}
 
