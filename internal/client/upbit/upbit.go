@@ -19,7 +19,8 @@ import (
 
 type ErrorResp struct {
 	Error struct {
-		Name string `json:"name"`
+		Name    float64 `json:"name"`
+		Message string  `json:"message"`
 	} `json:"error"`
 }
 
@@ -81,27 +82,32 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 		return nil, fmt.Errorf("error reading response body: %w", err)
 	}
 
-	var result map[string]interface{}
+	var result interface{}
 	if err = json.Unmarshal(body, &result); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	// Check if the response is an error
-	if _, ok := result["error"]; ok {
-		var errorResp ErrorResp
-		if err = json.Unmarshal(body, &errorResp); err != nil {
-			return nil, fmt.Errorf("error decoding error response: %w", err)
+	switch v := result.(type) {
+	case []interface{}:
+		var ticker []Ticker
+		if err = json.Unmarshal(body, &ticker); err != nil {
+			return nil, fmt.Errorf("error decoding ticker response: %w", err)
 		}
-		return nil, fmt.Errorf("error from API: %s", errorResp.Error.Name)
+		return &ticker[0], nil
+	case map[string]interface{}:
+		// handle the case where the JSON data is an object
+		if _, ok := v["error"]; ok {
+			var errorResp ErrorResp
+			if err = json.Unmarshal(body, &errorResp); err != nil {
+				return nil, fmt.Errorf("error decoding error response: %w", err)
+			}
+			return nil, fmt.Errorf("error from API: %s", errorResp.Error.Message)
+		}
+	default:
+		return nil, errors.New("unknown response type")
 	}
 
-	// If not an error, it should be a ticker
-	var ticker []Ticker
-	if err = json.Unmarshal(body, &ticker); err != nil {
-		return nil, fmt.Errorf("error decoding ticker response: %w", err)
-	}
-
-	return &ticker[0], nil
+	return nil, errors.New("unknown response type")
 }
 
 func (c *Client) PlaceLongOrderAt(ctx context.Context, symbol, size, priceInKRW string) (*CreateOrderResponse, error) {
