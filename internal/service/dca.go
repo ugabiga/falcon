@@ -11,6 +11,7 @@ import (
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
+	"net/http"
 )
 
 type TaskOrderInfo struct {
@@ -59,7 +60,16 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	return taskOrderInfos, nil
 }
 
+func (s DcaService) ExternalCallTest() {
+	resp, err := http.Get("https://api.coindesk.com/v1/bpi/currentprice.json")
+	if err != nil {
+		log.Printf("Error getting ticker: %s", err.Error())
+	}
+	log.Printf("resp: %+v", debug.ToJSONInlineStr(resp))
+}
+
 func (s DcaService) Order(orderInfo TaskOrderInfo) error {
+	s.ExternalCallTest()
 	ctx := context.Background()
 	var err error
 
@@ -93,6 +103,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 
 	return nil
 }
+
 func (s DcaService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
 	isSuccess := true
 	logMessage := "task executed successfully"
