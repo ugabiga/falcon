@@ -6,9 +6,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"hash"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -72,31 +74,31 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 		log.Printf("Error doing request: %s", err.Error())
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	//defer func(Body io.ReadCloser) {
-	//	err := Body.Close()
-	//	if err != nil {
-	//		log.Println(err)
-	//	}
-	//}(resp.Body)
-	//
-	//body, err := io.ReadAll(resp.Body)
-	//if err != nil {
-	//	log.Printf("Error reading response body: %s", err.Error())
-	//	return nil, err
-	//}
-	//
-	//log.Printf("resp body %+v", string(body))
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
 
-	var ticker []Ticker
-	if err = json.NewDecoder(resp.Body).Decode(&ticker); err != nil {
+	var result map[string]interface{}
+	if err = json.Unmarshal(body, &result); err != nil {
+		return nil, fmt.Errorf("error decoding response: %w", err)
+	}
+
+	// Check if the response is an error
+	if _, ok := result["error"]; ok {
 		var errorResp ErrorResp
-		if err = json.NewDecoder(resp.Body).Decode(&errorResp); err != nil {
-			log.Printf("Error decoding response: %s", err.Error())
-			return nil, err
+		if err = json.Unmarshal(body, &errorResp); err != nil {
+			return nil, fmt.Errorf("error decoding error response: %w", err)
 		}
-		log.Printf("Error decoding response: %s", errorResp.Error.Name)
-		return nil, err
+		return nil, fmt.Errorf("error from API: %s", errorResp.Error.Name)
+	}
+
+	// If not an error, it should be a ticker
+	var ticker []Ticker
+	if err = json.Unmarshal(body, &ticker); err != nil {
+		return nil, fmt.Errorf("error decoding ticker response: %w", err)
 	}
 
 	return &ticker[0], nil
