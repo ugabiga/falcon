@@ -75,35 +75,35 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 
 	switch tradingAccount.Exchange {
 	case "upbit":
-		err = s.orderUpbitAt(
+		orderErr := s.orderUpbitAt(
 			ctx,
 			tradingAccount,
 			t,
 		)
+		if err := s.createTaskHistory(ctx, orderErr, t); err != nil {
+			return err
+		}
 	default:
 		return errors.New("exchange not found")
-	}
-	if err != nil {
-		return err
 	}
 
 	if err := s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t); err != nil {
 		return err
 	}
 
-	if err := s.createTaskHistory(ctx, orderInfo.UserID, t); err != nil {
-		return err
-	}
-
 	return nil
 }
-func (s DcaService) createTaskHistory(ctx context.Context, userID string, t *model.Task) error {
+func (s DcaService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
+	logMessage := "task executed successfully"
+	if orderErr != nil {
+		logMessage = orderErr.Error()
+	}
 	th := model.TaskHistory{
 		TaskID:           t.ID,
 		TradingAccountID: t.TradingAccountID,
 		UserID:           t.UserID,
 		IsSuccess:        true,
-		Log:              "task executed successfully",
+		Log:              logMessage,
 	}
 
 	log.Printf("Creating task history: %+v", debug.ToJSONInlineStr(th))
@@ -150,8 +150,7 @@ func (s DcaService) orderUpbitAt(
 		return err
 	}
 
-	log.Printf("key: %s, size: %f, symbol: %s", key, size, symbol)
-	return nil
+	log.Printf("order at upbit: key: %s, size: %f, symbol: %s", key, size, symbol)
 
 	c := client.NewUpbitClient(key, decryptedSecret)
 
