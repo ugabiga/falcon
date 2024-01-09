@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/debug"
@@ -10,8 +11,10 @@ import (
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
+	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 type TaskOrderInfo struct {
@@ -60,12 +63,67 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	return taskOrderInfos, nil
 }
 
+type CurrentPrice struct {
+	Time struct {
+		Updated    string    `json:"updated"`
+		UpdatedISO time.Time `json:"updatedISO"`
+	} `json:"time"`
+	Disclaimer string `json:"disclaimer"`
+	ChartName  string `json:"chartName"`
+	Bpi        struct {
+		Usd struct {
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
+		} `json:"USD"`
+		Gbp struct {
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
+		} `json:"GBP"`
+		Eur struct {
+			Code        string  `json:"code"`
+			Symbol      string  `json:"symbol"`
+			Rate        string  `json:"rate"`
+			Description string  `json:"description"`
+			RateFloat   float64 `json:"rate_float"`
+		} `json:"EUR"`
+	} `json:"bpi"`
+}
+
 func (s DcaService) ExternalCallTest() {
+	log.Println("getServerIP")
 	resp, err := http.Get("https://api.coindesk.com/v1/bpi/currentprice.json")
 	if err != nil {
-		log.Printf("Error getting ticker: %s", err.Error())
+		log.Println(err)
+		return
 	}
-	log.Printf("resp: %+v", debug.ToJSONInlineStr(resp))
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	var respJson CurrentPrice
+	err = json.Unmarshal(body, &respJson)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Printf("test resp: %+v", debug.ToJSONInlineStr(respJson))
+	log.Printf("test resp: %+v", debug.ToJSONInlineStr(resp))
 }
 
 func (s DcaService) Order(orderInfo TaskOrderInfo) error {
