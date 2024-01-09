@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/AlekSi/pointer"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
@@ -38,7 +40,7 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 		return nil, err
 	}
 
-	ip, err := s.availableIP()
+	ip, err := s.availableIP(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +69,9 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 	tradingAccountID := s.repo.EncodeTradingAccountID(userID, exchange, key)
 	existingTradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccountID)
 	if err != nil {
-		return nil, err
+		if !errors.Is(err, repository.ErrNotFound) {
+			return nil, err
+		}
 	}
 
 	if existingTradingAccount != nil {
@@ -225,7 +229,14 @@ func (s TradingAccountService) encrypt(secret string) (string, error) {
 	return s.encryption.Encrypt(secret)
 }
 
-func (s TradingAccountService) availableIP() (string, error) {
-	// TODO : implement
-	return "192.168.0.1", nil
+func (s TradingAccountService) availableIP(ctx context.Context) (string, error) {
+	staticIP, err := s.repo.GetStaticIPByAvailability(ctx)
+	if err != nil {
+		log.Printf("failed to get static ip: %v", err)
+		return "", err
+	}
+
+	log.Printf("static ip: %+v", debug.ToJSONStr(staticIP))
+
+	return staticIP.IPAddress, nil
 }

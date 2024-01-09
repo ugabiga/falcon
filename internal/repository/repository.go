@@ -24,14 +24,17 @@ const (
 	KeyPrefixTaskAccount      = "ta"
 	KeyPrefixTask             = "task"
 	KeyPrefixTaskHistory      = "th"
+	KeyPrefixStaticIP         = "si"
 	Separator                 = "-"
 	GISNextExecutionTime      = "next_execution_time_GSI"
 	IndexNextExecutionTimeKey = "next_execution_time"
+	GISIndexIPAvailability    = "ip_availability_GSI"
 	EntityTypeUser            = "user"
 	EntityTypeAuthentication  = "authentication"
 	EntityTypeTaskAccount     = "trading_account"
 	EntityTypeTask            = "task"
 	EntityTypeTaskHistory     = "task_history"
+	EntityTypeStaticIP        = "static_ip"
 )
 
 type DynamoRepository struct {
@@ -668,6 +671,172 @@ func (r DynamoRepository) GetTaskHistoriesByTaskID(ctx context.Context, taskID s
 	return taskHistories, nil
 }
 
+func (r DynamoRepository) CreateStaticIP(ctx context.Context, staticIP model.StaticIP) (*model.StaticIP, error) {
+	staticIP.ID = r.EncodeStaticIPID(staticIP.IPAddress)
+	staticIP.UpdatedAt = r.timeNow()
+	staticIP.CreatedAt = r.timeNow()
+
+	if staticIP.ID == "" {
+		return nil, ErrEmptyID
+	}
+
+	av, err := MarshalItem(staticIP)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: staticIP.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: staticIP.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeStaticIP}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &staticIP, nil
+}
+
+func (r DynamoRepository) UpdateStaticIP(ctx context.Context, staticIP model.StaticIP) (*model.StaticIP, error) {
+	staticIP.UpdatedAt = r.timeNow()
+
+	av, err := MarshalItem(staticIP)
+	if err != nil {
+		return nil, err
+	}
+
+	av["pk"] = &types.AttributeValueMemberS{Value: staticIP.ID}
+	av["sk"] = &types.AttributeValueMemberS{Value: staticIP.ID}
+	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeStaticIP}
+
+	_, err = r.db.PutItem(
+		ctx,
+		&dynamodb.PutItemInput{
+			TableName: &r.tableName,
+			Item:      av,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &staticIP, nil
+}
+
+func (r DynamoRepository) GetStaticIP(ctx context.Context, staticIPID string) (*model.StaticIP, error) {
+	result, err := r.db.GetItem(
+		ctx,
+		&dynamodb.GetItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: staticIPID},
+				"sk": &types.AttributeValueMemberS{Value: staticIPID},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.Item == nil {
+		return nil, ErrNotFound
+	}
+
+	staticIP, err := UnmarshalItem[model.StaticIP](result.Item)
+	if err != nil {
+		return nil, err
+	}
+
+	return staticIP, nil
+}
+
+func (r DynamoRepository) CountUpStaticIPUsage(ctx context.Context, staticIPID string) error {
+	_, err := r.db.UpdateItem(
+		ctx,
+		&dynamodb.UpdateItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: staticIPID},
+				"sk": &types.AttributeValueMemberS{Value: staticIPID},
+			},
+			UpdateExpression: &[]string{"SET #v = #v + :val"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "ip_usage_count",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":val": &types.AttributeValueMemberN{Value: "1"},
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r DynamoRepository) CountDownStaticIPUsage(ctx context.Context, staticIPID string) error {
+	_, err := r.db.UpdateItem(
+		ctx,
+		&dynamodb.UpdateItemInput{
+			TableName: &r.tableName,
+			Key: map[string]types.AttributeValue{
+				"pk": &types.AttributeValueMemberS{Value: staticIPID},
+				"sk": &types.AttributeValueMemberS{Value: staticIPID},
+			},
+			UpdateExpression: &[]string{"SET #v = #v - :val"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "ip_usage_count",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":val": &types.AttributeValueMemberN{Value: "1"},
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r DynamoRepository) GetStaticIPByAvailability(ctx context.Context) (*model.StaticIP, error) {
+	result, err := r.db.Scan(
+		ctx,
+		&dynamodb.ScanInput{
+			TableName:        &r.tableName,
+			FilterExpression: &[]string{"#v = :is_available"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "ip_availability",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":is_available": &types.AttributeValueMemberBOOL{Value: true},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(result.Items) == 0 {
+		return nil, ErrNotFound
+	}
+
+	staticIP, err := UnmarshalItem[model.StaticIP](result.Items[0])
+	if err != nil {
+		return nil, err
+	}
+
+	return staticIP, nil
+
+}
+
 func (r DynamoRepository) encodeAuthenticationID(prefix, provider, identifier string) string {
 	return fmt.Sprintf("%s%s%s%s%s", prefix, Separator, provider, Separator, identifier)
 }
@@ -676,9 +845,14 @@ func (r DynamoRepository) EncodeTradingAccountID(id, exchange, key string) strin
 	return fmt.Sprintf("%s%s%s%s%s%s%s", KeyPrefixTaskAccount, Separator, id, Separator, exchange, Separator, key)
 }
 
+func (r DynamoRepository) EncodeStaticIPID(ip string) string {
+	return fmt.Sprintf("%s%s%s", KeyPrefixStaticIP, Separator, ip)
+}
+
 func (r DynamoRepository) encoding(prefix string) string {
 	return prefix + Separator + strconv.FormatInt(generateRowId(), 10)
 }
+
 func (r DynamoRepository) timeNow() time.Time {
 	return time.Now().Truncate(time.Second)
 }
