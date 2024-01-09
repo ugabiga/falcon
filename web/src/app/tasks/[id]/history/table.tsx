@@ -11,6 +11,7 @@ export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[
                 <TableRow>
                     <TableHead>{t("task_history.table.id")}</TableHead>
                     <TableHead>{t("task_history.table.is_success")}</TableHead>
+                    <TableHead>{t("task_history.table.log")}</TableHead>
                     <TableHead>{t("task_history.table.updated_at")}</TableHead>
                     <TableHead>{t("task_history.table.created_at")}</TableHead>
                 </TableRow>
@@ -29,6 +30,7 @@ export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[
                             <TableRow key={taskHistory.id}>
                                 <TableCell>{taskHistory.id}</TableCell>
                                 <TableCell>{t("task_history.table.is_success.boolean." + taskHistory.isSuccess)}</TableCell>
+                                <TableCell>{taskHistory.log}</TableCell>
                                 <TableCell>{taskHistory.updatedAt}</TableCell>
                                 <TableCell>{taskHistory.createdAt}</TableCell>
                             </TableRow>

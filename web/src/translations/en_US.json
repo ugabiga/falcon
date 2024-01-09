@@ -97,6 +97,7 @@
   "task_history.table.is_success": "Success",
   "task_history.table.is_success.boolean.true": "Yes",
   "task_history.table.is_success.boolean.false": "No",
+  "task_history.table.log": "Detail Log",
   "task_history.table.updated_at": "Updated At",
   "task_history.table.created_at": "Created At",
   "task_history.table.empty": "No History found",

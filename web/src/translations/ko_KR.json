@@ -96,6 +96,7 @@
   "task_history.table.is_success": "성공",
   "task_history.table.is_success.boolean.true": "예",
   "task_history.table.is_success.boolean.false": "아니오",
+  "task_history.table.log": "상세 기록",
   "task_history.table.updated_at": "업데이트 시간",
   "task_history.table.created_at": "생성 시간",
   "task_history.table.empty": "이력이 없습니다",

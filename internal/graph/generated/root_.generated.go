@@ -85,6 +85,7 @@ type ComplexityRoot struct {
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
 		IsSuccess func(childComplexity int) int
+		Log       func(childComplexity int) int
 		Task      func(childComplexity int) int
 		TaskID    func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -437,6 +438,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TaskHistory.IsSuccess(childComplexity), true
 
+	case "TaskHistory.log":
+		if e.complexity.TaskHistory.Log == nil {
+			break
+		}
+
+		return e.complexity.TaskHistory.Log(childComplexity), true
+
 	case "TaskHistory.task":
 		if e.complexity.TaskHistory.Task == nil {
 			break
@@ -777,6 +785,7 @@ type TaskHistory {
     id: ID!
     taskID: ID!
     isSuccess: Boolean!
+    log: String!
     updatedAt: Time!
     createdAt: Time!
     task: Task!

@@ -2,6 +2,7 @@ fragment TaskHistoryFragment on TaskHistory {
     id
     taskID
     isSuccess
+    log
     updatedAt
     createdAt
 }
