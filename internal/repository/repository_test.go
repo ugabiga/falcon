@@ -16,7 +16,7 @@ func TestRepository_Migration(t *testing.T) {
 	tester.ResetTables(t)
 	repo := tester.Repository
 
-	ipAddress := "192.168.0.1"
+	ipAddress := "3.39.156.133"
 	ctx := context.Background()
 
 	//Create static ip

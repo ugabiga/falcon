@@ -841,8 +841,8 @@ func (r DynamoRepository) encodeAuthenticationID(prefix, provider, identifier st
 	return fmt.Sprintf("%s%s%s%s%s", prefix, Separator, provider, Separator, identifier)
 }
 
-func (r DynamoRepository) EncodeTradingAccountID(id, exchange, key string) string {
-	return fmt.Sprintf("%s%s%s%s%s%s%s", KeyPrefixTaskAccount, Separator, id, Separator, exchange, Separator, key)
+func (r DynamoRepository) EncodeTradingAccountID(userID, exchange, key string) string {
+	return fmt.Sprintf("%s%s%s%s%s%s%s", KeyPrefixTaskAccount, Separator, exchange, Separator, key, Separator, userID)
 }
 
 func (r DynamoRepository) EncodeStaticIPID(ip string) string {
