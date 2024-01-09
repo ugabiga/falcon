@@ -36,7 +36,7 @@ func NewDcaService(
 
 func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	ctx := context.Background()
-	now := timer.NoSeconds()
+	now := timer.NowNoMinuteAndSeconds()
 
 	log.Printf("Searching for tasks with next execution time: %s", now.String())
 
@@ -94,15 +94,17 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	return nil
 }
 func (s DcaService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
+	isSuccess := true
 	logMessage := "task executed successfully"
 	if orderErr != nil {
 		logMessage = orderErr.Error()
+		isSuccess = false
 	}
 	th := model.TaskHistory{
 		TaskID:           t.ID,
 		TradingAccountID: t.TradingAccountID,
 		UserID:           t.UserID,
-		IsSuccess:        true,
+		IsSuccess:        isSuccess,
 		Log:              logMessage,
 	}
 
@@ -156,12 +158,15 @@ func (s DcaService) orderUpbitAt(
 
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
+		log.Printf("Error getting ticker: %s", err.Error())
 		return err
 	}
 
 	if ticker == nil {
 		return ErrTickerNotFound
 	}
+
+	log.Printf("ticker: %+v", ticker)
 
 	tradePrice := ticker.TradePrice
 	tradePriceStr := str.FromFloat64(tradePrice).Val()
@@ -172,7 +177,7 @@ func (s DcaService) orderUpbitAt(
 		return err
 	}
 
-	log.Printf("order: %+v", order)
+	log.Printf("order: %+v", debug.ToJSONInlineStr(order))
 
 	return nil
 }
