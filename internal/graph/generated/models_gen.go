@@ -53,6 +53,7 @@ type TaskHistory struct {
 	ID        string    `json:"id"`
 	TaskID    string    `json:"taskID"`
 	IsSuccess bool      `json:"isSuccess"`
+	Log       string    `json:"log"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`
 	Task      *Task     `json:"task"`

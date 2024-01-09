@@ -11,6 +11,7 @@ type TaskHistory {
     id: ID!
     taskID: ID!
     isSuccess: Boolean!
+    log: String!
     updatedAt: Time!
     createdAt: Time!
     task: Task!

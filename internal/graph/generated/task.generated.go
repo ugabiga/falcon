@@ -659,6 +659,8 @@ func (ec *executionContext) fieldContext_Task_taskHistories(ctx context.Context,
 				return ec.fieldContext_TaskHistory_taskID(ctx, field)
 			case "isSuccess":
 				return ec.fieldContext_TaskHistory_isSuccess(ctx, field)
+			case "log":
+				return ec.fieldContext_TaskHistory_log(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_TaskHistory_updatedAt(ctx, field)
 			case "createdAt":
