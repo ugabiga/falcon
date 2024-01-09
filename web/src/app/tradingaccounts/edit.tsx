@@ -43,7 +43,7 @@ export function EditTradingAccount(
             setOpenDialog(false)
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
-            errorToast(e.message)
+            errorToast(t("error."+ e.message))
         })
     }
 
