@@ -8,14 +8,18 @@ import (
 	"errors"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"hash"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 )
+
+type ErrorResp struct {
+	Error struct {
+		Name string `json:"name"`
+	} `json:"error"`
+}
 
 type Client struct {
 	basedURL  string
@@ -68,25 +72,30 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 		log.Printf("Error doing request: %s", err.Error())
 		return nil, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(resp.Body)
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Error reading response body: %s", err.Error())
-		return nil, err
-	}
-
-	log.Printf("ticker resp body %+v", debug.ToJSONInlineStr(body))
-	log.Printf("ticker resp body 2 %+v", string(body))
+	//defer func(Body io.ReadCloser) {
+	//	err := Body.Close()
+	//	if err != nil {
+	//		log.Println(err)
+	//	}
+	//}(resp.Body)
+	//
+	//body, err := io.ReadAll(resp.Body)
+	//if err != nil {
+	//	log.Printf("Error reading response body: %s", err.Error())
+	//	return nil, err
+	//}
+	//
+	//log.Printf("resp body %+v", string(body))
 
 	var ticker []Ticker
 	if err = json.NewDecoder(resp.Body).Decode(&ticker); err != nil {
-		log.Printf("Error decoding response: %s", err.Error())
+		var errorResp ErrorResp
+		if err = json.NewDecoder(resp.Body).Decode(&errorResp); err != nil {
+			log.Printf("Error decoding response: %s", err.Error())
+			return nil, err
+		}
+		log.Printf("Error decoding response: %s", errorResp.Error.Name)
 		return nil, err
 	}
 
