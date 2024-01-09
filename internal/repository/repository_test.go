@@ -11,15 +11,15 @@ import (
 	"time"
 )
 
-func TestTradingRepository_Migration(t *testing.T) {
+func TestRepository_Migration(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
 }
 
-func TestTradingRepository(t *testing.T) {
+func TestRepository(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
-	repo := tester.TradingRepository
+	repo := tester.Repository
 
 	ctx := context.Background()
 
@@ -132,4 +132,76 @@ func TestTradingRepository(t *testing.T) {
 	if len(tasksByNextExecutionTime) != 10-1 {
 		t.Fatal("tasks count is not equal")
 	}
+}
+
+func TestDynamoRepository_StaticIP(t *testing.T) {
+	tester := app.InitializeTestApplication()
+	tester.ResetTables(t)
+	repo := tester.Repository
+	ipAddress := "192.168.0.1"
+	ctx := context.Background()
+
+	//Create static ip
+	staticIP, err := repo.CreateStaticIP(ctx, model.StaticIP{
+		IPAddress:      ipAddress,
+		IPAvailability: true,
+		IPUsageCount:   0,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("should count up usage", func(t *testing.T) {
+		//Count up usage
+		err = repo.CountUpStaticIPUsage(ctx, staticIP.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//Retrieve static ip
+		retrieveStaticIP, err := repo.GetStaticIP(ctx, staticIP.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		log.Printf("retrieveStaticIP: %+v", debug.ToJSONStr(retrieveStaticIP))
+
+		if retrieveStaticIP.IPUsageCount != 1 {
+			t.Fatal("usage count is not equal")
+		}
+	})
+
+	t.Run("should count down usage", func(t *testing.T) {
+		//Count down usage
+		err = repo.CountDownStaticIPUsage(ctx, staticIP.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		//Retrieve static ip
+		retrieveStaticIP, err := repo.GetStaticIP(ctx, staticIP.ID)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		log.Printf("retrieveStaticIP: %+v", debug.ToJSONStr(retrieveStaticIP))
+
+		if retrieveStaticIP.IPUsageCount != 0 {
+			t.Fatal("usage count is not equal")
+		}
+	})
+
+	t.Run("should find available ip", func(t *testing.T) {
+		staticIPByAvailability, err := repo.GetStaticIPByAvailability(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		log.Printf("staticIPByAvailability: %+v", debug.ToJSONStr(staticIPByAvailability))
+
+		if staticIPByAvailability.IPAddress != ipAddress {
+			t.Fatal("ip address is not equal")
+		}
+
+	})
 }
