@@ -14,6 +14,7 @@
   "home.title": "더 팔콘 (베타)",
   "home.subTitle": "암호화폐를 위한 DCA 플랫폼",
   "home.description": "저희의 달러 평균 가격 (DCA) 플랫폼으로 암호화폐 투자를 효과적으로 관리하세요.",
+  "home.find_out_more.btn": "더 알아보기",
   "home.dca.title": "달러 평균 가격 (DCA)란 무엇인가요?",
   "home.dca.description": "달러 평균 가격 (DCA)는 자산의 가격과 관계없이 규칙적인 일정에 따라 일정량의 자산을 매입하는 투자 전략입니다. 이 기술은 주식이나 암호화폐와 같은 금융 자산의 대규모 매입에 대한 변동성의 영향을 완화하는 데 도움을 줄 수 있습니다.",
   "home.exchanges.title": "이용 가능한 암호화폐 거래소",
@@ -114,6 +115,6 @@
   "error.exceed_limit":"최대 허용량을 초과했습니다",
   "error.wrong_exchange":"잘못된 거래소 입니다",
   "error.wrong_currency":"잘못된 통화 단위 입니다",
-  "error.unauthorized_action":"이 작업을 수행할 권한이 없습니다"
-
+  "error.unauthorized_action":"이 작업을 수행할 권한이 없습니다",
+  "manual.btn": "메뉴얼 보기"
 }
