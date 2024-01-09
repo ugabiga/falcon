@@ -18,5 +18,5 @@ func NewMessageHandler(
 		return NewWatermillMessageHandler(dcaSrv)
 	}
 
-	return NewSQSMessageHandler(dcaSrv)
+	return NewSQSMessageHandler(dcaSrv, cfg)
 }
