@@ -2,7 +2,7 @@
 
 import {TaskTable} from "@/app/tasks/table";
 import {useQuery} from "@apollo/client";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import {GetTaskIndexDocument} from "@/graph/generated/generated";
 import {TradingAccountSelector} from "@/app/tasks/selector";
 import {useAppSelector} from "@/store";
@@ -13,6 +13,8 @@ import {Loading} from "@/components/loading";
 import {useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
+import {Button} from "@/components/ui/button";
+import {ManualKRTask} from "@/lib/ref-url";
 
 export default function Tasks() {
     const {t} = useTranslation()
@@ -50,9 +52,18 @@ export default function Tasks() {
 
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
-            <h1 className="text-3xl font-bold">
-                {t('tasks.title')}
-            </h1>
+            <div className="flex">
+                <h1 className="text-3xl font-bold">
+                    {t('tasks.title')}
+                </h1>
+                <Button className="ml-2" variant="link"
+                        onClick={() => {
+                            window.open(ManualKRTask, '_blank')
+                        }}
+                >
+                    {t("manual.btn")}
+                </Button>
+            </div>
 
             <div className={"mt-6 w-full flex space-x-2"}>
                 <div>

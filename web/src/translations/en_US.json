@@ -16,6 +16,7 @@
   "home.title": "The Falcon (Beta)",
   "home.subTitle": "The DCA Platform for Cryptocurrency",
   "home.description": "Take control of your cryptocurrency investments with our Dollar Cost Averaging (DCA) platform.",
+  "home.find_out_more.btn": "Find out more",
   "home.dca.title": "What is Dollar Cost Averaging (DCA)?",
   "home.dca.description": "Dollar Cost Averaging (DCA) is an investment strategy that involves purchasing a fixed amount of an asset on a regular schedule, regardless of the asset's price. This technique can help mitigate the impact of volatility on large purchases of financial assets such as equities or cryptocurrencies.",
   "home.exchanges.title": "Available Cryptocurrency Exchanges",
@@ -115,5 +116,6 @@
   "error.exceed_limit":"Exceed limit",
   "error.wrong_exchange":"Wrong exchange",
   "error.wrong_currency":"Wrong currency",
-  "error.unauthorized_action":"Unauthorized action"
+  "error.unauthorized_action":"Unauthorized action",
+  "manual.btn": "Manual"
 }
