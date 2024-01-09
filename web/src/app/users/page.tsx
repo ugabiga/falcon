@@ -51,7 +51,7 @@ export default function Users() {
         }).then(() => {
             normalToast({message: t("users.profile.saved")})
         }).catch((e) => {
-            errorToast(e.message)
+            errorToast(t("error."+ e.message))
         })
     }
 

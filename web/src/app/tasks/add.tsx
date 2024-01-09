@@ -51,7 +51,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                 refresh: true
             }))
         }).catch((e) => {
-            errorToast(e.message)
+            errorToast(t("error."+ e.message))
         })
     }
 

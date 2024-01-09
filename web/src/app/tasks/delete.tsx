@@ -37,8 +37,8 @@ export function DeleteTask(
                 tradingAccountID: task.tradingAccountID,
                 refresh: true
             }))
-        }).catch(error => {
-            errorToast(error.message)
+        }).catch(e => {
+            errorToast(t("error."+ e.message))
         })
     }
 
