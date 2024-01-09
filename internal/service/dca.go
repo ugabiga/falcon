@@ -166,8 +166,7 @@ func (s DcaService) orderUpbitAt(
 	if ticker == nil {
 		return ErrTickerNotFound
 	}
-
-	log.Printf("ticker: %+v", ticker)
+	log.Printf("ticker: %+v", debug.ToJSONInlineStr(ticker))
 
 	tradePrice := ticker.TradePrice
 	tradePriceStr := str.FromFloat64(tradePrice).Val()
