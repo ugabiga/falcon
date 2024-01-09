@@ -98,13 +98,17 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	return nil
 }
 func (s DcaService) createTaskHistory(ctx context.Context, userID string, t *model.Task) error {
-	_, err := s.repo.CreateTaskHistory(ctx, model.TaskHistory{
+	th := model.TaskHistory{
 		TaskID:           t.ID,
 		TradingAccountID: t.TradingAccountID,
 		UserID:           t.UserID,
 		IsSuccess:        true,
 		Log:              "task executed successfully",
-	})
+	}
+
+	log.Printf("Creating task history: %+v", debug.ToJSONInlineStr(th))
+
+	_, err := s.repo.CreateTaskHistory(ctx, th)
 	if err != nil {
 		return err
 	}
@@ -122,6 +126,8 @@ func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID stri
 		return err
 	}
 	t.NextExecutionTime = nextCronExecutionTime
+
+	log.Printf("Updating task: %+v", debug.ToJSONInlineStr(t))
 
 	_, err = s.repo.UpdateTask(ctx, *t)
 	if err != nil {
