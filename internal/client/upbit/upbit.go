@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"hash"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -67,8 +68,21 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 		log.Printf("Error doing request: %s", err.Error())
 		return nil, err
 	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(resp.Body)
 
-	log.Printf("resp: %+v", debug.ToJSONInlineStr(resp))
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading response body: %s", err.Error())
+		return nil, err
+	}
+
+	log.Printf("ticker resp body %+v", debug.ToJSONInlineStr(body))
+	log.Printf("ticker resp body 2 %+v", string(body))
 
 	var ticker []Ticker
 	if err = json.NewDecoder(resp.Body).Decode(&ticker); err != nil {

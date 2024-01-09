@@ -96,7 +96,6 @@ type CurrentPrice struct {
 }
 
 func (s DcaService) ExternalCallTest() {
-	log.Println("getServerIP")
 	resp, err := http.Get("https://api.coindesk.com/v1/bpi/currentprice.json")
 	if err != nil {
 		log.Println(err)
@@ -122,8 +121,8 @@ func (s DcaService) ExternalCallTest() {
 		return
 	}
 
+	log.Printf("test resp body: %+v", string(body))
 	log.Printf("test resp: %+v", debug.ToJSONInlineStr(respJson))
-	log.Printf("test resp: %+v", debug.ToJSONInlineStr(resp))
 }
 
 func (s DcaService) Order(orderInfo TaskOrderInfo) error {
