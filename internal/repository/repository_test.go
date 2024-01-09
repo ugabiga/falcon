@@ -14,6 +14,20 @@ import (
 func TestRepository_Migration(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
+	repo := tester.Repository
+
+	ipAddress := "192.168.0.1"
+	ctx := context.Background()
+
+	//Create static ip
+	_, err := repo.CreateStaticIP(ctx, model.StaticIP{
+		IPAddress:      ipAddress,
+		IPAvailability: true,
+		IPUsageCount:   0,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestRepository(t *testing.T) {
