@@ -22,7 +22,6 @@ export default function TradingAccounts() {
 
     useEffect(() => {
         if (tradingAccount?.refresh) {
-            console.log(tradingAccount)
             refetch()
                 .then(() => data)
                 .then(() => {

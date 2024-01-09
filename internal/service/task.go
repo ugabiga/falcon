@@ -99,7 +99,7 @@ func (s TaskService) Update(ctx context.Context, userID string, tradingAccountID
 	}
 
 	if t.UserID != userID {
-		return nil, ErrDoNotHaveAccess
+		return nil, ErrUnAuthorizedAction
 	}
 
 	updateTask := model.Task{

@@ -64,13 +64,14 @@ func (s TradingAccountService) Create(ctx context.Context, userID string, name s
 		tradingAccount.Phrase = encryptedPhrase
 	}
 
-	existingTradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccount.ID)
+	tradingAccountID := s.repo.EncodeTradingAccountID(userID, exchange, key)
+	existingTradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccountID)
 	if err != nil {
 		return nil, err
 	}
 
 	if existingTradingAccount != nil {
-		return nil, ErrAlreadyExist
+		return nil, ErrAlreadyExists
 	}
 
 	newTradingAccount, err := s.repo.CreateTradingAccount(

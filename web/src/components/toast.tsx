@@ -3,6 +3,7 @@
 
 import {toast} from "sonner";
 import {transformErrorMessage} from "@/lib/error";
+import {useTranslation} from "react-i18next";
 
 export function normalToast({message}: { message: string }) {
     toast(message, {
@@ -17,8 +18,7 @@ export function normalToast({message}: { message: string }) {
 }
 
 export function errorToast(message: string) {
-    const errorMessage = transformErrorMessage(message)
-    toast.error(errorMessage, {
+    toast.error(message, {
         position: "top-right",
         action: {
             label: "Close",
