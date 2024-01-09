@@ -10,18 +10,24 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/service"
+	"github.com/ugabiga/falcon/pkg/config"
 	"log"
 )
 
 type SQSMessageHandler struct {
-	dcaSrv *service.DcaService
+	dcaSrv    *service.DcaService
+	sqsURL    string
+	sqsRegion string
 }
 
 func NewSQSMessageHandler(
 	dcaSrv *service.DcaService,
+	cfg *config.Config,
 ) *SQSMessageHandler {
 	return &SQSMessageHandler{
-		dcaSrv: dcaSrv,
+		dcaSrv:    dcaSrv,
+		sqsURL:    cfg.SQSQueueURL,
+		sqsRegion: cfg.AWSRegion,
 	}
 }
 
@@ -53,8 +59,8 @@ func (h SQSMessageHandler) HandlePublish(ctx context.Context) (string, error) {
 }
 
 func (h SQSMessageHandler) publish(data interface{}) error {
-	sqsURL := "https://sqs.ap-northeast-2.amazonaws.com/358059338173/falcon-worker-sqs"
-	region := "ap-northeast-2"
+	sqsURL := h.sqsURL
+	region := h.sqsRegion
 
 	log.Printf("Publishing message to SQS: %+v", debug.ToJSONInlineStr(data))
 
