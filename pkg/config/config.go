@@ -20,6 +20,7 @@ type Config struct {
 	AWSRegion          string `mapstructure:"AWS_REGION"`
 	DynamoIsLocal      bool   `mapstructure:"DYNAMO_IS_LOCAL"`
 	MessagingPlatform  string `mapstructure:"MESSAGING_PLATFORM"`
+	SQSQueueURL        string `mapstructure:"SQS_QUEUE_URL"`
 }
 
 func NewConfigWithoutSetting() *Config {

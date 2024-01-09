@@ -235,6 +235,7 @@ func newLambdaEnvironment(cfg *config.Config) map[string]*string {
 	}
 
 	return map[string]*string{
+		//"AWS_REGION":         do not use this aws provider will automatically set this value
 		"DB_DRIVER_NAME":       jsii.String(cfg.DBDriverName),
 		"DB_SOURCE":            jsii.String(cfg.DBSource),
 		"GOOGLE_CLIENT_ID":     jsii.String(cfg.GoogleClientID),
@@ -243,9 +244,9 @@ func newLambdaEnvironment(cfg *config.Config) map[string]*string {
 		"JWT_SECRET_KEY":       jsii.String(cfg.JWTSecretKey),
 		"WEB_URL":              jsii.String(cfg.WebURL),
 		"ENCRYPTION_KEY":       jsii.String(cfg.EncryptionKey),
-		//"AWS_REGION":           jsii.String(cfg.AWSRegion), //do not use this
-		"DYNAMO_IS_LOCAL":    jsii.String(dynamoIsLocalStr),
-		"MESSAGING_PLATFORM": jsii.String(cfg.MessagingPlatform),
+		"DYNAMO_IS_LOCAL":      jsii.String(dynamoIsLocalStr),
+		"MESSAGING_PLATFORM":   jsii.String(cfg.MessagingPlatform),
+		"SQS_QUEUE_URL":        jsii.String(cfg.SQSQueueURL),
 	}
 }
 
