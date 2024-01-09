@@ -211,7 +211,7 @@ func (r DynamoRepository) GetAuthentication(ctx context.Context, provider, ident
 }
 
 func (r DynamoRepository) CreateTradingAccount(ctx context.Context, tradingAccount model.TradingAccount) (*model.TradingAccount, error) {
-	tradingAccount.ID = r.encodeTradingAccountID(KeyPrefixTaskAccount, tradingAccount.UserID, tradingAccount.Exchange, tradingAccount.Key)
+	tradingAccount.ID = r.EncodeTradingAccountID(tradingAccount.UserID, tradingAccount.Exchange, tradingAccount.Key)
 	tradingAccount.UpdatedAt = r.timeNow()
 	tradingAccount.CreatedAt = r.timeNow()
 
@@ -672,8 +672,8 @@ func (r DynamoRepository) encodeAuthenticationID(prefix, provider, identifier st
 	return fmt.Sprintf("%s%s%s%s%s", prefix, Separator, provider, Separator, identifier)
 }
 
-func (r DynamoRepository) encodeTradingAccountID(prefix, id, exchange, key string) string {
-	return fmt.Sprintf("%s%s%s%s%s%s%s", prefix, Separator, id, Separator, exchange, Separator, key)
+func (r DynamoRepository) EncodeTradingAccountID(id, exchange, key string) string {
+	return fmt.Sprintf("%s%s%s%s%s%s%s", KeyPrefixTaskAccount, Separator, id, Separator, exchange, Separator, key)
 }
 
 func (r DynamoRepository) encoding(prefix string) string {

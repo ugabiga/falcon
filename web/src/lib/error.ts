@@ -1,4 +1,5 @@
 export function transformErrorMessage(message: string) {
+
     if (message === "Failed to fetch") {
         return "Failed to connect to the server. Please try again later."
     }

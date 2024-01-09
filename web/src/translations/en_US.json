@@ -108,5 +108,11 @@
   "task.delete.btn":"Delete",
   "task.delete.title":"Are you sure you want to delete this task?",
   "task.delete.cancel":"Cancel",
-  "task.delete.yes":"Yes"
+  "task.delete.yes":"Yes",
+  "error.already_exists": "This item already exists",
+  "error.ticker_not_found":"Ticker not found",
+  "error.exceed_limit":"Exceed limit",
+  "error.wrong_exchange":"Wrong exchange",
+  "error.wrong_currency":"Wrong currency",
+  "error.unauthorized_action":"Unauthorized action"
 }

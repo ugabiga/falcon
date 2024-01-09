@@ -34,9 +34,7 @@ export default function Tasks() {
             })
                 .then(() => data)
                 .then(() => {
-                    dispatch(refreshTask({
-                        refresh: false
-                    }))
+                    dispatch(refreshTask({refresh: false}))
                 })
         }
 

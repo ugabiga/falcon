@@ -21,9 +21,10 @@ export function Error({message}: { message: string }) {
 
 
 function UnAuthorizedError() {
+    const {t} = useTranslation()
+
     signOut({redirect: false}).then()
 
-    const {t} = useTranslation()
     return (
         <div className="h-screen w-full flex flex-col justify-center items-center space-y-4">
             <h1 className="text-3xl font-bold"> {t("error.unauthorized")}</h1>

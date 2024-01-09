@@ -107,5 +107,12 @@
   "task.delete.btn": "삭제",
   "task.delete.title": "이 작업을 삭제하시겠습니까?",
   "task.delete.cancel": "취소",
-  "task.delete.yes": "예"
+  "task.delete.yes": "예",
+  "error.already_exists": "이미 존재하는 아이템 입니다",
+  "error.ticker_not_found":"티커 정보를 찾을 수 없습니다",
+  "error.exceed_limit":"최대 허용량을 초과했습니다",
+  "error.wrong_exchange":"잘못된 거래소 입니다",
+  "error.wrong_currency":"잘못된 통화 단위 입니다",
+  "error.unauthorized_action":"이 작업을 수행할 권한이 없습니다"
+
 }

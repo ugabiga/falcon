@@ -25,7 +25,7 @@ func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, userID,
 	}
 
 	if task.UserID != userID {
-		return nil, nil, ErrDoNotHaveAccess
+		return nil, nil, ErrUnAuthorizedAction
 	}
 
 	taskHistories, err := s.repo.GetTaskHistoriesByTaskID(ctx, task.ID)
