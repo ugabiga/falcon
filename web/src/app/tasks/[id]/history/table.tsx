@@ -1,6 +1,7 @@
 import {TaskHistory} from "@/graph/generated/generated";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {useTranslation} from "react-i18next";
+import {datetimeFromString} from "@/lib/date";
 
 export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[] }) {
     const {t} = useTranslation()
@@ -12,7 +13,6 @@ export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[
                         <TableHead>{t("task_history.table.id")}</TableHead>
                         <TableHead>{t("task_history.table.is_success")}</TableHead>
                         <TableHead>{t("task_history.table.log")}</TableHead>
-                        <TableHead>{t("task_history.table.updated_at")}</TableHead>
                         <TableHead>{t("task_history.table.created_at")}</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -31,8 +31,7 @@ export function TaskHistoryTable({taskHistories}: { taskHistories?: TaskHistory[
                                     <TableCell>{taskHistory.id}</TableCell>
                                     <TableCell>{t("task_history.table.is_success.boolean." + taskHistory.isSuccess)}</TableCell>
                                     <TableCell>{taskHistory.log}</TableCell>
-                                    <TableCell>{taskHistory.updatedAt}</TableCell>
-                                    <TableCell>{taskHistory.createdAt}</TableCell>
+                                    <TableCell>{datetimeFromString(taskHistory.createdAt)}</TableCell>
                                 </TableRow>
                             ))
 

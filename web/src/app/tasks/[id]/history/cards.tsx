@@ -2,6 +2,7 @@ import {TaskHistory} from "@/graph/generated/generated";
 import {useTranslation} from "react-i18next";
 import {Card, CardContent} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
+import {datetimeFromString} from "@/lib/date";
 
 export function TaskHistoryCards({taskHistories}: { taskHistories?: TaskHistory[] }) {
 
@@ -30,7 +31,7 @@ export function TaskHistoryCards({taskHistories}: { taskHistories?: TaskHistory[
                                         {t("task_history.table.log")} : {taskHistory.log}
                                     </Label>
                                     <Label className="col-span-2">
-                                        {t("task_history.table.created_at")} : {taskHistory.createdAt}
+                                        {t("task_history.table.created_at")} : {datetimeFromString(taskHistory.createdAt)}
                                     </Label>
                                 </CardContent>
                             </Card>

@@ -651,6 +651,7 @@ func (r DynamoRepository) GetTaskHistoriesByTaskID(ctx context.Context, taskID s
 				":pk": &types.AttributeValueMemberS{Value: taskID},
 				":sk": &types.AttributeValueMemberS{Value: KeyPrefixTaskHistory},
 			},
+			ScanIndexForward: &[]bool{false}[0],
 		},
 	)
 	if err != nil {
