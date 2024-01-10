@@ -62,7 +62,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                     {t("tasks.form.add.btn")}
                 </Button>
             </DialogTrigger>
-            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll max-h-screen"}>
+            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll h-[calc(100dvh)]"}>
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}

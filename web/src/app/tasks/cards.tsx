@@ -14,7 +14,6 @@ export function TaskCards({tasks}: { tasks?: Task[] }) {
         const hours = convertHours(cronExpression)
         const dayOfWeek = convertDayOfWeek(cronExpression)
         let translatedDayOfWeek = ""
-        console.log("dayOfWeek", dayOfWeek)
 
         switch (dayOfWeek) {
             case "everyday":
