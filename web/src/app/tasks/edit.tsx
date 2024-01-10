@@ -15,6 +15,7 @@ import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
 import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 export function EditTask({task}: { task: Task }) {
     const {t} = useTranslation();
@@ -57,7 +58,7 @@ export function EditTask({task}: { task: Task }) {
                 refresh: true
             }))
         }).catch((e) => {
-            errorToast(t("error."+ e.message))
+            errorToast(t("error." + e.message))
         })
     }
 
@@ -68,7 +69,7 @@ export function EditTask({task}: { task: Task }) {
                     {t("tasks.form.edit.btn")}
                 </DropdownMenuItem>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll max-h-screen"}>
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}

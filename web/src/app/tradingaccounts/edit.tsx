@@ -43,7 +43,7 @@ export function EditTradingAccount(
             setOpenDialog(false)
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
-            errorToast(t("error."+ e.message))
+            errorToast(t("error." + e.message))
         })
     }
 
@@ -54,7 +54,7 @@ export function EditTradingAccount(
                     {t("trading_account.edit.btn")}
                 </DropdownMenuItem>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll max-h-screen"}>
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
