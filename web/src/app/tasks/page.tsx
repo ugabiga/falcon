@@ -15,6 +15,7 @@ import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {ManualKRTask} from "@/lib/ref-url";
+import {TaskCards} from "@/app/tasks/cards";
 
 export default function Tasks() {
     const {t} = useTranslation()
@@ -81,6 +82,9 @@ export default function Tasks() {
             <div className="mt-6">
                 {/*@ts-ignore*/}
                 <TaskTable tasks={data?.taskIndex?.selectedTradingAccount?.tasks}/>
+
+                {/*@ts-ignore*/}
+                <TaskCards tasks={data?.taskIndex?.selectedTradingAccount?.tasks}/>
             </div>
         </main>
     )
