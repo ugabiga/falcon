@@ -54,7 +54,7 @@ export function EditTradingAccount(
                     {t("trading_account.edit.btn")}
                 </DropdownMenuItem>
             </DialogTrigger>
-            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll h-[calc(100dvh)]"}>
+            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll h-[calc(100dvh)] sm:h-auto"}>
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
