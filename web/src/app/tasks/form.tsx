@@ -149,7 +149,6 @@ export function TaskForm({form}: {
                             allowNegative={false}
                             allowLeadingZeros={false}
                             fixedDecimalScale={false}
-                            suffix={" " + form.watch("symbol")}
                             onValueChange={(values) => {
                                 field.onChange(values.floatValue)
                             }}
@@ -192,7 +191,7 @@ export function TaskForm({form}: {
                         {t("tasks.form.hours")}
                     </FormLabel>
                     <FormControl>
-                        <Input placeholder={t("tasks.form.hours")} {...field} />
+                        <Input placeholder={t("tasks.form.hours.placeholder")} {...field} />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>

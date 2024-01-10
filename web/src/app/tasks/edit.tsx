@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import {Task, UpdateTaskDocument} from "@/graph/generated/generated";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
@@ -107,7 +107,6 @@ export function EditTask({task}: { task: Task }) {
                                 </FormItem>
                             )}
                         />
-
                         <TaskForm form={form}/>
                     </form>
                 </Form>
