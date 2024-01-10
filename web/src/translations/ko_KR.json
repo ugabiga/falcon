@@ -46,7 +46,7 @@
   "trading_account.form.name": "이름",
   "trading_account.form.exchange": "거래소",
   "trading_account.form.key": "키",
-  "trading_account.form.secret": "시크릿",
+  "trading_account.form.secret": "시크릿 키",
   "trading_account.form.submit": "저장",
   "trading_account.table.name": "이름",
   "trading_account.table.exchange": "거래소",
