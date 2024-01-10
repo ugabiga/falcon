@@ -41,7 +41,7 @@ export function TaskCards({tasks}: { tasks?: Task[] }) {
 
 
     return (
-        <div className="block md:hidden">
+        <div className="block md:hidden space-y-2">
             {
                 !tasks || tasks?.length === 0
                     ? <div className="font-medium text-center">

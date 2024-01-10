@@ -9,7 +9,7 @@ export function TradingAccountCards({tradingAccounts}: { tradingAccounts?: Tradi
     const {t} = useTranslation();
 
     return (
-        <div className="block md:hidden">
+        <div className="block md:hidden space-y-2">
             {
                 !tradingAccounts || tradingAccounts?.length === 0
                     ? <div className="font-medium text-center">
