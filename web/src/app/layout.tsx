@@ -7,7 +7,8 @@ import {NavigationBar} from "@/components/navigation-bar";
 import {Toaster} from "@/components/ui/sonner"
 import {getServerSession} from "next-auth";
 import SessionProvider from "@/lib/session"
-import { Analytics } from '@vercel/analytics/react';
+import {Analytics} from '@vercel/analytics/react';
+import {SpeedInsights} from "@vercel/speed-insights/next"
 
 const inter = Inter({subsets: ['latin']})
 
@@ -52,7 +53,8 @@ export default async function RootLayout({children,}: { children: React.ReactNod
             <SessionProvider session={session}>
                 <NavigationBar/>
                 {children}
-                <Analytics />
+                <Analytics/>
+                <SpeedInsights/>
                 <Toaster
                     richColors={true}
                 />
