@@ -162,5 +162,37 @@
         ]
       }
     ]
+  },
+  "vpc-provider:account=358059338173:filter.vpc-id=vpc-0e6566566a5135a5c:region=ap-northeast-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0e6566566a5135a5c",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "ownerAccountId": "358059338173",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-08e6e332c790b1c4f",
+            "cidr": "10.0.128.0/20",
+            "availabilityZone": "ap-northeast-2a",
+            "routeTableId": "rtb-0bfd549aab522e58d"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-08e7e5ef89dd22ccb",
+            "cidr": "10.0.0.0/20",
+            "availabilityZone": "ap-northeast-2a",
+            "routeTableId": "rtb-0a47965e1df3a0cfd"
+          }
+        ]
+      }
+    ]
   }
 }

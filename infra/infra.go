@@ -154,6 +154,10 @@ func newLambdaCron(stack awscdk.Stack, ecr awsecr.Repository, environment map[st
 		Schedule: awsevents.Schedule_Cron(&awsevents.CronOptions{
 			Minute: jsii.String("0"),
 		}),
+		////Schedule every 5 minute
+		//Schedule: awsevents.Schedule_Cron(&awsevents.CronOptions{
+		//	Minute: jsii.String("*/5"),
+		//}),
 	})
 	cronRule.AddTarget(awseventstargets.NewLambdaFunction(lambdaCronFunc, nil))
 
