@@ -13,6 +13,7 @@ const inter = Inter({subsets: ['latin']})
 export const metadata: Metadata = {
     title: 'Falcon',
     description: 'Falcon is a crypto trading platform',
+    manifest: '/manifest.json',
     icons: [
         {
             rel: 'icon',
@@ -30,10 +31,6 @@ export const metadata: Metadata = {
             rel: 'apple-touch-icon',
             sizes: '180x180',
             url: process.env.PUBLIC_URL + '/apple-touch-icon.png',
-        },
-        {
-            rel: 'manifest',
-            url: process.env.PUBLIC_URL + '/site.webmanifest',
         },
         {
             rel: 'mask-icon',
