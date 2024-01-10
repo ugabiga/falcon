@@ -8,6 +8,7 @@ import {Button} from "@/components/ui/button";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
+import {TaskHistoryCards} from "@/app/tasks/[id]/history/cards";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
     const {t} = useTranslation()
@@ -52,6 +53,9 @@ export default function TaskHistory({params}: { params: { id: string } }) {
                 <div className="mt-6">
                     {/*@ts-ignore*/}
                     <TaskHistoryTable taskHistories={data?.taskHistoryIndex?.taskHistories}/>
+
+                    {/*@ts-ignore*/}
+                    <TaskHistoryCards taskHistories={data?.taskHistoryIndex?.taskHistories}/>
                 </div>
             </main>
         </>

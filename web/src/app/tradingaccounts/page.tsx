@@ -12,6 +12,7 @@ import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {ManualKRTradingAccount} from "@/lib/ref-url";
+import {TradingAccountCards} from "@/app/tradingaccounts/cards";
 
 
 export default function TradingAccounts() {
@@ -61,6 +62,10 @@ export default function TradingAccounts() {
             <div className="mt-6">
                 {/*@ts-ignore*/}
                 <TradingAccountTable tradingAccounts={data?.tradingAccountIndex?.tradingAccounts}/>
+
+                {/*@ts-ignore*/}
+                <TradingAccountCards tradingAccounts={data?.tradingAccountIndex?.tradingAccounts}/>
+
             </div>
         </main>
     )

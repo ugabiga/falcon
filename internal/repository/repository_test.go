@@ -11,6 +11,30 @@ import (
 	"time"
 )
 
+func TestDynamoRepository_CreateTaskHistory(t *testing.T) {
+	tester := app.InitializeTestApplication()
+	repo := tester.Repository
+
+	userID := "user-13264083632804462"
+	tradingAccountID := "ta-upbit-1-user-13263756649988541"
+	taskID := "task-13266121399739851"
+
+	th := model.TaskHistory{
+		TaskID:           taskID,
+		TradingAccountID: tradingAccountID,
+		UserID:           userID,
+		IsSuccess:        true,
+		Log:              "task_executed_successfully",
+	}
+
+	ctx := context.Background()
+
+	_, err := repo.CreateTaskHistory(ctx, th)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestRepository_Migration(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
