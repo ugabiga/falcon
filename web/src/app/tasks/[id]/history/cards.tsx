@@ -15,8 +15,8 @@ export function TaskHistoryCards({taskHistories}: { taskHistories?: TaskHistory[
                     </div>
                     : taskHistories?.map((taskHistory) => (
                             <Card key={taskHistory.id}>
-                                <div className="grid grid-cols-4 gap-6">
-                                    <div className="mt-4 mb-6 ml-6 col-span-3">
+                                <div className="grid grid-cols-5 gap-6">
+                                    <div className="mt-4 mb-6 ml-6 col-span-4">
                                         <h3 className="scroll-m-20 text-xl font-semibold tracking-tight">
                                             {taskHistory.id}
                                         </h3>
