@@ -75,7 +75,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 
 	switch tradingAccount.Exchange {
 	case "upbit":
-		orderErr := s.orderUpbitAt(
+		orderErr := s.OrderFromUpbit(
 			ctx,
 			tradingAccount,
 			t,
@@ -140,7 +140,7 @@ func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID stri
 	return nil
 }
 
-func (s DcaService) orderUpbitAt(
+func (s DcaService) OrderFromUpbit(
 	ctx context.Context,
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
