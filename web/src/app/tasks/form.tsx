@@ -1,15 +1,15 @@
 import * as z from "zod";
 import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import {TradingAccountFormSchema} from "@/app/tradingaccounts/form";
 import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {NumericFormatInput} from "@/components/numeric-format-input";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
 import {Input} from "@/components/ui/input";
-import React from "react";
+import React, {useEffect} from "react";
 import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
 
 export const TaskFromSchema = z.object({
     currency: z
@@ -55,11 +55,28 @@ export const TaskFromSchema = z.object({
         .optional()
 })
 
-
 export function TaskForm({form}: {
     form: ReturnType<typeof useForm<z.infer<typeof TaskFromSchema>>>
 }) {
     const {t} = useTranslation();
+    const {fetchConvertedTotal, convertedTotal} = useConvertSizeToCurrency()
+
+    useEffect(() => {
+        handleSizeOnChange()
+    }, [form]);
+
+    const handleSizeOnChange = () => {
+        const symbol = form.watch("symbol")
+        const currency = form.watch("currency")
+        const size = form.watch("size")
+
+        const canGetTicker = symbol && currency && size;
+        if (!canGetTicker) {
+            return;
+        }
+
+        fetchConvertedTotal(symbol, currency, size)
+    }
 
     return <>
         <FormField
@@ -118,7 +135,13 @@ export function TaskForm({form}: {
                     <FormLabel>
                         {t("tasks.form.symbol")}
                     </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                        // onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                            field.onChange(value)
+                            handleSizeOnChange()
+                        }}
+                        defaultValue={field.value}>
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder={t("tasks.form.symbol")}/>
@@ -126,7 +149,8 @@ export function TaskForm({form}: {
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="BTC">BTC</SelectItem>
-                            <SelectItem value="ETH" disabled>ETH</SelectItem>
+                            <SelectItem value="ETH">ETH</SelectItem>
+                            <SelectItem value="SOL">SOL</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -140,7 +164,7 @@ export function TaskForm({form}: {
             render={({field}) => (
                 <FormItem>
                     <FormLabel>
-                        {t("tasks.form.size")} {form.watch("symbol")}
+                        {t("tasks.form.size")} {form.watch("symbol")} {convertedTotal && `(${convertedTotal} ${form.watch("currency")})`}
                     </FormLabel>
                     <FormControl>
                         <NumericFormatInput
@@ -151,9 +175,9 @@ export function TaskForm({form}: {
                             fixedDecimalScale={false}
                             onValueChange={(values) => {
                                 field.onChange(values.floatValue)
+                                handleSizeOnChange()
                             }}
                         />
-
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
