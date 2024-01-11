@@ -55,3 +55,44 @@ type Ticker struct {
 	Lowest52WeekDate   string  `json:"lowest_52_week_date"`
 	Timestamp          int64   `json:"timestamp"`
 }
+
+type OrderChange struct {
+	BidFee      string `json:"bid_fee"`
+	AskFee      string `json:"ask_fee"`
+	MakerBidFee string `json:"maker_bid_fee"`
+	MakerAskFee string `json:"maker_ask_fee"`
+	Market      struct {
+		ID         string   `json:"id"`
+		Name       string   `json:"name"`
+		OrderTypes []string `json:"order_types"`
+		OrderSides []string `json:"order_sides"`
+		BidTypes   []string `json:"bid_types"`
+		AskTypes   []string `json:"ask_types"`
+		Bid        struct {
+			Currency string `json:"currency"`
+			MinTotal string `json:"min_total"`
+		} `json:"bid"`
+		Ask struct {
+			Currency string `json:"currency"`
+			MinTotal string `json:"min_total"`
+		} `json:"ask"`
+		MaxTotal string `json:"max_total"`
+		State    string `json:"state"`
+	} `json:"market"`
+	BidAccount struct {
+		Currency            string `json:"currency"`
+		Balance             string `json:"balance"`
+		Locked              string `json:"locked"`
+		AvgBuyPrice         string `json:"avg_buy_price"`
+		AvgBuyPriceModified bool   `json:"avg_buy_price_modified"`
+		UnitCurrency        string `json:"unit_currency"`
+	} `json:"bid_account"`
+	AskAccount struct {
+		Currency            string `json:"currency"`
+		Balance             string `json:"balance"`
+		Locked              string `json:"locked"`
+		AvgBuyPrice         string `json:"avg_buy_price"`
+		AvgBuyPriceModified bool   `json:"avg_buy_price_modified"`
+		UnitCurrency        string `json:"unit_currency"`
+	} `json:"ask_account"`
+}
