@@ -24,6 +24,13 @@ type ErrorResp struct {
 	} `json:"error"`
 }
 
+type ErrorRespRaw struct {
+	Error struct {
+		Name    interface{} `json:"name"`
+		Message string      `json:"message"`
+	} `json:"error"`
+}
+
 type Client struct {
 	basedURL  string
 	key       string
@@ -70,44 +77,12 @@ func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 		return nil, err
 	}
 
-	resp, err := c.Do(req)
-	if err != nil {
-		log.Printf("Error doing request: %s", err.Error())
+	var ticker []Ticker
+	if err := c.do(req, &ticker); err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %w", err)
-	}
-
-	var result interface{}
-	if err = json.Unmarshal(body, &result); err != nil {
-		return nil, fmt.Errorf("error decoding response: %w", err)
-	}
-
-	switch v := result.(type) {
-	case []interface{}:
-		var ticker []Ticker
-		if err = json.Unmarshal(body, &ticker); err != nil {
-			return nil, fmt.Errorf("error decoding ticker response: %w", err)
-		}
-		return &ticker[0], nil
-	case map[string]interface{}:
-		// handle the case where the JSON data is an object
-		if _, ok := v["error"]; ok {
-			var errorResp ErrorResp
-			if err = json.Unmarshal(body, &errorResp); err != nil {
-				return nil, fmt.Errorf("error decoding error response: %w", err)
-			}
-			return nil, fmt.Errorf("error from API: %s", errorResp.Error.Message)
-		}
-	default:
-		return nil, errors.New("unknown response type")
-	}
-
-	return nil, errors.New("unknown response type")
+	return &ticker[0], nil
 }
 
 func (c *Client) PlaceLongOrderAt(ctx context.Context, symbol, size, priceInKRW string) (*CreateOrderResponse, error) {
@@ -161,6 +136,74 @@ func (c *Client) PlaceOrder(ctx context.Context, symbol, sizeInKRW string) (*Cre
 	}
 
 	return &createOrderResponse, nil
+}
+
+func (c *Client) OrderChance(ctx context.Context, symbol string) (*OrderChange, error) {
+	params := url.Values{
+		"market": []string{symbol},
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/v1/orders/chance", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var orderChange OrderChange
+	if err := c.do(req, &orderChange); err != nil {
+		return nil, err
+	}
+
+	return &orderChange, nil
+}
+
+func (c *Client) do(req *http.Request, v interface{}) error {
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Printf("Error doing request: %s", err.Error())
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error doing request: %s", err.Error())
+		return err
+	}
+
+	var result interface{}
+	if err = json.Unmarshal(body, &result); err != nil {
+		log.Printf("Error doing request: %s", err.Error())
+		return err
+	}
+	log.Printf("path %v, result: %+v", req.URL.Path, result)
+
+	switch v := result.(type) {
+	case map[string]interface{}:
+		// handle the case where the JSON data is an object
+		if _, ok := v["error"]; ok {
+			var errorResp ErrorRespRaw
+
+			if err = json.Unmarshal(body, &errorResp); err != nil {
+				log.Printf("Error doing request: %s", err.Error())
+				return err
+			}
+
+			switch errorResp.Error.Name.(type) {
+			case float64:
+				log.Printf("Error doing request: %s", errorResp.Error.Message)
+				return fmt.Errorf("error from API: %s", errorResp.Error.Message)
+			case string:
+				log.Printf("Error doing request: %s", errorResp.Error.Name)
+				return fmt.Errorf("error from API: %s", errorResp.Error.Name)
+			}
+		}
+	}
+
+	if err = json.Unmarshal(body, &v); err != nil {
+		log.Printf("Error doing request: %s", err.Error())
+	}
+
+	return nil
 }
 
 func (c *Client) newRequest(method, url string, values url.Values) (*http.Request, error) {

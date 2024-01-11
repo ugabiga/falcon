@@ -21,6 +21,8 @@ type Config struct {
 	DynamoIsLocal      bool   `mapstructure:"DYNAMO_IS_LOCAL"`
 	MessagingPlatform  string `mapstructure:"MESSAGING_PLATFORM"`
 	SQSQueueURL        string `mapstructure:"SQS_QUEUE_URL"`
+	TestUpbitKey       string `mapstructure:"TEST_UPBIT_KEY"`
+	TestUpbitSecret    string `mapstructure:"TEST_UPBIT_SECRET"`
 }
 
 func NewConfigWithoutSetting() *Config {
