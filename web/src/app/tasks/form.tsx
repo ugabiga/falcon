@@ -3,13 +3,13 @@ import {useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {NumericFormatInput} from "@/components/numeric-format-input";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
 import {Input} from "@/components/ui/input";
 import React, {useEffect} from "react";
 import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
+import {NumericFormatInput} from "@/components/numeric-format-input";
 
 export const TaskFromSchema = z.object({
     currency: z
@@ -77,6 +77,10 @@ export function TaskForm({form}: {
 
         fetchConvertedTotal(symbol, currency, size)
     }
+
+    const addComma = (price: string) => {
+        return price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
 
     return <>
         <FormField
@@ -171,8 +175,6 @@ export function TaskForm({form}: {
                             value={field.value}
                             thousandSeparator={true}
                             allowNegative={false}
-                            allowLeadingZeros={false}
-                            fixedDecimalScale={false}
                             onValueChange={(values) => {
                                 field.onChange(values.floatValue)
                                 handleSizeOnChange()
