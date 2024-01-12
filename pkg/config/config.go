@@ -23,6 +23,8 @@ type Config struct {
 	SQSQueueURL        string `mapstructure:"SQS_QUEUE_URL"`
 	TestUpbitKey       string `mapstructure:"TEST_UPBIT_KEY"`
 	TestUpbitSecret    string `mapstructure:"TEST_UPBIT_SECRET"`
+	TestBinanceKey     string `mapstructure:"TEST_BINANCE_KEY"`
+	TestBinanceSecret  string `mapstructure:"TEST_BINANCE_SECRET"`
 }
 
 func NewConfigWithoutSetting() *Config {

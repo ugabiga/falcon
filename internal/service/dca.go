@@ -163,10 +163,17 @@ func (s DcaService) OrderFromBinance(
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
 ) error {
-	log.Printf("order at binance: key: %s, size: %f, symbol: %s", tradingAccount.Key, t.Size, t.Symbol)
-
-	c := client.NewBinanceClient(tradingAccount.Key, tradingAccount.Secret, false)
 	symbol := t.Symbol + t.Currency
+	size := t.Size
+	key := tradingAccount.Key
+	decryptedSecret, err := s.encryption.Decrypt(tradingAccount.Secret)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("order at binance: key: %s, size: %f, symbol: %s", key, size, symbol)
+
+	c := client.NewBinanceClient(key, decryptedSecret, false)
 
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
@@ -183,9 +190,9 @@ func (s DcaService) OrderFromBinance(
 	roundedTickerPrice := math.Round(tickerPrice*math.Pow10(tickerPriceDecimalCount)) / math.Pow10(tickerPriceDecimalCount)
 
 	order, err := c.PlaceOrderAtPrice(ctx,
-		t.Symbol,
+		symbol,
 		client.HoldSideLong,
-		str.FromFloat64(t.Size).Val(),
+		str.FromFloat64(size).Val(),
 		str.FromFloat64(roundedTickerPrice).Val(),
 	)
 	if err != nil {
