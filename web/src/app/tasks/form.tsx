@@ -152,9 +152,14 @@ export function TaskForm({form}: {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="BTC">BTC</SelectItem>
-                            <SelectItem value="ETH">ETH</SelectItem>
-                            <SelectItem value="SOL">SOL</SelectItem>
+                            <SelectItem value="BTC">Bitcoin BTC</SelectItem>
+                            <SelectItem value="ETH">Ethereum ETH</SelectItem>
+                            <SelectItem value="SOL">Solana SOL</SelectItem>
+                            <SelectItem value="XRP">XRP</SelectItem>
+                            <SelectItem value="ADA">Cardano ADA</SelectItem>
+                            <SelectItem value="AVAX">Avalanche AVAX</SelectItem>
+                            <SelectItem value="TRX">TRON TRX</SelectItem>
+                            <SelectItem value="MATIC">Polygon MATIC</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
