@@ -11,6 +11,11 @@ import (
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
+	"math"
+)
+
+var (
+	ErrExchangeNotFound = errors.New("exchange_not_found")
 )
 
 type TaskOrderInfo struct {
@@ -74,7 +79,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	}
 
 	switch tradingAccount.Exchange {
-	case "upbit":
+	case model.ExchangeUpbit:
 		orderErr := s.OrderFromUpbit(
 			ctx,
 			tradingAccount,
@@ -83,8 +88,21 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 		if err := s.createTaskHistory(ctx, orderErr, t); err != nil {
 			return err
 		}
+	case model.ExchangeBinanceFutures:
+		orderErr := s.OrderFromBinance(
+			ctx,
+			tradingAccount,
+			t,
+		)
+		if err := s.createTaskHistory(ctx, orderErr, t); err != nil {
+			return err
+		}
 	default:
-		return errors.New("exchange not found")
+		orderErr := ErrExchangeNotFound
+		if err := s.createTaskHistory(ctx, orderErr, t); err != nil {
+			return err
+		}
+		return orderErr
 	}
 
 	if err := s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t); err != nil {
@@ -136,6 +154,45 @@ func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID stri
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (s DcaService) OrderFromBinance(
+	ctx context.Context,
+	tradingAccount *model.TradingAccount,
+	t *model.Task,
+) error {
+	log.Printf("order at binance: key: %s, size: %f, symbol: %s", tradingAccount.Key, t.Size, t.Symbol)
+
+	c := client.NewBinanceClient(tradingAccount.Key, tradingAccount.Secret, false)
+
+	ticker, err := c.Ticker(ctx, t.Symbol)
+	if err != nil {
+		log.Printf("Error getting ticker: %s", err.Error())
+		return err
+	}
+
+	if ticker == nil {
+		return ErrTickerNotFound
+	}
+
+	tickerPriceDecimalCount := str.New(ticker.Price).CountDecimalCount()
+	tickerPrice := str.New(ticker.Price).ToFloat64Default(0)
+	roundedTickerPrice := math.Round(tickerPrice*math.Pow10(tickerPriceDecimalCount)) / math.Pow10(tickerPriceDecimalCount)
+
+	order, err := c.PlaceOrderAtPrice(ctx,
+		t.Symbol,
+		client.HoldSideLong,
+		str.FromFloat64(t.Size).Val(),
+		str.FromFloat64(roundedTickerPrice).Val(),
+	)
+	if err != nil {
+		log.Printf("Error placing order: %s", err.Error())
+		return err
+	}
+
+	log.Printf("order: %+v", debug.ToJSONInlineStr(order))
 
 	return nil
 }
