@@ -1,4 +1,4 @@
-interface Ticker {
+interface UpbitTicker {
     market: string;
     tradeDate: string;
     tradeTime: string;
@@ -27,7 +27,7 @@ interface Ticker {
     timestamp: number;
 }
 
-export async function getTicker(symbol: string = "BTC"): Promise<Ticker[]> {
+export async function getUpbitTicker(symbol: string = "BTC"): Promise<UpbitTicker[]> {
     const response = await fetch('https://api.upbit.com/v1/ticker?markets=' + symbol, {
         method: 'GET',
         headers: {
