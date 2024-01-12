@@ -166,8 +166,9 @@ func (s DcaService) OrderFromBinance(
 	log.Printf("order at binance: key: %s, size: %f, symbol: %s", tradingAccount.Key, t.Size, t.Symbol)
 
 	c := client.NewBinanceClient(tradingAccount.Key, tradingAccount.Secret, false)
+	symbol := t.Symbol + t.Currency
 
-	ticker, err := c.Ticker(ctx, t.Symbol)
+	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
 		log.Printf("Error getting ticker: %s", err.Error())
 		return err

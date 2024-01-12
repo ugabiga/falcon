@@ -1,5 +1,5 @@
 import {useMutation} from "@apollo/client";
-import {CreateTaskDocument} from "@/graph/generated/generated";
+import {CreateTaskDocument, TradingAccount} from "@/graph/generated/generated";
 import React, {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
@@ -13,7 +13,7 @@ import {errorToast} from "@/components/toast";
 import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 
-export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
+export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     const {t} = useTranslation();
     const dispatch = useAppDispatch()
     const [createTask] = useMutation(CreateTaskDocument);
@@ -27,15 +27,11 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
         },
     })
 
-    if (!tradingAccountID) {
-        return null
-    }
-
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
         console.log("data", data)
         createTask({
             variables: {
-                tradingAccountID: tradingAccountID!,
+                tradingAccountID: tradingAccount.id,
                 currency: data.currency,
                 size: data.size,
                 symbol: data.symbol,
@@ -47,11 +43,11 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
             setOpenDialog(false)
             form.reset()
             dispatch(refreshTask({
-                tradingAccountID: tradingAccountID,
+                tradingAccountID: tradingAccount.id,
                 refresh: true
             }))
         }).catch((e) => {
-            errorToast(t("error."+ e.message))
+            errorToast(t("error." + e.message))
         })
     }
 
@@ -73,7 +69,7 @@ export function AddTask({tradingAccountID}: { tradingAccountID?: string }) {
                             </DialogTitle>
                         </DialogHeader>
 
-                        <TaskForm form={form}/>
+                        <TaskForm form={form} tradingAccount={tradingAccount}/>
                     </form>
                 </Form>
             </DialogContent>

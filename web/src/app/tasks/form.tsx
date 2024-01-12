@@ -10,6 +10,8 @@ import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
 import {NumericFormatInput} from "@/components/numeric-format-input";
+import {TradingAccount} from "@/graph/generated/generated";
+import {ExchangeList} from "@/lib/exchanges";
 
 export const TaskFromSchema = z.object({
     currency: z
@@ -55,9 +57,14 @@ export const TaskFromSchema = z.object({
         .optional()
 })
 
-export function TaskForm({form}: {
-    form: ReturnType<typeof useForm<z.infer<typeof TaskFromSchema>>>
-}) {
+export function TaskForm(
+    {
+        form,
+        tradingAccount,
+    }: {
+        form: ReturnType<typeof useForm<z.infer<typeof TaskFromSchema>>>
+        tradingAccount: TradingAccount
+    }) {
     const {t} = useTranslation();
     const {fetchConvertedTotal, convertedTotal} = useConvertSizeToCurrency()
 
@@ -122,8 +129,14 @@ export function TaskForm({form}: {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="KRW">KRW</SelectItem>
-                            <SelectItem value="USD" disabled>USD</SelectItem>
+                            {
+                                ExchangeList
+                                    .find((exchange) => exchange.value === tradingAccount.exchange)
+                                    ?.supportCurrencies
+                                    .map((currency) => {
+                                        return <SelectItem value={currency}>{currency}</SelectItem>
+                                    })
+                            }
                         </SelectContent>
                     </Select>
                     <FormMessage/>

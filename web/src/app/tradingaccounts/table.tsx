@@ -3,6 +3,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {camelize, trim} from "@/lib/str";
 import {useTranslation} from "react-i18next";
 import {TradingAccountMoreBtn} from "@/app/tradingaccounts/more-btn";
+import {ExchangeList} from "@/lib/exchanges";
 
 
 export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
@@ -30,8 +31,12 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                             </TableRow>
                             : tradingAccounts?.map((tradingAccount) => (
                                 <TableRow key={tradingAccount.id}>
-                                    <TableCell className="font-medium">{tradingAccount.name}</TableCell>
-                                    <TableCell>{camelize(tradingAccount.exchange)}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {tradingAccount.name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {t(`common.exchange.${tradingAccount.exchange}`)}
+                                    </TableCell>
                                     <TableCell>{trim(tradingAccount.key, 4)}</TableCell>
                                     <TableCell>{tradingAccount.ip}</TableCell>
                                     <TableCell>

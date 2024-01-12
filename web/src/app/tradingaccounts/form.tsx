@@ -7,6 +7,8 @@ import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
 import React from "react";
+import {ExchangeList} from "@/lib/exchanges";
+
 
 export const TradingAccountFormSchema = z.object({
     name: z
@@ -74,8 +76,11 @@ export function TradingAccountForm({form}: {
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="upbit">Upbit</SelectItem>
-                            <SelectItem value="binance" disabled>Binance</SelectItem>
+                            {ExchangeList.map((item, index) => {
+                                return <SelectItem key={index} value={item.value}>
+                                    {t(`common.exchange.${item.value}`)}
+                                </SelectItem>
+                            })}
                         </SelectContent>
                     </Select>
                     <FormMessage/>

@@ -1,4 +1,4 @@
-import {Task} from "@/graph/generated/generated";
+import {Task, TradingAccount} from "@/graph/generated/generated";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal} from "lucide-react";
@@ -8,7 +8,15 @@ import Link from "next/link";
 import {useTranslation} from "react-i18next";
 
 
-export function TaskMoreBtn({task}: { task: Task }) {
+export function TaskMoreBtn(
+    {
+        task,
+        tradingAccount
+    }: {
+        task: Task
+        tradingAccount: TradingAccount
+    }
+) {
     const {t} = useTranslation();
 
     return (
@@ -19,7 +27,7 @@ export function TaskMoreBtn({task}: { task: Task }) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <EditTask task={task}/>
+                <EditTask task={task} tradingAccount={tradingAccount}/>
                 <DropdownMenuItem>
                     <Link
                         href={`/tasks/${task.id}/history?trading_account_id=${task.tradingAccountID}`}

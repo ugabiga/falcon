@@ -216,9 +216,9 @@ func (s TradingAccountService) Delete(ctx context.Context, userID string, tradin
 
 func (s TradingAccountService) validateExchange(exchange string) error {
 	switch exchange {
-	case "binance":
+	case model.ExchangeBinanceFutures:
 		return nil
-	case "upbit":
+	case model.ExchangeUpbit:
 		return nil
 	default:
 		return ErrWrongExchange
