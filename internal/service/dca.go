@@ -170,7 +170,6 @@ func (s DcaService) OrderFromBinance(
 	if err != nil {
 		return err
 	}
-
 	log.Printf("order at binance: key: %s, size: %f, symbol: %s", key, size, symbol)
 
 	c := client.NewBinanceClient(key, decryptedSecret, false)
@@ -180,7 +179,6 @@ func (s DcaService) OrderFromBinance(
 		log.Printf("Error getting ticker: %s", err.Error())
 		return err
 	}
-
 	if ticker == nil {
 		return ErrTickerNotFound
 	}
@@ -196,7 +194,6 @@ func (s DcaService) OrderFromBinance(
 		str.FromFloat64(roundedTickerPrice).Val(),
 	)
 	if err != nil {
-		log.Printf("Error placing order: %s", err.Error())
 		return err
 	}
 

@@ -183,6 +183,28 @@ func (s TaskService) validateCurrency(currency string) error {
 	}
 }
 
+func (s TaskService) validateSize(size float64) error {
+	//TODO validate lot size
+	//TODO validate min notional
+
+	//lotSize, err := c.LotSize(ctx, symbol)
+	//if err != nil {
+	//	log.Printf("Error getting lot size: %s", err.Error())
+	//	return err
+	//}
+	//lotStep := str.New(lotSize.StepSize).CountDecimalCount()
+	//tmp := ToFixed(size, lotStep)
+	//
+	//log.Printf("ticker: %+v", debug.ToJSONInlineStr(lotSize))
+	//log.Printf("tmp: %+v", tmp)
+	//log.Printf("lotStemp: %+v", lotStep)
+
+	if size < 0 {
+		return ErrSizeNotSatisfiedMinimum
+	}
+	return nil
+}
+
 func (s TaskService) cronExpression(hour string, days string) string {
 	return "0 0 " + hour + " * * " + days
 }

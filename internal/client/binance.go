@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"github.com/adshao/go-binance/v2/common"
 	"github.com/ugabiga/falcon/internal/common/str"
 
 	"github.com/adshao/go-binance/v2/futures"
@@ -29,6 +30,23 @@ func NewBinanceClient(apiKey, secretKey string, isTest bool) *BinanceClient {
 	return &BinanceClient{
 		future: c,
 	}
+}
+
+func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.LotSizeFilter, error) {
+	resp, err := c.future.NewExchangeInfoService().Do(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, s := range resp.Symbols {
+		if s.Symbol == symbol {
+			lotSizeFilter := s.LotSizeFilter()
+			return lotSizeFilter, nil
+		}
+	}
+
+	return nil, nil
+
 }
 
 func (c *BinanceClient) Balance(ctx context.Context) (*futures.Balance, error) {
@@ -149,10 +167,34 @@ func (c *BinanceClient) PlaceOrderAtPrice(ctx context.Context, symbol, holdSide,
 		TimeInForce(futures.TimeInForceTypeGTC).
 		Do(ctx)
 	if err != nil {
-		return nil, err
+		return nil, c.errorConverter(err)
 	}
 
 	return resp, nil
+}
+
+var (
+	ErrPrecisionError = errors.New("precision_error")
+	ErrMinNotional    = errors.New("not_satisfied_min_notional")
+)
+
+func (c *BinanceClient) errorConverter(apiErr error) error {
+	var e *common.APIError
+	switch {
+	case errors.As(apiErr, &e):
+		switch e.Code {
+		case -4164:
+			return ErrMinNotional
+		case -1111:
+			return ErrPrecisionError
+		default:
+			return apiErr
+		}
+	default:
+		return apiErr
+	}
+
+	return apiErr
 }
 
 func (c *BinanceClient) PlaceOrder(ctx context.Context, symbol, holdSide, size string) (*futures.CreateOrderResponse, error) {
