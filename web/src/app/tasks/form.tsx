@@ -133,8 +133,8 @@ export function TaskForm(
                                 ExchangeList
                                     .find((exchange) => exchange.value === tradingAccount.exchange)
                                     ?.supportCurrencies
-                                    .map((currency) => {
-                                        return <SelectItem value={currency}>{currency}</SelectItem>
+                                    .map((currency, index) => {
+                                        return <SelectItem key={index} value={currency}>{currency}</SelectItem>
                                     })
                             }
                         </SelectContent>
