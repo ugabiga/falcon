@@ -249,7 +249,7 @@ func TestDcaService_OrderFromBinance(t *testing.T) {
 			generated.CreateTaskInput{
 				TradingAccountID: tradingAccount.ID,
 				Currency:         "USDT",
-				Size:             0.01,
+				Size:             0.0005,
 				Symbol:           "BTC",
 				Hours:            time.Now().Format("18"),
 				Days:             "1,2,3,4,5,6,7",
