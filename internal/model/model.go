@@ -2,6 +2,11 @@ package model
 
 import "time"
 
+const (
+	ExchangeBinanceFutures = "binance_futures"
+	ExchangeUpbit          = "upbit"
+)
+
 type User struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name,omitempty"`

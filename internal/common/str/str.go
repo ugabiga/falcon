@@ -78,3 +78,21 @@ func (s *Str) ToInt64Default(defaultValue int64) int64 {
 	}
 	return i
 }
+
+func (s *Str) CountDecimalCount() int {
+	str := s.str
+	count := 0
+	foundDot := false
+
+	for i := 0; i < len(str); i++ {
+		if str[i] == '.' {
+			foundDot = true
+		}
+
+		if foundDot {
+			count++
+		}
+	}
+
+	return count - 1
+}

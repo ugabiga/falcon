@@ -9,6 +9,7 @@ require (
 	github.com/AlekSi/pointer v1.1.0
 	github.com/ThreeDotsLabs/watermill v1.3.5
 	github.com/adhocore/gronx v1.6.6
+	github.com/adshao/go-binance/v2 v2.4.5
 	github.com/akrylysov/algnhsa v1.1.0
 	github.com/antlabs/deepcopy v0.0.10
 	github.com/aws/aws-lambda-go v1.43.0
@@ -55,6 +56,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.21.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.26.6 // indirect
 	github.com/aws/smithy-go v1.19.0 // indirect
+	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
