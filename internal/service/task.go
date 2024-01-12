@@ -176,7 +176,7 @@ func (s TaskService) validateCurrency(currency string) error {
 	switch currency {
 	case "KRW":
 		return nil
-	case "USD":
+	case "USDT":
 		return nil
 	default:
 		return ErrWrongCurrency

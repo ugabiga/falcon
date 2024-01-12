@@ -1,11 +1,17 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Task} from "@/graph/generated/generated";
+import {Task, TradingAccount} from "@/graph/generated/generated";
 import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/cron-parser";
 import {useTranslation} from "react-i18next";
 import {convertNumberToCryptoSize} from "@/lib/number";
 import {TaskMoreBtn} from "@/app/tasks/more-btn";
 
-export function TaskTable({tasks}: { tasks?: Task[] }) {
+export function TaskTable(
+    {
+        tradingAccount
+    }: {
+        tradingAccount: TradingAccount
+    }
+) {
     const {t} = useTranslation();
 
     function convertSchedule(cronExpression: string): string {
@@ -54,7 +60,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                 </TableHeader>
                 <TableBody>
                     {
-                        !tasks || tasks?.length === 0
+                        !tradingAccount.tasks || tradingAccount.tasks?.length === 0
                             ? (
                                 <TableRow>
                                     <TableCell colSpan={9} className="font-medium text-center">
@@ -62,7 +68,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                     </TableCell>
                                 </TableRow>
                             )
-                            : tasks?.map((task) => (
+                            : tradingAccount.tasks?.map((task) => (
                                     <TableRow key={task.id}>
                                         <TableCell>{task.id}</TableCell>
                                         <TableCell>{task.type}</TableCell>
@@ -80,7 +86,7 @@ export function TaskTable({tasks}: { tasks?: Task[] }) {
                                             {t("task.table.is_active.boolean." + task.isActive)}
                                         </TableCell>
                                         <TableCell>
-                                            <TaskMoreBtn task={task}/>
+                                            <TaskMoreBtn task={task} tradingAccount={tradingAccount}/>
                                         </TableCell>
                                     </TableRow>
                                 )

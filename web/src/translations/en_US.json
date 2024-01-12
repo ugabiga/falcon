@@ -118,5 +118,7 @@
   "error.wrong_exchange":"Wrong exchange",
   "error.wrong_currency":"Wrong currency",
   "error.unauthorized_action":"Unauthorized action",
-  "manual.btn": "Manual"
+  "manual.btn": "Manual",
+  "common.exchange.upbit": "Upbit",
+  "common.exchange.binance_futures": "Binance Future"
 }

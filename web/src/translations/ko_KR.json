@@ -117,5 +117,7 @@
   "error.wrong_exchange": "잘못된 거래소 입니다",
   "error.wrong_currency": "잘못된 통화 단위 입니다",
   "error.unauthorized_action": "이 작업을 수행할 권한이 없습니다",
-  "manual.btn": "메뉴얼 보기"
+  "manual.btn": "메뉴얼 보기",
+  "common.exchange.upbit": "업비트",
+  "common.exchange.binance_futures": "바이낸스 선물"
 }

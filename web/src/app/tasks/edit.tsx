@@ -1,5 +1,5 @@
 import {useMutation} from "@apollo/client";
-import {Task, UpdateTaskDocument} from "@/graph/generated/generated";
+import {Task, TradingAccount, UpdateTaskDocument} from "@/graph/generated/generated";
 import React, {useEffect, useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
@@ -17,7 +17,15 @@ import {useTranslation} from "react-i18next";
 import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 import {ScrollArea} from "@/components/ui/scroll-area";
 
-export function EditTask({task}: { task: Task }) {
+export function EditTask(
+    {
+        task,
+        tradingAccount
+    }: {
+        task: Task
+        tradingAccount: TradingAccount
+    }
+) {
     const {t} = useTranslation();
     const [updateTask] = useMutation(UpdateTaskDocument)
     const [openDialog, setOpenDialog] = useState(false)
@@ -107,7 +115,7 @@ export function EditTask({task}: { task: Task }) {
                                 </FormItem>
                             )}
                         />
-                        <TaskForm form={form}/>
+                        <TaskForm form={form} tradingAccount={tradingAccount}/>
                     </form>
                 </Form>
             </DialogContent>

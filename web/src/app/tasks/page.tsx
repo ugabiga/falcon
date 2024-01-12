@@ -75,16 +75,20 @@ export default function Tasks() {
                 <div className={"flex-grow"}></div>
 
                 <div>
-                    <AddTask tradingAccountID={data?.taskIndex?.selectedTradingAccount?.id}/>
+                    {
+                        data?.taskIndex?.selectedTradingAccount
+                        // @ts-ignore
+                        && <AddTask tradingAccount={data?.taskIndex?.selectedTradingAccount}/>
+                    }
                 </div>
             </div>
 
             <div className="mt-6">
                 {/*@ts-ignore*/}
-                <TaskTable tasks={data?.taskIndex?.selectedTradingAccount?.tasks}/>
+                <TaskTable tradingAccount={data?.taskIndex?.selectedTradingAccount}/>
 
                 {/*@ts-ignore*/}
-                <TaskCards tasks={data?.taskIndex?.selectedTradingAccount?.tasks}/>
+                <TaskCards tradingAccount={data?.taskIndex?.selectedTradingAccount}/>
             </div>
         </main>
     )

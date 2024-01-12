@@ -1,4 +1,4 @@
-import {Task} from "@/graph/generated/generated";
+import {Task, TradingAccount} from "@/graph/generated/generated";
 import {useTranslation} from "react-i18next";
 import {Card, CardContent} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
@@ -7,7 +7,13 @@ import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/
 import {TaskMoreBtn} from "@/app/tasks/more-btn";
 
 
-export function TaskCards({tasks}: { tasks?: Task[] }) {
+export function TaskCards(
+    {
+        tradingAccount
+    }: {
+        tradingAccount: TradingAccount
+    }
+) {
     const {t} = useTranslation();
 
     function convertSchedule(cronExpression: string): string {
@@ -43,11 +49,11 @@ export function TaskCards({tasks}: { tasks?: Task[] }) {
     return (
         <div className="block md:hidden space-y-2">
             {
-                !tasks || tasks?.length === 0
+                !tradingAccount.tasks || tradingAccount.tasks?.length === 0
                     ? <div className="font-medium text-center">
                         {t("tasks.table.empty")}
                     </div>
-                    : tasks?.map((task) => (
+                    : tradingAccount.tasks?.map((task) => (
                             <Card key={task.id}>
                                 <div className="grid grid-cols-5 gap-6">
                                     <div className="mt-4 mb-6 ml-6 col-span-4">
@@ -57,7 +63,7 @@ export function TaskCards({tasks}: { tasks?: Task[] }) {
                                     </div>
                                     <div className="flex space-x-2 mt-2 mr-2">
                                         <div className="flex-grow"></div>
-                                        <TaskMoreBtn task={task}/>
+                                        <TaskMoreBtn task={task} tradingAccount={tradingAccount}/>
                                     </div>
                                 </div>
                                 <CardContent className="grid grid-cols-2 gap-6">
