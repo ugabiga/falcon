@@ -11,7 +11,7 @@ export function TaskCards(
     {
         tradingAccount
     }: {
-        tradingAccount: TradingAccount
+        tradingAccount?: TradingAccount
     }
 ) {
     const {t} = useTranslation();
@@ -49,11 +49,11 @@ export function TaskCards(
     return (
         <div className="block md:hidden space-y-2">
             {
-                !tradingAccount.tasks || tradingAccount.tasks?.length === 0
+                !tradingAccount?.tasks || tradingAccount?.tasks?.length === 0
                     ? <div className="font-medium text-center">
                         {t("tasks.table.empty")}
                     </div>
-                    : tradingAccount.tasks?.map((task) => (
+                    : tradingAccount?.tasks?.map((task) => (
                             <Card key={task.id}>
                                 <div className="grid grid-cols-5 gap-6">
                                     <div className="mt-4 mb-6 ml-6 col-span-4">
