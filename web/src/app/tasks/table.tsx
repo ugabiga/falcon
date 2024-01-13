@@ -9,9 +9,10 @@ export function TaskTable(
     {
         tradingAccount
     }: {
-        tradingAccount: TradingAccount
+        tradingAccount?: TradingAccount
     }
 ) {
+    console.log("tradingAccount", tradingAccount)
     const {t} = useTranslation();
 
     function convertSchedule(cronExpression: string): string {
@@ -60,7 +61,7 @@ export function TaskTable(
                 </TableHeader>
                 <TableBody>
                     {
-                        !tradingAccount.tasks || tradingAccount.tasks?.length === 0
+                        !tradingAccount?.tasks || tradingAccount?.tasks?.length === 0
                             ? (
                                 <TableRow>
                                     <TableCell colSpan={9} className="font-medium text-center">
@@ -68,7 +69,7 @@ export function TaskTable(
                                     </TableCell>
                                 </TableRow>
                             )
-                            : tradingAccount.tasks?.map((task) => (
+                            : tradingAccount?.tasks?.map((task) => (
                                     <TableRow key={task.id}>
                                         <TableCell>{task.id}</TableCell>
                                         <TableCell>{task.type}</TableCell>
