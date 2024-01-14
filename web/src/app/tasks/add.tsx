@@ -8,10 +8,10 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
-import {refreshTask} from "@/store/taskSlice";
 import {errorToast} from "@/components/toast";
 import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
+import {refreshTask} from "@/store/refresherSlice";
 
 export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     const {t} = useTranslation();

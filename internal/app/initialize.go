@@ -3,7 +3,6 @@ package app
 import (
 	"github.com/ugabiga/falcon/internal/client"
 	"github.com/ugabiga/falcon/internal/common/encryption"
-	"github.com/ugabiga/falcon/internal/graph/helper"
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/messaging"
@@ -20,7 +19,6 @@ func provider() fx.Option {
 		config.NewConfig,
 
 		// Client
-		client.NewEntClient,
 		client.NewDynamoClient,
 
 		// Migration
@@ -43,7 +41,6 @@ func provider() fx.Option {
 		handler.NewErrorHandler,
 
 		// GraphQL
-		helper.NewNodeResolver,
 		resolvers.NewResolver,
 
 		// Server

@@ -3,6 +3,7 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import userSlice from "@/store/userSlice";
 import tradingAccountSlice from "@/store/tradingAccountSlice";
 import taskSlice from "@/store/taskSlice";
+import refresherSlice from "@/store/refresherSlice";
 
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
         user: userSlice.reducer,
         tradingAccount: tradingAccountSlice.reducer,
         task: taskSlice.reducer,
+        refresher: refresherSlice.reducer,
     }
 })
 

@@ -16,13 +16,14 @@ import {useTranslation} from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {ManualKRTask} from "@/lib/ref-url";
 import {TaskCards} from "@/app/tasks/cards";
+import {RefreshTarget} from "@/store/refresherSlice";
 
 export default function Tasks() {
     const {t} = useTranslation()
     const params = useSearchParams()
     const dispatch = useDispatch()
     const tradingAccountId = params.get('trading_account_id')
-    const task = useAppSelector((state) => state.task)
+    const refresher = useAppSelector((state) => state.refresher)
     const {data, loading, refetch, error} = useQuery(GetTaskIndexDocument, {
         variables: {
             tradingAccountID: tradingAccountId ?? null
@@ -31,9 +32,9 @@ export default function Tasks() {
     })
 
     useEffect(() => {
-        if (task?.refresh) {
+        if (refresher?.refresh && refresher?.targetName === RefreshTarget.Task) {
             refetch({
-                tradingAccountID: task.tradingAccountID
+                tradingAccountID: refresher.params?.tradingAccountID ?? null
             })
                 .then(() => data)
                 .then(() => {
@@ -41,7 +42,7 @@ export default function Tasks() {
                 })
         }
 
-    }, [task]);
+    }, [refresher]);
 
     if (loading) {
         return <Loading/>

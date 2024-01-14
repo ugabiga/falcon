@@ -1,6 +1,6 @@
 import {useMutation} from "@apollo/client";
 import {Task, TradingAccount, UpdateTaskDocument} from "@/graph/generated/generated";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {useAppDispatch} from "@/store";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
@@ -9,13 +9,12 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
-import {refreshTask} from "@/store/taskSlice";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
 import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import {refreshTask} from "@/store/refresherSlice";
 
 export function EditTask(
     {
@@ -115,6 +114,7 @@ export function EditTask(
                                 </FormItem>
                             )}
                         />
+
                         <TaskForm form={form} tradingAccount={tradingAccount}/>
                     </form>
                 </Form>
