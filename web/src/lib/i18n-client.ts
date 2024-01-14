@@ -19,3 +19,14 @@ export function useSetupI18n() {
 
     return {loading}
 }
+
+export function useChangeI18nLanguage() {
+    const [cookies, setCookie] = useCookies([cookieName])
+
+    const changeLanguage = (language: string) => {
+        i18n.changeLanguage(language).then()
+        setCookie(cookieName, language, {path: '/'})
+    }
+
+    return {changeLanguage}
+}
