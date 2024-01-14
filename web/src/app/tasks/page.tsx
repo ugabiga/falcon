@@ -12,7 +12,7 @@ import {AddTask} from "@/app/tasks/add";
 import {Loading} from "@/components/loading";
 import {useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
-import {useTranslation} from "react-i18next";
+import {useTranslation} from "@/lib/i18n";
 import {Button} from "@/components/ui/button";
 import {ManualKRTask} from "@/lib/ref-url";
 import {TaskCards} from "@/app/tasks/cards";

@@ -9,14 +9,14 @@ import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
 import {TradingAccountTable} from "@/app/tradingaccounts/table";
 import {Loading} from "@/components/loading";
 import {Error} from "@/components/error";
-import {useTranslation} from "react-i18next";
 import {Button} from "@/components/ui/button";
 import {ManualKRTradingAccount} from "@/lib/ref-url";
 import {TradingAccountCards} from "@/app/tradingaccounts/cards";
+import {useTranslation} from "@/lib/i18n";
 
 
 export default function TradingAccounts() {
-    const {t} = useTranslation();
+    const {t} = useTranslation()
     const dispatch = useAppDispatch()
     const tradingAccount = useAppSelector((state) => state.tradingAccount);
     const {data, loading, refetch, error} = useQuery(TradingAccountIndexDocument, {
