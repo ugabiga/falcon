@@ -7,7 +7,7 @@ import {useRouter} from "next/navigation";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
-import {useTranslation} from "react-i18next";
+import {useTranslation} from "@/lib/i18n";
 
 export function NavigationMobileBar() {
     const {t} = useTranslation()

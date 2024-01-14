@@ -3,12 +3,12 @@ import {Inter} from 'next/font/google'
 import './globals.css'
 import React from "react";
 import Providers from "@/app/providers";
-import {NavigationBar} from "@/components/navigation-bar";
 import {Toaster} from "@/components/ui/sonner"
 import {getServerSession} from "next-auth";
 import SessionProvider from "@/lib/session"
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from "@vercel/speed-insights/next"
+import NavigationBar from "@/components/navigation-bar";
 
 const inter = Inter({subsets: ['latin']})
 
@@ -50,7 +50,12 @@ export const metadata: Metadata = {
 }
 
 
-export default async function RootLayout({children,}: { children: React.ReactNode }) {
+export default async function RootLayout(
+    {
+        children,
+    }: {
+        children: React.ReactNode
+    }) {
     const session = await getServerSession()
 
     return (

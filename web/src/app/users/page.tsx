@@ -6,11 +6,11 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Loading} from "@/components/loading";
 import {errorToast, normalToast} from "@/components/toast";
 import {Error} from "@/components/error";
-import {useTranslation} from "react-i18next";
+import {useTranslation} from "@/lib/i18n";
 
 
 export default function Users() {
@@ -87,7 +87,8 @@ export default function Users() {
                             <SelectValue placeholder="Timezone"/>
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="default" disabled>{t("users.profile.timezone.placeholder")}</SelectItem>
+                            <SelectItem value="default"
+                                        disabled>{t("users.profile.timezone.placeholder")}</SelectItem>
                             <SelectItem value="Asia/Seoul">{t("users.profile.timezone.asia-seoul")}</SelectItem>
                             <SelectItem value="UTC">{t("users.profile.timezone.utc")}</SelectItem>
                         </SelectContent>

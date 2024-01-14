@@ -15,7 +15,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // i18n
+    // i18n,
     webpack: (config, {isServer}) => {
         config.externals.push({
             'utf-8-validate': 'commonjs utf-8-validate',

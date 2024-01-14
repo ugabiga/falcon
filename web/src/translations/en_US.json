@@ -54,6 +54,7 @@
   "trading_account.table.exchange": "Exchange",
   "trading_account.table.key": "Key",
   "trading_account.table.ip": "IP",
+  "trading_account.table.action": "Action",
   "trading_account.table.empty": "No Trading Accounts found",
   "trading_account.add.error.secret": "Please enter your secret key",
   "tasks.title": "Tasks",

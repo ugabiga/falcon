@@ -2,13 +2,13 @@
 
 import React from "react";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
-import {useTranslation} from "react-i18next";
 import {Button} from "@/components/ui/button";
-import Link from "next/link";
 import {ManualKRMain} from "@/lib/ref-url";
+import {useTranslation} from "@/lib/i18n";
 
 export default function Home() {
-    const {t} = useTranslation();
+    const {t} = useTranslation()
+
     return (
         <main className="flex-1 flex flex-col min-h-screen">
             <section className="w-full py-12 md:py-24 lg:py-24">

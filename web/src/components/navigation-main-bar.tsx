@@ -3,9 +3,9 @@ import Link from "next/link";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
-import {useTranslation} from "react-i18next";
+import {useTranslation} from "@/lib/i18n";
 
-export function NavigationMainBar() {
+export function NavigationMainBar(){
     const {t} = useTranslation()
     const pathname = usePathname()
 
