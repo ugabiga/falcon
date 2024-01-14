@@ -15,40 +15,19 @@ import {ExchangeList} from "@/lib/exchanges";
 
 export const TaskFromSchema = z.object({
     currency: z
-        .string({
-            required_error: "Please enter a currency",
-        }),
+        .string(),
     size: z
-        .number({
-            required_error: "Please enter a currency size",
-        }),
+        .number(),
     symbol: z
-        .string({
-            required_error: "Please enter a exchange",
-        })
-        .min(1, {
-            message: "Please enter a exchange",
-        }),
+        .string(),
     days: z
-        .string({
-            required_error: "Please enter a exchange",
-        })
-        .min(1, {
-            message: "Please enter a exchange",
-        }),
+        .string(),
     hours: z
-        .string({
-            required_error: "Please enter a exchange",
-        })
-        .min(1, {
-            message: "Please enter a exchange",
-        }),
+        .string(),
     type: z
         .enum(["DCA", "Grid"]),
     isActive: z
-        .boolean({
-            required_error: "Please enter a exchange",
-        }),
+        .boolean(),
     grid: z
         .object({
             gap: z.number({}),
