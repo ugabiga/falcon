@@ -1,5 +1,5 @@
 import {useTheme} from "next-themes";
-import {Moon, Sun} from "lucide-react";
+import {LanguagesIcon, Moon, Sun} from "lucide-react";
 import {useEffect, useState} from "react";
 import {icon} from "@/components/styles";
 import {signIn, signOut, useSession} from "next-auth/react";
@@ -8,10 +8,10 @@ import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {useRouter} from "next/navigation";
 import {useTranslation} from "react-i18next";
+import {useChangeI18nLanguage} from "@/lib/i18n-client";
 
 
 export function NavigationRightMenu() {
-    const {theme, setTheme} = useTheme()
     const [isClient, setIsClient] = useState(false)
 
     // Fix : Content does not match server-rendered HTML
@@ -21,13 +21,48 @@ export function NavigationRightMenu() {
 
     return (
         <div className={"flex"}>
-            {isClient
-                && <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-                    {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
-                </Button>
+            {
+                isClient
+                && <div>
+                    <LanguageMenu/>
+                    <DarkModeButton/>
+                </div>
             }
             <SessionMenu/>
         </div>
+    )
+}
+
+function DarkModeButton() {
+    const {theme, setTheme} = useTheme()
+
+    return (
+        <Button variant="ghost" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+            {theme === "dark" ? <Sun className={icon()}/> : <Moon className={icon()}/>}
+        </Button>
+    )
+}
+
+function LanguageMenu() {
+    const {changeLanguage} = useChangeI18nLanguage()
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                    <LanguagesIcon className={icon()}/>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => changeLanguage("en")}>
+                    English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeLanguage("ko")}>
+                    한국어 (Korean)
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+
     )
 }
 
