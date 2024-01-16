@@ -9,6 +9,7 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {useRouter} from "next/navigation";
 import {useTranslation} from "react-i18next";
 import {useChangeI18nLanguage} from "@/lib/i18n-client";
+import Link from "next/link";
 
 
 export function NavigationRightMenu() {
@@ -43,9 +44,7 @@ function DarkModeButton() {
     )
 }
 
-function LanguageMenu() {
-    const {changeLanguage} = useChangeI18nLanguage()
-
+export function LanguageMenu() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -54,17 +53,43 @@ function LanguageMenu() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => changeLanguage("en")}>
-                    English
+                <DropdownMenuItem>
+                    <Link href={"/language/en"}>
+                        English
+                    </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLanguage("ko")}>
-                    한국어 (Korean)
+                <DropdownMenuItem>
+                    <Link href={"/language/ko"}>
+                        한국어 (Korean)
+                    </Link>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
-
     )
 }
+
+// function LanguageMenu() {
+//     const {changeLanguage} = useChangeI18nLanguage()
+//
+//     return (
+//         <DropdownMenu>
+//             <DropdownMenuTrigger asChild>
+//                 <Button variant="ghost">
+//                     <LanguagesIcon className={icon()}/>
+//                 </Button>
+//             </DropdownMenuTrigger>
+//             <DropdownMenuContent>
+//                 <DropdownMenuItem onClick={() => changeLanguage("en")}>
+//                     English
+//                 </DropdownMenuItem>
+//                 <DropdownMenuItem onClick={() => changeLanguage("ko")}>
+//                     한국어 (Korean)
+//                 </DropdownMenuItem>
+//             </DropdownMenuContent>
+//         </DropdownMenu>
+//
+//     )
+// }
 
 function SessionMenu() {
     const {t} = useTranslation()

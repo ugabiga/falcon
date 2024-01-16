@@ -8,7 +8,7 @@ export const languages = [fallbackLng, 'ko']
 export const defaultNS = 'translation'
 export const cookieName = 'i18next'
 
-const resources = {
+export const resources = {
     en: {
         translation: usTranslations,
     },

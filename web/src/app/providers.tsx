@@ -11,9 +11,9 @@ import {useSetupI18n} from "@/lib/i18n-client";
 export default function Providers({children}: { children: React.ReactNode }) {
     const {loading} = useSetupI18n();
 
-    if (loading) {
-        return <div></div>
-    }
+    // if (loading) {
+    //     return <div></div>
+    // }
 
     return (
         <ThemeProvider attribute="class" defaultTheme={"system"} enableSystem>
