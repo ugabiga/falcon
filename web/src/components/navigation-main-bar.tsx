@@ -3,11 +3,13 @@ import Link from "next/link";
 import {cn} from "@/lib/utils";
 import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
-import {useTranslation} from "@/lib/i18n";
+import {useTranslation} from "@/lib/i18n-server";
+import {Button} from "@/components/ui/button";
+import {NavigationBarSsr} from "@/components/navigation-bar-ssr";
 
-export function NavigationMainBar(){
-    const {t} = useTranslation()
-    const pathname = usePathname()
+export async function NavigationMainBar() {
+    const {t} = await useTranslation()
+    // const pathname = usePathname()
 
     return (
         <div className="hidden md:flex md:max-w-[1200px] w-full mx-auto justify-between">
@@ -16,7 +18,7 @@ export function NavigationMainBar(){
                     href="/"
                     className={cn(
                         "transition-colors hover:text-foreground/80",
-                        pathname === "/" ? "text-foreground" : "text-foreground/60"
+                        // pathname === "/" ? "text-foreground" : "text-foreground/60"
                     )}
                 >
                     <div className="flex items-center">
@@ -30,7 +32,7 @@ export function NavigationMainBar(){
                     href="/tradingaccounts"
                     className={cn(
                         "transition-colors hover:text-foreground/80",
-                        pathname === "/tradingaccounts" ? "text-foreground" : "text-foreground/60"
+                        // pathname === "/tradingaccounts" ? "text-foreground" : "text-foreground/60"
                     )}
                 >
                     {t("nav.trading-accounts")}
@@ -39,13 +41,14 @@ export function NavigationMainBar(){
                     href="/tasks"
                     className={cn(
                         "transition-colors hover:text-foreground/80",
-                        pathname === "/tasks" ? "text-foreground" : "text-foreground/60"
+                        // pathname === "/tasks" ? "text-foreground" : "text-foreground/60"
                     )}
                 >
                     {t("nav.tasks")}
                 </Link>
                 <div className={"flex-grow"}></div>
-                <NavigationRightMenu/>
+                {/*<NavigationRightMenu/>*/}
+                <NavigationBarSsr/>
             </nav>
         </div>
     )

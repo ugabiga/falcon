@@ -46,9 +46,6 @@ const handler = NextAuth({
                 return false;
             }
 
-            console.log(account)
-
-
             const resp = await fetch(apiUrl + "/auth/signin", {
                 method: "POST",
                 headers: {
@@ -60,11 +57,11 @@ const handler = NextAuth({
                     access_token: account.access_token,
                 })
             })
-            console.log(resp)
 
             const data = await resp.json()
             const {token} = data
 
+            console.log("token", token)
 
             cookies().set(
                 jwtCookieName,

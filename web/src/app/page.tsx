@@ -1,13 +1,11 @@
-"use client";
-
 import React from "react";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {ManualKRMain} from "@/lib/ref-url";
-import {useTranslation} from "@/lib/i18n";
+import {useTranslation} from "@/lib/i18n-server";
 
-export default function Home() {
-    const {t} = useTranslation()
+export default async function Home() {
+    const {t} = await useTranslation()
 
     return (
         <main className="flex-1 flex flex-col min-h-screen">
@@ -22,11 +20,11 @@ export default function Home() {
                     <p className="text-center max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
                         {t("home.description")}
                     </p>
-                    <Button onClick={() => {
-                        window.open(ManualKRMain, '_blank')
-                    }}>
-                        {t("home.find_out_more.btn")}
-                    </Button>
+                    {/*<Button onClick={() => {*/}
+                    {/*    window.open(ManualKRMain, '_blank')*/}
+                    {/*}}>*/}
+                    {/*    {t("home.find_out_more.btn")}*/}
+                    {/*</Button>*/}
                 </div>
             </section>
             <section className="w-full py-12 md:py-24 lg:py-24 border-y">
