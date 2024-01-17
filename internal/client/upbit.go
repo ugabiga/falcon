@@ -41,3 +41,20 @@ func (c *UpbitClient) Ticker(ctx context.Context, symbol string) (*upbit.Ticker,
 
 	return ticker, nil
 }
+func (c *UpbitClient) OrderChance(ctx context.Context, symbol string) (*upbit.OrderChange, error) {
+	r, err := c.client.OrderChance(ctx, symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+
+}
+func (c *UpbitClient) OrderBook(ctx context.Context, symbol string) (*upbit.OrderBook, error) {
+	r, err := c.client.OrderBook(ctx, symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}

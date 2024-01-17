@@ -96,3 +96,18 @@ type OrderChange struct {
 		UnitCurrency        string `json:"unit_currency"`
 	} `json:"ask_account"`
 }
+
+type OrderBook struct {
+	Market         string `json:"market"`
+	OrderbookUnits []struct {
+		AskPrice int64   `json:"ask_price"`
+		AskSize  float64 `json:"ask_size"`
+		BidPrice int64   `json:"bid_price"`
+		BidSize  float64 `json:"bid_size"`
+	} `json:"orderbook_units"`
+	Timestamp    int64   `json:"timestamp"`
+	TotalAskSize float64 `json:"total_ask_size"`
+	TotalBidSize float64 `json:"total_bid_size"`
+}
+
+type OrderBooks []OrderBook

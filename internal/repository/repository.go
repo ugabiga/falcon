@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/model"
-	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -368,8 +366,6 @@ func (r DynamoRepository) CreateTask(ctx context.Context, task model.Task) (*mod
 	task.UpdatedAt = r.timeNow()
 	task.CreatedAt = r.timeNow()
 
-	log.Printf("task: %+v", debug.ToJSONStr(task))
-
 	av, err := MarshalItem(task)
 	if err != nil {
 		return nil, err
@@ -478,6 +474,51 @@ func (r DynamoRepository) GetTasksByTradingAccountID(ctx context.Context, tradin
 	return tasks, nil
 }
 
+func (r DynamoRepository) GetTasksByActiveNextExecutionTimeAndType(ctx context.Context, nextExecutionTime time.Time, taskType string) ([]model.Task, error) {
+	formattedNextExecutionTime := nextExecutionTime.Format(time.RFC3339)
+
+	result, err := r.db.Query(
+		ctx,
+		&dynamodb.QueryInput{
+			TableName: &r.tableName,
+			IndexName: &[]string{GISNextExecutionTime}[0],
+			KeyConditions: map[string]types.Condition{
+				"next_execution_time": {
+					ComparisonOperator: types.ComparisonOperatorEq,
+					AttributeValueList: []types.AttributeValue{
+						&types.AttributeValueMemberS{Value: formattedNextExecutionTime},
+					},
+				},
+			},
+			//Is Active?
+			FilterExpression: &[]string{"#v = :is_active AND #t = :task_type"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#v": "is_active",
+				"#t": "type",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":is_active": &types.AttributeValueMemberBOOL{Value: true},
+				":task_type": &types.AttributeValueMemberS{Value: taskType},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []model.Task
+
+	for _, item := range result.Items {
+		task, err := UnmarshalItem[model.Task](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, *task)
+	}
+
+	return tasks, nil
+}
 func (r DynamoRepository) GetTasksByActiveNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
 	formattedNextExecutionTime := nextExecutionTime.Format(time.RFC3339)
 
