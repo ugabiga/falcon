@@ -10,20 +10,6 @@ services:
     ports:
       - "8000:8000"
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/"
-  falcon-db:
-    container_name: falcon-db
-    image: postgres:12
-    volumes:
-      - app-db-data:/var/lib/postgresql/data/pgdata
-    ports:
-      - "5432:5432"
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_USER=pg
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=falcon
-    networks:
-      - falcon-net
 
 volumes:
   app-db-data:

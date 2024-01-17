@@ -9,22 +9,23 @@ import (
 )
 
 type Config struct {
-	DBDriverName       string `mapstructure:"DB_DRIVER_NAME"`
-	DBSource           string `mapstructure:"DB_SOURCE"`
-	SessionSecretKey   string `mapstructure:"SESSION_SECRET_KEY"`
-	JWTSecretKey       string `mapstructure:"JWT_SECRET_KEY"`
-	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
-	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
-	WebURL             string `mapstructure:"WEB_URL"`
-	EncryptionKey      string `mapstructure:"ENCRYPTION_KEY"`
-	AWSRegion          string `mapstructure:"AWS_REGION"`
-	DynamoIsLocal      bool   `mapstructure:"DYNAMO_IS_LOCAL"`
-	MessagingPlatform  string `mapstructure:"MESSAGING_PLATFORM"`
-	SQSQueueURL        string `mapstructure:"SQS_QUEUE_URL"`
-	TestUpbitKey       string `mapstructure:"TEST_UPBIT_KEY"`
-	TestUpbitSecret    string `mapstructure:"TEST_UPBIT_SECRET"`
-	TestBinanceKey     string `mapstructure:"TEST_BINANCE_KEY"`
-	TestBinanceSecret  string `mapstructure:"TEST_BINANCE_SECRET"`
+	DBDriverName        string `mapstructure:"DB_DRIVER_NAME"`
+	DBSource            string `mapstructure:"DB_SOURCE"`
+	SessionSecretKey    string `mapstructure:"SESSION_SECRET_KEY"`
+	JWTSecretKey        string `mapstructure:"JWT_SECRET_KEY"`
+	GoogleClientID      string `mapstructure:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret  string `mapstructure:"GOOGLE_CLIENT_SECRET"`
+	WebURL              string `mapstructure:"WEB_URL"`
+	EncryptionKey       string `mapstructure:"ENCRYPTION_KEY"`
+	AWSRegion           string `mapstructure:"AWS_REGION"`
+	DynamoIsLocal       bool   `mapstructure:"DYNAMO_IS_LOCAL"`
+	MessagingPlatform   string `mapstructure:"MESSAGING_PLATFORM"`
+	SQSQueueURL         string `mapstructure:"SQS_QUEUE_URL"`
+	SQSSubscriptionType string `mapstructure:"SQS_SUBSCRIPTION_TYPE"` // "pull" or "lambda"
+	TestUpbitKey        string `mapstructure:"TEST_UPBIT_KEY"`
+	TestUpbitSecret     string `mapstructure:"TEST_UPBIT_SECRET"`
+	TestBinanceKey      string `mapstructure:"TEST_BINANCE_KEY"`
+	TestBinanceSecret   string `mapstructure:"TEST_BINANCE_SECRET"`
 }
 
 func NewConfigWithoutSetting() *Config {

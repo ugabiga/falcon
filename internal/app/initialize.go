@@ -34,6 +34,7 @@ func provider() fx.Option {
 		service.NewTaskService,
 		service.NewTaskHistoryService,
 		service.NewDcaService,
+		service.NewGridService,
 
 		// Handler
 		handler.NewHomeHandler,
@@ -48,6 +49,7 @@ func provider() fx.Option {
 
 		//MessagingPlatform Handler
 		messaging.NewMessageHandler,
+		messaging.NewSQSMessageHandler,
 
 		//Others
 		encryption.NewEncryption,

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/migration"
 	"github.com/ugabiga/falcon/internal/repository"
 	"github.com/ugabiga/falcon/internal/service"
@@ -18,6 +19,8 @@ type Tester struct {
 	DcaSrv            *service.DcaService
 	Migration         *migration.Migration
 	Repository        *repository.DynamoRepository
+	GridSrv           *service.GridService
+	SQSHandler        *messaging.SQSMessageHandler
 }
 
 func NewTester(
@@ -30,6 +33,8 @@ func NewTester(
 	dcaSrv *service.DcaService,
 	mg *migration.Migration,
 	tradingRepository *repository.DynamoRepository,
+	gridSrv *service.GridService,
+	sqsHandler *messaging.SQSMessageHandler,
 ) Tester {
 	return Tester{
 		Cfg:               cfg,
@@ -41,6 +46,8 @@ func NewTester(
 		DcaSrv:            dcaSrv,
 		Migration:         mg,
 		Repository:        tradingRepository,
+		GridSrv:           gridSrv,
+		SQSHandler:        sqsHandler,
 	}
 }
 

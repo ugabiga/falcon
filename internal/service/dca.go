@@ -19,6 +19,7 @@ var (
 )
 
 type TaskOrderInfo struct {
+	TaskType         string
 	TaskID           string
 	TradingAccountID string
 	UserID           string
@@ -55,6 +56,7 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	var taskOrderInfos []TaskOrderInfo
 	for _, t := range tasks {
 		taskOrderInfos = append(taskOrderInfos, TaskOrderInfo{
+			TaskType:         t.Type,
 			TaskID:           t.ID,
 			TradingAccountID: t.TradingAccountID,
 			UserID:           t.UserID,
@@ -106,52 +108,6 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	}
 
 	if err := s.updateNextTaskExecutionTime(ctx, orderInfo.UserID, t); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s DcaService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
-	isSuccess := true
-	logMessage := "task executed successfully"
-	if orderErr != nil {
-		logMessage = orderErr.Error()
-		isSuccess = false
-	}
-	th := model.TaskHistory{
-		TaskID:           t.ID,
-		TradingAccountID: t.TradingAccountID,
-		UserID:           t.UserID,
-		IsSuccess:        isSuccess,
-		Log:              logMessage,
-	}
-
-	log.Printf("Creating task history: %+v", debug.ToJSONInlineStr(th))
-
-	_, err := s.repo.CreateTaskHistory(ctx, th)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
-	u, err := s.repo.GetUser(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	nextCronExecutionTime, err := nextCronExecutionTime(t.Cron, u.Timezone)
-	if err != nil {
-		return err
-	}
-	t.NextExecutionTime = nextCronExecutionTime
-
-	log.Printf("Updating task: %+v", debug.ToJSONInlineStr(t))
-
-	_, err = s.repo.UpdateTask(ctx, *t)
-	if err != nil {
 		return err
 	}
 
@@ -240,6 +196,53 @@ func (s DcaService) OrderFromUpbit(
 	}
 
 	log.Printf("order: %+v", debug.ToJSONInlineStr(order))
+
+	return nil
+}
+
+func (s DcaService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
+	isSuccess := true
+	logMessage := "task executed successfully"
+	if orderErr != nil {
+		logMessage = orderErr.Error()
+		isSuccess = false
+	}
+	th := model.TaskHistory{
+		TaskID:           t.ID,
+		TradingAccountID: t.TradingAccountID,
+		UserID:           t.UserID,
+		IsSuccess:        isSuccess,
+		Log:              logMessage,
+	}
+
+	log.Printf("Creating task history: %+v", debug.ToJSONInlineStr(th))
+
+	_, err := s.repo.CreateTaskHistory(ctx, th)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s DcaService) updateNextTaskExecutionTime(ctx context.Context, userID string, t *model.Task) error {
+	u, err := s.repo.GetUser(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	nextCronExecutionTime, err := nextCronExecutionTime(t.Cron, u.Timezone)
+	if err != nil {
+		return err
+	}
+	t.NextExecutionTime = nextCronExecutionTime
+
+	log.Printf("Updating task: %+v", debug.ToJSONInlineStr(t))
+
+	_, err = s.repo.UpdateTask(ctx, *t)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
