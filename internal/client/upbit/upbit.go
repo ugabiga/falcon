@@ -156,6 +156,28 @@ func (c *Client) OrderChance(ctx context.Context, symbol string) (*OrderChange, 
 	return &orderChange, nil
 }
 
+func (c *Client) OrderBook(ctx context.Context, symbol string) (*OrderBook, error) {
+	params := url.Values{
+		"markets": []string{symbol},
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/v1/orderbook", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var r OrderBooks
+	if err := c.do(req, &r); err != nil {
+		return nil, err
+	}
+
+	if len(r) < 1 {
+		return nil, errors.New("no orderbook")
+	}
+
+	return &r[0], nil
+}
+
 func (c *Client) do(req *http.Request, v interface{}) error {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

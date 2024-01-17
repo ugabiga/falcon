@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"github.com/AlekSi/pointer"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
@@ -235,8 +234,6 @@ func (s TradingAccountService) availableIP(ctx context.Context) (string, error) 
 		log.Printf("failed to get static ip: %v", err)
 		return "", err
 	}
-
-	log.Printf("static ip: %+v", debug.ToJSONStr(staticIP))
 
 	return staticIP.IPAddress, nil
 }

@@ -31,11 +31,6 @@ type Task struct {
 	CreatedAt         time.Time              `json:"created_at"`
 }
 
-type TaskGridParams struct {
-	Gap      int64 `json:"gap"`
-	Quantity int64 `json:"quantity"`
-}
-
 func (t Task) GridParams() (*TaskGridParams, error) {
 	if t.Type != TaskTypeGrid {
 		return nil, ErrInvalidTaskType
@@ -52,4 +47,16 @@ func (t Task) GridParams() (*TaskGridParams, error) {
 	}
 
 	return &gridParams, nil
+}
+
+type TaskGridParams struct {
+	GapPercent int64 `json:"gap_percent"`
+	Quantity   int64 `json:"quantity"`
+}
+
+func (t TaskGridParams) ToParams() map[string]interface{} {
+	return map[string]interface{}{
+		"gap_percent": t.GapPercent,
+		"quantity":    t.Quantity,
+	}
 }

@@ -30,7 +30,7 @@ export const TaskFromSchema = z.object({
         .boolean(),
     grid: z
         .object({
-            gap: z.number({}),
+            gap_percent: z.number({}),
             quantity: z.number({}),
         })
         .optional()
@@ -238,7 +238,7 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
         <>
             <FormField
                 control={form.control}
-                name="grid.gap"
+                name="grid.gap_percent"
                 render={({field}) => (
                     <FormItem>
                         <FormLabel>
