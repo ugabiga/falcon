@@ -49,7 +49,6 @@ func provider() fx.Option {
 
 		//MessagingPlatform Handler
 		messaging.NewMessageHandler,
-		messaging.NewSQSMessageHandler,
 
 		//Others
 		encryption.NewEncryption,
