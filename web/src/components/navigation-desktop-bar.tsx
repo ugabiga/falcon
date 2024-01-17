@@ -1,15 +1,11 @@
-import {usePathname} from "next/navigation";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
-import {NavigationRightMenu} from "@/components/navigation-right-menu";
 import {Icons} from "@/components/icons";
 import {useTranslation} from "@/lib/i18n-server";
-import {Button} from "@/components/ui/button";
-import {NavigationBarSsr} from "@/components/navigation-bar-ssr";
+import {NavigationRightMenu} from "@/components/navigation-right-menu";
 
-export async function NavigationMainBar() {
+export async function NavigationDesktopBar() {
     const {t} = await useTranslation()
-    // const pathname = usePathname()
 
     return (
         <div className="hidden md:flex md:max-w-[1200px] w-full mx-auto justify-between">
@@ -47,8 +43,7 @@ export async function NavigationMainBar() {
                     {t("nav.tasks")}
                 </Link>
                 <div className={"flex-grow"}></div>
-                {/*<NavigationRightMenu/>*/}
-                <NavigationBarSsr/>
+                <NavigationRightMenu/>
             </nav>
         </div>
     )
