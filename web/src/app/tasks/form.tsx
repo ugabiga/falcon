@@ -85,7 +85,7 @@ export function TaskForm(
                         </FormControl>
                         <SelectContent>
                             <SelectItem value="DCA">DCA</SelectItem>
-                            <SelectItem value="Grid">Grid</SelectItem>
+                            <SelectItem value="Grid" disabled>Grid</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
