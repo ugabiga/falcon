@@ -35,6 +35,7 @@ go.work
 /config.yaml
 /config.prod.yaml
 config.yml
+config.prod.yaml
 
 # develop
 /tmp
