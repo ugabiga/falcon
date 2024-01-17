@@ -1,4 +1,4 @@
-package messaging
+package sqs
 
 import (
 	"github.com/ugabiga/falcon/internal/service"
