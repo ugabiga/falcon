@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {ReactNode, useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -90,17 +90,18 @@ export function NavigationMobileBar() {
 
 interface MobileLinkProps extends LinkProps {
     onOpenChange?: (open: boolean) => void
-    children: React.ReactNode
+    children: ReactNode
     className?: string
 }
 
-function MobileLink({
-                        href,
-                        onOpenChange,
-                        className,
-                        children,
-                        ...props
-                    }: MobileLinkProps) {
+function MobileLink(
+    {
+        href,
+        onOpenChange,
+        className,
+        children,
+        ...props
+    }: MobileLinkProps) {
     const router = useRouter()
     return (
         <Link
