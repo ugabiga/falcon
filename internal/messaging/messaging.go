@@ -13,10 +13,7 @@ type MessageHandler interface {
 func NewMessageHandler(
 	cfg *config.Config,
 	dcaSrv *service.DcaService,
+	gridSrv *service.GridService,
 ) MessageHandler {
-	if cfg.MessagingPlatform == "watermill" {
-		return NewWatermillMessageHandler(dcaSrv)
-	}
-
-	return NewSQSMessageHandler(dcaSrv, cfg)
+	return NewSQSMessageHandler(cfg, dcaSrv, gridSrv)
 }
