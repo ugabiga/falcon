@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/adshao/go-binance/v2/common"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/str"
+	"log"
 
 	"github.com/adshao/go-binance/v2/futures"
 )
@@ -32,6 +34,22 @@ func NewBinanceClient(apiKey, secretKey string, isTest bool) *BinanceClient {
 	}
 }
 
+func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (string, string, error) {
+	resp, err := c.future.NewExchangeInfoService().Do(ctx)
+	if err != nil {
+		return "", "", err
+	}
+
+	for _, s := range resp.Symbols {
+		if s.Symbol == symbol {
+			lotSizeFilter := s.LotSizeFilter()
+			priceFilter := s.PriceFilter()
+			return priceFilter.TickSize, lotSizeFilter.StepSize, nil
+		}
+	}
+
+	return "", "", err
+}
 func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.LotSizeFilter, error) {
 	resp, err := c.future.NewExchangeInfoService().Do(ctx)
 	if err != nil {
@@ -40,6 +58,7 @@ func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.Lo
 
 	for _, s := range resp.Symbols {
 		if s.Symbol == symbol {
+			log.Printf("Symbol: %+v", debug.ToJSONStr(s))
 			lotSizeFilter := s.LotSizeFilter()
 			return lotSizeFilter, nil
 		}

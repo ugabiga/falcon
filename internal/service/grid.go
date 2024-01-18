@@ -107,8 +107,66 @@ func (s GridService) OrderFromBinance(
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
 ) error {
-	return nil
+	params, err := t.GridParams()
+	if err != nil {
+		return err
+	}
 
+	symbol := t.Symbol + t.Currency
+	size := t.Size
+	key := tradingAccount.Key
+	decryptedSecret, err := s.encryption.Decrypt(tradingAccount.Secret)
+	if err != nil {
+		return err
+	}
+	c := client.NewBinanceClient(key, decryptedSecret, false)
+	log.Printf("OrderFromBinance: key: %s, size: %f, symbol: %s grid params: %+v",
+		key,
+		size,
+		symbol,
+		debug.ToJSONInlineStr(params),
+	)
+
+	ticker, err := c.Ticker(ctx, symbol)
+	if err != nil {
+		log.Printf("Error getting ticker: %s", err.Error())
+		return err
+	}
+	if ticker == nil {
+		return ErrTickerNotFound
+	}
+
+	tickSizeStr, _, err := c.TickAndStepSize(ctx, symbol)
+	if err != nil {
+		log.Printf("Error getting lotSize: %s", err.Error())
+		return err
+	}
+	tickSize := str.New(tickSizeStr).ToFloat64Default(0)
+	tickerPriceDecimalCount := str.New(ticker.Price).CountDecimalCount()
+	tickerPrice := str.New(ticker.Price).ToFloat64Default(0)
+
+	for i := int64(0); i < params.Quantity; i++ {
+		percentDownTickerPrice := tickerPrice - (tickerPrice * float64(params.GapPercent) / 100)
+		roundedTickerPrice := math.Round(percentDownTickerPrice*math.Pow10(tickerPriceDecimalCount)) / math.Pow10(tickerPriceDecimalCount)
+		trimmedPrice := math.Round(roundedTickerPrice/tickSize) * tickSize
+		log.Printf("tickerPrice: %f,  roundedTickerPrice: %f, trimmedPrice: %f", tickerPrice, roundedTickerPrice, trimmedPrice)
+
+		order, err := c.PlaceOrderAtPrice(ctx,
+			symbol,
+			client.HoldSideLong,
+			str.FromFloat64(size).Val(),
+			str.FromFloat64(trimmedPrice).Val(),
+		)
+		if err != nil {
+			log.Printf("Error placing order: %s", err)
+			continue
+		}
+		log.Printf("Successfully placed order: %+v", debug.ToJSONInlineStr(order))
+
+		tickerPrice = percentDownTickerPrice
+	}
+
+	return nil
 }
 
 func (s GridService) OrderFromUpbit(
