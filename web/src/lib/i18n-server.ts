@@ -54,7 +54,6 @@ export function detectLanguage() {
 
 export async function useTranslation() {
     const lng = detectLanguage()
-    console.log('lng', lng)
     const i18nextInstance = await initI18next(lng)
     return {
         t: i18nextInstance.t,
