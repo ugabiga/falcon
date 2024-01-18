@@ -58,6 +58,11 @@ const handler = NextAuth({
                 })
             })
 
+            if (resp.status !== 200) {
+                console.error("Error", resp.status, resp.statusText)
+                return false;
+            }
+
             const data = await resp.json()
             const {token} = data
 
