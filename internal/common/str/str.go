@@ -1,6 +1,7 @@
 package str
 
 import (
+	"fmt"
 	"github.com/iancoleman/strcase"
 	"strconv"
 )
@@ -20,7 +21,7 @@ func New(str string) *Str {
 }
 
 func FromFloat64(f float64) *Str {
-	return New(strconv.FormatFloat(f, 'f', -1, 64))
+	return New(fmt.Sprintf("%f", f))
 }
 
 func FromFloat64WithPrec(f float64, prec int) *Str {
