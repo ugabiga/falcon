@@ -69,7 +69,7 @@ func (c MessageCore) SubscribeMessage(reqMsg TaskOrderInfoMessage) error {
 			log.Printf("Error occurred during order. Err: %v", err)
 			return err
 		}
-	case model.TaskTypeGrid:
+	case model.TaskTypeLongGrid:
 		log.Printf("Grid task is not supported yet")
 		return nil
 	default:

@@ -132,3 +132,21 @@ func (o OrderBook) UnitPrice() float64 {
 
 	return float64(unitPrice)
 }
+
+type Order struct {
+	UUID            string    `json:"uuid"`
+	Side            string    `json:"side"`
+	OrdType         string    `json:"ord_type"`
+	Price           string    `json:"price"`
+	State           string    `json:"state"`
+	Market          string    `json:"market"`
+	CreatedAt       time.Time `json:"created_at"`
+	Volume          string    `json:"volume"`
+	RemainingVolume string    `json:"remaining_volume"`
+	ReservedFee     string    `json:"reserved_fee"`
+	RemainingFee    string    `json:"remaining_fee"`
+	PaidFee         string    `json:"paid_fee"`
+	Locked          string    `json:"locked"`
+	ExecutedVolume  string    `json:"executed_volume"`
+	TradesCount     int       `json:"trades_count"`
+}

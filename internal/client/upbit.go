@@ -58,3 +58,21 @@ func (c *UpbitClient) OrderBook(ctx context.Context, symbol string) (*upbit.Orde
 
 	return r, nil
 }
+
+func (c *UpbitClient) Orders(ctx context.Context, symbol string) ([]upbit.Order, error) {
+	r, err := c.client.Orders(ctx, symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}
+
+func (c *UpbitClient) CancelOrder(ctx context.Context, uuid string) (*upbit.Order, error) {
+	r, err := c.client.CancelOrder(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}

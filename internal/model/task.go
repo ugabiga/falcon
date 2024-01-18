@@ -11,8 +11,8 @@ var (
 )
 
 const (
-	TaskTypeGrid = "Grid"
-	TaskTypeDCA  = "DCA"
+	TaskTypeLongGrid = "long_grid"
+	TaskTypeDCA      = "dca"
 )
 
 type Task struct {
@@ -32,7 +32,7 @@ type Task struct {
 }
 
 func (t Task) GridParams() (*TaskGridParams, error) {
-	if t.Type != TaskTypeGrid {
+	if t.Type != TaskTypeLongGrid {
 		return nil, ErrInvalidTaskType
 	}
 

@@ -35,7 +35,7 @@ func (s GridService) GetTarget(t Timer) ([]TaskOrderInfo, error) {
 	if t != nil {
 		now = t.NoSeconds()
 	}
-	taskType := model.TaskTypeGrid
+	taskType := model.TaskTypeLongGrid
 	tasks, err := s.repo.GetTasksByActiveNextExecutionTimeAndType(ctx, now, taskType)
 	if err != nil {
 		return nil, err
@@ -127,6 +127,24 @@ func (s GridService) OrderFromBinance(
 		debug.ToJSONInlineStr(params),
 	)
 
+	//cancel all open orders
+	orders, err := c.OpenPositionOrders(ctx, symbol)
+	if err != nil {
+		return err
+	}
+
+	var orderIDs []int64
+	for _, order := range orders {
+		orderIDs = append(orderIDs, order.OrderID)
+	}
+
+	if len(orderIDs) > 0 {
+		_, err = c.CancelOpenOrders(ctx, symbol, orderIDs)
+		if err != nil {
+			return err
+		}
+	}
+
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
 		log.Printf("Error getting ticker: %s", err.Error())
@@ -190,6 +208,17 @@ func (s GridService) OrderFromUpbit(
 	log.Printf("OrderFromUpbit: key: %s, size: %f, symbol: %s", key, size, symbol)
 
 	c := client.NewUpbitClient(key, decryptedSecret)
+
+	orders, err := c.Orders(ctx, symbol)
+	if err != nil {
+		return err
+	}
+
+	for _, order := range orders {
+		if _, err := c.CancelOrder(ctx, order.UUID); err != nil {
+			log.Printf("Error canceling order: %s", err.Error())
+		}
+	}
 
 	orderBook, err := c.OrderBook(ctx, symbol)
 	if err != nil {
