@@ -44,7 +44,7 @@ func TestGridService_GetTarget(t *testing.T) {
 				Symbol:           "BTC",
 				Hours:            time.Now().Format("18"),
 				Days:             "1,2,3,4,5,6,7",
-				Type:             model.TaskTypeGrid,
+				Type:             model.TaskTypeLongGrid,
 				Params:           map[string]interface{}{},
 			})
 		if err != nil {
@@ -96,11 +96,11 @@ func TestGridService_Order(t *testing.T) {
 			generated.CreateTaskInput{
 				TradingAccountID: tradingAccount.ID,
 				Currency:         "KRW",
-				Size:             0.00001,
+				Size:             0.0001,
 				Symbol:           "BTC",
 				Hours:            time.Now().Format("18"),
 				Days:             "1,2,3,4,5,6,7",
-				Type:             model.TaskTypeGrid,
+				Type:             model.TaskTypeLongGrid,
 				Params:           gridTaskParams.ToParams(),
 			})
 		if err != nil {
@@ -146,11 +146,11 @@ func TestGridService_Order(t *testing.T) {
 			generated.CreateTaskInput{
 				TradingAccountID: tradingAccount.ID,
 				Currency:         "USDT",
-				Size:             0.00001,
+				Size:             0.003,
 				Symbol:           "BTC",
 				Hours:            time.Now().Format("18"),
 				Days:             "1,2,3,4,5,6,7",
-				Type:             model.TaskTypeGrid,
+				Type:             model.TaskTypeLongGrid,
 				Params:           gridTaskParams.ToParams(),
 			})
 		if err != nil {

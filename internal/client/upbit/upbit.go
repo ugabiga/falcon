@@ -178,6 +178,45 @@ func (c *Client) OrderBook(ctx context.Context, symbol string) (*OrderBook, erro
 	return &r[0], nil
 }
 
+func (c *Client) Orders(ctx context.Context, symbol string) ([]Order, error) {
+	params := url.Values{
+		"market": []string{symbol},
+		"state":  []string{"wait"},
+		"page":   []string{"1"},
+		"limit":  []string{"100"},
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/v1/orders", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var orders []Order
+	if err := c.do(req, &orders); err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
+
+func (c *Client) CancelOrder(ctx context.Context, uuid string) (*Order, error) {
+	params := url.Values{
+		"uuid": []string{uuid},
+	}
+
+	req, err := c.newRequest(http.MethodDelete, "/v1/order", params)
+	if err != nil {
+		return nil, err
+	}
+
+	var order Order
+	if err := c.do(req, &order); err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
+
 func (c *Client) do(req *http.Request, v interface{}) error {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
