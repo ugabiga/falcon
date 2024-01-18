@@ -97,6 +97,8 @@ type OrderChange struct {
 	} `json:"ask_account"`
 }
 
+type OrderBooks []OrderBook
+
 type OrderBook struct {
 	Market         string `json:"market"`
 	OrderbookUnits []struct {
@@ -110,4 +112,23 @@ type OrderBook struct {
 	TotalBidSize float64 `json:"total_bid_size"`
 }
 
-type OrderBooks []OrderBook
+func (o OrderBook) UnitPrice() float64 {
+	unitPrice := int64(0)
+	for i, orderBookUnit := range o.OrderbookUnits {
+		if i == 0 {
+			continue
+		}
+		previousOrderBookUnit := o.OrderbookUnits[i-1]
+		currentOrderBookUnit := orderBookUnit
+		subtract := currentOrderBookUnit.AskPrice - previousOrderBookUnit.AskPrice
+
+		if unitPrice == 0 {
+			unitPrice = subtract
+		}
+		if subtract < unitPrice {
+			unitPrice = subtract
+		}
+	}
+
+	return float64(unitPrice)
+}
