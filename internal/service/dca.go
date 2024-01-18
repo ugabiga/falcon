@@ -47,7 +47,8 @@ func (s DcaService) GetTarget() ([]TaskOrderInfo, error) {
 	log.Printf("Searching for tasks with next execution time: %s", now.String())
 
 	// TODO add pagination
-	tasks, err := s.repo.GetTasksByActiveNextExecutionTime(ctx, now)
+	taskType := model.TaskTypeDCA
+	tasks, err := s.repo.GetTasksByActiveNextExecutionTimeAndType(ctx, now, taskType)
 	if err != nil {
 		return nil, err
 	}
