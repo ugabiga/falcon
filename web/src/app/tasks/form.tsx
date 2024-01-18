@@ -84,8 +84,8 @@ export function TaskForm(
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="dca">DCA</SelectItem>
-                            <SelectItem value="long_grid">Long Grid</SelectItem>
+                            <SelectItem value="dca">{t("tasks.type.dca")}</SelectItem>
+                            <SelectItem value="long_grid">{t("tasks.type.long_grid")}</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>

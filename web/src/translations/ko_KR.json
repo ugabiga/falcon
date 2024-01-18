@@ -119,5 +119,7 @@
   "error.unauthorized_action": "이 작업을 수행할 권한이 없습니다",
   "manual.btn": "메뉴얼 보기",
   "common.exchange.upbit": "업비트",
-  "common.exchange.binance_futures": "바이낸스 선물"
+  "common.exchange.binance_futures": "바이낸스 선물",
+  "tasks.type.dca": "달러평균비용법",
+  "tasks.type.long_grid": "롱 그리드"
 }

@@ -72,7 +72,9 @@ export function TaskTable(
                             : tradingAccount?.tasks?.map((task) => (
                                     <TableRow key={task.id}>
                                         <TableCell>{task.id}</TableCell>
-                                        <TableCell>{task.type}</TableCell>
+                                        <TableCell>
+                                            {t("tasks.type." + task.type)}
+                                        </TableCell>
                                         <TableCell>
                                             {convertSchedule(task.cron)}
                                         </TableCell>
