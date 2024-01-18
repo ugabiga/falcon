@@ -25,7 +25,7 @@ export const TaskFromSchema = z.object({
     hours: z
         .string(),
     type: z
-        .enum(["DCA", "Grid"]),
+        .enum(["dca", "long_grid"]),
     isActive: z
         .boolean(),
     grid: z
@@ -84,8 +84,8 @@ export function TaskForm(
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="DCA">DCA</SelectItem>
-                            <SelectItem value="Grid" disabled>Grid</SelectItem>
+                            <SelectItem value="dca">DCA</SelectItem>
+                            <SelectItem value="long_grid">Long Grid</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -221,7 +221,7 @@ export function TaskForm(
             )}
         />
 
-        {form.watch("type") === "Grid" && <GridFormFields form={form}/>}
+        {form.watch("type") === "long_grid" && <GridFormFields form={form}/>}
 
         {/* Submit */}
         <DialogFooter>
@@ -247,6 +247,7 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                         <FormControl>
                             <Input type="number"
                                    min={0}
+                                   step={1}
                                    placeholder={t("tasks.form.grid.gap")}
                                    value={field.value}
                                    onChange={(e) => {
@@ -268,7 +269,10 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                             {t("tasks.form.grid.quantity")}
                         </FormLabel>
                         <FormControl>
-                            <Input type="number" placeholder={t("tasks.form.grid.quantity")}
+                            <Input type="number"
+                                   min={1}
+                                   step={1}
+                                   placeholder={t("tasks.form.grid.quantity")}
                                    value={field.value}
                                    onChange={(e) => {
                                        field.onChange(Number(e.target.value))

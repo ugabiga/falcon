@@ -140,12 +140,12 @@ function convertCronToDays(cron: string): string {
     return result
 }
 
-function convertStringToTaskType(value: string): "DCA" | "Grid" {
-    return value === "DCA" ? "DCA" : "Grid"
+function convertStringToTaskType(value: string): "dca" | "long_grid" {
+    return value === "dca" ? "dca" : "long_grid"
 }
 
 function parseGridParams(task: Task): { gap_percent: number, quantity: number } {
-    if (task.type === "Grid") {
+    if (task.type === "long_grid") {
         return {
             gap_percent: task.params?.gap_percent ?? 0,
             quantity: task.params?.quantity
@@ -159,7 +159,7 @@ function parseGridParams(task: Task): { gap_percent: number, quantity: number } 
 }
 
 function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): { gap_percent: number, quantity: number } | null {
-    if (data.type === "Grid") {
+    if (data.type === "long_grid") {
         return {
             gap_percent: data.grid?.gap_percent ?? 0,
             quantity: data.grid?.quantity ?? 0,

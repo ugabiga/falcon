@@ -22,7 +22,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
         resolver: zodResolver(TaskFromSchema),
         defaultValues: {
             hours: "",
-            type: "DCA",
+            type: "dca",
             isActive: true,
         },
     })
