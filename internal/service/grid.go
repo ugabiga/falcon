@@ -148,13 +148,13 @@ func (s GridService) OrderFromUpbit(
 	}
 
 	tradePrice := ticker.TradePrice
-	tradeUnitPrice := orderBook.UnitPrice()
-	tradeLot := s.upbitLot(tradeUnitPrice)
+	tradeUnit := orderBook.UnitPrice()
+	tradeLot := s.upbitLot(tradeUnit)
 
 	for i := int64(0); i < params.Quantity; i++ {
 		percentDownTradePrice := tradePrice - (tradePrice * float64(params.GapPercent) / 100)
 		appliedLotPrice := math.Round(percentDownTradePrice/tradeLot) * tradeLot
-		appliedUnitPrice := appliedLotPrice - math.Mod(appliedLotPrice, tradeUnitPrice)
+		appliedUnitPrice := appliedLotPrice - math.Mod(appliedLotPrice, tradeUnit)
 		log.Printf("tradePrice: %f,  percentDownTradePrice: %f", tradePrice, appliedUnitPrice)
 
 		order, err := c.PlaceLongOrderAt(
