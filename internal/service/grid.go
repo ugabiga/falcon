@@ -3,16 +3,15 @@ package service
 import (
 	"context"
 	"github.com/ugabiga/falcon/internal/client"
-	"github.com/ugabiga/falcon/internal/client/upbit"
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/common/encryption"
+	"github.com/ugabiga/falcon/internal/common/inti"
 	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/common/timer"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
 	"math"
-	"strconv"
 )
 
 type GridService struct {
@@ -149,22 +148,30 @@ func (s GridService) OrderFromUpbit(
 	}
 
 	tradePrice := ticker.TradePrice
-	tradeUnitPrice := s.upbitUnitPrice(orderBook)
+	tradeUnitPrice := orderBook.UnitPrice()
 	tradeLot := s.upbitLot(tradeUnitPrice)
 
 	for i := int64(0); i < params.Quantity; i++ {
 		percentDownTradePrice := tradePrice - (tradePrice * float64(params.GapPercent) / 100)
-		percentDownTradePrice = math.Round(percentDownTradePrice/tradeLot) * tradeLot
-		percentDownTradePrice = percentDownTradePrice - math.Mod(percentDownTradePrice, tradeUnitPrice)
-		log.Printf("tradePrice: %f,  percentDownTradePrice: %f", tradePrice, percentDownTradePrice)
+		appliedLotPrice := math.Round(percentDownTradePrice/tradeLot) * tradeLot
+		appliedUnitPrice := appliedLotPrice - math.Mod(appliedLotPrice, tradeUnitPrice)
+		log.Printf("tradePrice: %f,  percentDownTradePrice: %f", tradePrice, appliedUnitPrice)
 
-		tradePriceStr := str.FromFloat64(percentDownTradePrice).Val()
-		sizeStr := str.FromFloat64(size).Val()
-		order, err := c.PlaceLongOrderAt(ctx, symbol, sizeStr, tradePriceStr)
+		order, err := c.PlaceLongOrderAt(
+			ctx,
+			symbol,
+			str.FromFloat64(size).Val(),
+			str.FromFloat64(appliedUnitPrice).Val(),
+		)
 		if err != nil {
+			log.Printf("Error placing order: %s", err.Error())
 			continue
 		}
-		log.Printf("order: %+v", debug.ToJSONInlineStr(order))
+		if order.UUID == "" {
+			log.Printf("Error placing order: %s", debug.ToJSONInlineStr(order))
+			continue
+		}
+		log.Printf("Successfully placed order: %+v", debug.ToJSONInlineStr(order))
 
 		tradePrice = percentDownTradePrice
 	}
@@ -172,41 +179,8 @@ func (s GridService) OrderFromUpbit(
 	return nil
 }
 func (s GridService) upbitLot(unitPrice float64) float64 {
-	lot := countZeros(int(unitPrice))
-
+	lot := inti.CountZeros(int(unitPrice))
 	return math.Pow(10, float64(lot))
-}
-func (s GridService) upbitUnitPrice(orderBook *upbit.OrderBook) float64 {
-	minimumSubtract := int64(0)
-	for i, orderBookUnit := range orderBook.OrderbookUnits {
-		if i == 0 {
-			continue
-		}
-		previousOrderBookUnit := orderBook.OrderbookUnits[i-1]
-		currentOrderBookUnit := orderBookUnit
-		subtract := currentOrderBookUnit.AskPrice - previousOrderBookUnit.AskPrice
-
-		if minimumSubtract == 0 {
-			minimumSubtract = subtract
-		}
-		if subtract < minimumSubtract {
-			minimumSubtract = subtract
-		}
-	}
-
-	return float64(minimumSubtract)
-
-}
-
-func countZeros(n int) int {
-	str := strconv.Itoa(n)
-	count := 0
-	for _, char := range str {
-		if char == '0' {
-			count++
-		}
-	}
-	return count
 }
 
 func (s GridService) createTaskHistory(ctx context.Context, orderErr error, t *model.Task) error {
