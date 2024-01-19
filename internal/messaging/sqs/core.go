@@ -101,7 +101,10 @@ func (c MessageCore) SubscribeMessage(reqMsg TaskOrderInfoMessage) error {
 			return err
 		}
 	case model.TaskTypeLongGrid:
-		log.Printf("Grid task is not supported yet")
+		if err := c.gridSrv.Order(reqMsg.TaskOrderInfo); err != nil {
+			log.Printf("Error occurred during order. Err: %v", err)
+			return err
+		}
 		return nil
 	default:
 		log.Printf("Unknown task type: %s", reqMsg.TaskOrderInfo.TaskType)
