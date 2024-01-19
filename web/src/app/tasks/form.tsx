@@ -86,7 +86,7 @@ export function TaskForm(
                         </FormControl>
                         <SelectContent>
                             <SelectItem value={TaskType.DCA}>{t("tasks.type.dca")}</SelectItem>
-                            <SelectItem value={TaskType.LongGrid}>{t("tasks.type.long_grid")}</SelectItem>
+                            <SelectItem value={TaskType.BuyingGrid}>{t("tasks.type.buying_grid")}</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -222,7 +222,7 @@ export function TaskForm(
             )}
         />
 
-        {form.watch("type") === TaskType.LongGrid && <GridFormFields form={form}/>}
+        {form.watch("type") === TaskType.BuyingGrid && <GridFormFields form={form}/>}
 
         {/* Submit */}
         <DialogFooter>
