@@ -15,6 +15,7 @@ import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
 import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 import {refreshTask} from "@/store/refresherSlice";
+import {convertStringToTaskType, TaskType} from "@/lib/model";
 
 export function EditTask(
     {
@@ -140,12 +141,8 @@ function convertCronToDays(cron: string): string {
     return result
 }
 
-function convertStringToTaskType(value: string): "dca" | "long_grid" {
-    return value === "dca" ? "dca" : "long_grid"
-}
-
 function parseGridParams(task: Task): { gap_percent: number, quantity: number } {
-    if (task.type === "long_grid") {
+    if (task.type === TaskType.LongGrid) {
         return {
             gap_percent: task.params?.gap_percent ?? 0,
             quantity: task.params?.quantity
@@ -159,7 +156,7 @@ function parseGridParams(task: Task): { gap_percent: number, quantity: number } 
 }
 
 function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): { gap_percent: number, quantity: number } | null {
-    if (data.type === "long_grid") {
+    if (data.type === TaskType.LongGrid) {
         return {
             gap_percent: data.grid?.gap_percent ?? 0,
             quantity: data.grid?.quantity ?? 0,

@@ -11,7 +11,7 @@ var (
 )
 
 const (
-	TaskTypeLongGrid = "long_grid"
+	TaskTypeLongGrid = "buying_grid"
 	TaskTypeDCA      = "dca"
 )
 

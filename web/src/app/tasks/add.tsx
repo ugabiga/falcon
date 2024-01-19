@@ -12,6 +12,7 @@ import {errorToast} from "@/components/toast";
 import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
+import {TaskType} from "@/lib/model";
 
 export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     const {t} = useTranslation();
@@ -22,7 +23,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
         resolver: zodResolver(TaskFromSchema),
         defaultValues: {
             hours: "",
-            type: "dca",
+            type: TaskType.DCA,
             isActive: true,
         },
     })

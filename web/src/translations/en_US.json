@@ -123,5 +123,6 @@
   "common.exchange.upbit": "Upbit",
   "common.exchange.binance_futures": "Binance Future",
   "tasks.type.dca": "DCA",
-  "tasks.type.long_grid": "Long Grid"
+  "tasks.type.long_grid": "Long Grid",
+  "tasks.type.buying_grid": "Buying Grid"
 }

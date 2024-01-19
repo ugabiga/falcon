@@ -12,6 +12,7 @@ import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
 import {NumericFormatInput} from "@/components/numeric-format-input";
 import {TradingAccount} from "@/graph/generated/generated";
 import {ExchangeList} from "@/lib/exchanges";
+import {TaskType} from "@/lib/model";
 
 export const TaskFromSchema = z.object({
     currency: z
@@ -25,7 +26,7 @@ export const TaskFromSchema = z.object({
     hours: z
         .string(),
     type: z
-        .enum(["dca", "long_grid"]),
+        .nativeEnum(TaskType),
     isActive: z
         .boolean(),
     grid: z
@@ -84,8 +85,8 @@ export function TaskForm(
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                            <SelectItem value="dca">{t("tasks.type.dca")}</SelectItem>
-                            <SelectItem value="long_grid">{t("tasks.type.long_grid")}</SelectItem>
+                            <SelectItem value={TaskType.DCA}>{t("tasks.type.dca")}</SelectItem>
+                            <SelectItem value={TaskType.LongGrid}>{t("tasks.type.long_grid")}</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
@@ -221,7 +222,7 @@ export function TaskForm(
             )}
         />
 
-        {form.watch("type") === "long_grid" && <GridFormFields form={form}/>}
+        {form.watch("type") === TaskType.LongGrid && <GridFormFields form={form}/>}
 
         {/* Submit */}
         <DialogFooter>
