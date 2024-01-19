@@ -122,6 +122,6 @@
   "manual.btn": "Manual",
   "common.exchange.upbit": "Upbit",
   "common.exchange.binance_futures": "Binance Future",
-  "tasks.table.type.dca": "DCA",
-  "tasks.table.type.long_grid": "Long Grid"
+  "tasks.type.dca": "DCA",
+  "tasks.type.long_grid": "Long Grid"
 }
