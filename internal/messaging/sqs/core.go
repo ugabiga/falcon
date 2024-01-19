@@ -31,6 +31,37 @@ func (c MessageCore) PublishMessages() error {
 		log.Printf("Error occurred during publishing DCA messages. Err: %v", err)
 	}
 
+	if err := c.publishLongGridMessages(); err != nil {
+		log.Printf("Error occurred during publishing LongGrid messages. Err: %v", err)
+	}
+
+	return nil
+}
+func (c MessageCore) publishLongGridMessages() error {
+	messages, err := c.gridSrv.GetTarget(nil)
+	if err != nil {
+		return err
+	}
+
+	if len(messages) == 0 {
+		log.Printf("No messages to publish")
+		return nil
+	}
+
+	var gridMessages []TaskOrderInfoMessage
+	for _, msg := range messages {
+		gridMessages = append(gridMessages, TaskOrderInfoMessage{
+			TaskOrderInfo: msg,
+		})
+	}
+
+	for _, msg := range gridMessages {
+		if _, err := c.sqsClient.Publish(msg); err != nil {
+			log.Printf("Error occurred during publishing. Err: %v", err)
+			continue
+		}
+	}
+
 	return nil
 }
 
