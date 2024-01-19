@@ -71,7 +71,7 @@ export function TaskCards(
                                         {t("task.table.is_active.boolean." + task.isActive)}
                                     </Label>
                                     <Label>
-                                        {t("tasks.table.type")} : {task.type}
+                                        {t("tasks.table.type")} : {t("tasks.type." + task.type)}
                                     </Label>
                                     <Label>
                                         {t("tasks.table.symbol")} : {task.symbol}
