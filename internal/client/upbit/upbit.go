@@ -66,6 +66,25 @@ func (c *Client) Accounts() ([]Account, error) {
 	return accounts, nil
 }
 
+func (c *Client) TickerPublic(ctx context.Context, symbol string) (*Ticker, error) {
+	params := url.Values{
+		"markets": []string{symbol},
+	}
+
+	req, err := c.newPublicRequest(http.MethodGet, "/v1/ticker", params)
+	if err != nil {
+		log.Printf("Error creating request: %s", err.Error())
+		return nil, err
+	}
+
+	var ticker []Ticker
+	if err := c.do(req, &ticker); err != nil {
+		return nil, err
+	}
+
+	return &ticker[0], nil
+}
+
 func (c *Client) Ticker(ctx context.Context, symbol string) (*Ticker, error) {
 	params := url.Values{
 		"markets": []string{symbol},
@@ -265,6 +284,34 @@ func (c *Client) do(req *http.Request, v interface{}) error {
 	}
 
 	return nil
+}
+
+func (c *Client) newPublicRequest(method, url string, values url.Values) (*http.Request, error) {
+	var (
+		req *http.Request
+		err error
+	)
+
+	// Build request
+	switch method {
+	case http.MethodGet, http.MethodDelete:
+		req, err = http.NewRequest(method, c.basedURL+url+"?"+values.Encode(), nil)
+		if err != nil {
+			return nil, err
+		}
+	case http.MethodPost, http.MethodPut:
+		req, err = http.NewRequest(method, c.basedURL+url, strings.NewReader(values.Encode()))
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, errors.New("invalid method")
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	return req, nil
 }
 
 func (c *Client) newRequest(method, url string, values url.Values) (*http.Request, error) {
