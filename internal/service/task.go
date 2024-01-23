@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/ugabiga/falcon/internal/client"
+	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
@@ -16,14 +19,16 @@ const (
 )
 
 type TaskService struct {
-	repo *repository.DynamoRepository
+	repo        *repository.DynamoRepository
+	upbitClient *client.UpbitClient
 }
 
 func NewTaskService(
 	repo *repository.DynamoRepository,
 ) *TaskService {
 	return &TaskService{
-		repo: repo,
+		repo:        repo,
+		upbitClient: client.NewUpbitClient("", ""),
 	}
 }
 
@@ -37,6 +42,10 @@ func (s TaskService) Create(ctx context.Context, userID string, input generated.
 	}
 
 	if err := s.validateHours(input.Hours); err != nil {
+		return nil, err
+	}
+
+	if err := s.validateSize(ctx, userID, input.TradingAccountID, input.Currency, input.Symbol, input.Size); err != nil {
 		return nil, err
 	}
 
@@ -183,28 +192,49 @@ func (s TaskService) validateCurrency(currency string) error {
 	}
 }
 
-func (s TaskService) validateSize(size float64) error {
-	//TODO validate lot size
-	//TODO validate min notional
-
-	//lotSize, err := c.LotSize(ctx, symbol)
-	//if err != nil {
-	//	log.Printf("Error getting lot size: %s", err.Error())
-	//	return err
-	//}
-	//lotStep := str.New(lotSize.StepSize).CountDecimalCount()
-	//tmp := ToFixed(size, lotStep)
-	//
-	//log.Printf("ticker: %+v", debug.ToJSONInlineStr(lotSize))
-	//log.Printf("tmp: %+v", tmp)
-	//log.Printf("lotStemp: %+v", lotStep)
-
+func (s TaskService) validateSize(ctx context.Context, userID, tradingAccountID, currency, symbol string, size float64) error {
+	log.Printf("validateSize: %+v", size)
 	if size < 0 {
-		return ErrSizeNotSatisfiedMinimum
+		return ErrSizeNotSatisfiedMinimumSize
 	}
-	return nil
+
+	tradingAccount, err := s.repo.GetTradingAccount(ctx, userID, tradingAccountID)
+	if err != nil {
+		return err
+	}
+	log.Printf("validateSize: %+v", debug.ToJSONStr(tradingAccount))
+
+	switch tradingAccount.Exchange {
+	case model.ExchangeUpbit:
+		return s.validateUpbitSize(ctx, currency, symbol, size)
+	case model.ExchangeBinanceFutures:
+		return s.validateBinanceSize(ctx, symbol, size)
+	default:
+		return ErrWrongExchange
+	}
 }
 
 func (s TaskService) cronExpression(hour string, days string) string {
 	return "0 0 " + hour + " * * " + days
+}
+
+func (s TaskService) validateUpbitSize(ctx context.Context, currency, symbol string, size float64) error {
+	minimumUpbitSize := 5000
+	upbitSymbol := currency + "-" + symbol
+	ticker, err := s.upbitClient.TickerPublic(ctx, upbitSymbol)
+	if err != nil {
+		return err
+	}
+
+	orderSize := size * ticker.TradePrice
+	if orderSize < float64(minimumUpbitSize) {
+		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() + fmt.Sprintf("#%s-%d", currency, minimumUpbitSize))
+	}
+
+	return nil
+}
+
+func (s TaskService) validateBinanceSize(ctx context.Context, symbol string, size float64) error {
+
+	return nil
 }
