@@ -124,5 +124,6 @@
   "common.exchange.binance_futures": "Binance Future",
   "tasks.type.dca": "DCA",
   "tasks.type.long_grid": "Long Grid",
-  "tasks.type.buying_grid": "Buying Grid"
+  "tasks.type.buying_grid": "Buying Grid",
+  "error.size_not_satisfied_minimum_size": "Size cost should be greater than {{size}}"
 }

@@ -1,3 +1,5 @@
+import {TFunction} from "i18next";
+
 export function transformErrorMessage(message: string) {
 
     if (message === "Failed to fetch") {
@@ -12,12 +14,15 @@ export function transformErrorMessage(message: string) {
         return "You have reached the maximum number of items you can create."
     }
 
-    if (message.includes("error.size_not_satisfied_minimum_size")) {
-        const size = message.split("#")[1]
-            .replace("-", " ")
+    return message;
+}
 
-        return `The minimum size is ${size}`
+export function translatedError(t: TFunction<"translation", undefined>, message: string) {
+    if (message.includes("size_not_satisfied_minimum_size")) {
+        const size = message.split("#")[1]
+
+        return t("error.size_not_satisfied_minimum_size", {size})
     }
 
-    return message;
+    return t("error." + message)
 }

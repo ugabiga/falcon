@@ -122,5 +122,6 @@
   "common.exchange.binance_futures": "바이낸스 선물",
   "tasks.type.dca": "달러평균비용법",
   "tasks.type.long_grid": "롱 그리드",
-  "tasks.type.buying_grid": "매수 그리드"
+  "tasks.type.buying_grid": "매수 그리드",
+  "error.size_not_satisfied_minimum_size": "주문 크기는 최소 {{size}} 이상이어야 합니다"
 }
