@@ -13,6 +13,7 @@ import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
 import {TaskType} from "@/lib/model";
+import {translatedError} from "@/lib/error";
 
 export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     const {t} = useTranslation();
@@ -47,7 +48,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
                 refresh: true
             }))
         }).catch((e) => {
-            errorToast(t("error." + e.message))
+            errorToast(translatedError(t, e.message))
         })
     }
 

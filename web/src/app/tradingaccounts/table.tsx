@@ -1,9 +1,8 @@
 import {TradingAccount} from "@/graph/generated/generated";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {camelize, trim} from "@/lib/str";
+import {trim} from "@/lib/str";
 import {useTranslation} from "react-i18next";
 import {TradingAccountMoreBtn} from "@/app/tradingaccounts/more-btn";
-import {ExchangeList} from "@/lib/exchanges";
 
 
 export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
