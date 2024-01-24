@@ -29,7 +29,6 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     })
 
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
-        console.log("data", data)
         createTask({
             variables: {
                 tradingAccountID: tradingAccount.id,
