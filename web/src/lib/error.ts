@@ -12,5 +12,12 @@ export function transformErrorMessage(message: string) {
         return "You have reached the maximum number of items you can create."
     }
 
+    if (message.includes("error.size_not_satisfied_minimum_size")) {
+        const size = message.split("#")[1]
+            .replace("-", " ")
+
+        return `The minimum size is ${size}.`
+    }
+
     return message;
 }
