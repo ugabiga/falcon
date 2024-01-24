@@ -255,6 +255,7 @@ func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *mo
 		return err
 	}
 
+	tickerPriceDecimalCount := str.New(ticker.Price).CountDecimalCount()
 	leverage := str.New(position.Leverage).ToIntDefault(0)
 	price := str.New(ticker.Price).ToFloat64Default(0)
 	costWithoutLeverage := price * size
@@ -262,7 +263,10 @@ func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *mo
 	requiredCost := math.Round(minimumBinanceCost * float64(leverage))
 
 	if cost < minimumBinanceCost {
-		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() + fmt.Sprintf("#%s-%f", currency, requiredCost))
+		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() +
+			fmt.Sprintf("#%s-", currency) +
+			strconv.FormatFloat(requiredCost, 'f', tickerPriceDecimalCount, 64),
+		)
 	}
 
 	return nil
