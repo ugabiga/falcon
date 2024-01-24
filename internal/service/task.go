@@ -221,16 +221,16 @@ func (s TaskService) cronExpression(hour string, days string) string {
 
 func (s TaskService) validateUpbitSize(ctx context.Context, currency, symbol string, size float64) error {
 	upbitClient := client.NewUpbitClient("", "")
-	minimumUpbitSize := 5000
+	minimumUpbitCost := 5000
 	upbitSymbol := currency + "-" + symbol
 	ticker, err := upbitClient.TickerPublic(ctx, upbitSymbol)
 	if err != nil {
 		return err
 	}
 
-	orderSize := size * ticker.TradePrice
-	if orderSize < float64(minimumUpbitSize) {
-		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() + fmt.Sprintf("#%s-%d", currency, minimumUpbitSize))
+	minimumSize := float64(minimumUpbitCost) / ticker.TradePrice
+	if size < minimumSize {
+		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() + fmt.Sprintf("#%f", minimumSize))
 	}
 
 	return nil
@@ -241,7 +241,6 @@ func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *mo
 	if err != nil {
 		return err
 	}
-
 	binanceClient := client.NewBinanceClient(tradingAccount.Key, secret, false)
 	binanceSymbol := symbol + currency
 	minimumBinanceCost := 5.0
@@ -250,22 +249,27 @@ func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *mo
 	if err != nil {
 		return err
 	}
+	tickerPrice := str.New(ticker.Price).ToFloat64Default(0)
+
 	position, err := binanceClient.PositionWithoutSideIncludeEmpty(ctx, binanceSymbol)
 	if err != nil {
 		return err
 	}
-
-	tickerPriceDecimalCount := str.New(ticker.Price).CountDecimalCount()
 	leverage := str.New(position.Leverage).ToIntDefault(0)
-	price := str.New(ticker.Price).ToFloat64Default(0)
-	costWithoutLeverage := price * size
-	cost := costWithoutLeverage / float64(leverage)
-	requiredCost := math.Round(minimumBinanceCost * float64(leverage))
 
-	if cost < minimumBinanceCost {
+	_, stepSizeStr, err := binanceClient.TickAndStepSize(ctx, binanceSymbol)
+	if err != nil {
+		return err
+	}
+	stepSizeDecimalCount := str.New(stepSizeStr).CountDecimalCount()
+
+	minimumCost := math.Round(minimumBinanceCost * float64(leverage))
+	minimumSize := math.Round(minimumCost/tickerPrice*math.Pow10(stepSizeDecimalCount)) / math.Pow10(stepSizeDecimalCount)
+
+	if size < minimumSize {
 		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() +
-			fmt.Sprintf("#%s-", currency) +
-			strconv.FormatFloat(requiredCost, 'f', tickerPriceDecimalCount, 64),
+			"#" +
+			strconv.FormatFloat(minimumSize, 'f', stepSizeDecimalCount, 64),
 		)
 	}
 
