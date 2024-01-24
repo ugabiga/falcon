@@ -18,6 +18,8 @@ var (
 
 var (
 	ErrPositionNotFound = errors.New("position not found")
+	ErrPrecisionError   = errors.New("precision_error")
+	ErrMinNotional      = errors.New("not_satisfied_min_notional")
 )
 
 type BinanceClient struct {
@@ -32,6 +34,23 @@ func NewBinanceClient(apiKey, secretKey string, isTest bool) *BinanceClient {
 	return &BinanceClient{
 		future: c,
 	}
+}
+
+func (c *BinanceClient) MinQuantity(ctx context.Context, symbol string) (string, error) {
+	resp, err := c.future.NewExchangeInfoService().Do(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	for _, s := range resp.Symbols {
+		if s.Symbol == symbol {
+			lotSizeFilter := s.PriceFilter()
+			log.Printf("Symbol: %+v", debug.ToJSONStr(s))
+			return lotSizeFilter.MinPrice, nil
+		}
+	}
+
+	return "", err
 }
 
 func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (string, string, error) {
@@ -50,6 +69,7 @@ func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (str
 
 	return "", "", err
 }
+
 func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.LotSizeFilter, error) {
 	resp, err := c.future.NewExchangeInfoService().Do(ctx)
 	if err != nil {
@@ -93,6 +113,21 @@ func (c *BinanceClient) Ticker(ctx context.Context, symbol string) (*futures.Sym
 	for _, t := range resp {
 		if t.Symbol == symbol {
 			return t, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (c *BinanceClient) PositionWithoutSideIncludeEmpty(ctx context.Context, symbol string) (*futures.AccountPosition, error) {
+	resp, err := c.future.NewGetAccountService().Do(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range resp.Positions {
+		if p.Symbol == symbol {
+			return p, nil
 		}
 	}
 
@@ -190,30 +225,6 @@ func (c *BinanceClient) PlaceOrderAtPrice(ctx context.Context, symbol, holdSide,
 	}
 
 	return resp, nil
-}
-
-var (
-	ErrPrecisionError = errors.New("precision_error")
-	ErrMinNotional    = errors.New("not_satisfied_min_notional")
-)
-
-func (c *BinanceClient) errorConverter(apiErr error) error {
-	var e *common.APIError
-	switch {
-	case errors.As(apiErr, &e):
-		switch e.Code {
-		case -4164:
-			return ErrMinNotional
-		case -1111:
-			return ErrPrecisionError
-		default:
-			return apiErr
-		}
-	default:
-		return apiErr
-	}
-
-	return apiErr
 }
 
 func (c *BinanceClient) PlaceOrder(ctx context.Context, symbol, holdSide, size string) (*futures.CreateOrderResponse, error) {
@@ -426,6 +437,23 @@ func (c *BinanceClient) LimitOrder(ctx context.Context, symbol string) (*futures
 	return nil, nil
 }
 
+func (c *BinanceClient) NotionAndLeverageBrackets(ctx context.Context, symbol string) (*futures.LeverageBracket, error) {
+	resp, err := c.future.NewGetLeverageBracketService().
+		Symbol(symbol).
+		Do(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, bracket := range resp {
+		if bracket.Symbol == symbol {
+			return bracket, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func (c *BinanceClient) oppositeHoldSide(holdSide string) futures.SideType {
 	side := c.convertHoldSide(holdSide)
 	switch side {
@@ -447,4 +475,23 @@ func (c *BinanceClient) convertHoldSide(holdSide string) futures.SideType {
 	default:
 		return futures.SideType(holdSide)
 	}
+}
+
+func (c *BinanceClient) errorConverter(apiErr error) error {
+	var e *common.APIError
+	switch {
+	case errors.As(apiErr, &e):
+		switch e.Code {
+		case -4164:
+			return ErrMinNotional
+		case -1111:
+			return ErrPrecisionError
+		default:
+			return apiErr
+		}
+	default:
+		return apiErr
+	}
+
+	return apiErr
 }
