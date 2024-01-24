@@ -5,11 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ugabiga/falcon/internal/client"
-	"github.com/ugabiga/falcon/internal/common/debug"
+	"github.com/ugabiga/falcon/internal/common/encryption"
+	"github.com/ugabiga/falcon/internal/common/str"
 	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
 	"log"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -19,16 +21,17 @@ const (
 )
 
 type TaskService struct {
-	repo        *repository.DynamoRepository
-	upbitClient *client.UpbitClient
+	repo       *repository.DynamoRepository
+	encryption *encryption.Encryption
 }
 
 func NewTaskService(
 	repo *repository.DynamoRepository,
+	encryption *encryption.Encryption,
 ) *TaskService {
 	return &TaskService{
-		repo:        repo,
-		upbitClient: client.NewUpbitClient("", ""),
+		repo:       repo,
+		encryption: encryption,
 	}
 }
 
@@ -193,7 +196,6 @@ func (s TaskService) validateCurrency(currency string) error {
 }
 
 func (s TaskService) validateSize(ctx context.Context, userID, tradingAccountID, currency, symbol string, size float64) error {
-	log.Printf("validateSize: %+v", size)
 	if size < 0 {
 		return ErrSizeNotSatisfiedMinimumSize
 	}
@@ -202,13 +204,12 @@ func (s TaskService) validateSize(ctx context.Context, userID, tradingAccountID,
 	if err != nil {
 		return err
 	}
-	log.Printf("validateSize: %+v", debug.ToJSONStr(tradingAccount))
 
 	switch tradingAccount.Exchange {
 	case model.ExchangeUpbit:
 		return s.validateUpbitSize(ctx, currency, symbol, size)
 	case model.ExchangeBinanceFutures:
-		return s.validateBinanceSize(ctx, symbol, size)
+		return s.validateBinanceSize(ctx, tradingAccount, currency, symbol, size)
 	default:
 		return ErrWrongExchange
 	}
@@ -219,9 +220,10 @@ func (s TaskService) cronExpression(hour string, days string) string {
 }
 
 func (s TaskService) validateUpbitSize(ctx context.Context, currency, symbol string, size float64) error {
+	upbitClient := client.NewUpbitClient("", "")
 	minimumUpbitSize := 5000
 	upbitSymbol := currency + "-" + symbol
-	ticker, err := s.upbitClient.TickerPublic(ctx, upbitSymbol)
+	ticker, err := upbitClient.TickerPublic(ctx, upbitSymbol)
 	if err != nil {
 		return err
 	}
@@ -234,7 +236,34 @@ func (s TaskService) validateUpbitSize(ctx context.Context, currency, symbol str
 	return nil
 }
 
-func (s TaskService) validateBinanceSize(ctx context.Context, symbol string, size float64) error {
+func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *model.TradingAccount, currency, symbol string, size float64) error {
+	secret, err := s.encryption.Decrypt(tradingAccount.Secret)
+	if err != nil {
+		return err
+	}
+
+	binanceClient := client.NewBinanceClient(tradingAccount.Key, secret, false)
+	binanceSymbol := symbol + currency
+	minimumBinanceCost := 5.0
+
+	ticker, err := binanceClient.Ticker(ctx, binanceSymbol)
+	if err != nil {
+		return err
+	}
+	position, err := binanceClient.PositionWithoutSideIncludeEmpty(ctx, binanceSymbol)
+	if err != nil {
+		return err
+	}
+
+	leverage := str.New(position.Leverage).ToIntDefault(0)
+	price := str.New(ticker.Price).ToFloat64Default(0)
+	costWithoutLeverage := price * size
+	cost := costWithoutLeverage / float64(leverage)
+	requiredCost := math.Round(minimumBinanceCost * float64(leverage))
+
+	if cost < minimumBinanceCost {
+		return errors.New(ErrSizeNotSatisfiedMinimumSize.Error() + fmt.Sprintf("#%s-%f", currency, requiredCost))
+	}
 
 	return nil
 }
