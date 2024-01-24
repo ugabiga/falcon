@@ -16,7 +16,7 @@ export function transformErrorMessage(message: string) {
         const size = message.split("#")[1]
             .replace("-", " ")
 
-        return `The minimum size is ${size}.`
+        return `The minimum size is ${size}`
     }
 
     return message;
