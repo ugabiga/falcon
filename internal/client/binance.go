@@ -63,6 +63,7 @@ func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (str
 		if s.Symbol == symbol {
 			lotSizeFilter := s.LotSizeFilter()
 			priceFilter := s.PriceFilter()
+			log.Printf("Symbol: %+v", debug.ToJSONStr(s))
 			return priceFilter.TickSize, lotSizeFilter.StepSize, nil
 		}
 	}
