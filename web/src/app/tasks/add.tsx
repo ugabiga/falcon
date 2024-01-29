@@ -9,7 +9,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import {errorToast} from "@/components/toast";
-import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
 import {TaskType} from "@/lib/model";
@@ -39,6 +39,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
                 days: data.days,
                 hours: data.hours,
                 type: data.type,
+                params: parseParamsFromData(data)
             }
         }).then(() => {
             setOpenDialog(false)

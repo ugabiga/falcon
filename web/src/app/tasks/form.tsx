@@ -287,3 +287,16 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
         </>
     )
 }
+
+export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): { gap_percent: number, quantity: number } | null {
+    if (data.type === TaskType.BuyingGrid) {
+        return {
+            gap_percent: data.grid?.gap_percent ?? 0,
+            quantity: data.grid?.quantity ?? 0,
+        }
+    }
+
+    return null
+}
+
+
