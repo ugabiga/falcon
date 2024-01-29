@@ -140,6 +140,7 @@ export function DaysOfWeekSelector(
                     <CommandPrimitive.Input
                         ref={inputRef}
                         value={inputValue}
+                        readOnly={true}
                         onValueChange={setInputValue}
                         onBlur={() => setOpen(false)}
                         onFocus={() => setOpen(true)}
