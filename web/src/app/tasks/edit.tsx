@@ -7,7 +7,7 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
-import {TaskForm, TaskFromSchema} from "@/app/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
@@ -154,16 +154,4 @@ function parseGridParams(task: Task): { gap_percent: number, quantity: number } 
         quantity: 0,
     }
 }
-
-function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): { gap_percent: number, quantity: number } | null {
-    if (data.type === TaskType.BuyingGrid) {
-        return {
-            gap_percent: data.grid?.gap_percent ?? 0,
-            quantity: data.grid?.quantity ?? 0,
-        }
-    }
-
-    return null
-}
-
 
