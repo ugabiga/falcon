@@ -169,12 +169,11 @@ export function TaskForm(
                         {t("tasks.form.size")} {form.watch("symbol")} {convertedTotal && `(${convertedTotal} ${form.watch("currency")})`}
                     </FormLabel>
                     <FormControl>
-                        <NumericFormatInput
+                        <Input
+                            type={"number"}
                             value={field.value}
-                            thousandSeparator={true}
-                            allowNegative={false}
-                            onValueChange={(values) => {
-                                field.onChange(values.floatValue)
+                            onChange={(e) => {
+                                field.onChange(Number(e.target.value))
                                 handleSizeOnChange()
                             }}
                         />
@@ -247,7 +246,6 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                         </FormLabel>
                         <FormControl>
                             <Input type="number"
-                                   min={0}
                                    step={1}
                                    placeholder={t("tasks.form.grid.gap")}
                                    value={field.value}
@@ -271,7 +269,6 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                         </FormLabel>
                         <FormControl>
                             <Input type="number"
-                                   min={1}
                                    step={1}
                                    placeholder={t("tasks.form.grid.quantity")}
                                    value={field.value}
@@ -288,7 +285,10 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
     )
 }
 
-export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): { gap_percent: number, quantity: number } | null {
+export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): {
+    gap_percent: number,
+    quantity: number
+} | null {
     if (data.type === TaskType.BuyingGrid) {
         return {
             gap_percent: data.grid?.gap_percent ?? 0,
