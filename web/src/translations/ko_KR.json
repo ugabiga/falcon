@@ -43,10 +43,10 @@
   "trading_account.add.title": "거래 계정 추가",
   "trading_account.edit.btn": "편집",
   "trading_account.edit.title": "거래 계정 편집",
-  "trading_account.form.name": "이름",
+  "trading_account.form.name": "계정 이름",
   "trading_account.form.exchange": "거래소",
-  "trading_account.form.key": "키",
-  "trading_account.form.secret": "시크릿 키",
+  "trading_account.form.key": "API 키",
+  "trading_account.form.secret": "API 시크릿 키",
   "trading_account.form.submit": "저장",
   "trading_account.table.name": "이름",
   "trading_account.table.exchange": "거래소",
@@ -123,5 +123,8 @@
   "tasks.type.dca": "달러평균비용법",
   "tasks.type.long_grid": "롱 그리드",
   "tasks.type.buying_grid": "매수 그리드",
-  "error.size_not_satisfied_minimum_size": "주문 크기는 최소 {{size}} 이상이어야 합니다"
+  "error.size_not_satisfied_minimum_size": "주문 크기는 최소 {{size}} 이상이어야 합니다",
+  "trading_account.form.key_placeholder": "거래소에서 발급받은 API 키를 입력하세요",
+  "trading_account.form.secret_placeholder": "거래소에서 발급받은 API 시크릿 키를 입력하세요",
+  "trading_account.form.name_placeholder": "사용할 거래 계정의 이름을 입력하세요"
 }

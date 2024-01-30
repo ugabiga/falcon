@@ -56,7 +56,10 @@ export function TradingAccountForm({form}: {
                 <FormItem>
                     <FormLabel>{t("trading_account.form.name")}</FormLabel>
                     <FormControl>
-                        <Input placeholder={t("trading_account.form.name")} {...field} />
+                        <Input
+                            placeholder={t("trading_account.form.name_placeholder")}
+                            {...field}
+                        />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
@@ -93,9 +96,15 @@ export function TradingAccountForm({form}: {
             name="key"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>{t("trading_account.form.key")}</FormLabel>
+                    <FormLabel>
+                        {t("trading_account.form.key")}
+                    </FormLabel>
                     <FormControl>
-                        <Input type="password" placeholder={t("trading_account.form.key")} {...field} />
+                        <Input
+                            type="password"
+                            placeholder={t("trading_account.form.key_placeholder")}
+                            {...field}
+                        />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
@@ -109,7 +118,11 @@ export function TradingAccountForm({form}: {
                 <FormItem>
                     <FormLabel>{t("trading_account.form.secret")}</FormLabel>
                     <FormControl>
-                        <Input type="password" placeholder={t("trading_account.form.secret")} {...field} />
+                        <Input
+                            type="password"
+                            placeholder={t("trading_account.form.secret_placeholder")}
+                            {...field}
+                        />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
