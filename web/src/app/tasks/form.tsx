@@ -214,7 +214,11 @@ export function TaskForm(
                         {t("tasks.form.hours")}
                     </FormLabel>
                     <FormControl>
-                        <Input placeholder={t("tasks.form.hours.placeholder")} {...field} />
+                        <Input
+                            placeholder={t("tasks.form.hours.placeholder")}
+                            type={"number"}
+                            {...field}
+                        />
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
