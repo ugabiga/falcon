@@ -125,5 +125,8 @@
   "tasks.type.dca": "DCA",
   "tasks.type.long_grid": "Long Grid",
   "tasks.type.buying_grid": "Buying Grid",
-  "error.size_not_satisfied_minimum_size": "Size cost should be greater than {{size}}"
+  "error.size_not_satisfied_minimum_size": "Size cost should be greater than {{size}}",
+  "trading_account.form.key_placeholder": "Enter your API key from your exchange",
+  "trading_account.form.secret_placeholder": "Enter your API secret from your exchange",
+  "trading_account.form.name_placeholder": "Enter a name for your trading account"
 }
