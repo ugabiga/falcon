@@ -13,6 +13,8 @@ import {Button} from "@/components/ui/button";
 import {ManualKRTradingAccount} from "@/lib/ref-url";
 import {TradingAccountCards} from "@/app/tradingaccounts/cards";
 import {useTranslation} from "@/lib/i18n";
+import {setTradingAccountTutorial} from "@/store/tutorialSlice";
+import {TradingAccountTutorial} from "@/app/tradingaccounts/tutorial";
 
 
 export default function TradingAccounts() {
@@ -41,6 +43,7 @@ export default function TradingAccounts() {
         return <Error message={error.message}/>
     }
 
+
     return (
         <main className="min-h-screen mt-12 pr-4 pl-4 md:max-w-[1200px] overflow-auto w-full mx-auto">
             <div className="flex">
@@ -56,17 +59,28 @@ export default function TradingAccounts() {
 
             <div className={"w-full flex space-x-2"}>
                 <div className={"flex-grow"}></div>
+                {/*<Button onClick={*/}
+                {/*    () => {*/}
+                {/*        dispatch(setTradingAccountTutorial(false))*/}
+                {/*    }*/}
+                {/*}>*/}
+                {/*    Reset Tutorial*/}
+                {/*</Button>*/}
                 <AddTradingAccount/>
             </div>
 
             <div className="mt-6">
+
                 {/*@ts-ignore*/}
                 <TradingAccountTable tradingAccounts={data?.tradingAccountIndex?.tradingAccounts}/>
 
                 {/*@ts-ignore*/}
                 <TradingAccountCards tradingAccounts={data?.tradingAccountIndex?.tradingAccounts}/>
 
+                {/*<TradingAccountTutorial/>*/}
             </div>
         </main>
     )
 }
+
+
