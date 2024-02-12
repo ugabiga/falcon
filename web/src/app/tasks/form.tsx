@@ -216,7 +216,6 @@ export function TaskForm(
                     <FormControl>
                         <Input
                             placeholder={t("tasks.form.hours.placeholder")}
-                            type={"number"}
                             {...field}
                         />
                     </FormControl>
