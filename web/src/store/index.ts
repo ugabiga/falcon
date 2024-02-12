@@ -7,6 +7,7 @@ import refresherSlice from "@/store/refresherSlice";
 import storage from "redux-persist/lib/storage";
 import {FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE} from "redux-persist";
 import {thunk} from "redux-thunk";
+import tutorialSlice from "@/store/tutorialSlice";
 
 
 const rootReducer = combineReducers({
@@ -14,12 +15,13 @@ const rootReducer = combineReducers({
     tradingAccount: tradingAccountSlice.reducer,
     task: taskSlice.reducer,
     refresher: refresherSlice.reducer,
+    tutorial: tutorialSlice.reducer,
 })
 
 const persistConfig = {
     key: 'root',
     storage: storage,
-    whitelist: []
+    whitelist: ["tutorial"]
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

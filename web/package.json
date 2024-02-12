@@ -34,6 +34,7 @@
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "cron-parser": "^4.9.0",
+    "embla-carousel-react": "^8.0.0-rc22",
     "graphql": "^16.8.1",
     "i18next": "^23.7.12",
     "lucide-react": "^0.299.0",
