@@ -35,9 +35,6 @@ export function TradingAccountCards({tradingAccounts}: { tradingAccounts?: Tradi
                                     <Label>
                                         {t("trading_account.table.key")} : {trim(tradingAccount.key, 4)}
                                     </Label>
-                                    <Label>
-                                        {t("trading_account.table.ip")} : {tradingAccount.ip}
-                                    </Label>
                                 </CardContent>
                             </Card>
                         )

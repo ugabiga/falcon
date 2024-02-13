@@ -89,6 +89,13 @@ export function TaskForm(
                             <SelectItem value={TaskType.BuyingGrid}>{t("tasks.type.buying_grid")}</SelectItem>
                         </SelectContent>
                     </Select>
+                    <p className="text-sm text-gray-500 mb-2">
+                        {
+                            form.watch("type") === TaskType.DCA
+                                ? t("tasks.form.type.dca.description")
+                                : t("tasks.form.type.buying_grid.description")
+                        }
+                    </p>
                     <FormMessage/>
                 </FormItem>
             )}

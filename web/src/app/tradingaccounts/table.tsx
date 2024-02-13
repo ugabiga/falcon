@@ -16,7 +16,6 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                         <TableHead>{t("trading_account.table.name")}</TableHead>
                         <TableHead>{t("trading_account.table.exchange")}</TableHead>
                         <TableHead>{t("trading_account.table.key")}</TableHead>
-                        <TableHead>{t("trading_account.table.ip")}</TableHead>
                         <TableHead>{t("trading_account.table.action")}</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -37,7 +36,6 @@ export function TradingAccountTable({tradingAccounts}: { tradingAccounts?: Tradi
                                         {t(`common.exchange.${tradingAccount.exchange}`)}
                                     </TableCell>
                                     <TableCell>{trim(tradingAccount.key, 4)}</TableCell>
-                                    <TableCell>{tradingAccount.ip}</TableCell>
                                     <TableCell>
                                         <TradingAccountMoreBtn tradingAccount={tradingAccount}/>
                                     </TableCell>
