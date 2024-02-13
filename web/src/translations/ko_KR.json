@@ -94,7 +94,7 @@
   "tasks.table.symbol": "코인명/심볼",
   "tasks.table.size": "크기",
   "tasks.table.next_execution_time": "다음 실행 시간",
-  "tasks.table.is_active": "활성화됨",
+  "tasks.table.is_active": "활성화 여부",
   "tasks.table.action": "동작",
   "tasks.table.more": "더 보기",
   "tasks.table.history": "작업 이력 보기",
