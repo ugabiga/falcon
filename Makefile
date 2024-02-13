@@ -24,5 +24,5 @@ gql-gen:
 build:
 	@docker build -t "falcon:latest" -f ./lambda.Dockerfile .
 
-f-deploy:
+deploy:
 	@git checkout prod && git merge main && git push && git checkout main
