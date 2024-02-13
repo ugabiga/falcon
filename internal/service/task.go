@@ -237,6 +237,10 @@ func (s TaskService) validateUpbitSize(ctx context.Context, currency, symbol str
 }
 
 func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *model.TradingAccount, currency, symbol string, size float64) error {
+	return nil
+	// There is ip restriction for binance futures
+	// So, we can't use binance futures api with the current setup
+
 	secret, err := s.encryption.Decrypt(tradingAccount.Secret)
 	if err != nil {
 		return err
