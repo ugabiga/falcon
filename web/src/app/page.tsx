@@ -125,6 +125,20 @@ export default async function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* Footer */}
+            <div className="container md:h-12 items-center">
+                <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
+                    {t("home.contact.title")}
+                    <a
+                        href="mailto:vultor.xyz@gmail.com"
+                        target="_blank" rel="noreferrer"
+                        className="font-medium underline underline-offset-4">
+                        vultor.xyz@gmail.com
+                    </a>
+                </p>
+            </div>
+
         </main>
     )
 }
