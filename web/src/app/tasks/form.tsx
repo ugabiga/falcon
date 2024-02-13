@@ -257,7 +257,7 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                         <FormControl>
                             <Input type="number"
                                    step={1}
-                                   placeholder={t("tasks.form.grid.gap")}
+                                   placeholder={t("tasks.form.grid.gap.description")}
                                    value={field.value}
                                    onChange={(e) => {
                                        field.onChange(Number(e.target.value))
@@ -280,7 +280,7 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                         <FormControl>
                             <Input type="number"
                                    step={1}
-                                   placeholder={t("tasks.form.grid.quantity")}
+                                   placeholder={t("tasks.form.grid.quantity.description")}
                                    value={field.value}
                                    onChange={(e) => {
                                        field.onChange(Number(e.target.value))

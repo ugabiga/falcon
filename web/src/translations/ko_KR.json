@@ -86,8 +86,8 @@
   "tasks.form.is_active": "활성화",
   "tasks.form.is_active.desc": "활성화된 경우이 작업이 실행됩니다",
   "tasks.form.submit": "변경 사항 저장",
-  "tasks.form.grid.gap": "그리드 갭 (%)",
-  "tasks.form.grid.quantity": "그리드 양",
+  "tasks.form.grid.gap": "매수 그리드 갭 (%)",
+  "tasks.form.grid.quantity": "매수 그리드 갯수",
   "tasks.table.id": "ID",
   "tasks.table.type": "유형",
   "tasks.table.schedule": "일정",
@@ -144,5 +144,7 @@
   "trading_account.form.ip.title": "API 연동시 사용할 IP: ",
   "trading_account.form.ip": "3.39.156.133",
   "tasks.form.type.dca.description": "일정한 기간마다 일정한 금액을 투자하는 방식, 변동성을 줄이고 평균매입가격을 낮추어 수익을 높일 수 있습니다",
-  "tasks.form.type.buying_grid.description": "단기적으로 가격이 하락하는 경우 일정한 간격으로 매수를 진행하는 방식, 하락시 평균매입가격을 낮추어 수익을 높일 수 있습니다"
+  "tasks.form.type.buying_grid.description": "단기적으로 가격이 하락하는 경우 일정한 간격으로 매수를 진행하는 방식, 하락시 평균매입가격을 낮추어 수익을 높일 수 있습니다",
+  "tasks.form.grid.gap.description": "시장가격에서 몇 % 갭으로 매수를 진행할지 설정하세요",
+  "tasks.form.grid.quantity.description": "설정한 갭으로 몇 번 매수를 진행할지 설정하세요"
 }

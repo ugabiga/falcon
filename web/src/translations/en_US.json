@@ -144,5 +144,7 @@
   "trading_account.form.ip.title": "IP Address for API Integration: ",
   "trading_account.form.ip": "3.39.156.133",
   "tasks.form.type.dca.description": "A method of investing a fixed amount at regular intervals, which helps reduce volatility and lower the average purchase price to increase profits.",
-  "tasks.form.type.buying_grid.description": "A method of buying at regular intervals when prices decline in the short term, aiming to lower the average purchase price during declines to increase profits."
+  "tasks.form.type.buying_grid.description": "A method of buying at regular intervals when prices decline in the short term, aiming to lower the average purchase price during declines to increase profits.",
+  "tasks.form.grid.gap.description": "Specify the percentage gap at which purchases will be made from the market price.",
+  "tasks.form.grid.quantity.description": "Specify how many purchases will be made at the set intervals."
 }
