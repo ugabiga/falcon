@@ -9,6 +9,7 @@ export default async function Home() {
 
     return (
         <main className="flex-1 flex flex-col min-h-screen">
+            {/* Hero */}
             <section className="w-full py-12 md:py-24 lg:py-24">
                 <div className="container space-y-12 px-4 md:px-6 justify-center flex flex-col items-center">
                     <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
@@ -18,25 +19,78 @@ export default async function Home() {
                         {t("home.subTitle")}
                     </h3>
                     <p className="text-center max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
-                        {t("home.description")}
+                        <p className="mb-2">
+                            {t("home.description.1")}
+                        </p>
+                        <p>
+                            {t("home.description.2")}
+                        </p>
                     </p>
-                    {/*<Button onClick={() => {*/}
-                    {/*    window.open(ManualKRMain, '_blank')*/}
-                    {/*}}>*/}
-                    {/*    {t("home.find_out_more.btn")}*/}
-                    {/*</Button>*/}
                 </div>
             </section>
+
+            {/* Why */}
             <section className="w-full py-12 md:py-24 lg:py-24 border-y">
                 <div className="container space-y-12 px-4 md:px-6">
                     <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
-                        {t("home.dca.title")}
+                        {t("home.why.title")}
                     </h2>
-                    <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
-                        {t("home.dca.description")}
+                    <p className="max-w-[1000px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
+                        <p className="mb-2">
+                            {t("home.why.1.problem")}
+                        </p>
+                        <p>
+                            {t("home.why.1.solution")}
+
+                        </p>
+                    </p>
+                    <p className="max-w-[1000px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
+                        <p className="mb-2">
+                            {t("home.why.2.problem")}
+                        </p>
+                        <p>
+                            {t("home.why.2.solution")}
+                        </p>
                     </p>
                 </div>
             </section>
+
+            {/* Strategy */}
+            <section className="w-full py-12 md:py-24 lg:py-24 border-y ">
+                <div className="container space-y-12 px-4 md:px-6">
+                    <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
+                        {t("home.strategy.title")}
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+                        <Card>
+                            <CardHeader>
+                                <h3 className="text-xl font-semibold">
+                                    {t("home.strategy.dca.title")}
+                                </h3>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-500">
+                                    {t("home.strategy.dca.description")}
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <h3 className="text-xl font-semibold">
+                                    {t("home.strategy.buying_grid.title")}
+                                </h3>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-500">
+                                    {t("home.strategy.buying_grid.description")}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </section>
+
+
             <section className="w-full py-12 md:py-24 lg:py-32">
                 <div className="container space-y-12 px-4 md:px-6">
                     <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
@@ -52,18 +106,19 @@ export default async function Home() {
                             <CardContent>
                                 <p className="text-gray-500">
                                     {t("home.exchanges.upbit.description")}
+
                                 </p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader>
                                 <h3 className="text-xl font-semibold">
-                                    {t("home.exchanges.binance.title")}
+                                    {t("home.exchanges.binance_future.title")}
                                 </h3>
                             </CardHeader>
                             <CardContent>
                                 <p className="text-gray-500">
-                                    {t("home.exchanges.binance.description")}
+                                    {t("home.exchanges.binance_future.description")}
                                 </p>
                             </CardContent>
                         </Card>
