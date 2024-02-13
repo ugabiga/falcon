@@ -62,6 +62,10 @@ export function AddTradingAccount() {
                     >
                         <DialogHeader className="mb-2">
                             <DialogTitle>{t("trading_account.add.title")}</DialogTitle>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {t("trading_account.form.ip.title")}
+                                {t("trading_account.form.ip")}
+                            </p>
                         </DialogHeader>
 
                         <TradingAccountForm form={form}/>

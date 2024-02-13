@@ -140,5 +140,9 @@
   "error.size_not_satisfied_minimum_size": "Size cost should be greater than {{size}}",
   "trading_account.form.key_placeholder": "Enter your API key from your exchange",
   "trading_account.form.secret_placeholder": "Enter your API secret from your exchange",
-  "trading_account.form.name_placeholder": "Enter a name for your trading account"
+  "trading_account.form.name_placeholder": "Enter a name for your trading account",
+  "trading_account.form.ip.title": "IP Address for API Integration: ",
+  "trading_account.form.ip": "3.39.156.133",
+  "tasks.form.type.dca.description": "A method of investing a fixed amount at regular intervals, which helps reduce volatility and lower the average purchase price to increase profits.",
+  "tasks.form.type.buying_grid.description": "A method of buying at regular intervals when prices decline in the short term, aiming to lower the average purchase price during declines to increase profits."
 }
