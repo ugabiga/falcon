@@ -68,25 +68,23 @@ export function TaskCards(
                                 </div>
                                 <CardContent className="grid grid-cols-2 gap-6">
                                     <Label className="col-span-2">
-                                        {t("task.table.is_active.boolean." + task.isActive)}
+                                        {t("tasks.table.symbol")} : {task.symbol}
                                     </Label>
                                     <Label>
                                         {t("tasks.table.type")} : {t("tasks.type." + task.type)}
                                     </Label>
                                     <Label>
-                                        {t("tasks.table.symbol")} : {task.symbol}
-                                    </Label>
-                                    <Label>
                                         {t("tasks.table.size")} : {convertNumberToCryptoSize(task.size, task.symbol)}
                                     </Label>
                                     <Label className="col-span-2">
+                                        {t("tasks.table.next_execution_time")} : {convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}
+                                    </Label>
+                                    <Label>
                                         {t("tasks.table.schedule")} : {convertSchedule(task.cron)}
                                     </Label>
-                                    <div className="flex flex-col space-y-2 col-span-2">
-                                        <Label>
-                                            {t("tasks.table.next_execution_time")} : {convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}
-                                        </Label>
-                                    </div>
+                                    <Label>
+                                        {t("task.table.is_active.boolean." + task.isActive)}
+                                    </Label>
                                 </CardContent>
                             </Card>
                         )

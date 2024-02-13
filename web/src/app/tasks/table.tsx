@@ -50,11 +50,11 @@ export function TaskTable(
                 <TableHeader>
                     <TableRow>
                         <TableHead>{t("tasks.table.id")}</TableHead>
-                        <TableHead>{t("tasks.table.type")}</TableHead>
-                        <TableHead>{t("tasks.table.schedule")}</TableHead>
                         <TableHead>{t("tasks.table.symbol")}</TableHead>
+                        <TableHead>{t("tasks.table.type")}</TableHead>
                         <TableHead>{t("tasks.table.size")}</TableHead>
                         <TableHead>{t("tasks.table.next_execution_time")}</TableHead>
+                        <TableHead>{t("tasks.table.schedule")}</TableHead>
                         <TableHead>{t("tasks.table.is_active")}</TableHead>
                         <TableHead>{t("tasks.table.action")}</TableHead>
                     </TableRow>
@@ -72,18 +72,18 @@ export function TaskTable(
                             : tradingAccount?.tasks?.map((task) => (
                                     <TableRow key={task.id}>
                                         <TableCell>{task.id}</TableCell>
+                                        <TableCell>{task.symbol}</TableCell>
                                         <TableCell>
                                             {t("tasks.type." + task.type)}
                                         </TableCell>
-                                        <TableCell>
-                                            {convertSchedule(task.cron)}
-                                        </TableCell>
-                                        <TableCell>{task.symbol}</TableCell>
                                         <TableCell>
                                             {convertNumberToCryptoSize(task.size, task.symbol)}
                                         </TableCell>
                                         <TableCell>
                                             {convertToNextExecutionTime(task.cron, t("tasks.table.next_execution_time.fail"))}
+                                        </TableCell>
+                                        <TableCell>
+                                            {convertSchedule(task.cron)}
                                         </TableCell>
                                         <TableCell>
                                             {t("task.table.is_active.boolean." + task.isActive)}
