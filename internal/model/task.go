@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"time"
 )
 
@@ -43,6 +44,7 @@ func (t Task) GridParams() (*TaskGridParams, error) {
 
 	var gridParams TaskGridParams
 	if err := json.Unmarshal(marshalParams, &gridParams); err != nil {
+		log.Printf("Error unmarshalling grid params. Err: %v", err)
 		return nil, err
 	}
 
@@ -50,8 +52,8 @@ func (t Task) GridParams() (*TaskGridParams, error) {
 }
 
 type TaskGridParams struct {
-	GapPercent int64 `json:"gap_percent"`
-	Quantity   int64 `json:"quantity"`
+	GapPercent float64 `json:"gap_percent"`
+	Quantity   int64   `json:"quantity"`
 }
 
 func (t TaskGridParams) ToParams() map[string]interface{} {
