@@ -14,6 +14,7 @@ import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
 import {TaskType} from "@/lib/model";
 import {translatedError} from "@/lib/error";
+import {capture} from "@/lib/posthog";
 
 export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
     const {t} = useTranslation();
@@ -42,6 +43,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
                 params: parseParamsFromData(data)
             }
         }).then(() => {
+            capture("add_task")
             setOpenDialog(false)
             form.reset()
             dispatch(refreshTask({

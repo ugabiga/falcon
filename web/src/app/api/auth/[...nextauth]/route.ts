@@ -35,7 +35,6 @@ const handler = NextAuth({
     events: {
         signOut: async (message) => {
             cookies().delete(jwtCookieName)
-            // resetPostHog()
         }
     },
     callbacks: {
@@ -79,8 +78,6 @@ const handler = NextAuth({
                     maxAge: 60 * 60 * 24, //24 hours
                 }
             );
-
-            // setPostHogUser(user.id, user.name)
 
             return true;
         },

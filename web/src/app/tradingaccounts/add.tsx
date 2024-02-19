@@ -12,6 +12,7 @@ import {useAppDispatch} from "@/store";
 import {refreshTradingAccount} from "@/store/tradingAccountSlice";
 import {errorToast} from "@/components/toast";
 import {useTranslation} from "react-i18next";
+import {capture} from "@/lib/posthog";
 
 export function AddTradingAccount() {
     const {t} = useTranslation();
@@ -43,6 +44,7 @@ export function AddTradingAccount() {
                 secret: data.secret ?? "",
             }
         }).then(() => {
+            capture("add_trading_account")
             setOpenDialog(false)
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
