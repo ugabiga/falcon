@@ -1,7 +1,7 @@
 import type {Metadata, Viewport} from 'next'
 import {Inter} from 'next/font/google'
 import './globals.css'
-import React from "react";
+import React, {Suspense} from "react";
 import Providers from "@/app/providers";
 import {Toaster} from "@/components/ui/sonner"
 import {getServerSession} from "next-auth";
@@ -9,6 +9,7 @@ import SessionProvider from "@/lib/session"
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from "@vercel/speed-insights/next"
 import NavigationBar from "@/components/navigation-bar";
+import GtmAnalytics from "@/lib/gtm-head";
 
 const inter = Inter({subsets: ['latin']})
 
@@ -71,6 +72,9 @@ export default async function RootLayout(
                 <Toaster
                     richColors={true}
                 />
+                <Suspense>
+                    <GtmAnalytics/>
+                </Suspense>
             </SessionProvider>
         </Providers>
         </body>
