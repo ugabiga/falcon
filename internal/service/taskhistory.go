@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/repository"
+	"log"
 )
 
 type TaskHistoryService struct {
@@ -34,4 +35,22 @@ func (s *TaskHistoryService) GetTaskHistoryByTaskId(ctx context.Context, userID,
 	}
 
 	return task, taskHistories, nil
+}
+
+func (s *TaskHistoryService) UpdateAllTaskHistoryTTL(ctx context.Context) error {
+	histories, err := s.repo.GetAllTaskHistories(ctx)
+	if err != nil {
+		log.Printf("error getting all task histories: %v", err)
+		return err
+	}
+
+	for _, th := range histories {
+		_, err := s.repo.UpdateTaskHistory(ctx, *th)
+		if err != nil {
+			log.Printf("error updating task history: %v", err)
+			return err
+		}
+	}
+
+	return nil
 }

@@ -33,7 +33,6 @@ func (a App) RunServer() error {
 func (a App) RunCron() error {
 	return a.messaging.Publish()
 }
-
 func (a App) RunWorker() error {
 	return a.messaging.Subscribe()
 }
