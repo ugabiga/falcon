@@ -35,7 +35,7 @@ const handler = NextAuth({
     events: {
         signOut: async (message) => {
             cookies().delete(jwtCookieName)
-            resetPostHog()
+            // resetPostHog()
         }
     },
     callbacks: {
@@ -80,7 +80,7 @@ const handler = NextAuth({
                 }
             );
 
-            setPostHogUser(user.id, user.name)
+            // setPostHogUser(user.id, user.name)
 
             return true;
         },
