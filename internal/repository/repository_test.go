@@ -35,31 +35,6 @@ func TestDynamoRepository_CreateTaskHistory(t *testing.T) {
 	}
 }
 
-func TestDynamoRepository_GetAllTaskHistories(t *testing.T) {
-	tester := app.InitializeTestApplication()
-	repo := tester.Repository
-
-	ctx := context.Background()
-
-	taskHistories, err := repo.GetAllTaskHistories(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	log.Printf("taskHistories: %+v", debug.ToJSONStr(taskHistories))
-
-	//loop through the taskHistories
-	//and update ttl to created_at + 30 days
-
-	for _, th := range taskHistories {
-		th.CreatedAt = th.CreatedAt.Add(30 * 24 * time.Hour)
-		_, err := repo.UpdateTaskHistory(ctx, *th)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-}
-
 func TestRepository_Migration(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	tester.ResetTables(t)
