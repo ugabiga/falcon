@@ -20,6 +20,7 @@ export const viewport: Viewport = {
     maximumScale: 1,
 }
 
+
 export const metadata: Metadata = {
     title: 'Falcon',
     description: 'Falcon is a crypto trading platform',
