@@ -44,7 +44,9 @@ export function AddTradingAccount() {
                 secret: data.secret ?? "",
             }
         }).then(() => {
-            capture("add_trading_account")
+            capture("Trading Account Added", {
+                exchange: data.exchange,
+            })
             setOpenDialog(false)
             dispatch(refreshTradingAccount(true))
         }).catch((e) => {
