@@ -1,6 +1,7 @@
 package sqs
 
 import (
+	"context"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
@@ -8,9 +9,10 @@ import (
 )
 
 type MessageCore struct {
-	sqsClient *Client
-	dcaSrv    *service.DcaService
-	gridSrv   *service.GridService
+	sqsClient      *Client
+	dcaSrv         *service.DcaService
+	gridSrv        *service.GridService
+	taskHistorySrv *service.TaskHistoryService
 }
 
 func NewMessageCore(
@@ -18,11 +20,13 @@ func NewMessageCore(
 	dcaSrv *service.DcaService,
 	gridSrv *service.GridService,
 	sqsClient *Client,
+	taskHistorySrv *service.TaskHistoryService,
 ) *MessageCore {
 	return &MessageCore{
-		dcaSrv:    dcaSrv,
-		gridSrv:   gridSrv,
-		sqsClient: sqsClient,
+		dcaSrv:         dcaSrv,
+		gridSrv:        gridSrv,
+		sqsClient:      sqsClient,
+		taskHistorySrv: taskHistorySrv,
 	}
 }
 
@@ -33,6 +37,18 @@ func (c MessageCore) PublishMessages() error {
 
 	if err := c.publishLongGridMessages(); err != nil {
 		log.Printf("Error occurred during publishing LongGrid messages. Err: %v", err)
+	}
+
+	msg := TaskOrderInfoMessage{
+		TaskOrderInfo: service.TaskOrderInfo{
+			TaskType:         "migration",
+			TaskID:           "migration",
+			TradingAccountID: "migration",
+			UserID:           "migration",
+		},
+	}
+	if _, err := c.sqsClient.Publish(msg); err != nil {
+		log.Printf("Error occurred during publishing. Err: %v", err)
 	}
 
 	return nil
@@ -105,6 +121,15 @@ func (c MessageCore) SubscribeMessage(reqMsg TaskOrderInfoMessage) error {
 			log.Printf("Error occurred during order. Err: %v", err)
 			return err
 		}
+		return nil
+	case "migration":
+		log.Println("[TEMP] update all task history TTL")
+		err := c.taskHistorySrv.UpdateAllTaskHistoryTTL(context.Background())
+		if err != nil {
+			log.Printf("error updating all task history TTL: %v", err)
+			return nil
+		}
+		log.Printf("Migration task received")
 		return nil
 	default:
 		log.Printf("Unknown task type: %s", reqMsg.TaskOrderInfo.TaskType)
