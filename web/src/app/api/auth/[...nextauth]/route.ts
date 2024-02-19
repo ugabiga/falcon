@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import {cookies} from "next/headers";
 import {redirect} from "next/navigation";
-import {setPostHogUser} from "@/lib/posthog";
+import {resetPostHog, setPostHogUser} from "@/lib/posthog";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
@@ -35,6 +35,7 @@ const handler = NextAuth({
     events: {
         signOut: async (message) => {
             cookies().delete(jwtCookieName)
+            resetPostHog()
         }
     },
     callbacks: {
