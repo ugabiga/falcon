@@ -519,6 +519,7 @@ func (r DynamoRepository) GetTasksByActiveNextExecutionTimeAndType(ctx context.C
 
 	return tasks, nil
 }
+
 func (r DynamoRepository) GetTasksByActiveNextExecutionTime(ctx context.Context, nextExecutionTime time.Time) ([]model.Task, error) {
 	formattedNextExecutionTime := nextExecutionTime.Format(time.RFC3339)
 
@@ -600,6 +601,34 @@ func (r DynamoRepository) DeleteTask(ctx context.Context, tradingAccountID, task
 
 	return nil
 }
+func (r DynamoRepository) GetAllTaskHistories(ctx context.Context) ([]*model.TaskHistory, error) {
+	result, err := r.db.Scan(
+		ctx,
+		&dynamodb.ScanInput{
+			TableName:        &r.tableName,
+			FilterExpression: &[]string{"entity_type = :entity_type"}[0],
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":entity_type": &types.AttributeValueMemberS{Value: EntityTypeTaskHistory},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var taskHistories []*model.TaskHistory
+
+	for _, item := range result.Items {
+		taskHistory, err := UnmarshalItem[model.TaskHistory](item)
+		if err != nil {
+			return nil, err
+		}
+
+		taskHistories = append(taskHistories, taskHistory)
+	}
+
+	return taskHistories, nil
+}
 
 func (r DynamoRepository) CreateTaskHistory(ctx context.Context, taskHistory model.TaskHistory) (*model.TaskHistory, error) {
 	taskHistory.ID = r.encoding(KeyPrefixTaskHistory)
@@ -614,6 +643,7 @@ func (r DynamoRepository) CreateTaskHistory(ctx context.Context, taskHistory mod
 	av["pk"] = &types.AttributeValueMemberS{Value: taskHistory.TaskID}
 	av["sk"] = &types.AttributeValueMemberS{Value: taskHistory.ID}
 	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskHistory}
+	av["ttl"] = &types.AttributeValueMemberN{Value: strconv.FormatInt(time.Now().AddDate(0, 0, 30).Unix(), 10)}
 
 	_, err = r.db.PutItem(
 		ctx,
@@ -640,6 +670,7 @@ func (r DynamoRepository) UpdateTaskHistory(ctx context.Context, taskHistory mod
 	av["pk"] = &types.AttributeValueMemberS{Value: taskHistory.TaskID}
 	av["sk"] = &types.AttributeValueMemberS{Value: taskHistory.ID}
 	av["entity_type"] = &types.AttributeValueMemberS{Value: EntityTypeTaskHistory}
+	av["ttl"] = &types.AttributeValueMemberN{Value: strconv.FormatInt(taskHistory.UpdatedAt.AddDate(0, 0, 30).Unix(), 10)}
 
 	_, err = r.db.PutItem(
 		ctx,
