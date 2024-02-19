@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import {cookies} from "next/headers";
 import {redirect} from "next/navigation";
+import {setPostHogUser} from "@/lib/posthog";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
@@ -77,6 +78,9 @@ const handler = NextAuth({
                     maxAge: 60 * 60 * 24, //24 hours
                 }
             );
+
+            setPostHogUser(user.id, user.name)
+
             return true;
         },
     }
