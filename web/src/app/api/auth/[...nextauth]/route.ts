@@ -1,8 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import {cookies} from "next/headers";
-import {redirect} from "next/navigation";
-import {resetPostHog, setPostHogUser} from "@/lib/posthog";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
