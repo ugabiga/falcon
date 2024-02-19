@@ -15,9 +15,9 @@ export default async function Home() {
             {/* Hero */}
             <section className="w-full py-12 md:py-24 lg:py-24">
                 <div className="container space-y-12 px-4 md:px-6 justify-center flex flex-col items-center">
-                    <h2 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
+                    <h1 className="text-3xl font-bold tracking-tighter text-center sm:text-5xl">
                         {t("home.title")}
-                    </h2>
+                    </h1>
                     <h3 className="text-xl font-semibold text-center sm:text-2xl">
                         {t("home.subTitle")}
                     </h3>
