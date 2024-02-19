@@ -5,8 +5,8 @@ export function capture(eventName: string, properties: any = undefined) {
     posthog.capture(eventName, properties);
 }
 
-export function setPostHogUser(id: string, name: string | null | undefined) {
-    posthog.identify(`user_${id}`, {
+export function setPostHogUser(name: string | null | undefined) {
+    posthog.identify(`user_${name}`, {
         name: name,
     });
 }

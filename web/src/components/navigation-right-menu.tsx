@@ -12,6 +12,7 @@ import {useTranslation} from "react-i18next";
 import Link from "next/link";
 import {convertToInitials} from "@/lib/converter";
 import {useTheme} from "next-themes";
+import {resetPostHog, setPostHogUser} from "@/lib/posthog";
 
 
 export function NavigationRightMenu() {
@@ -95,6 +96,8 @@ function SessionMenu() {
         )
     }
 
+    setPostHogUser(session.user?.name)
+
     return (
         <div className={"ml-2"}>
             <DropdownMenu>
@@ -114,6 +117,7 @@ function SessionMenu() {
                         {t("nav.profile")}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => signOut({redirect: false}).then(() => {
+                        resetPostHog()
                         router.push("/")
                     })}>
                         {t("nav.sign_out")}
