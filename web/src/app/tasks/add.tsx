@@ -43,7 +43,10 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
                 params: parseParamsFromData(data)
             }
         }).then(() => {
-            capture("add_task")
+            capture("Task Added", {
+                tradingAccountID: tradingAccount.id,
+                taskType: data.type
+            })
             setOpenDialog(false)
             form.reset()
             dispatch(refreshTask({
