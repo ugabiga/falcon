@@ -15,7 +15,6 @@ func NewMessageHandler(
 	cfg *config.Config,
 	dcaSrv *service.DcaService,
 	gridSrv *service.GridService,
-	taskHistorySrv *service.TaskHistoryService,
 ) MessageHandler {
 
 	if cfg.MessagingPlatform != "sqs" {
@@ -28,7 +27,6 @@ func NewMessageHandler(
 		dcaSrv,
 		gridSrv,
 		sqsClient,
-		taskHistorySrv,
 	)
 
 	switch cfg.SQSSubscriptionType {

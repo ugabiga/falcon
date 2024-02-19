@@ -1,7 +1,6 @@
 package sqs
 
 import (
-	"context"
 	"github.com/ugabiga/falcon/internal/model"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
@@ -9,10 +8,9 @@ import (
 )
 
 type MessageCore struct {
-	sqsClient      *Client
-	dcaSrv         *service.DcaService
-	gridSrv        *service.GridService
-	taskHistorySrv *service.TaskHistoryService
+	sqsClient *Client
+	dcaSrv    *service.DcaService
+	gridSrv   *service.GridService
 }
 
 func NewMessageCore(
@@ -20,13 +18,11 @@ func NewMessageCore(
 	dcaSrv *service.DcaService,
 	gridSrv *service.GridService,
 	sqsClient *Client,
-	taskHistorySrv *service.TaskHistoryService,
 ) *MessageCore {
 	return &MessageCore{
-		dcaSrv:         dcaSrv,
-		gridSrv:        gridSrv,
-		sqsClient:      sqsClient,
-		taskHistorySrv: taskHistorySrv,
+		dcaSrv:    dcaSrv,
+		gridSrv:   gridSrv,
+		sqsClient: sqsClient,
 	}
 }
 
@@ -39,20 +35,29 @@ func (c MessageCore) PublishMessages() error {
 		log.Printf("Error occurred during publishing LongGrid messages. Err: %v", err)
 	}
 
-	msg := TaskOrderInfoMessage{
+	//if err := c.publishCustomMessage(); err != nil {
+	//	log.Printf("Error occurred during publishing Custom messages. Err: %v", err)
+	//}
+
+	return nil
+}
+
+func (c MessageCore) publishCustomMessage() error {
+	if _, err := c.sqsClient.Publish(TaskOrderInfoMessage{
 		TaskOrderInfo: service.TaskOrderInfo{
-			TaskType:         "migration",
-			TaskID:           "migration",
-			TradingAccountID: "migration",
-			UserID:           "migration",
+			TaskType:         "custom",
+			TaskID:           "",
+			TradingAccountID: "",
+			UserID:           "",
 		},
-	}
-	if _, err := c.sqsClient.Publish(msg); err != nil {
+	}); err != nil {
 		log.Printf("Error occurred during publishing. Err: %v", err)
+		return err
 	}
 
 	return nil
 }
+
 func (c MessageCore) publishLongGridMessages() error {
 	messages, err := c.gridSrv.GetTarget(nil)
 	if err != nil {
@@ -121,15 +126,6 @@ func (c MessageCore) SubscribeMessage(reqMsg TaskOrderInfoMessage) error {
 			log.Printf("Error occurred during order. Err: %v", err)
 			return err
 		}
-		return nil
-	case "migration":
-		log.Println("[TEMP] update all task history TTL")
-		err := c.taskHistorySrv.UpdateAllTaskHistoryTTL(context.Background())
-		if err != nil {
-			log.Printf("error updating all task history TTL: %v", err)
-			return nil
-		}
-		log.Printf("Migration task received")
 		return nil
 	default:
 		log.Printf("Unknown task type: %s", reqMsg.TaskOrderInfo.TaskType)
