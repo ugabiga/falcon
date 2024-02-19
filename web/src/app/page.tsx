@@ -22,12 +22,12 @@ export default async function Home() {
                         {t("home.subTitle")}
                     </h3>
                     <p className="text-center max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
-                        <p className="mb-2">
+                        <span className="mb-2">
                             {t("home.description.1")}
-                        </p>
-                        <p>
+                        </span>
+                        <span>
                             {t("home.description.2")}
-                        </p>
+                        </span>
                     </p>
                 </div>
             </section>
@@ -39,21 +39,20 @@ export default async function Home() {
                         {t("home.why.title")}
                     </h2>
                     <p className="max-w-[1000px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
-                        <p className="mb-2">
+                        <span className="mb-2">
                             {t("home.why.1.problem")}
-                        </p>
-                        <p>
+                        </span>
+                        <span>
                             {t("home.why.1.solution")}
-
-                        </p>
+                        </span>
                     </p>
                     <p className="max-w-[1000px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400 mx-auto">
-                        <p className="mb-2">
+                        <span className="mb-2">
                             {t("home.why.2.problem")}
-                        </p>
-                        <p>
+                        </span>
+                        <span>
                             {t("home.why.2.solution")}
-                        </p>
+                        </span>
                     </p>
                 </div>
             </section>
