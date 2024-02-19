@@ -2,8 +2,6 @@ name: Build and Deploy to Amazon Lambda
 
 on:
   workflow_dispatch:
-    branches: [ "main" ]
-  push:
     branches: [ "prod" ]
 
 env:
