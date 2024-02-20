@@ -245,7 +245,7 @@ func (s TaskService) validateBinanceSize(ctx context.Context, tradingAccount *mo
 	if err != nil {
 		return err
 	}
-	binanceClient := client.NewBinanceClient(tradingAccount.Key, secret, false)
+	binanceClient := client.NewBinanceFutureClient(tradingAccount.Key, secret, false)
 	binanceSymbol := symbol + currency
 	minimumBinanceCost := 5.0
 

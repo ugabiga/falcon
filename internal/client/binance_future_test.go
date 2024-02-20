@@ -13,7 +13,7 @@ func TestBinanceClient_Balance(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	ctx := context.Background()
 
-	c := client.NewBinanceClient(
+	c := client.NewBinanceFutureClient(
 		tester.Cfg.TestBinanceKey,
 		tester.Cfg.TestBinanceSecret,
 		false,

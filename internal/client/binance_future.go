@@ -22,21 +22,21 @@ var (
 	ErrMinNotional      = errors.New("not_satisfied_min_notional")
 )
 
-type BinanceClient struct {
+type BinanceFutureClient struct {
 	future *futures.Client
 }
 
-func NewBinanceClient(apiKey, secretKey string, isTest bool) *BinanceClient {
+func NewBinanceFutureClient(apiKey, secretKey string, isTest bool) *BinanceFutureClient {
 	if isTest {
 		futures.UseTestnet = true
 	}
 	c := futures.NewClient(apiKey, secretKey)
-	return &BinanceClient{
+	return &BinanceFutureClient{
 		future: c,
 	}
 }
 
-func (c *BinanceClient) MinQuantity(ctx context.Context, symbol string) (string, error) {
+func (c *BinanceFutureClient) MinQuantity(ctx context.Context, symbol string) (string, error) {
 	resp, err := c.future.NewExchangeInfoService().Do(ctx)
 	if err != nil {
 		return "", err
@@ -53,7 +53,7 @@ func (c *BinanceClient) MinQuantity(ctx context.Context, symbol string) (string,
 	return "", err
 }
 
-func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (string, string, error) {
+func (c *BinanceFutureClient) TickAndStepSize(ctx context.Context, symbol string) (string, string, error) {
 	resp, err := c.future.NewExchangeInfoService().Do(ctx)
 	if err != nil {
 		return "", "", err
@@ -71,7 +71,7 @@ func (c *BinanceClient) TickAndStepSize(ctx context.Context, symbol string) (str
 	return "", "", err
 }
 
-func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.LotSizeFilter, error) {
+func (c *BinanceFutureClient) LotSize(ctx context.Context, symbol string) (*futures.LotSizeFilter, error) {
 	resp, err := c.future.NewExchangeInfoService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (c *BinanceClient) LotSize(ctx context.Context, symbol string) (*futures.Lo
 
 }
 
-func (c *BinanceClient) Balance(ctx context.Context) (*futures.Balance, error) {
+func (c *BinanceFutureClient) Balance(ctx context.Context) (*futures.Balance, error) {
 	resp, err := c.future.NewGetBalanceService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -105,7 +105,7 @@ func (c *BinanceClient) Balance(ctx context.Context) (*futures.Balance, error) {
 
 }
 
-func (c *BinanceClient) Ticker(ctx context.Context, symbol string) (*futures.SymbolPrice, error) {
+func (c *BinanceFutureClient) Ticker(ctx context.Context, symbol string) (*futures.SymbolPrice, error) {
 	resp, err := c.future.NewListPricesService().Symbol(symbol).Do(ctx)
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (c *BinanceClient) Ticker(ctx context.Context, symbol string) (*futures.Sym
 	return nil, nil
 }
 
-func (c *BinanceClient) PositionWithoutSideIncludeEmpty(ctx context.Context, symbol string) (*futures.AccountPosition, error) {
+func (c *BinanceFutureClient) PositionWithoutSideIncludeEmpty(ctx context.Context, symbol string) (*futures.AccountPosition, error) {
 	resp, err := c.future.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -135,7 +135,7 @@ func (c *BinanceClient) PositionWithoutSideIncludeEmpty(ctx context.Context, sym
 	return nil, nil
 }
 
-func (c *BinanceClient) PositionWithoutSide(ctx context.Context, symbol string) (*futures.AccountPosition, error) {
+func (c *BinanceFutureClient) PositionWithoutSide(ctx context.Context, symbol string) (*futures.AccountPosition, error) {
 	resp, err := c.future.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -155,7 +155,7 @@ func (c *BinanceClient) PositionWithoutSide(ctx context.Context, symbol string) 
 	return nil, nil
 }
 
-func (c *BinanceClient) PositionSide(p futures.AccountPosition) (string, error) {
+func (c *BinanceFutureClient) PositionSide(p futures.AccountPosition) (string, error) {
 	positionAmt := str.New(p.PositionAmt).ToFloat64Default(0)
 	if positionAmt == 0 {
 		return "", errors.New("position amount is 0")
@@ -170,7 +170,7 @@ func (c *BinanceClient) PositionSide(p futures.AccountPosition) (string, error) 
 	return "", ErrPositionNotFound
 }
 
-func (c *BinanceClient) PositionWithEmptyValue(ctx context.Context, symbol, holdSide string) (*futures.AccountPosition, error) {
+func (c *BinanceFutureClient) PositionWithEmptyValue(ctx context.Context, symbol, holdSide string) (*futures.AccountPosition, error) {
 	resp, err := c.future.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func (c *BinanceClient) PositionWithEmptyValue(ctx context.Context, symbol, hold
 	return nil, nil
 }
 
-func (c *BinanceClient) Position(ctx context.Context, symbol, holdSide string) (*futures.AccountPosition, error) {
+func (c *BinanceFutureClient) Position(ctx context.Context, symbol, holdSide string) (*futures.AccountPosition, error) {
 	resp, err := c.future.NewGetAccountService().Do(ctx)
 	if err != nil {
 		return nil, err
@@ -212,7 +212,7 @@ func (c *BinanceClient) Position(ctx context.Context, symbol, holdSide string) (
 	return nil, nil
 }
 
-func (c *BinanceClient) PlaceOrderAtPrice(ctx context.Context, symbol, holdSide, size, price string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) PlaceOrderAtPrice(ctx context.Context, symbol, holdSide, size, price string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeLimit).
@@ -228,7 +228,7 @@ func (c *BinanceClient) PlaceOrderAtPrice(ctx context.Context, symbol, holdSide,
 	return resp, nil
 }
 
-func (c *BinanceClient) PlaceOrder(ctx context.Context, symbol, holdSide, size string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) PlaceOrder(ctx context.Context, symbol, holdSide, size string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeMarket).
@@ -243,7 +243,7 @@ func (c *BinanceClient) PlaceOrder(ctx context.Context, symbol, holdSide, size s
 	return resp, nil
 }
 
-func (c *BinanceClient) SetTP(ctx context.Context, symbol, holdSide, price string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) SetTP(ctx context.Context, symbol, holdSide, price string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeTakeProfitMarket).
@@ -258,7 +258,7 @@ func (c *BinanceClient) SetTP(ctx context.Context, symbol, holdSide, price strin
 	return resp, nil
 }
 
-func (c *BinanceClient) SetTPLimit(ctx context.Context, symbol, holdSide, price, size string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) SetTPLimit(ctx context.Context, symbol, holdSide, price, size string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeTakeProfit).
@@ -274,7 +274,7 @@ func (c *BinanceClient) SetTPLimit(ctx context.Context, symbol, holdSide, price,
 	return resp, nil
 }
 
-func (c *BinanceClient) SetSL(ctx context.Context, symbol, holdSide, price string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) SetSL(ctx context.Context, symbol, holdSide, price string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeStopMarket).
@@ -289,7 +289,7 @@ func (c *BinanceClient) SetSL(ctx context.Context, symbol, holdSide, price strin
 	return resp, nil
 }
 
-func (c *BinanceClient) SetSLLimit(ctx context.Context, symbol, holdSide, price, size string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) SetSLLimit(ctx context.Context, symbol, holdSide, price, size string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeStop).
@@ -305,7 +305,7 @@ func (c *BinanceClient) SetSLLimit(ctx context.Context, symbol, holdSide, price,
 	return resp, nil
 }
 
-func (c *BinanceClient) SetTS(ctx context.Context, symbol, side, triggerPrice, callbackRate, size string) (*futures.CreateOrderResponse, error) {
+func (c *BinanceFutureClient) SetTS(ctx context.Context, symbol, side, triggerPrice, callbackRate, size string) (*futures.CreateOrderResponse, error) {
 	resp, err := c.future.NewCreateOrderService().
 		Symbol(symbol).
 		Type(futures.OrderTypeTrailingStopMarket).
@@ -322,7 +322,7 @@ func (c *BinanceClient) SetTS(ctx context.Context, symbol, side, triggerPrice, c
 	return resp, nil
 }
 
-func (c *BinanceClient) SetLeverage(ctx context.Context, symbol string, leverage int) (*futures.SymbolLeverage, error) {
+func (c *BinanceFutureClient) SetLeverage(ctx context.Context, symbol string, leverage int) (*futures.SymbolLeverage, error) {
 	resp, err := c.future.NewChangeLeverageService().
 		Symbol(symbol).
 		Leverage(leverage).
@@ -334,7 +334,7 @@ func (c *BinanceClient) SetLeverage(ctx context.Context, symbol string, leverage
 	return resp, nil
 }
 
-func (c *BinanceClient) SetMarginTypeToIsolate(ctx context.Context, symbol string) error {
+func (c *BinanceFutureClient) SetMarginTypeToIsolate(ctx context.Context, symbol string) error {
 	err := c.future.NewChangeMarginTypeService().
 		Symbol(symbol).
 		MarginType(futures.MarginTypeIsolated).
@@ -351,7 +351,7 @@ func (c *BinanceClient) SetMarginTypeToIsolate(ctx context.Context, symbol strin
 	return nil
 }
 
-func (c *BinanceClient) SetMarginTypeToCross(ctx context.Context, symbol string) error {
+func (c *BinanceFutureClient) SetMarginTypeToCross(ctx context.Context, symbol string) error {
 	err := c.future.NewChangeMarginTypeService().
 		Symbol(symbol).
 		MarginType(futures.MarginTypeCrossed).
@@ -368,7 +368,7 @@ func (c *BinanceClient) SetMarginTypeToCross(ctx context.Context, symbol string)
 	return nil
 }
 
-func (c *BinanceClient) OpenTPSLTSOrders(ctx context.Context, symbol string) ([]*futures.Order, error) {
+func (c *BinanceFutureClient) OpenTPSLTSOrders(ctx context.Context, symbol string) ([]*futures.Order, error) {
 	resp, err := c.future.NewListOpenOrdersService().
 		Symbol(symbol).
 		Do(ctx)
@@ -388,7 +388,7 @@ func (c *BinanceClient) OpenTPSLTSOrders(ctx context.Context, symbol string) ([]
 	return orders, nil
 }
 
-func (c *BinanceClient) OpenPositionOrders(ctx context.Context, symbol string) ([]*futures.Order, error) {
+func (c *BinanceFutureClient) OpenPositionOrders(ctx context.Context, symbol string) ([]*futures.Order, error) {
 	resp, err := c.future.NewListOpenOrdersService().
 		Symbol(symbol).
 		Do(ctx)
@@ -407,7 +407,7 @@ func (c *BinanceClient) OpenPositionOrders(ctx context.Context, symbol string) (
 	return orders, nil
 }
 
-func (c *BinanceClient) CancelOpenOrders(ctx context.Context, symbol string, orderIDList []int64) ([]*futures.CancelOrderResponse, error) {
+func (c *BinanceFutureClient) CancelOpenOrders(ctx context.Context, symbol string, orderIDList []int64) ([]*futures.CancelOrderResponse, error) {
 	cancelResult, err := c.future.NewCancelMultipleOrdersService().
 		Symbol(symbol).
 		OrderIDList(orderIDList).
@@ -419,7 +419,7 @@ func (c *BinanceClient) CancelOpenOrders(ctx context.Context, symbol string, ord
 	return cancelResult, nil
 }
 
-func (c *BinanceClient) LimitOrder(ctx context.Context, symbol string) (*futures.Order, error) {
+func (c *BinanceFutureClient) LimitOrder(ctx context.Context, symbol string) (*futures.Order, error) {
 	resp, err := c.future.NewListOpenOrdersService().
 		Symbol(symbol).
 		Do(ctx)
@@ -438,7 +438,7 @@ func (c *BinanceClient) LimitOrder(ctx context.Context, symbol string) (*futures
 	return nil, nil
 }
 
-func (c *BinanceClient) NotionAndLeverageBrackets(ctx context.Context, symbol string) (*futures.LeverageBracket, error) {
+func (c *BinanceFutureClient) NotionAndLeverageBrackets(ctx context.Context, symbol string) (*futures.LeverageBracket, error) {
 	resp, err := c.future.NewGetLeverageBracketService().
 		Symbol(symbol).
 		Do(ctx)
@@ -455,7 +455,7 @@ func (c *BinanceClient) NotionAndLeverageBrackets(ctx context.Context, symbol st
 	return nil, nil
 }
 
-func (c *BinanceClient) oppositeHoldSide(holdSide string) futures.SideType {
+func (c *BinanceFutureClient) oppositeHoldSide(holdSide string) futures.SideType {
 	side := c.convertHoldSide(holdSide)
 	switch side {
 	case futures.SideTypeBuy:
@@ -467,7 +467,7 @@ func (c *BinanceClient) oppositeHoldSide(holdSide string) futures.SideType {
 	}
 }
 
-func (c *BinanceClient) convertHoldSide(holdSide string) futures.SideType {
+func (c *BinanceFutureClient) convertHoldSide(holdSide string) futures.SideType {
 	switch holdSide {
 	case HoldSideLong:
 		return futures.SideTypeBuy
@@ -478,7 +478,7 @@ func (c *BinanceClient) convertHoldSide(holdSide string) futures.SideType {
 	}
 }
 
-func (c *BinanceClient) errorConverter(apiErr error) error {
+func (c *BinanceFutureClient) errorConverter(apiErr error) error {
 	var e *common.APIError
 	switch {
 	case errors.As(apiErr, &e):
@@ -493,6 +493,4 @@ func (c *BinanceClient) errorConverter(apiErr error) error {
 	default:
 		return apiErr
 	}
-
-	return apiErr
 }

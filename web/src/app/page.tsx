@@ -1,14 +1,9 @@
 import React from "react";
 import {Card, CardContent, CardHeader} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
-import {ManualKRMain} from "@/lib/ref-url";
 import {useTranslation} from "@/lib/i18n-server";
-import {capture} from "@/lib/posthog";
 
 export default async function Home() {
     const {t} = await useTranslation()
-
-    capture('home_page_viewed')
 
     return (
         <main className="flex-1 flex flex-col min-h-screen">
