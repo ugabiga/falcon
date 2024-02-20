@@ -198,7 +198,8 @@ func TestDcaService_OrderFromUpbit(t *testing.T) {
 		}
 	})
 }
-func TestDcaService_OrderFromBinance(t *testing.T) {
+
+func TestDcaService_OrderFromBinanceFuture(t *testing.T) {
 	tester := Initialize(t)
 	authenticationSrv := tester.AuthenticationSrv
 	tradingAccountSrv := tester.TradingAccountSrv
@@ -265,6 +266,82 @@ func TestDcaService_OrderFromBinance(t *testing.T) {
 		}
 
 		if err := srv.OrderFromBinanceFuture(
+			ctx,
+			tradingAccount,
+			task,
+		); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestDcaService_OrderFromBinanceSpot(t *testing.T) {
+	tester := Initialize(t)
+	authenticationSrv := tester.AuthenticationSrv
+	tradingAccountSrv := tester.TradingAccountSrv
+	taskSrv := tester.TaskSrv
+	repo := tester.Repository
+	srv := tester.DcaSrv
+	ctx := context.Background()
+
+	ipAddress := "3.39.156.133"
+	_, err := repo.CreateStaticIP(ctx, model.StaticIP{
+		IPAddress:      ipAddress,
+		IPAvailability: true,
+		IPUsageCount:   0,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//CreateUser
+	_, user, err := authenticationSrv.SignUp(
+		ctx,
+		"google",
+		uuid.New().String(),
+		uuid.New().String(),
+		"user-test-user",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tradingAccount, err := tradingAccountSrv.Create(
+		ctx,
+		user.ID,
+		"binance_test",
+		model.ExchangeBinanceSpot,
+		tester.Cfg.TestBinanceKey,
+		tester.Cfg.TestBinanceSecret,
+		"",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("should complete order BTC", func(t *testing.T) {
+		task, err := taskSrv.Create(
+			ctx,
+			user.ID,
+			generated.CreateTaskInput{
+				TradingAccountID: tradingAccount.ID,
+				Currency:         "USDT",
+				Size:             0.0001,
+				Symbol:           "BTC",
+				Hours:            time.Now().Format("15"),
+				Days:             "1,2,3,4,5,6,7",
+				Type:             "DCA",
+				Params:           map[string]interface{}{},
+			})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if task == nil {
+			t.Fatal("task is nil")
+		}
+
+		if err := srv.OrderFromBinanceSpot(
 			ctx,
 			tradingAccount,
 			task,
