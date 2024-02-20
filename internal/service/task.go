@@ -208,6 +208,8 @@ func (s TaskService) validateSize(ctx context.Context, userID, tradingAccountID,
 	switch tradingAccount.Exchange {
 	case model.ExchangeUpbit:
 		return s.validateUpbitSize(ctx, currency, symbol, size)
+	case model.ExchangeBinanceSpot:
+		return s.validateBinanceSize(ctx, tradingAccount, currency, symbol, size)
 	case model.ExchangeBinanceFutures:
 		return s.validateBinanceSize(ctx, tradingAccount, currency, symbol, size)
 	default:

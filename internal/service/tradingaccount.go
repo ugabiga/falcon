@@ -217,6 +217,8 @@ func (s TradingAccountService) validateExchange(exchange string) error {
 	switch exchange {
 	case model.ExchangeBinanceFutures:
 		return nil
+	case model.ExchangeBinanceSpot:
+		return nil
 	case model.ExchangeUpbit:
 		return nil
 	default:

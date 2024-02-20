@@ -175,4 +175,56 @@ func TestGridService_Order(t *testing.T) {
 		}
 
 	})
+
+	t.Run("should make binance spot order", func(t *testing.T) {
+		tradingAccount := tester.CreateTestTradingAccount(
+			ctx,
+			t,
+			user.ID,
+			model.ExchangeBinanceSpot,
+			cfg.TestBinanceKey,
+			cfg.TestBinanceSecret,
+		)
+
+		gridTaskParams := model.TaskGridParams{
+			GapPercent: 5,
+			Quantity:   2,
+		}
+
+		task, err := tester.TaskSrv.Create(
+			ctx,
+			user.ID,
+			generated.CreateTaskInput{
+				TradingAccountID: tradingAccount.ID,
+				Currency:         "USDT",
+				Size:             0.0002,
+				Symbol:           "BTC",
+				Hours:            time.Now().Format("15"),
+				Days:             "1,2,3,4,5,6,7",
+				Type:             model.TaskTypeLongGrid,
+				Params:           gridTaskParams.ToParams(),
+			})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mt := NewMockTimer()
+		mt.On("NoSeconds").Return(task.NextExecutionTime)
+
+		target, err := tester.GridSrv.GetTarget(mt)
+		if err != nil {
+			t.Error(err)
+		}
+
+		if len(target) < 1 {
+			t.Errorf("expected len(target) > 0, got %d", len(target))
+		}
+
+		err = tester.GridSrv.Order(target[0])
+		if err != nil {
+			t.Error(err)
+		}
+
+	})
+
 }
