@@ -134,6 +134,7 @@
   "manual.btn": "메뉴얼 보기",
   "common.exchange.upbit": "업비트",
   "common.exchange.binance_futures": "바이낸스 선물",
+  "common.exchange.binance_spot": "바이낸스 현물",
   "tasks.type.dca": "적립식 투자(DCA)",
   "tasks.type.long_grid": "롱 그리드",
   "tasks.type.buying_grid": "매수 그리드",

@@ -14,5 +14,10 @@ export const ExchangeList: Exchanges[] = [
         value: "binance_futures",
         supportCurrencies: ["USDT"],
         isEnable: true
+    },
+    {
+        value: "binance_spot",
+        supportCurrencies: ["USDT"],
+        isEnable: true
     }
 ];
