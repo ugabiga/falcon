@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	TradingAccountCreationLimit = 2
+	TradingAccountCreationLimit = 3
 )
 
 type TradingAccountService struct {
