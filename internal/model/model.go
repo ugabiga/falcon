@@ -6,6 +6,7 @@ import (
 
 const (
 	ExchangeBinanceFutures = "binance_futures"
+	ExchangeBinanceSpot    = "binance_spot"
 	ExchangeUpbit          = "upbit"
 )
 

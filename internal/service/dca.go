@@ -92,7 +92,16 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 			return err
 		}
 	case model.ExchangeBinanceFutures:
-		orderErr := s.OrderFromBinance(
+		orderErr := s.OrderFromBinanceFuture(
+			ctx,
+			tradingAccount,
+			t,
+		)
+		if err := s.createTaskHistory(ctx, orderErr, t); err != nil {
+			return err
+		}
+	case model.ExchangeBinanceSpot:
+		orderErr := s.OrderFromBinanceSpot(
 			ctx,
 			tradingAccount,
 			t,
@@ -115,7 +124,7 @@ func (s DcaService) Order(orderInfo TaskOrderInfo) error {
 	return nil
 }
 
-func (s DcaService) OrderFromBinance(
+func (s DcaService) OrderFromBinanceSpot(
 	ctx context.Context,
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
@@ -129,7 +138,51 @@ func (s DcaService) OrderFromBinance(
 	}
 	log.Printf("order at binance: key: %s, size: %f, symbol: %s", key, size, symbol)
 
-	c := client.NewBinanceClient(key, decryptedSecret, false)
+	c := client.NewBinanceSpotClient(key, decryptedSecret, false)
+
+	ticker, err := c.Ticker(ctx, symbol)
+	if err != nil {
+		log.Printf("Error getting ticker: %s", err.Error())
+		return err
+	}
+	if ticker == nil {
+		return ErrTickerNotFound
+	}
+
+	tickerPriceDecimalCount := str.New(ticker.Price).CountDecimalCount()
+	tickerPrice := str.New(ticker.Price).ToFloat64Default(0)
+	roundedTickerPrice := math.Round(tickerPrice*math.Pow10(tickerPriceDecimalCount)) / math.Pow10(tickerPriceDecimalCount)
+
+	order, err := c.PlaceOrderAtPrice(ctx,
+		symbol,
+		client.HoldSideLong,
+		str.FromFloat64(size).Val(),
+		str.FromFloat64(roundedTickerPrice).Val(),
+	)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("order: %+v", debug.ToJSONInlineStr(order))
+
+	return nil
+}
+
+func (s DcaService) OrderFromBinanceFuture(
+	ctx context.Context,
+	tradingAccount *model.TradingAccount,
+	t *model.Task,
+) error {
+	symbol := t.Symbol + t.Currency
+	size := t.Size
+	key := tradingAccount.Key
+	decryptedSecret, err := s.encryption.Decrypt(tradingAccount.Secret)
+	if err != nil {
+		return err
+	}
+	log.Printf("order at binance: key: %s, size: %f, symbol: %s", key, size, symbol)
+
+	c := client.NewBinanceFutureClient(key, decryptedSecret, false)
 
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {

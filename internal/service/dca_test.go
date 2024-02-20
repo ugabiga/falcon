@@ -264,7 +264,7 @@ func TestDcaService_OrderFromBinance(t *testing.T) {
 			t.Fatal("task is nil")
 		}
 
-		if err := srv.OrderFromBinance(
+		if err := srv.OrderFromBinanceFuture(
 			ctx,
 			tradingAccount,
 			task,
