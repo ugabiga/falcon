@@ -88,6 +88,16 @@ function SessionMenu() {
     const {data: session} = useSession();
     const router = useRouter()
 
+    useEffect(() => {
+        if (!session) {
+            return
+        }
+        if (session.user?.name === null && session.user?.email === null) {
+            return
+        }
+        setPostHogUser(session.user?.name)
+    }, [session]);
+
     if (!session) {
         return (
             <Button variant="ghost" onClick={() => signIn()}>
@@ -96,7 +106,18 @@ function SessionMenu() {
         )
     }
 
-    setPostHogUser(session.user?.name)
+    if (session.user?.name === null && session.user?.email === null) {
+        signOut({
+            callbackUrl: "/",
+            redirect: false
+        }).then()
+
+        return (
+            <Button variant="ghost" onClick={() => signIn()}>
+                {t("nav.sign_in")}
+            </Button>
+        )
+    }
 
     return (
         <div className={"ml-2"}>
