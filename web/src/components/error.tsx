@@ -27,7 +27,6 @@ function UnAuthorizedError() {
 
     return (
         <div className="h-screen w-full flex flex-col justify-center items-center space-y-4">
-            <h1 className="text-3xl font-bold"> {t("error.unauthorized")}</h1>
             <h2 className="text-2xl font-bold"> {t("error.unauthorized.action")}</h2>
             <Button onClick={() => signIn()}>
                 {t("error.unauthorized.action.sign_in")}
