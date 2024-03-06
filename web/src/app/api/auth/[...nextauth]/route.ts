@@ -65,8 +65,6 @@ const handler = NextAuth({
             const data = await resp.json()
             const {token} = data
 
-            console.log("token", token)
-
             cookies().set(
                 jwtCookieName,
                 token,
