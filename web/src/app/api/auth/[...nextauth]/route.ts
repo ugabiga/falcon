@@ -36,6 +36,43 @@ const handler = NextAuth({
         }
     },
     callbacks: {
+        async session({session, token}) {
+            const jwtToken = cookies().get(jwtCookieName)
+
+            if (jwtToken === undefined) {
+                return {
+                    ...session,
+                    user: {
+                        name: null,
+                        email: null,
+                        image: null,
+                    },
+                    expires: new Date().toISOString(),
+                }
+            }
+
+            const resp = await fetch(apiUrl + "/auth/protected", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + jwtToken?.value,
+                },
+            })
+
+            if (resp.status !== 200) {
+                return {
+                    ...session,
+                    user: {
+                        name: null,
+                        email: null,
+                        image: null,
+                    },
+                    expires: new Date().toISOString(),
+                }
+            }
+
+            return session;
+        },
         async signIn({user, account, profile, email, credentials}) {
             if (!user || !account) {
                 return false;
