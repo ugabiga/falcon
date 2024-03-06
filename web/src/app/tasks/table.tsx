@@ -12,7 +12,6 @@ export function TaskTable(
         tradingAccount?: TradingAccount
     }
 ) {
-    console.log("tradingAccount", tradingAccount)
     const {t} = useTranslation();
 
     function convertSchedule(cronExpression: string): string {
