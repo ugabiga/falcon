@@ -1,6 +1,6 @@
 {
   "SECTION_ERROR": "",
-  "error.unauthorized": "You are not authorized to access this page",
+  "error.unauthorized": "",
   "error.unauthorized.action": "Please sign in to continue",
   "error.unauthorized.action.sign_in": "Sign In",
   "SECTION_COMMON": "",
