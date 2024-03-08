@@ -160,6 +160,8 @@ export function TaskForm(
                             <SelectItem value="AVAX">Avalanche AVAX</SelectItem>
                             <SelectItem value="TRX">TRON TRX</SelectItem>
                             <SelectItem value="MATIC">Polygon MATIC</SelectItem>
+                            <SelectItem value="ARB">Arbitrum ARB</SelectItem>
+                            <SelectItem value="INJ">Injective Protocol INJ</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage/>
