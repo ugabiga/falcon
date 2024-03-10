@@ -50,6 +50,24 @@ func (t Task) GridParams() (*TaskGridParams, error) {
 
 	return &gridParams, nil
 }
+func (t Task) GridParamsV2() (*TaskGridParamsV2, error) {
+	if t.Type != TaskTypeLongGrid {
+		return nil, ErrInvalidTaskType
+	}
+
+	marshalParams, err := json.Marshal(t.Params)
+	if err != nil {
+		return nil, err
+	}
+
+	var gridParams TaskGridParamsV2
+	if err := json.Unmarshal(marshalParams, &gridParams); err != nil {
+		log.Printf("Error unmarshalling grid params. Err: %v", err)
+		return nil, err
+	}
+
+	return &gridParams, nil
+}
 
 type TaskGridParams struct {
 	GapPercent float64 `json:"gap_percent"`
@@ -60,5 +78,19 @@ func (t TaskGridParams) ToParams() map[string]interface{} {
 	return map[string]interface{}{
 		"gap_percent": t.GapPercent,
 		"quantity":    t.Quantity,
+	}
+}
+
+type TaskGridParamsV2 struct {
+	GapPercent                 float64 `json:"gap_percent"`
+	Quantity                   int64   `json:"quantity"`
+	ShouldDeletePreviousOrders bool    `json:"should_delete_previous_orders"`
+}
+
+func (t TaskGridParamsV2) ToParams() map[string]interface{} {
+	return map[string]interface{}{
+		"gap_percent":                   t.GapPercent,
+		"quantity":                      t.Quantity,
+		"should_delete_previous_orders": t.ShouldDeletePreviousOrders,
 	}
 }
