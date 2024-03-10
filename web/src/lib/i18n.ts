@@ -3,9 +3,8 @@ import {FallbackNs, initReactI18next, useTranslation as useTranslationOrg} from 
 import usTranslations from '@/translations/en_US.json';
 import krTranslations from '@/translations/ko_KR.json';
 
-export const fallbackLng = 'en'
-export const languages = [fallbackLng, 'ko']
-export const defaultNS = 'translation'
+export const fallbackLng = 'ko'
+export const languages = [fallbackLng, 'en']
 export const cookieName = 'i18next'
 
 export const resources = {
@@ -38,9 +37,7 @@ export function useTranslation<
     ns?: Ns,
     options: { keyPrefix?: KPrefix } = {}
 ) {
-    const ret = useTranslationOrg(ns, options)
-    const {i18n} = ret
-    return ret
+    return useTranslationOrg(ns, options)
 }
 
 export default i18n;
