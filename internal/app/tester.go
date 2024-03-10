@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/google/uuid"
+	"github.com/ugabiga/falcon/internal/graph/generated"
 	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/migration"
 	"github.com/ugabiga/falcon/internal/model"
@@ -59,11 +60,13 @@ func (t Tester) ResetTables(tt *testing.T) {
 		tt.Fatal(err)
 	}
 }
+
 func (t Tester) CleanUp(tt *testing.T) {
 	if err := t.Migration.Migrate(true); err != nil {
 		tt.Fatal(err)
 	}
 }
+
 func (t Tester) CreateStaticIP(ctx context.Context, tt *testing.T) {
 	ipAddress := "127.0.0.1"
 
@@ -77,6 +80,7 @@ func (t Tester) CreateStaticIP(ctx context.Context, tt *testing.T) {
 		tt.Fatal(err)
 	}
 }
+
 func (t Tester) CreateOrGetTestUser(ctx context.Context, tt *testing.T) *model.User {
 	authentication, user, err := t.AuthenticationSrv.SignUp(
 		ctx,
@@ -102,9 +106,10 @@ func (t Tester) CreateOrGetTestUser(ctx context.Context, tt *testing.T) *model.U
 
 func (t Tester) CreateTestTradingAccount(
 	ctx context.Context,
-	tt *testing.T, userID,
-	exchange string,
-	key string,
+	tt *testing.T,
+	userID,
+	exchange,
+	key,
 	secret string,
 ) *model.TradingAccount {
 	t.CreateStaticIP(ctx, tt)
@@ -123,4 +128,55 @@ func (t Tester) CreateTestTradingAccount(
 	}
 
 	return tradingAccount
+}
+
+func (t Tester) CreateTestTasks(
+	ctx context.Context,
+	tt *testing.T,
+	tradingAccount *model.TradingAccount,
+	userID string,
+) []model.Task {
+
+	//Create DCA Task
+	dcaTask, err := t.TaskSrv.Create(
+		ctx,
+		userID,
+		generated.CreateTaskInput{
+			TradingAccountID: tradingAccount.ID,
+			Currency:         "KRW",
+			Size:             0.001,
+			Symbol:           "BTC",
+			Days:             "1,2,3,4,5,6,7",
+			Hours:            "18",
+			Type:             model.TaskTypeDCA,
+			Params:           nil,
+		},
+	)
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	//Create Grid Task
+	gridTask, err := t.TaskSrv.Create(
+		ctx,
+		userID,
+		generated.CreateTaskInput{
+			TradingAccountID: tradingAccount.ID,
+			Currency:         "KRW",
+			Size:             0.001,
+			Symbol:           "BTC",
+			Days:             "1,2,3,4,5,6,7",
+			Hours:            "18",
+			Type:             model.TaskTypeLongGrid,
+			Params: model.TaskGridParams{
+				GapPercent: 2,
+				Quantity:   2,
+			}.ToParams(),
+		},
+	)
+	if err != nil {
+		tt.Fatal(err)
+	}
+
+	return []model.Task{*dcaTask, *gridTask}
 }

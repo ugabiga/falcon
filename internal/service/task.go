@@ -156,6 +156,38 @@ func (s TaskService) GetByTradingAccount(ctx context.Context, tradingAccountID s
 	return tasks, nil
 }
 
+func (s TaskService) MigrateGridParams(ctx context.Context) error {
+	tasks, err := s.repo.ScanTasksByType(ctx, model.TaskTypeLongGrid)
+	if err != nil {
+		return err
+	}
+
+	for _, task := range tasks {
+		if task.Type != model.TaskTypeLongGrid {
+			continue
+		}
+
+		gridParams, err := task.GridParams()
+		if err != nil {
+			return err
+		}
+
+		newParams := model.TaskGridParamsV2{
+			GapPercent:                 gridParams.GapPercent,
+			Quantity:                   gridParams.Quantity,
+			ShouldDeletePreviousOrders: true,
+		}
+
+		task.Params = newParams.ToParams()
+		_, err = s.repo.UpdateTask(ctx, task)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s TaskService) validateExceedLimit(ctx context.Context, tradingAccountID string) error {
 	count, err := s.repo.CountTasksByTradingID(ctx, tradingAccountID)
 	if err != nil {

@@ -448,6 +448,41 @@ func (r DynamoRepository) GetTask(ctx context.Context, tradingAccountID, taskID 
 	return task, nil
 }
 
+func (r DynamoRepository) ScanTasksByType(ctx context.Context, taskType string) ([]model.Task, error) {
+	result, err := r.db.Scan(
+		ctx,
+		&dynamodb.ScanInput{
+			TableName:        &r.tableName,
+			FilterExpression: &[]string{"begins_with(#key, :pk) AND #type = :task_type"}[0],
+			ExpressionAttributeNames: map[string]string{
+				"#key":  "pk",
+				"#type": "type",
+			},
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":pk":        &types.AttributeValueMemberS{Value: "ta-"},
+				":task_type": &types.AttributeValueMemberS{Value: taskType},
+			},
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []model.Task
+
+	for _, item := range result.Items {
+		task, err := UnmarshalItem[model.Task](item)
+		if err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, *task)
+	}
+
+	return tasks, nil
+
+}
+
 func (r DynamoRepository) GetTasksByTradingAccountID(ctx context.Context, tradingAccountID string) ([]model.Task, error) {
 	result, err := r.db.Query(
 		ctx,
