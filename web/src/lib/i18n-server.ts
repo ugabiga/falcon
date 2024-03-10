@@ -4,9 +4,8 @@ import acceptLanguage from 'accept-language'
 import usTranslations from "@/translations/en_US.json";
 import krTranslations from "@/translations/ko_KR.json";
 
-export const fallbackLng = 'en'
-export const languages = [fallbackLng, 'ko']
-export const defaultNS = 'translation'
+export const fallbackLng = 'ko'
+export const languages = [fallbackLng, 'en']
 export const cookieName = 'i18next'
 
 export const resources = {
@@ -38,16 +37,16 @@ const initI18next = async (lng: string) => {
 acceptLanguage.languages(languages)
 
 export function detectLanguage() {
-    const ckies = cookies()
-    const hders = headers()
+    const reqCookies = cookies()
+    const readOnlyHeaders = headers()
     let lng
-    const nextUrlHeader = hders.has('next-url') && hders.get('next-url')
+    const nextUrlHeader = readOnlyHeaders.has('next-url') && readOnlyHeaders.get('next-url')
     if (nextUrlHeader && nextUrlHeader.indexOf(`"lng":"`) > -1) {
         const qsObj = JSON.parse(nextUrlHeader.substring(nextUrlHeader.indexOf('{'), nextUrlHeader.indexOf(`}`) + 1))
         lng = qsObj.lng
     }
-    if (!lng && ckies.has(cookieName)) lng = acceptLanguage.get(ckies.get(cookieName)!.value)
-    if (!lng) lng = acceptLanguage.get(hders.get('Accept-Language'))
+    if (!lng && reqCookies.has(cookieName)) lng = acceptLanguage.get(reqCookies.get(cookieName)!.value)
+    if (!lng) lng = acceptLanguage.get(readOnlyHeaders.get('Accept-Language'))
     if (!lng) lng = fallbackLng
     return lng
 }
