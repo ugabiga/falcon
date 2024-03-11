@@ -34,12 +34,6 @@ export const metadata: Metadata = {
         },
         {
             rel: 'icon',
-            type: 'image/svg+xml',
-            sizes: 'any',
-            url: '/safari-pinned-tab.svg',
-        },
-        {
-            rel: 'icon',
             type: 'image/png',
             sizes: '32x32',
             url: '/favicon-32x32.png',
@@ -52,55 +46,14 @@ export const metadata: Metadata = {
         },
         {
             rel: 'apple-touch-icon',
-            sizes: '57x57',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '60x60',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '72x72',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '76x76',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '114x114',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '120x120',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '144x144',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
-            sizes: '152x152',
-            url: '/apple-touch-icon.png'
-        },
-        {
-            rel: 'apple-touch-icon',
             sizes: '180x180',
-            url: '/apple-touch-icon.png'
+            url: '/apple-touch-icon.png',
         },
-
-        // {
-        //     rel: 'mask-icon',
-        //     url: '/safari-pinned-tab.svg',
-        //     color: '#5bbad5',
-        // },
+        {
+            rel: 'mask-icon',
+            url: '/safari-pinned-tab.svg',
+            color: '#5bbad5',
+        },
     ],
 }
 
