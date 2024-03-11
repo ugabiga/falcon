@@ -25,6 +25,7 @@ type Tester struct {
 	Repository        *repository.DynamoRepository
 	GridSrv           *service.GridService
 	MessageHandler    messaging.MessageHandler
+	MigrationSrv      *service.MigrationService
 }
 
 func NewTester(
@@ -39,6 +40,7 @@ func NewTester(
 	tradingRepository *repository.DynamoRepository,
 	gridSrv *service.GridService,
 	messageHandler messaging.MessageHandler,
+	migrationSrv *service.MigrationService,
 ) Tester {
 	return Tester{
 		Cfg:               cfg,
@@ -52,6 +54,7 @@ func NewTester(
 		Repository:        tradingRepository,
 		GridSrv:           gridSrv,
 		MessageHandler:    messageHandler,
+		MigrationSrv:      migrationSrv,
 	}
 }
 
