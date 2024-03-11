@@ -173,9 +173,11 @@ func (s TaskService) MigrateGridParams(ctx context.Context) error {
 		}
 
 		newParams := model.TaskGridParamsV2{
-			GapPercent:                 gridParams.GapPercent,
-			Quantity:                   gridParams.Quantity,
-			ShouldDeletePreviousOrders: true,
+			GapPercent:           gridParams.GapPercent,
+			Quantity:             gridParams.Quantity,
+			UseIncrementalSize:   false,
+			IncrementalSize:      0,
+			DeletePreviousOrders: true,
 		}
 
 		task.Params = newParams.ToParams()

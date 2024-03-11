@@ -37,8 +37,8 @@ func TestTaskService_MigrateGridParams(t *testing.T) {
 					t.Errorf("Task params should not be nil")
 				}
 
-				if task.Params["should_delete_previous_orders"] == nil {
-					t.Errorf("Task params should have should_delete_previous_orders")
+				if task.Params["delete_previous_orders"] == nil {
+					t.Errorf("Task params should have delete_previous_orders")
 				}
 
 				paramsV2, err := task.GridParamsV2()
@@ -46,7 +46,7 @@ func TestTaskService_MigrateGridParams(t *testing.T) {
 					t.Errorf("Error while parse grid params v2")
 				}
 
-				if paramsV2.ShouldDeletePreviousOrders != true {
+				if paramsV2.DeletePreviousOrders != true {
 					t.Errorf("Task params should set should delete previous orders to true")
 				}
 			}

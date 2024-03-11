@@ -297,14 +297,23 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
     )
 }
 
-export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): {
+export interface TaskGridParams {
     gap_percent: number,
-    quantity: number
-} | null {
+    quantity: number,
+    use_incremental_size: boolean,
+    incremental_size: number,
+    delete_previous_orders: boolean
+
+}
+
+export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): TaskGridParams | null {
     if (data.type === TaskType.BuyingGrid) {
         return {
             gap_percent: data.grid?.gap_percent ?? 0,
             quantity: data.grid?.quantity ?? 0,
+            use_incremental_size: false,
+            incremental_size: 0,
+            delete_previous_orders: true,
         }
     }
 
