@@ -82,15 +82,19 @@ func (t TaskGridParams) ToParams() map[string]interface{} {
 }
 
 type TaskGridParamsV2 struct {
-	GapPercent                 float64 `json:"gap_percent"`
-	Quantity                   int64   `json:"quantity"`
-	ShouldDeletePreviousOrders bool    `json:"should_delete_previous_orders"`
+	GapPercent           float64 `json:"gap_percent"`
+	Quantity             int64   `json:"quantity"`
+	UseIncrementalSize   bool    `json:"use_incremental_size"`
+	IncrementalSize      float64 `json:"incremental_size"`
+	DeletePreviousOrders bool    `json:"delete_previous_orders"`
 }
 
 func (t TaskGridParamsV2) ToParams() map[string]interface{} {
 	return map[string]interface{}{
-		"gap_percent":                   t.GapPercent,
-		"quantity":                      t.Quantity,
-		"should_delete_previous_orders": t.ShouldDeletePreviousOrders,
+		"gap_percent":            t.GapPercent,
+		"quantity":               t.Quantity,
+		"use_incremental_size":   t.UseIncrementalSize,
+		"incremental_size":       t.IncrementalSize,
+		"delete_previous_orders": t.DeletePreviousOrders,
 	}
 }
