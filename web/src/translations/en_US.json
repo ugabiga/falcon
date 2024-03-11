@@ -147,5 +147,11 @@
   "tasks.form.type.dca.description": "A method of investing a fixed amount at regular intervals, which helps reduce volatility and lower the average purchase price to increase profits.",
   "tasks.form.type.buying_grid.description": "A method of buying at regular intervals when prices decline in the short term, aiming to lower the average purchase price during declines to increase profits.",
   "tasks.form.grid.gap.description": "Specify the percentage gap at which purchases will be made from the market price.",
-  "tasks.form.grid.quantity.description": "Specify how many purchases will be made at the set intervals."
+  "tasks.form.grid.quantity.description": "Specify how many purchases will be made at the set intervals.",
+  "tasks.form.grid.use_incremental_size": "Use Incremental Size",
+  "tasks.form.grid.use_incremental_size.description": "If checked, the size of the purchase will increase as the gap increases.",
+  "tasks.form.grid.incremental_size": "Incremental Size",
+  "tasks.form.grid.incremental_size.description": "Specify the size of the incremental purchase.",
+  "tasks.form.grid.delete_previous_orders": "Delete Previous Orders",
+  "tasks.form.grid.delete_previous_orders.description": "If checked, previous orders will be deleted before placing new orders."
 }

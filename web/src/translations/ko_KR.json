@@ -78,7 +78,7 @@
   "tasks.form.type": "유형",
   "tasks.form.currency": "통화",
   "tasks.form.symbol": "암호화폐 코인명/심볼",
-  "tasks.form.size": "투자 크기",
+  "tasks.form.size": "매수 크기",
   "tasks.form.days": "일",
   "tasks.form.days.placeholder": "일 선택",
   "tasks.form.hours": "실행 시간 (24시간 형식) (예: 13,14,15)",
@@ -147,5 +147,11 @@
   "tasks.form.type.dca.description": "일정한 기간마다 일정한 금액을 투자하는 방식, 변동성을 줄이고 평균매입가격을 낮추어 수익을 높일 수 있습니다",
   "tasks.form.type.buying_grid.description": "단기적으로 가격이 하락하는 경우 일정한 간격으로 매수를 진행하는 방식, 하락시 평균매입가격을 낮추어 수익을 높일 수 있습니다",
   "tasks.form.grid.gap.description": "시장가격에서 몇 % 갭으로 매수를 진행할지 설정하세요",
-  "tasks.form.grid.quantity.description": "설정한 갭으로 몇 번 매수를 진행할지 설정하세요"
+  "tasks.form.grid.quantity.description": "설정한 갭으로 몇 번 매수를 진행할지 설정하세요",
+  "tasks.form.grid.use_incremental_size": "점진적 매수 크기 증가 사용",
+  "tasks.form.grid.use_incremental_size.description": "매수 갭마다 매수 크기를 증가시킬지 설정하세요",
+  "tasks.form.grid.incremental_size": "점진적 매수 증가 크기",
+  "tasks.form.grid.incremental_size.description": "매수 갭마다 증가시킬 매수 크기를 설정하세요",
+  "tasks.form.grid.delete_previous_orders": "이전 주문 삭제 여부",
+  "tasks.form.grid.delete_previous_orders.description": "실행시 이전 주문을 삭제할지 설정하세요"
 }
