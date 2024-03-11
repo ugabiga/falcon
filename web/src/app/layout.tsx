@@ -52,14 +52,50 @@ export const metadata: Metadata = {
         },
         {
             rel: 'apple-touch-icon',
-            sizes: '180x180',
-            url: '/apple-touch-icon.png',
+            sizes: '57x57',
+            url: '/apple-touch-icon.png'
         },
         {
             rel: 'apple-touch-icon',
-            sizes: 'any',
-            url: '/apple-touch-icon.png',
+            sizes: '60x60',
+            url: '/apple-touch-icon.png'
         },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '72x72',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '76x76',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '114x114',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '120x120',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '144x144',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '152x152',
+            url: '/apple-touch-icon.png'
+        },
+        {
+            rel: 'apple-touch-icon',
+            sizes: '180x180',
+            url: '/apple-touch-icon.png'
+        },
+
         // {
         //     rel: 'mask-icon',
         //     url: '/safari-pinned-tab.svg',
