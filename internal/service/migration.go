@@ -23,12 +23,6 @@ func NewMigrationService(
 	}
 }
 func (s MigrationService) Migrate() error {
-	ctx := context.Background()
-	log.Printf("Migrating grid params")
-	if err := s.MigrateGridParams(ctx); err != nil {
-		return err
-	}
-
 	return nil
 }
 
