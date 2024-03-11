@@ -5,7 +5,7 @@ import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/compon
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {DaysOfWeekSelector} from "@/components/days-of-week-selector";
 import {Input} from "@/components/ui/input";
-import React, {useEffect} from "react";
+import React from "react";
 import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
@@ -52,10 +52,6 @@ export function TaskForm(
     const {t} = useTranslation();
     const {fetchConvertedTotal, convertedTotal} = useConvertSizeToCurrency()
 
-    useEffect(() => {
-        handleSizeOnChange()
-    }, [form]);
-
     const handleSizeOnChange = () => {
         const symbol = form.watch("symbol")
         const currency = form.watch("currency")
@@ -67,6 +63,15 @@ export function TaskForm(
         }
 
         fetchConvertedTotal(symbol, currency, size)
+    }
+    const handleOnTypeChange = () => {
+        const type = form.watch("type")
+        const gap_percent = form.watch("grid.gap_percent")
+        if (type == TaskType.BuyingGrid && !gap_percent) {
+            form.setValue("grid", {
+                delete_previous_orders: true
+            } as TaskGridParams)
+        }
     }
 
     const addComma = (price: string) => {
@@ -82,7 +87,13 @@ export function TaskForm(
                     <FormLabel>
                         {t("tasks.form.type")}
                     </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                        onValueChange={(value) => {
+                            field.onChange(value)
+                            handleOnTypeChange()
+                        }}
+                        defaultValue={field.value}
+                    >
                         <FormControl>
                             <SelectTrigger>
                                 <SelectValue placeholder={t("tasks.form.type")}/>
