@@ -15,6 +15,7 @@ func NewMessageHandler(
 	cfg *config.Config,
 	dcaSrv *service.DcaService,
 	gridSrv *service.GridService,
+	migrationSrv *service.MigrationService,
 ) MessageHandler {
 
 	if cfg.MessagingPlatform != "sqs" {
@@ -26,6 +27,7 @@ func NewMessageHandler(
 		cfg,
 		dcaSrv,
 		gridSrv,
+		migrationSrv,
 		sqsClient,
 	)
 

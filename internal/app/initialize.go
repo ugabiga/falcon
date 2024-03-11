@@ -35,6 +35,7 @@ func provider() fx.Option {
 		service.NewTaskHistoryService,
 		service.NewDcaService,
 		service.NewGridService,
+		service.NewMigrationService,
 
 		// Handler
 		handler.NewHomeHandler,

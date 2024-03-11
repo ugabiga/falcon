@@ -8,21 +8,24 @@ import (
 )
 
 type MessageCore struct {
-	sqsClient *Client
-	dcaSrv    *service.DcaService
-	gridSrv   *service.GridService
+	sqsClient    *Client
+	dcaSrv       *service.DcaService
+	gridSrv      *service.GridService
+	migrationSrv *service.MigrationService
 }
 
 func NewMessageCore(
 	cfg *config.Config,
 	dcaSrv *service.DcaService,
 	gridSrv *service.GridService,
+	migrationSrv *service.MigrationService,
 	sqsClient *Client,
 ) *MessageCore {
 	return &MessageCore{
-		dcaSrv:    dcaSrv,
-		gridSrv:   gridSrv,
-		sqsClient: sqsClient,
+		dcaSrv:       dcaSrv,
+		gridSrv:      gridSrv,
+		migrationSrv: migrationSrv,
+		sqsClient:    sqsClient,
 	}
 }
 
@@ -35,17 +38,17 @@ func (c MessageCore) PublishMessages() error {
 		log.Printf("Error occurred during publishing LongGrid messages. Err: %v", err)
 	}
 
-	//if err := c.publishCustomMessage(); err != nil {
-	//	log.Printf("Error occurred during publishing Custom messages. Err: %v", err)
-	//}
+	if err := c.publishMigrationMessages(); err != nil {
+		log.Printf("Error occurred during publishing migration messages. Err: %v", err)
+	}
 
 	return nil
 }
 
-func (c MessageCore) publishCustomMessage() error {
+func (c MessageCore) publishMigrationMessages() error {
 	if _, err := c.sqsClient.Publish(TaskOrderInfoMessage{
 		TaskOrderInfo: service.TaskOrderInfo{
-			TaskType:         "custom",
+			TaskType:         "migration",
 			TaskID:           "",
 			TradingAccountID: "",
 			UserID:           "",
@@ -124,6 +127,13 @@ func (c MessageCore) SubscribeMessage(reqMsg TaskOrderInfoMessage) error {
 	case model.TaskTypeLongGrid:
 		if err := c.gridSrv.Order(reqMsg.TaskOrderInfo); err != nil {
 			log.Printf("Error occurred during order. Err: %v", err)
+			return err
+		}
+		return nil
+	case "migration":
+		log.Printf("Migration task received")
+		if err := c.migrationSrv.Migrate(); err != nil {
+			log.Printf("Error occurred during migration. Err: %v", err)
 			return err
 		}
 		return nil
