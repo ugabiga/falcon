@@ -7,7 +7,7 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
-import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/app/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema, TaskGridParams} from "@/app/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
@@ -141,17 +141,23 @@ function convertCronToDays(cron: string): string {
     return result
 }
 
-function parseGridParams(task: Task): { gap_percent: number, quantity: number } {
+function parseGridParams(task: Task): TaskGridParams {
     if (task.type === TaskType.BuyingGrid) {
         return {
             gap_percent: task.params?.gap_percent ?? 0,
-            quantity: task.params?.quantity
+            quantity: task.params?.quantity,
+            use_incremental_size: task.params?.use_incremental_size ?? false,
+            incremental_size: task.params?.incremental_size ?? 0,
+            delete_previous_orders: task.params?.delete_previous_orders ?? true,
         }
     }
 
     return {
         gap_percent: 0,
         quantity: 0,
+        use_incremental_size: false,
+        incremental_size: 0,
+        delete_previous_orders: true,
     }
 }
 

@@ -9,7 +9,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import {errorToast} from "@/components/toast";
-import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/app/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema, TaskGridParams} from "@/app/tasks/form";
 import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
 import {TaskType} from "@/lib/model";
@@ -27,6 +27,10 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
             hours: "",
             type: TaskType.DCA,
             isActive: true,
+            grid: {
+                use_incremental_size: false,
+                delete_previous_orders: true
+            } as TaskGridParams
         },
     })
 
@@ -82,5 +86,4 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
             </DialogContent>
         </Dialog>
     )
-
 }

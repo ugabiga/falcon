@@ -9,10 +9,11 @@ import React, {useEffect} from "react";
 import {DialogFooter} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
-import {NumericFormatInput} from "@/components/numeric-format-input";
 import {TradingAccount} from "@/graph/generated/generated";
 import {ExchangeList} from "@/lib/exchanges";
 import {TaskType} from "@/lib/model";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Label} from "@/components/ui/label";
 
 export const TaskFromSchema = z.object({
     currency: z
@@ -31,8 +32,11 @@ export const TaskFromSchema = z.object({
         .boolean(),
     grid: z
         .object({
-            gap_percent: z.number({}),
-            quantity: z.number({}),
+            gap_percent: z.number(),
+            quantity: z.number(),
+            use_incremental_size: z.boolean().default(false),
+            incremental_size: z.number({}).optional(),
+            delete_previous_orders: z.boolean().default(true)
         })
         .optional()
 })
@@ -250,6 +254,29 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
         <>
             <FormField
                 control={form.control}
+                name="grid.quantity"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>
+                            {t("tasks.form.grid.quantity")}
+                        </FormLabel>
+                        <FormControl>
+                            <Input type="number"
+                                   step={1}
+                                   placeholder={t("tasks.form.grid.quantity.description")}
+                                   value={field.value}
+                                   onChange={(e) => {
+                                       field.onChange(Number(e.target.value))
+                                   }}
+                            />
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
                 name="grid.gap_percent"
                 render={({field}) => (
                     <FormItem>
@@ -273,16 +300,46 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
 
             <FormField
                 control={form.control}
-                name="grid.quantity"
+                name="grid.use_incremental_size"
                 render={({field}) => (
                     <FormItem>
                         <FormLabel>
-                            {t("tasks.form.grid.quantity")}
+                            {t("tasks.form.grid.use_incremental_size")}
+                        </FormLabel>
+                        <FormControl>
+                            <div
+                                className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={(value) => {
+                                            field.onChange(value)
+                                        }}
+                                    />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <Label className={"text-sm font-light"}>
+                                        {t("tasks.form.grid.use_incremental_size.description")}
+                                    </Label>
+                                </div>
+                            </div>
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+
+            <FormField
+                control={form.control}
+                name="grid.incremental_size"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>
+                            {t("tasks.form.grid.incremental_size")}
                         </FormLabel>
                         <FormControl>
                             <Input type="number"
-                                   step={1}
-                                   placeholder={t("tasks.form.grid.quantity.description")}
+                                   placeholder={t("tasks.form.grid.incremental_size.description")}
                                    value={field.value}
                                    onChange={(e) => {
                                        field.onChange(Number(e.target.value))
@@ -293,6 +350,38 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                     </FormItem>
                 )}
             />
+
+            <FormField
+                control={form.control}
+                name="grid.delete_previous_orders"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>
+                            {t("tasks.form.grid.delete_previous_orders")}
+                        </FormLabel>
+                        <FormControl>
+                            <div
+                                className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={(value) => {
+                                            field.onChange(value)
+                                        }}
+                                    />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                    <Label className={"text-sm font-light"}>
+                                        {t("tasks.form.grid.delete_previous_orders.description")}
+                                    </Label>
+                                </div>
+                            </div>
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+
         </>
     )
 }
@@ -311,9 +400,9 @@ export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): TaskG
         return {
             gap_percent: data.grid?.gap_percent ?? 0,
             quantity: data.grid?.quantity ?? 0,
-            use_incremental_size: false,
-            incremental_size: 0,
-            delete_previous_orders: true,
+            use_incremental_size: data.grid?.use_incremental_size ?? false,
+            incremental_size: data.grid?.incremental_size ?? 0,
+            delete_previous_orders: data.grid?.delete_previous_orders ?? true
         }
     }
 
