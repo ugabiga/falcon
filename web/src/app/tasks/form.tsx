@@ -32,11 +32,11 @@ export const TaskFromSchema = z.object({
         .boolean(),
     grid: z
         .object({
-            gap_percent: z.number(),
-            quantity: z.number(),
-            use_incremental_size: z.boolean().default(false),
+            gap_percent: z.number({}),
+            quantity: z.number({}),
+            use_incremental_size: z.boolean({}),
             incremental_size: z.number({}).optional(),
-            delete_previous_orders: z.boolean().default(true)
+            delete_previous_orders: z.boolean({}),
         })
         .optional()
 })
@@ -184,7 +184,7 @@ export function TaskForm(
                     <FormControl>
                         <Input
                             type={"number"}
-                            value={field.value}
+                            value={field.value || 0}
                             onChange={(e) => {
                                 field.onChange(Number(e.target.value))
                                 handleSizeOnChange()
