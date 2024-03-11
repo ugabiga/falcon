@@ -69,6 +69,7 @@ export function TaskForm(
         const gap_percent = form.watch("grid.gap_percent")
         if (type == TaskType.BuyingGrid && !gap_percent) {
             form.setValue("grid", {
+                use_incremental_size: false,
                 delete_previous_orders: true
             } as TaskGridParams)
         }
