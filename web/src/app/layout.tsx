@@ -49,11 +49,11 @@ export const metadata: Metadata = {
             sizes: '180x180',
             url: '/apple-touch-icon.png',
         },
-        {
-            rel: 'mask-icon',
-            url: '/safari-pinned-tab.svg',
-            color: '#5bbad5',
-        },
+        // {
+        //     rel: 'mask-icon',
+        //     url: '/safari-pinned-tab.svg',
+        //     color: '#5bbad5',
+        // },
     ],
 }
 
