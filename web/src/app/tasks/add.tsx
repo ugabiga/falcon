@@ -27,10 +27,6 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
             hours: "",
             type: TaskType.DCA,
             isActive: true,
-            grid: {
-                use_incremental_size: false,
-                delete_previous_orders: true
-            } as TaskGridParams
         },
     })
 
