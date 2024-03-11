@@ -116,7 +116,7 @@ func (s GridService) OrderFromBinanceSpot(
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
 ) error {
-	params, err := t.GridParams()
+	params, err := t.GridParamsV2()
 	if err != nil {
 		return err
 	}
@@ -137,23 +137,26 @@ func (s GridService) OrderFromBinanceSpot(
 	)
 
 	//cancel all open orders
-	orders, err := c.OpenPositionOrders(ctx, symbol)
-	if err != nil {
-		return err
-	}
-
-	var orderIDs []int64
-	for _, order := range orders {
-		orderIDs = append(orderIDs, order.OrderID)
-	}
-
-	if len(orderIDs) > 0 {
-		_, err = c.CancelOpenOrders(ctx, symbol)
+	if params.DeletePreviousOrders {
+		orders, err := c.OpenPositionOrders(ctx, symbol)
 		if err != nil {
 			return err
 		}
+
+		var orderIDs []int64
+		for _, order := range orders {
+			orderIDs = append(orderIDs, order.OrderID)
+		}
+
+		if len(orderIDs) > 0 {
+			_, err = c.CancelOpenOrders(ctx, symbol)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
+	// Get current ticker
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
 		log.Printf("Error getting ticker: %s", err.Error())
@@ -177,6 +180,10 @@ func (s GridService) OrderFromBinanceSpot(
 		roundedTickerPrice := math.Round(percentDownTickerPrice*math.Pow10(tickerPriceDecimalCount)) / math.Pow10(tickerPriceDecimalCount)
 		trimmedPrice := math.Round(roundedTickerPrice/tickSize) * tickSize
 		log.Printf("tickerPrice: %f,  roundedTickerPrice: %f, trimmedPrice: %f", tickerPrice, roundedTickerPrice, trimmedPrice)
+
+		if params.UseIncrementalSize && i > 0 {
+			size += params.IncrementalSize
+		}
 
 		order, err := c.PlaceOrderAtPrice(ctx,
 			symbol,
@@ -201,7 +208,7 @@ func (s GridService) OrderFromBinanceFuture(
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
 ) error {
-	params, err := t.GridParams()
+	params, err := t.GridParamsV2()
 	if err != nil {
 		return err
 	}
@@ -214,31 +221,28 @@ func (s GridService) OrderFromBinanceFuture(
 		return err
 	}
 	c := client.NewBinanceFutureClient(key, decryptedSecret, false)
-	log.Printf("OrderFromBinanceFuture: key: %s, size: %f, symbol: %s grid params: %+v",
-		key,
-		size,
-		symbol,
-		debug.ToJSONInlineStr(params),
-	)
 
 	//cancel all open orders
-	orders, err := c.OpenPositionOrders(ctx, symbol)
-	if err != nil {
-		return err
-	}
-
-	var orderIDs []int64
-	for _, order := range orders {
-		orderIDs = append(orderIDs, order.OrderID)
-	}
-
-	if len(orderIDs) > 0 {
-		_, err = c.CancelOpenOrders(ctx, symbol, orderIDs)
+	if params.DeletePreviousOrders {
+		orders, err := c.OpenPositionOrders(ctx, symbol)
 		if err != nil {
 			return err
 		}
+
+		var orderIDs []int64
+		for _, order := range orders {
+			orderIDs = append(orderIDs, order.OrderID)
+		}
+
+		if len(orderIDs) > 0 {
+			_, err = c.CancelOpenOrders(ctx, symbol, orderIDs)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
+	// Get current ticker
 	ticker, err := c.Ticker(ctx, symbol)
 	if err != nil {
 		log.Printf("Error getting ticker: %s", err.Error())
@@ -263,6 +267,10 @@ func (s GridService) OrderFromBinanceFuture(
 		trimmedPrice := math.Round(roundedTickerPrice/tickSize) * tickSize
 		log.Printf("tickerPrice: %f,  roundedTickerPrice: %f, trimmedPrice: %f", tickerPrice, roundedTickerPrice, trimmedPrice)
 
+		if params.UseIncrementalSize && i > 0 {
+			size += params.IncrementalSize
+		}
+
 		order, err := c.PlaceOrderAtPrice(ctx,
 			symbol,
 			client.HoldSideLong,
@@ -286,7 +294,7 @@ func (s GridService) OrderFromUpbit(
 	tradingAccount *model.TradingAccount,
 	t *model.Task,
 ) error {
-	params, err := t.GridParams()
+	params, err := t.GridParamsV2()
 	if err != nil {
 		return err
 	}
@@ -303,14 +311,16 @@ func (s GridService) OrderFromUpbit(
 
 	c := client.NewUpbitClient(key, decryptedSecret)
 
-	orders, err := c.Orders(ctx, symbol)
-	if err != nil {
-		return err
-	}
+	if params.DeletePreviousOrders {
+		orders, err := c.Orders(ctx, symbol)
+		if err != nil {
+			return err
+		}
 
-	for _, order := range orders {
-		if _, err := c.CancelOrder(ctx, order.UUID); err != nil {
-			log.Printf("Error canceling order: %s", err.Error())
+		for _, order := range orders {
+			if _, err := c.CancelOrder(ctx, order.UUID); err != nil {
+				log.Printf("Error canceling order: %s", err.Error())
+			}
 		}
 	}
 
@@ -338,6 +348,10 @@ func (s GridService) OrderFromUpbit(
 		appliedUnitPrice := appliedLotPrice - math.Mod(appliedLotPrice, tradeUnit)
 		log.Printf("tradePrice: %f,  percentDownTradePrice: %f", tradePrice, appliedUnitPrice)
 
+		if params.UseIncrementalSize && i > 0 {
+			size += params.IncrementalSize
+		}
+
 		order, err := c.PlaceLongOrderAt(
 			ctx,
 			symbol,
@@ -359,6 +373,7 @@ func (s GridService) OrderFromUpbit(
 
 	return nil
 }
+
 func (s GridService) upbitLot(unitPrice float64) float64 {
 	lot := inti.CountZeros(int(unitPrice))
 	return math.Pow(10, float64(lot))

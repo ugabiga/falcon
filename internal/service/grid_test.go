@@ -135,9 +135,12 @@ func TestGridService_Order(t *testing.T) {
 			cfg.TestBinanceSecret,
 		)
 
-		gridTaskParams := model.TaskGridParams{
-			GapPercent: 5,
-			Quantity:   1,
+		gridTaskParams := model.TaskGridParamsV2{
+			GapPercent:           5,
+			Quantity:             3,
+			UseIncrementalSize:   false,
+			IncrementalSize:      0.001,
+			DeletePreviousOrders: true,
 		}
 
 		task, err := tester.TaskSrv.Create(
@@ -148,7 +151,7 @@ func TestGridService_Order(t *testing.T) {
 				Currency:         "USDT",
 				Size:             0.003,
 				Symbol:           "BTC",
-				Hours:            time.Now().Format("18"),
+				Hours:            "18",
 				Days:             "1,2,3,4,5,6,7",
 				Type:             model.TaskTypeLongGrid,
 				Params:           gridTaskParams.ToParams(),
