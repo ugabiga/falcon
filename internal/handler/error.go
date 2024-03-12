@@ -3,28 +3,24 @@ package handler
 import (
 	"errors"
 	"github.com/labstack/echo/v4"
-	"github.com/ugabiga/falcon/internal/handler/model"
 	"net/http"
 )
+
+type APIError struct {
+	Error   string
+	Message string
+}
+
+type Error struct {
+	Code    int
+	Message string
+}
 
 type ErrorHandler struct {
 }
 
 func NewErrorHandler() *ErrorHandler {
 	return &ErrorHandler{}
-}
-
-type APIError struct {
-	Error   string
-	Message string
-}
-type Error struct {
-	Code    int
-	Message string
-}
-type ErrorIndex struct {
-	Layout model.Layout
-	Error  Error
 }
 
 func (h ErrorHandler) ErrorHandler(err error, c echo.Context) {
