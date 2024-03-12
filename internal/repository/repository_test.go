@@ -11,6 +11,25 @@ import (
 	"time"
 )
 
+func TestRepository_Reset(t *testing.T) {
+	tester := app.InitializeTestApplication()
+	tester.ResetTables(t)
+	repo := tester.Repository
+
+	ipAddress := "3.39.156.133"
+	ctx := context.Background()
+
+	//Create static ip
+	_, err := repo.CreateStaticIP(ctx, model.StaticIP{
+		IPAddress:      ipAddress,
+		IPAvailability: true,
+		IPUsageCount:   0,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDynamoRepository_CreateTaskHistory(t *testing.T) {
 	tester := app.InitializeTestApplication()
 	repo := tester.Repository
@@ -30,25 +49,6 @@ func TestDynamoRepository_CreateTaskHistory(t *testing.T) {
 	ctx := context.Background()
 
 	_, err := repo.CreateTaskHistory(ctx, th)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestRepository_Migration(t *testing.T) {
-	tester := app.InitializeTestApplication()
-	tester.ResetTables(t)
-	repo := tester.Repository
-
-	ipAddress := "3.39.156.133"
-	ctx := context.Background()
-
-	//Create static ip
-	_, err := repo.CreateStaticIP(ctx, model.StaticIP{
-		IPAddress:      ipAddress,
-		IPAvailability: true,
-		IPUsageCount:   0,
-	})
 	if err != nil {
 		t.Fatal(err)
 	}

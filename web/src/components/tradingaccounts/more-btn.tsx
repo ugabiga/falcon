@@ -2,8 +2,8 @@ import {TradingAccount} from "@/graph/generated/generated";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal} from "lucide-react";
-import {EditTradingAccount} from "@/app/tradingaccounts/edit";
-import {DeleteTradingAccount} from "@/app/tradingaccounts/delete";
+import {EditTradingAccount} from "@/components/tradingaccounts/edit";
+import {DeleteTradingAccount} from "@/components/tradingaccounts/delete";
 
 
 export function TradingAccountMoreBtn({tradingAccount}: { tradingAccount: TradingAccount }) {

@@ -1,10 +1,10 @@
-import {Task, TradingAccount} from "@/graph/generated/generated";
+import {TradingAccount} from "@/graph/generated/generated";
 import {useTranslation} from "react-i18next";
 import {Card, CardContent} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {convertNumberToCryptoSize} from "@/lib/number";
 import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/cron-parser";
-import {TaskMoreBtn} from "@/app/tasks/more-btn";
+import {TaskMoreBtn} from "@/components/tasks/more-btn";
 
 
 export function TaskCards(

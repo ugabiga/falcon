@@ -35,7 +35,7 @@ export function DeleteTradingAccount(
             setOpenDialog(false)
             dispatch(refreshTradingAccount(true))
         }).catch(e => {
-            errorToast(t("error."+ e.message))
+            errorToast(t("error." + e.message))
         })
     }
 

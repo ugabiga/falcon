@@ -1,9 +1,9 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Task, TradingAccount} from "@/graph/generated/generated";
+import {TradingAccount} from "@/graph/generated/generated";
 import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/cron-parser";
 import {useTranslation} from "react-i18next";
 import {convertNumberToCryptoSize} from "@/lib/number";
-import {TaskMoreBtn} from "@/app/tasks/more-btn";
+import {TaskMoreBtn} from "@/components/tasks/more-btn";
 
 export function TaskTable(
     {
