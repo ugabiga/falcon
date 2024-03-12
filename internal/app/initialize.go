@@ -5,6 +5,7 @@ import (
 	"github.com/ugabiga/falcon/internal/common/encryption"
 	"github.com/ugabiga/falcon/internal/graph/resolvers"
 	"github.com/ugabiga/falcon/internal/handler"
+	v1 "github.com/ugabiga/falcon/internal/handler/v1"
 	"github.com/ugabiga/falcon/internal/messaging"
 	"github.com/ugabiga/falcon/internal/migration"
 	"github.com/ugabiga/falcon/internal/repository"
@@ -41,6 +42,9 @@ func provider() fx.Option {
 		handler.NewHomeHandler,
 		handler.NewAuthenticationHandler,
 		handler.NewErrorHandler,
+
+		// Handler V1
+		v1.NewUserHandler,
 
 		// GraphQL
 		resolvers.NewResolver,

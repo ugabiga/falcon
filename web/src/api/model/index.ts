@@ -10,3 +10,5 @@ export * from './handlerAPIError';
 export * from './handlerProtectedResponse';
 export * from './handlerSignInRequest';
 export * from './handlerSignInResponse';
+export * from './modelUser';
+export * from './requestUpdateUserRequest';
