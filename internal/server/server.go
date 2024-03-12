@@ -46,7 +46,7 @@ func NewServer(
 }
 
 func (s *Server) router() {
-	s.e.HTTPErrorHandler = s.errorHandler.DebugErrorHandler
+	s.e.HTTPErrorHandler = s.errorHandler.ErrorHandler
 
 	r := s.e.Group("")
 	s.homeHandler.SetRoutes(r)
