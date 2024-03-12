@@ -29,12 +29,3 @@ func LayoutMiddleware() echo.MiddlewareFunc {
 		}
 	}
 }
-
-func ExtractLayout(c echo.Context) model.Layout {
-	layout, ok := c.Get(LayoutContextKey).(model.Layout)
-	if !ok {
-		return model.Layout{}
-	}
-
-	return layout
-}
