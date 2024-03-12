@@ -34,6 +34,17 @@ type SignInResponse struct {
 	Token string `json:"token"`
 }
 
+// Signin godoc
+//
+//	@Summary		Sign in
+//	@Description	Sign in with OAuth
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			req	body		SignInRequest	true	"Sign in request"
+//	@Success		200	{object}	SignInResponse
+//	@Failure		500	{object}	handler.APIError
+//	@Router			/auth/signin [post]
 func (h AuthenticationHandler) Signin(c echo.Context) error {
 	var req SignInRequest
 	if err := c.Bind(&req); err != nil {
@@ -74,9 +85,24 @@ func (h AuthenticationHandler) Signin(c echo.Context) error {
 	})
 }
 
+type ProtectedResponse struct {
+	Message string `json:"message"`
+}
+
+// Protected godoc
+//
+//	@Summary		Protected
+//	@Description	Protected route
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Security		Bearer
+//	@Success		200	{object}	ProtectedResponse
+//	@Failure		401	{object}	handler.APIError
+//	@Router			/auth/protected [get]
 func (h AuthenticationHandler) Protected(c echo.Context) error {
 	claim := helper.MustJWTClaim(c)
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "Hello " + claim.Name + "!",
+	return c.JSON(http.StatusOK, ProtectedResponse{
+		Message: "Hello, " + claim.Name,
 	})
 }

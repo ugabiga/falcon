@@ -1,0 +1,86 @@
+basePath: /
+definitions:
+  handler.APIError:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  handler.ProtectedResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  handler.SignInRequest:
+    properties:
+      access_token:
+        type: string
+      account_id:
+        type: string
+      type:
+        type: string
+    type: object
+  handler.SignInResponse:
+    properties:
+      token:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  description: This is a crypto trading bot API
+  license:
+    name: BSD-3-Clause
+  title: Falcon API
+  version: "1.0"
+paths:
+  /auth/protected:
+    get:
+      consumes:
+      - application/json
+      description: Protected route
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ProtectedResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.APIError'
+      security:
+      - Bearer: []
+      summary: Protected
+      tags:
+      - authentication
+  /auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Sign in with OAuth
+      parameters:
+      - description: Sign in request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.SignInResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.APIError'
+      summary: Sign in
+      tags:
+      - authentication
+swagger: "2.0"

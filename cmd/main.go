@@ -37,6 +37,20 @@ var cronCmd = &cli.Command{
 	},
 }
 
+//	@title			Falcon API
+//	@version		1.0
+//	@description	This is a crypto trading bot API
+//	@termsOfService
+
+//	@contact.name	API Support
+//	@contact.url
+//	@contact.email
+
+//	@license.name	BSD-3-Clause
+//	@license.url
+
+// @host		localhost:8080
+// @BasePath	/
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	application := &cli.App{
