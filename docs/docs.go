@@ -20,6 +20,89 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get user profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.APIError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "User profile",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.APIError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/handler.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/protected": {
             "get": {
                 "security": [
@@ -133,6 +216,37 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "timezone": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "timezone": {
                     "type": "string"
                 }
             }

@@ -31,7 +31,9 @@ import type {
   HandlerAPIError,
   HandlerProtectedResponse,
   HandlerSignInRequest,
-  HandlerSignInResponse
+  HandlerSignInResponse,
+  ModelUser,
+  RequestUpdateUserRequest
 } from '../model'
 import { customInstance } from '../mutator/custom-instance';
 import type { ErrorType } from '../mutator/custom-instance';
@@ -40,6 +42,243 @@ import type { ErrorType } from '../mutator/custom-instance';
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
 
+/**
+ * Get user profile
+ * @summary Get user profile
+ */
+export const getApiV1UsersMe = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<ModelUser>(
+      {url: `/api/v1/users/me`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getGetApiV1UsersMeQueryKey = () => {
+    return [`/api/v1/users/me`] as const;
+    }
+
+    
+export const getGetApiV1UsersMeInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({ signal }) => getApiV1UsersMe(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetApiV1UsersMeInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
+export type GetApiV1UsersMeInfiniteQueryError = ErrorType<HandlerAPIError>
+
+/**
+ * @summary Get user profile
+ */
+export const useGetApiV1UsersMeInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetApiV1UsersMeInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1UsersMeQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({ signal }) => getApiV1UsersMe(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetApiV1UsersMeQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
+export type GetApiV1UsersMeQueryError = ErrorType<HandlerAPIError>
+
+/**
+ * @summary Get user profile
+ */
+export const useGetApiV1UsersMe = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = ErrorType<HandlerAPIError>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetApiV1UsersMeQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1UsersMeSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({ signal }) => getApiV1UsersMe(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetApiV1UsersMeSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
+export type GetApiV1UsersMeSuspenseQueryError = ErrorType<HandlerAPIError>
+
+/**
+ * @summary Get user profile
+ */
+export const useGetApiV1UsersMeSuspense = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = ErrorType<HandlerAPIError>>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetApiV1UsersMeSuspenseQueryOptions(options)
+
+  const query = useSuspenseQuery(queryOptions) as  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+export const getGetApiV1UsersMeSuspenseInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({ signal }) => getApiV1UsersMe(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetApiV1UsersMeSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
+export type GetApiV1UsersMeSuspenseInfiniteQueryError = ErrorType<HandlerAPIError>
+
+/**
+ * @summary Get user profile
+ */
+export const useGetApiV1UsersMeSuspenseInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>(
+  options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+
+  ):  UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
+
+  const queryOptions = getGetApiV1UsersMeSuspenseInfiniteQueryOptions(options)
+
+  const query = useSuspenseInfiniteQuery(queryOptions) as  UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+/**
+ * Update user profile
+ * @summary Update user profile
+ */
+export const putApiV1UsersMe = (
+    requestUpdateUserRequest: RequestUpdateUserRequest,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<ModelUser>(
+      {url: `/api/v1/users/me`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: requestUpdateUserRequest
+    },
+      options);
+    }
+  
+
+
+export const getPutApiV1UsersMeMutationOptions = <TError = ErrorType<HandlerAPIError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UsersMe>>, TError,{data: RequestUpdateUserRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof putApiV1UsersMe>>, TError,{data: RequestUpdateUserRequest}, TContext> => {
+ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiV1UsersMe>>, {data: RequestUpdateUserRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  putApiV1UsersMe(data,requestOptions)
+        }
+
+        
+
+
+   return  { mutationFn, ...mutationOptions }}
+
+    export type PutApiV1UsersMeMutationResult = NonNullable<Awaited<ReturnType<typeof putApiV1UsersMe>>>
+    export type PutApiV1UsersMeMutationBody = RequestUpdateUserRequest
+    export type PutApiV1UsersMeMutationError = ErrorType<HandlerAPIError>
+
+    /**
+ * @summary Update user profile
+ */
+export const usePutApiV1UsersMe = <TError = ErrorType<HandlerAPIError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiV1UsersMe>>, TError,{data: RequestUpdateUserRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+      const mutationOptions = getPutApiV1UsersMeMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
 /**
  * Protected route
  * @summary Protected
