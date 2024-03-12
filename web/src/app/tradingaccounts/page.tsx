@@ -3,18 +3,16 @@
 import {TradingAccountIndexDocument} from "@/graph/generated/generated";
 import {useQuery} from "@apollo/client";
 import React, {useEffect} from "react";
-import {AddTradingAccount} from "@/app/tradingaccounts/add";
+import {AddTradingAccount} from "@/components/tradingaccounts/add";
 import {useAppDispatch, useAppSelector} from "@/store";
 import {refreshTradingAccount,} from "@/store/tradingAccountSlice";
-import {TradingAccountTable} from "@/app/tradingaccounts/table";
+import {TradingAccountTable} from "@/components/tradingaccounts/table";
 import {Loading} from "@/components/loading";
 import {Error} from "@/components/error";
 import {Button} from "@/components/ui/button";
 import {ManualKRTradingAccount} from "@/lib/ref-url";
-import {TradingAccountCards} from "@/app/tradingaccounts/cards";
+import {TradingAccountCards} from "@/components/tradingaccounts/cards";
 import {useTranslation} from "@/lib/i18n";
-import {setTradingAccountTutorial} from "@/store/tutorialSlice";
-import {TradingAccountTutorial} from "@/app/tradingaccounts/tutorial";
 
 
 export default function TradingAccounts() {

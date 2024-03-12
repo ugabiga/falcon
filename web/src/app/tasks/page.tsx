@@ -1,21 +1,21 @@
 "use client";
 
-import {TaskTable} from "@/app/tasks/table";
+import {TaskTable} from "@/components/tasks/table";
 import {useQuery} from "@apollo/client";
 import React, {useEffect} from "react";
 import {GetTaskIndexDocument} from "@/graph/generated/generated";
-import {TradingAccountSelector} from "@/app/tasks/selector";
+import {TradingAccountSelector} from "@/components/tasks/selector";
 import {useAppSelector} from "@/store";
 import {useDispatch} from "react-redux";
 import {refreshTask} from "@/store/taskSlice";
-import {AddTask} from "@/app/tasks/add";
+import {AddTask} from "@/components/tasks/add";
 import {Loading} from "@/components/loading";
 import {useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
 import {useTranslation} from "@/lib/i18n";
 import {Button} from "@/components/ui/button";
 import {ManualKRTask} from "@/lib/ref-url";
-import {TaskCards} from "@/app/tasks/cards";
+import {TaskCards} from "@/components/tasks/cards";
 import {RefreshTarget} from "@/store/refresherSlice";
 
 export default function Tasks() {

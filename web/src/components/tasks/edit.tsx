@@ -7,7 +7,7 @@ import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
-import {parseParamsFromData, TaskForm, TaskFromSchema, TaskGridParams} from "@/app/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema, TaskGridParams} from "@/components/tasks/form";
 import {parseCronExpression} from "@/lib/cron-parser";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";

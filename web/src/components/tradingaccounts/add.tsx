@@ -3,7 +3,7 @@ import {CreateTradingAccountDocument} from "@/graph/generated/generated";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
-import {TradingAccountForm, TradingAccountFormSchema} from "@/app/tradingaccounts/form";
+import {TradingAccountForm, TradingAccountFormSchema} from "@/components/tradingaccounts/form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";

@@ -1,6 +1,6 @@
 "use client";
 
-import {TaskHistoryTable} from "@/app/tasks/[id]/history/table";
+import {TaskHistoryTable} from "@/components/taskhistory/table";
 import {useQuery} from "@apollo/client";
 import {GetTaskHistoryIndexDocument} from "@/graph/generated/generated";
 import {Loading} from "@/components/loading";
@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button";
 import {useRouter, useSearchParams} from "next/navigation";
 import {Error} from "@/components/error";
 import {useTranslation} from "react-i18next";
-import {TaskHistoryCards} from "@/app/tasks/[id]/history/cards";
+import {TaskHistoryCards} from "@/components/taskhistory/cards";
 
 export default function TaskHistory({params}: { params: { id: string } }) {
     const {t} = useTranslation()

@@ -3,7 +3,7 @@ import {Label} from "@/components/ui/label";
 import {Card, CardContent, CardTitle} from "@/components/ui/card";
 import {camelize, trim} from "@/lib/str";
 import {useTranslation} from "react-i18next";
-import {TradingAccountMoreBtn} from "@/app/tradingaccounts/more-btn";
+import {TradingAccountMoreBtn} from "@/components/tradingaccounts/more-btn";
 
 export function TradingAccountCards({tradingAccounts}: { tradingAccounts?: TradingAccount[] }) {
     const {t} = useTranslation();

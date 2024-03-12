@@ -38,7 +38,7 @@ export function DeleteTask(
                 refresh: true
             }))
         }).catch(e => {
-            errorToast(t("error."+ e.message))
+            errorToast(t("error." + e.message))
         })
     }
 

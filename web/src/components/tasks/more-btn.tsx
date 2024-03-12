@@ -2,8 +2,8 @@ import {Task, TradingAccount} from "@/graph/generated/generated";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal} from "lucide-react";
-import {EditTask} from "@/app/tasks/edit";
-import {DeleteTask} from "@/app/tasks/delete";
+import {EditTask} from "@/components/tasks/edit";
+import {DeleteTask} from "@/components/tasks/delete";
 import Link from "next/link";
 import {useTranslation} from "react-i18next";
 
