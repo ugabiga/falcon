@@ -7,9 +7,9 @@ import (
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/handler/helper"
+	v1 "github.com/ugabiga/falcon/internal/handler/v1"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
 	"log"
@@ -21,6 +21,7 @@ type Server struct {
 	authenticationService *service.AuthenticationService
 	homeHandler           *handler.HomeHandler
 	authenticationHandler *handler.AuthenticationHandler
+	userHandler           *v1.UserHandler
 	errorHandler          *handler.ErrorHandler
 	graphServer           *gqlHandler.Server
 }
@@ -30,6 +31,7 @@ func NewServer(
 	authenticationService *service.AuthenticationService,
 	homeHandler *handler.HomeHandler,
 	authenticationHandler *handler.AuthenticationHandler,
+	userHandler *v1.UserHandler,
 	errorHandler *handler.ErrorHandler,
 	graphServer *gqlHandler.Server,
 ) *Server {
@@ -39,6 +41,7 @@ func NewServer(
 		authenticationService: authenticationService,
 		homeHandler:           homeHandler,
 		authenticationHandler: authenticationHandler,
+		userHandler:           userHandler,
 		errorHandler:          errorHandler,
 		graphServer:           graphServer,
 	}
@@ -50,6 +53,9 @@ func (s *Server) router() {
 	r := s.e.Group("")
 	s.homeHandler.SetRoutes(r)
 	s.authenticationHandler.SetRoutes(r)
+
+	apiV1Group := r.Group("/api/v1")
+	s.userHandler.SetRoutes(apiV1Group)
 
 	s.e.POST("/graph", func(c echo.Context) error {
 		ctx := helper.NewJWTClaimContext(c)
@@ -64,8 +70,16 @@ func (s *Server) router() {
 func (s *Server) middleware() {
 	s.e.Use(middleware.Recover())
 	s.e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		log.Printf(c.Path() + "Request:" + debug.FromByteToJSONInLineStr(reqBody))
-		log.Printf(c.Path() + "Response:" + debug.FromByteToJSONInLineStr(resBody))
+		// if request method is OPTIONS, do not log
+		if c.Request().Method == "OPTIONS" {
+			return
+		}
+
+		if c.Request().Method != "GET" {
+			log.Printf("request:" + c.Path() + ":" + string(reqBody))
+		}
+
+		log.Printf("response:" + c.Path() + ":" + string(resBody))
 	}))
 	s.e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{s.cfg.WebURL},
