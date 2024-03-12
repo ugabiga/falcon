@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0
  */
 
-export * from './getAuthProtected200';
 export * from './handlerAPIError';
 export * from './handlerProtectedResponse';
 export * from './handlerSignInRequest';
