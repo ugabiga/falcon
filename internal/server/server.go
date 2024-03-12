@@ -10,7 +10,6 @@ import (
 	"github.com/ugabiga/falcon/internal/common/debug"
 	"github.com/ugabiga/falcon/internal/handler"
 	"github.com/ugabiga/falcon/internal/handler/helper"
-	falconMiddleware "github.com/ugabiga/falcon/internal/handler/middleware"
 	"github.com/ugabiga/falcon/internal/service"
 	"github.com/ugabiga/falcon/pkg/config"
 	"log"
@@ -84,7 +83,6 @@ func (s *Server) middleware() {
 		{Type: service.WhiteListTypePrefix, Path: "/auth/signin"},
 	}))
 	s.e.Use(s.authenticationService.UngradedJWTMiddleware())
-	s.e.Use(falconMiddleware.LayoutMiddleware())
 }
 
 func (s *Server) Run() error {
