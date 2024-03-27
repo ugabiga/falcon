@@ -35,7 +35,7 @@ export function AddTask({tradingAccount}: { tradingAccount: TradingAccount }) {
             variables: {
                 tradingAccountID: tradingAccount.id,
                 currency: data.currency,
-                size: data.size,
+                size: Number(data.size),
                 symbol: data.symbol,
                 days: data.days,
                 hours: data.hours,

@@ -36,7 +36,7 @@ export function EditTask(
         defaultValues: {
             type: convertStringToTaskType(task.type),
             currency: task.currency,
-            size: task.size,
+            size: String(task.size),
             symbol: task.symbol,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
@@ -51,7 +51,7 @@ export function EditTask(
                 tradingAccountID: task.tradingAccountID,
                 taskID: task.id,
                 currency: data.currency,
-                size: data.size,
+                size: Number(data.size),
                 symbol: data.symbol,
                 days: data.days,
                 hours: data.hours,
