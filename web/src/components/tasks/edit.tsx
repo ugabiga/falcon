@@ -144,19 +144,19 @@ function convertCronToDays(cron: string): string {
 function parseGridParams(task: Task): TaskGridParams {
     if (task.type === TaskType.BuyingGrid) {
         return {
-            gap_percent: task.params?.gap_percent ?? 0,
-            quantity: task.params?.quantity,
+            gap_percent: String(task.params?.gap_percent) ?? 0,
+            quantity: String(task.params?.quantity),
             use_incremental_size: task.params?.use_incremental_size ?? false,
-            incremental_size: task.params?.incremental_size ?? 0,
+            incremental_size: String(task.params?.incremental_size) ?? 0,
             delete_previous_orders: task.params?.delete_previous_orders ?? true,
         }
     }
 
     return {
-        gap_percent: 0,
-        quantity: 0,
+        gap_percent: "0",
+        quantity: "0",
         use_incremental_size: false,
-        incremental_size: 0,
+        incremental_size: "0",
         delete_previous_orders: true,
     }
 }

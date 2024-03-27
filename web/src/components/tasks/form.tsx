@@ -19,7 +19,8 @@ export const TaskFromSchema = z.object({
     currency: z
         .string(),
     size: z
-        .string(),
+        .string()
+        .regex(/^\d+\.?\d*$/, "Size must be a number"),
     symbol: z
         .string(),
     days: z
@@ -32,10 +33,14 @@ export const TaskFromSchema = z.object({
         .boolean(),
     grid: z
         .object({
-            gap_percent: z.number({}),
-            quantity: z.number({}),
+            gap_percent: z.string({})
+                .regex(/^\d+\.?\d*$/, "Gap percent must be a number"),
+            quantity: z.string({})
+                .regex(/^\d+$/, "Quantity must be a number"),
             use_incremental_size: z.boolean({}),
-            incremental_size: z.number({}).optional(),
+            incremental_size: z.string({})
+                .regex(/^\d+\.?\d*$/, "Incremental size must be a number")
+                .optional(),
             delete_previous_orders: z.boolean({}),
         })
         .optional()
@@ -276,13 +281,16 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                             {t("tasks.form.grid.quantity")}
                         </FormLabel>
                         <FormControl>
-                            <Input type="number"
-                                   step={1}
-                                   placeholder={t("tasks.form.grid.quantity.description")}
-                                   value={field.value}
-                                   onChange={(e) => {
-                                       field.onChange(Number(e.target.value))
-                                   }}
+                            <Input
+                                type={"number"}
+                                inputMode="decimal"
+                                pattern="\d*"
+                                value={field.value}
+                                step={1}
+                                placeholder={t("tasks.form.grid.quantity.description")}
+                                onChange={(e) => {
+                                    field.onChange(e.target.value)
+                                }}
                             />
                         </FormControl>
                         <FormMessage/>
@@ -299,13 +307,16 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                             {t("tasks.form.grid.gap")}
                         </FormLabel>
                         <FormControl>
-                            <Input type="number"
-                                   step={1}
-                                   placeholder={t("tasks.form.grid.gap.description")}
-                                   value={field.value}
-                                   onChange={(e) => {
-                                       field.onChange(Number(e.target.value))
-                                   }}
+                            <Input
+                                type={"number"}
+                                inputMode="decimal"
+                                pattern="\d*.?\d*"
+                                value={field.value}
+                                step={1}
+                                placeholder={t("tasks.form.grid.gap.description")}
+                                onChange={(e) => {
+                                    field.onChange(e.target.value)
+                                }}
                             />
                         </FormControl>
                         <FormMessage/>
@@ -353,12 +364,15 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
                             {t("tasks.form.grid.incremental_size")}
                         </FormLabel>
                         <FormControl>
-                            <Input type="number"
-                                   placeholder={t("tasks.form.grid.incremental_size.description")}
-                                   value={field.value}
-                                   onChange={(e) => {
-                                       field.onChange(Number(e.target.value))
-                                   }}
+                            <Input
+                                type={"number"}
+                                inputMode="decimal"
+                                pattern="\d*.?\d*"
+                                value={field.value}
+                                placeholder={t("tasks.form.grid.incremental_size.description")}
+                                onChange={(e) => {
+                                    field.onChange(e.target.value)
+                                }}
                             />
                         </FormControl>
                         <FormMessage/>
@@ -402,10 +416,10 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
 }
 
 export interface TaskGridParams {
-    gap_percent: number,
-    quantity: number,
+    gap_percent: string,
+    quantity: string,
     use_incremental_size: boolean,
-    incremental_size: number,
+    incremental_size: string,
     delete_previous_orders: boolean
 
 }
@@ -413,10 +427,10 @@ export interface TaskGridParams {
 export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): TaskGridParams | null {
     if (data.type === TaskType.BuyingGrid) {
         return {
-            gap_percent: data.grid?.gap_percent ?? 0,
-            quantity: data.grid?.quantity ?? 0,
+            gap_percent: String(data.grid?.gap_percent) ?? 0,
+            quantity: String(data.grid?.quantity) ?? 0,
             use_incremental_size: data.grid?.use_incremental_size ?? false,
-            incremental_size: data.grid?.incremental_size ?? 0,
+            incremental_size: String(data.grid?.incremental_size) ?? 0,
             delete_previous_orders: data.grid?.delete_previous_orders ?? true
         }
     }
