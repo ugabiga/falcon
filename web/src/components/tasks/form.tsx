@@ -19,7 +19,7 @@ export const TaskFromSchema = z.object({
     currency: z
         .string(),
     size: z
-        .number(),
+        .string(),
     symbol: z
         .string(),
     days: z
@@ -56,13 +56,14 @@ export function TaskForm(
         const symbol = form.watch("symbol")
         const currency = form.watch("currency")
         const size = form.watch("size")
+        const numSize = Number(size)
 
         const canGetTicker = symbol && currency && size;
         if (!canGetTicker) {
             return;
         }
 
-        fetchConvertedTotal(symbol, currency, size)
+        fetchConvertedTotal(symbol, currency, numSize)
     }
     const handleOnTypeChange = () => {
         const type = form.watch("type")
@@ -196,9 +197,11 @@ export function TaskForm(
                     <FormControl>
                         <Input
                             type={"number"}
-                            value={field.value || 0}
+                            inputMode="decimal"
+                            pattern="\d*.?\d*"
+                            value={field.value}
                             onChange={(e) => {
-                                field.onChange(Number(e.target.value))
+                                field.onChange(e.target.value)
                                 handleSizeOnChange()
                             }}
                         />
