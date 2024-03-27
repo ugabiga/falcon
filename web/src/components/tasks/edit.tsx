@@ -77,7 +77,7 @@ export function EditTask(
                     {t("tasks.form.edit.btn")}
                 </DropdownMenuItem>
             </DialogTrigger>
-            <DialogContent className={"sm:max-w-[425px] overflow-y-scroll h-[calc(100dvh)] sm:h-auto"}>
+            <DialogContent className={"overflow-y-scroll h-[calc(100dvh)] sm:max-w-[425px] md:h-auto md:max-h-screen"}>
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
                           onSubmit={form.handleSubmit(onSubmit)}
