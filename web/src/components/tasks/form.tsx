@@ -77,7 +77,7 @@ export function TaskForm(
             form.setValue("grid", {
                 use_incremental_size: false,
                 delete_previous_orders: true
-            } as TaskGridParams)
+            } as TaskGridInnerParams)
         }
     }
 
@@ -415,22 +415,30 @@ function GridFormFields({form}: { form: ReturnType<typeof useForm<z.infer<typeof
     )
 }
 
-export interface TaskGridParams {
-    gap_percent: string,
+export interface TaskGridInnerParams {
+    gap_percent: string
     quantity: string,
     use_incremental_size: boolean,
     incremental_size: string,
     delete_previous_orders: boolean
+}
 
+// TaskGridParams is for the backend
+export interface TaskGridParams {
+    gap_percent: number
+    quantity: number,
+    use_incremental_size: boolean,
+    incremental_size: number,
+    delete_previous_orders: boolean
 }
 
 export function parseParamsFromData(data: z.infer<typeof TaskFromSchema>): TaskGridParams | null {
     if (data.type === TaskType.BuyingGrid) {
         return {
-            gap_percent: String(data.grid?.gap_percent) ?? 0,
-            quantity: String(data.grid?.quantity) ?? 0,
+            gap_percent: Number(data.grid?.gap_percent) ?? 0,
+            quantity: Number(data.grid?.quantity) ?? 0,
             use_incremental_size: data.grid?.use_incremental_size ?? false,
-            incremental_size: String(data.grid?.incremental_size) ?? 0,
+            incremental_size: Number(data.grid?.incremental_size) ?? 0,
             delete_previous_orders: data.grid?.delete_previous_orders ?? true
         }
     }
