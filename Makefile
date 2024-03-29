@@ -13,6 +13,12 @@ ent-visual:
 dev:
 	@air server | docker-compose up -d
 
+db:
+	@air server
+
+df:
+	@cd web && yarn dev & cd web && yarn openapi
+
 and-reverse:
 	@/Users/sanghwa/Library/Android/sdk/platform-tools/adb reverse tcp:3000 tcp:3000
 	@/Users/sanghwa/Library/Android/sdk/platform-tools/adb reverse tcp:8080 tcp:8080
