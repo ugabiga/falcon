@@ -76,12 +76,12 @@
   "tasks.form.edit.btn": "편집",
   "tasks.form.edit.title": "작업 편집",
   "tasks.form.type": "유형",
-  "tasks.form.currency": "통화",
+  "tasks.form.currency": "매수 통화",
   "tasks.form.symbol": "암호화폐 코인명/심볼",
   "tasks.form.size": "매수 크기",
-  "tasks.form.days": "일",
+  "tasks.form.days": "실행 요일",
   "tasks.form.days.placeholder": "일 선택",
-  "tasks.form.hours": "실행 시간 (24시간 형식) (예: 13,14,15)",
+  "tasks.form.hours": "실행 시간",
   "tasks.form.hours.placeholder": "24시간 형식으로 실행 시간을 입력하세요 (예: 13,14,15)",
   "tasks.form.is_active": "활성화",
   "tasks.form.is_active.desc": "활성화된 경우이 작업이 실행됩니다",
@@ -98,7 +98,7 @@
   "tasks.table.action": "동작",
   "tasks.table.more": "더 보기",
   "tasks.table.history": "작업 이력 보기",
-  "tasks.table.empty": "작업이 없습니다",
+  "tasks.table.empty": "작업이 없습니다. 먼저 작업을 추가하세요.",
   "tasks.table.next_execution_time.fail": "다음 실행 시간 없음",
   "tasks.table.schedule.encoded": "{{days}} {{hours}}시",
   "tasks.table.schedule.everyday": "매일",
@@ -153,5 +153,6 @@
   "tasks.form.grid.incremental_size": "점진적 매수 증가 크기",
   "tasks.form.grid.incremental_size.description": "매수 갭마다 증가시킬 매수 크기를 설정하세요",
   "tasks.form.grid.delete_previous_orders": "이전 주문 삭제 여부",
-  "tasks.form.grid.delete_previous_orders.description": "실행시 이전 주문을 삭제할지 설정하세요"
+  "tasks.form.grid.delete_previous_orders.description": "실행시 이전 주문을 삭제할지 설정하세요",
+  "tasks.trading_accounts.empty": "거래 계정이 없습니다. 먼저 거래 계정을 추가하세요"
 }

@@ -22,6 +22,7 @@ type Server struct {
 	homeHandler           *handler.HomeHandler
 	authenticationHandler *handler.AuthenticationHandler
 	userHandler           *v1.UserHandler
+	taskHandler           *v1.TaskHandler
 	errorHandler          *handler.ErrorHandler
 	graphServer           *gqlHandler.Server
 }
@@ -32,6 +33,7 @@ func NewServer(
 	homeHandler *handler.HomeHandler,
 	authenticationHandler *handler.AuthenticationHandler,
 	userHandler *v1.UserHandler,
+	taskHandler *v1.TaskHandler,
 	errorHandler *handler.ErrorHandler,
 	graphServer *gqlHandler.Server,
 ) *Server {
@@ -42,6 +44,7 @@ func NewServer(
 		homeHandler:           homeHandler,
 		authenticationHandler: authenticationHandler,
 		userHandler:           userHandler,
+		taskHandler:           taskHandler,
 		errorHandler:          errorHandler,
 		graphServer:           graphServer,
 	}
@@ -56,6 +59,7 @@ func (s *Server) router() {
 
 	apiV1Group := r.Group("/api/v1")
 	s.userHandler.SetRoutes(apiV1Group)
+	s.taskHandler.SetRoutes(apiV1Group)
 
 	s.e.POST("/graph", func(c echo.Context) error {
 		ctx := helper.NewJWTClaimContext(c)

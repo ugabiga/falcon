@@ -6,9 +6,14 @@
  * OpenAPI spec version: 1.0
  */
 
+export * from './getApiV1TasksParams';
 export * from './handlerAPIError';
 export * from './handlerProtectedResponse';
 export * from './handlerSignInRequest';
 export * from './handlerSignInResponse';
+export * from './modelTask';
+export * from './modelTaskParams';
+export * from './modelTradingAccount';
 export * from './modelUser';
 export * from './requestUpdateUserRequest';
+export * from './v1TaskIndexResponse';

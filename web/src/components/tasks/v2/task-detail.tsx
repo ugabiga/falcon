@@ -1,0 +1,124 @@
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {useTranslation} from "react-i18next";
+import {Form} from "@/components/ui/form";
+import React, {useState} from "react";
+import {useForm} from "react-hook-form";
+import * as z from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {convertStringToTaskType} from "@/lib/model";
+import {TaskFormFields, TaskFromSchema} from "@/components/tasks/v2/task-form";
+import {useAppDispatch} from "@/store";
+import {useMutation} from "@apollo/client";
+import {CreateTaskDocument, UpdateTaskDocument} from "@/graph/generated/generated";
+import {useSendRefreshSignal} from "@/lib/use-refresh";
+import {ModelTask, ModelTradingAccount} from "@/api/model";
+import {parseCronExpression} from "@/lib/cron-parser";
+import {capture} from "@/lib/posthog";
+import {RefreshTarget} from "@/store/refresherSlice";
+import {errorToast} from "@/components/toast";
+import {translatedError} from "@/lib/error";
+import TaskDelete from "@/components/tasks/v2/task-delete";
+import Spacer from "@/components/spacer";
+
+export default function TaskDetail(
+    {
+        task,
+        tradingAccount
+    }: {
+        task: ModelTask
+        tradingAccount: ModelTradingAccount
+    }
+) {
+    const {t} = useTranslation()
+    const [openDialog, setOpenDialog] = useState(false)
+    const form = useForm<z.infer<typeof TaskFromSchema>>({
+        resolver: zodResolver(TaskFromSchema),
+        defaultValues: {
+            type: convertStringToTaskType(task.type!),
+            currency: task.currency,
+            size: task.size?.toString(),
+            symbol: task.symbol,
+            days: convertCronToDays(task.cron),
+            hours: convertCronToHours(task.cron),
+            isActive: task.is_active
+        },
+    })
+
+    const {sendRefresh} = useSendRefreshSignal()
+    const [updateTask] = useMutation(UpdateTaskDocument)
+
+
+    function onSubmit(data: z.infer<typeof TaskFromSchema>) {
+        updateTask({
+            variables: {
+                tradingAccountID: task.trading_account_id!,
+                taskID: task.id!,
+                currency: data.currency,
+                size: Number(data.size),
+                symbol: data.symbol,
+                days: data.hours.join(','),
+                hours: data.days.join(','),
+                type: data.type,
+                isActive: data.isActive
+                // params: parseParamsFromData(data)
+            }
+        }).then(() => {
+            onCompleteAction()
+        }).catch((e) => {
+            errorToast(translatedError(t, e.message))
+        })
+    }
+
+    function onCompleteAction() {
+        setOpenDialog(false)
+        sendRefresh(RefreshTarget.Task)
+    }
+
+    return (
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+                <Button variant="ghost">
+                    Detail
+                </Button>
+            </DialogTrigger>
+            <DialogContent className={"sm:max-w-[500px] overflow-y-scroll h-[calc(100dvh)] sm:h-auto"}>
+
+                <Form {...form}>
+                    <form className={"grid gap-2 py-4 space-y-2"}
+                          onSubmit={form.handleSubmit(onSubmit)}
+                    >
+                        <DialogHeader className="mb-2">
+                            <DialogTitle>
+                                {t("tasks.form.edit.title")} ({task.id})
+                            </DialogTitle>
+                        </DialogHeader>
+
+                        <TaskFormFields form={form} tradingAccount={tradingAccount}/>
+
+                        <DialogFooter>
+                            <TaskDelete task={task} onDelete={onCompleteAction}/>
+                            <Spacer/>
+                            <Button type="submit">
+                                {t("tasks.form.submit")}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+function convertCronToHours(cron?: string): string[] {
+    if (!cron) return []
+    const parsedCron = parseCronExpression(cron)
+    return parsedCron.fields.hour.toString().split(',')
+}
+
+function convertCronToDays(cron?: string): string[] {
+    if (!cron) return []
+    const parsedCron = parseCronExpression(cron)
+    return parsedCron.fields.dayOfWeek.toString().split(',')
+}

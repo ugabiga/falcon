@@ -4,6 +4,7 @@ export enum RefreshTarget {
     None = '',
     Task = 'task',
 }
+
 export interface Refresh {
     targetName?: RefreshTarget,
     refresh: boolean,
@@ -28,9 +29,20 @@ const refresherSlice = createSlice({
             state.params = {
                 tradingAccountID: action.payload.tradingAccountID
             }
+        },
+        setRefresher: (state, action: PayloadAction<Refresh>) => {
+            state.targetName = action.payload.targetName
+        },
+        setRefresherNone: (state) => {
+            state.targetName = RefreshTarget.None
+            state.refresh = false
         }
     }
 });
 
-export const {refreshTask} = refresherSlice.actions;
+export const {
+    refreshTask,
+    setRefresher,
+    setRefresherNone
+} = refresherSlice.actions;
 export default refresherSlice;

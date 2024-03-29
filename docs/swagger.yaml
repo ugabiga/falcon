@@ -26,6 +26,59 @@ definitions:
       token:
         type: string
     type: object
+  model.Task:
+    properties:
+      created_at:
+        type: string
+      cron:
+        type: string
+      currency:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      next_execution_time:
+        type: string
+      params:
+        additionalProperties: true
+        type: object
+      size:
+        type: number
+      symbol:
+        type: string
+      trading_account_id:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.TradingAccount:
+    properties:
+      created_at:
+        type: string
+      exchange:
+        type: string
+      id:
+        type: string
+      ip:
+        type: string
+      key:
+        type: string
+      name:
+        type: string
+      phrase:
+        type: string
+      secret:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
   model.User:
     properties:
       created_at:
@@ -46,6 +99,19 @@ definitions:
       timezone:
         type: string
     type: object
+  v1.TaskIndexResponse:
+    properties:
+      selected_tasks:
+        items:
+          $ref: '#/definitions/model.Task'
+        type: array
+      selected_trading_account:
+        $ref: '#/definitions/model.TradingAccount'
+      trading_accounts:
+        items:
+          $ref: '#/definitions/model.TradingAccount'
+        type: array
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -56,6 +122,32 @@ info:
   title: Falcon API
   version: "1.0"
 paths:
+  /api/v1/tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get user tasks
+      parameters:
+      - description: Trading account ID
+        in: query
+        name: trading_account_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.TaskIndexResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.APIError'
+      security:
+      - Bearer: []
+      summary: Get user tasks
+      tags:
+      - task
   /api/v1/users/me:
     get:
       consumes:

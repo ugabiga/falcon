@@ -45,6 +45,7 @@ func provider() fx.Option {
 
 		// Handler V1
 		v1.NewUserHandler,
+		v1.NewTaskHandler,
 
 		// GraphQL
 		resolvers.NewResolver,
