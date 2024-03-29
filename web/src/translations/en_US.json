@@ -76,12 +76,12 @@
   "tasks.form.edit.btn": "Edit",
   "tasks.form.edit.title": "Edit Task",
   "tasks.form.type": "Type",
-  "tasks.form.currency": "Currency",
+  "tasks.form.currency": "Base Currency",
   "tasks.form.symbol": "Crypto Symbol",
   "tasks.form.size": "Investing Size",
-  "tasks.form.days": "Days",
+  "tasks.form.days": "Execution days",
   "tasks.form.days.placeholder": "Select days",
-  "tasks.form.hours": "Execution hours in 24h format (e.g., 13,14,15)",
+  "tasks.form.hours": "Execution hours",
   "tasks.form.hours.placeholder": "Enter execution hours in 24h format (e.g., 13,14,15)",
   "tasks.form.is_active": "Active",
   "tasks.form.is_active.desc": "If checked, this task will be executed",
@@ -98,7 +98,7 @@
   "tasks.table.action": "Action",
   "tasks.table.more": "More",
   "tasks.table.history": "History",
-  "tasks.table.empty": "No Tasks found",
+  "tasks.table.empty": "No Tasks found, please add a task first",
   "tasks.table.next_execution_time.fail": "No next Execution Time",
   "tasks.table.schedule.encoded": "{{days}} at {{hours}}",
   "tasks.table.schedule.everyday": "Everyday",
@@ -153,5 +153,6 @@
   "tasks.form.grid.incremental_size": "Incremental Size",
   "tasks.form.grid.incremental_size.description": "Specify the size of the incremental purchase.",
   "tasks.form.grid.delete_previous_orders": "Delete Previous Orders",
-  "tasks.form.grid.delete_previous_orders.description": "If checked, previous orders will be deleted before placing new orders."
+  "tasks.form.grid.delete_previous_orders.description": "If checked, previous orders will be deleted before placing new orders.",
+  "tasks.trading_accounts.empty": "No Trading Accounts found, please add a trading account first"
 }
