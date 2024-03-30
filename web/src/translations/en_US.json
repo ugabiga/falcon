@@ -154,5 +154,6 @@
   "tasks.form.grid.incremental_size.description": "Specify the size of the incremental purchase.",
   "tasks.form.grid.delete_previous_orders": "Delete Previous Orders",
   "tasks.form.grid.delete_previous_orders.description": "If checked, previous orders will be deleted before placing new orders.",
-  "tasks.trading_accounts.empty": "No Trading Accounts found, please add a trading account first"
+  "tasks.trading_accounts.empty": "No Trading Accounts found, please add a trading account first",
+  "tasks.detail.btn": "Detail"
 }

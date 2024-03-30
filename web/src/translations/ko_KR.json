@@ -137,7 +137,7 @@
   "common.exchange.binance_spot": "바이낸스 현물",
   "tasks.type.dca": "적립식 투자(DCA)",
   "tasks.type.long_grid": "롱 그리드",
-  "tasks.type.buying_grid": "매수 그리드",
+  "tasks.type.buying_grid": "매수 그리드(Buying Grid)",
   "error.size_not_satisfied_minimum_size": "주문 크기는 최소 {{size}} 이상이어야 합니다",
   "trading_account.form.key_placeholder": "거래소에서 발급받은 API 키를 입력하세요",
   "trading_account.form.secret_placeholder": "거래소에서 발급받은 API 시크릿 키를 입력하세요",
@@ -154,5 +154,6 @@
   "tasks.form.grid.incremental_size.description": "매수 갭마다 증가시킬 매수 크기를 설정하세요",
   "tasks.form.grid.delete_previous_orders": "이전 주문 삭제 여부",
   "tasks.form.grid.delete_previous_orders.description": "실행시 이전 주문을 삭제할지 설정하세요",
-  "tasks.trading_accounts.empty": "거래 계정이 없습니다. 먼저 거래 계정을 추가하세요"
+  "tasks.trading_accounts.empty": "거래 계정이 없습니다. 먼저 거래 계정을 추가하세요",
+  "tasks.detail.btn": "자세히 보기"
 }

@@ -9,6 +9,8 @@ import {ExchangeList} from "@/lib/exchanges";
 import {Input} from "@/components/ui/input";
 import {useConvertSizeToCurrency} from "@/hooks/convert-size-to-currency";
 import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
+import SeparationHeader from "@/components/separation-header";
+import {TaskFormBuyingGridFields} from "@/components/tasks/v2/task-form-grid";
 
 const HOURS = Array.from({length: 24}, (_, i) => i)
 
@@ -44,24 +46,29 @@ const DAYS = [
 ]
 
 export const TaskFromSchema = z.object({
-    type: z
-        .nativeEnum(TaskType),
-    currency: z
-        .string(),
-    size: z
-        .string()
+    type: z.nativeEnum(TaskType),
+    currency: z.string(),
+    size: z.string()
         .regex(/^\d+\.?\d*$/, "Size must be a number"),
-    symbol: z
-        .string(),
-    days: z
-        .array(
-            z.string()
-        ),
+    symbol: z.string(),
+    days: z.array(
+        z.string()
+    ),
     hours: z.array(
         z.string().regex(/^\d+$/, "Priority must be a number"),
     ),
-    isActive: z
-        .boolean()
+    isActive: z.boolean(),
+    grid: z.object({
+        gap_percent: z.string({})
+            .regex(/^\d+\.?\d*$/, "Gap percent must be a number"),
+        quantity: z.string({})
+            .regex(/^\d+$/, "Quantity must be a number"),
+        use_incremental_size: z.boolean({}),
+        incremental_size: z.string({})
+            .regex(/^\d+\.?\d*$/, "Incremental size must be a number")
+            .optional(),
+        delete_previous_orders: z.boolean({}),
+    }).optional()
 })
 
 export function TaskFormFields(
@@ -91,6 +98,8 @@ export function TaskFormFields(
     }
 
     return <>
+        <SeparationHeader name={"Basic Information"}/>
+
         <FormField
             control={form.control}
             name={"type"}
@@ -297,6 +306,8 @@ export function TaskFormFields(
                 </FormItem>
             )}
         />
+
+        {form.watch("type") === TaskType.BuyingGrid && <TaskFormBuyingGridFields form={form}/>}
 
     </>
 }
