@@ -5,6 +5,8 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import React from "react";
 import TaskDetail from "@/components/tasks/v2/task-detail";
 import {TaskMoreBtn} from "@/components/tasks/more-btn";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 export default function TaskTable(
     {
@@ -55,7 +57,11 @@ export default function TaskTable(
                         <TableHead>{t("tasks.table.schedule")}</TableHead>
                         <TableHead>{t("tasks.table.next_execution_time")}</TableHead>
                         <TableHead>{t("tasks.table.is_active")}</TableHead>
-                        <TableHead>{t("tasks.table.action")}</TableHead>
+                        <TableHead
+                            className="text-center"
+                        >
+                            {t("tasks.table.action")}
+                        </TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -81,8 +87,20 @@ export default function TaskTable(
                                 <TableCell className={task.is_active ? "text-green-500" : "text-red-500"}>
                                     {t("task.table.is_active.boolean." + task.is_active)}
                                 </TableCell>
-                                <TableCell>
-                                    <TaskDetail task={task} tradingAccount={data.selected_trading_account}/>
+                                <TableCell className="text-center">
+                                    <TaskDetail
+                                        variant="link"
+                                        task={task}
+                                        tradingAccount={data.selected_trading_account}
+                                    />
+                                    <Button variant="link" asChild>
+                                        <Link
+                                            href={`/tasks/${task.id}`
+                                                + `/history?trading_account_id=${task.trading_account_id}`}
+                                        >
+                                            {t("tasks.table.history")}
+                                        </Link>
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))

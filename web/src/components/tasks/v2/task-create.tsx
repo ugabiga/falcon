@@ -16,6 +16,7 @@ import {errorToast} from "@/components/toast";
 import {translatedError} from "@/lib/error";
 import {useSendRefreshSignal} from "@/lib/use-refresh";
 import {ModelTradingAccount} from "@/api/model";
+import {parseParamsFromData} from "@/lib/task-params";
 
 export default function TaskCreate(
     {
@@ -42,6 +43,9 @@ export default function TaskCreate(
             return
         }
 
+        console.log(data)
+        // return
+
         createTask({
             variables: {
                 tradingAccountID: tradingAccount.id,
@@ -51,6 +55,7 @@ export default function TaskCreate(
                 days: data.days.join(","),
                 hours: data.hours.join(","),
                 type: data.type,
+                params: parseParamsFromData(data)
             }
         }).then(() => {
             capture("Task Added", {
@@ -72,7 +77,8 @@ export default function TaskCreate(
                     {t("tasks.form.add.btn")}
                 </Button>
             </DialogTrigger>
-            <DialogContent className={"sm:max-w-[500px] overflow-y-scroll h-[calc(100dvh)] sm:h-auto"}>
+
+            <DialogContent className={"overflow-y-scroll h-[calc(100dvh)] sm:max-w-[500px] md:h-auto md:max-h-screen"}>
 
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}

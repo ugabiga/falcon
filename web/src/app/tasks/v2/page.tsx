@@ -18,6 +18,7 @@ import {RefreshTarget} from "@/store/refresherSlice";
 import {refreshTask} from "@/store/taskSlice";
 import {useAppSelector} from "@/store";
 import {useReceiveRefreshSignal} from "@/lib/use-refresh";
+import TaskCards from "@/components/tasks/v2/task-cards";
 
 export default function Tasks() {
     const {t} = useTranslation()
@@ -63,6 +64,9 @@ export default function Tasks() {
             {/* Table */}
             <div className="hidden md:block">
                 <TaskTable data={data}/>
+            </div>
+            <div className="block md:hidden mt-6">
+                <TaskCards data={data}/>
             </div>
 
         </main>

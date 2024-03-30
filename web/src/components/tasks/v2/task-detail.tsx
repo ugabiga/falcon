@@ -20,12 +20,16 @@ import {errorToast} from "@/components/toast";
 import {translatedError} from "@/lib/error";
 import TaskDelete from "@/components/tasks/v2/task-delete";
 import Spacer from "@/components/spacer";
+import {parseParamsFromData, parseParamsFromTask} from "@/lib/task-params";
+import Link from "next/link";
 
 export default function TaskDetail(
     {
+        variant,
         task,
         tradingAccount
     }: {
+        variant: "secondary" | "link"
         task: ModelTask
         tradingAccount: ModelTradingAccount
     }
@@ -41,13 +45,13 @@ export default function TaskDetail(
             symbol: task.symbol,
             days: convertCronToDays(task.cron),
             hours: convertCronToHours(task.cron),
-            isActive: task.is_active
+            isActive: task.is_active,
+            grid: parseParamsFromTask(task)
         },
     })
 
     const {sendRefresh} = useSendRefreshSignal()
     const [updateTask] = useMutation(UpdateTaskDocument)
-
 
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
         updateTask({
@@ -60,8 +64,8 @@ export default function TaskDetail(
                 days: data.hours.join(','),
                 hours: data.days.join(','),
                 type: data.type,
-                isActive: data.isActive
-                // params: parseParamsFromData(data)
+                isActive: data.isActive,
+                params: parseParamsFromData(data)
             }
         }).then(() => {
             onCompleteAction()
@@ -78,11 +82,11 @@ export default function TaskDetail(
     return (
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
-                <Button variant="ghost">
-                    Detail
+                <Button variant={variant}>
+                    {t("tasks.detail.btn")}
                 </Button>
             </DialogTrigger>
-            <DialogContent className={"sm:max-w-[500px] overflow-y-scroll h-[calc(100dvh)] sm:h-auto"}>
+            <DialogContent className={"overflow-y-scroll h-[calc(100dvh)] sm:max-w-[500px] md:h-auto md:max-h-screen"}>
 
                 <Form {...form}>
                     <form className={"grid gap-2 py-4 space-y-2"}
