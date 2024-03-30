@@ -9,7 +9,7 @@ import type { ModelTask } from './modelTask';
 import type { ModelTradingAccount } from './modelTradingAccount';
 
 export interface V1TaskIndexResponse {
-  selected_tasks?: ModelTask[];
-  selected_trading_account?: ModelTradingAccount;
-  trading_accounts?: ModelTradingAccount[];
+  selected_tasks: ModelTask[];
+  selected_trading_account: ModelTradingAccount;
+  trading_accounts: ModelTradingAccount[];
 }

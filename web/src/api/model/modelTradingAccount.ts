@@ -7,14 +7,14 @@
  */
 
 export interface ModelTradingAccount {
-  created_at?: string;
-  exchange?: string;
-  id?: string;
-  ip?: string;
-  key?: string;
-  name?: string;
-  phrase?: string;
+  created_at: string;
+  exchange: string;
+  id: string;
+  ip: string;
+  key: string;
+  name: string;
+  phrase: string;
   secret?: string;
-  updated_at?: string;
-  user_id?: string;
+  updated_at: string;
+  user_id: string;
 }

@@ -8,17 +8,17 @@
 import type { ModelTaskParams } from './modelTaskParams';
 
 export interface ModelTask {
-  created_at?: string;
-  cron?: string;
-  currency?: string;
-  id?: string;
-  is_active?: boolean;
-  next_execution_time?: string;
+  created_at: string;
+  cron: string;
+  currency: string;
+  id: string;
+  is_active: boolean;
+  next_execution_time: string;
   params?: ModelTaskParams;
-  size?: number;
-  symbol?: string;
-  trading_account_id?: string;
-  type?: string;
-  updated_at?: string;
-  user_id?: string;
+  size: number;
+  symbol: string;
+  trading_account_id: string;
+  type: string;
+  updated_at: string;
+  user_id: string;
 }

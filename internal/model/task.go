@@ -17,19 +17,19 @@ const (
 )
 
 type Task struct {
-	ID                string                 `json:"id"`
-	UserID            string                 `json:"user_id"`
-	TradingAccountID  string                 `json:"trading_account_id"`
-	Currency          string                 `json:"currency"`
-	Size              float64                `json:"size"`
-	Symbol            string                 `json:"symbol"`
-	Cron              string                 `json:"cron"`
-	NextExecutionTime time.Time              `json:"next_execution_time"`
-	IsActive          bool                   `json:"is_active"`
-	Type              string                 `json:"type"`
+	ID                string                 `json:"id" validate:"required"`
+	UserID            string                 `json:"user_id" validate:"required"`
+	TradingAccountID  string                 `json:"trading_account_id" validate:"required"`
+	Currency          string                 `json:"currency" validate:"required"`
+	Size              float64                `json:"size" validate:"required"`
+	Symbol            string                 `json:"symbol" validate:"required"`
+	Cron              string                 `json:"cron" validate:"required"`
+	NextExecutionTime time.Time              `json:"next_execution_time" validate:"required"`
+	IsActive          bool                   `json:"is_active" validate:"required"`
+	Type              string                 `json:"type" validate:"required"`
 	Params            map[string]interface{} `json:"params"`
-	UpdatedAt         time.Time              `json:"updated_at"`
-	CreatedAt         time.Time              `json:"created_at"`
+	UpdatedAt         time.Time              `json:"updated_at" validate:"required"`
+	CreatedAt         time.Time              `json:"created_at" validate:"required"`
 }
 
 func (t Task) GridParams() (*TaskGridParams, error) {

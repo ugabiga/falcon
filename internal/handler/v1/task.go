@@ -69,9 +69,9 @@ func (h TaskHandler) Index(c echo.Context) error {
 }
 
 type TaskIndexResponse struct {
-	TradingAccounts        []model.TradingAccount `json:"trading_accounts"`
-	SelectedTradingAccount model.TradingAccount   `json:"selected_trading_account"`
-	SelectedTasks          []model.Task           `json:"selected_tasks"`
+	TradingAccounts        []model.TradingAccount `json:"trading_accounts" validate:"required"`
+	SelectedTradingAccount model.TradingAccount   `json:"selected_trading_account" validate:"required"`
+	SelectedTasks          []model.Task           `json:"selected_tasks" validate:"required"`
 }
 
 func newTaskIndexResponse(tasks []model.Task, tradingAccounts []model.TradingAccount, tradingAccountID string) TaskIndexResponse {

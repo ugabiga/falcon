@@ -264,6 +264,20 @@ const docTemplate = `{
         },
         "model.Task": {
             "type": "object",
+            "required": [
+                "created_at",
+                "cron",
+                "currency",
+                "id",
+                "is_active",
+                "next_execution_time",
+                "size",
+                "symbol",
+                "trading_account_id",
+                "type",
+                "updated_at",
+                "user_id"
+            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -309,6 +323,17 @@ const docTemplate = `{
         },
         "model.TradingAccount": {
             "type": "object",
+            "required": [
+                "created_at",
+                "exchange",
+                "id",
+                "ip",
+                "key",
+                "name",
+                "phrase",
+                "updated_at",
+                "user_id"
+            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -375,6 +400,11 @@ const docTemplate = `{
         },
         "v1.TaskIndexResponse": {
             "type": "object",
+            "required": [
+                "selected_tasks",
+                "selected_trading_account",
+                "trading_accounts"
+            ],
             "properties": {
                 "selected_tasks": {
                     "type": "array",
