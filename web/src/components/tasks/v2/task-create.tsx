@@ -21,7 +21,7 @@ export default function TaskCreate(
     {
         tradingAccount
     }: {
-        tradingAccount: ModelTradingAccount
+        tradingAccount?: ModelTradingAccount
     }) {
 
     const {t} = useTranslation()
@@ -38,9 +38,13 @@ export default function TaskCreate(
     const [createTask] = useMutation(CreateTaskDocument);
 
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
+        if (!tradingAccount) {
+            return
+        }
+
         createTask({
             variables: {
-                tradingAccountID: tradingAccount.id!,
+                tradingAccountID: tradingAccount.id,
                 currency: data.currency,
                 size: Number(data.size),
                 symbol: data.symbol,

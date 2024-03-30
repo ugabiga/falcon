@@ -55,6 +55,19 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - created_at
+    - cron
+    - currency
+    - id
+    - is_active
+    - next_execution_time
+    - size
+    - symbol
+    - trading_account_id
+    - type
+    - updated_at
+    - user_id
     type: object
   model.TradingAccount:
     properties:
@@ -78,6 +91,16 @@ definitions:
         type: string
       user_id:
         type: string
+    required:
+    - created_at
+    - exchange
+    - id
+    - ip
+    - key
+    - name
+    - phrase
+    - updated_at
+    - user_id
     type: object
   model.User:
     properties:
@@ -111,6 +134,10 @@ definitions:
         items:
           $ref: '#/definitions/model.TradingAccount'
         type: array
+    required:
+    - selected_tasks
+    - selected_trading_account
+    - trading_accounts
     type: object
 host: localhost:8080
 info:

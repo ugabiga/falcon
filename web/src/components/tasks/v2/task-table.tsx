@@ -70,19 +70,19 @@ export default function TaskTable(
                                     {task.size + " " + task.symbol}
                                 </TableCell>
                                 <TableCell>
-                                    {convertSchedule(task.cron!)}
+                                    {convertSchedule(task.cron)}
                                 </TableCell>
                                 <TableCell>
                                     {convertToNextExecutionTime(
-                                        task.cron!,
+                                        task.cron,
                                         t("tasks.table.next_execution_time.fail")
                                     )}
                                 </TableCell>
-                                <TableCell className={(task.is_active === true) ? "text-green-500" : "text-red-500"}>
+                                <TableCell className={task.is_active ? "text-green-500" : "text-red-500"}>
                                     {t("task.table.is_active.boolean." + task.is_active)}
                                 </TableCell>
                                 <TableCell>
-                                    <TaskDetail task={task} tradingAccount={data.selected_trading_account!}/>
+                                    <TaskDetail task={task} tradingAccount={data.selected_trading_account}/>
                                 </TableCell>
                             </TableRow>
                         ))

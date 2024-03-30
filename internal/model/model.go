@@ -29,27 +29,27 @@ type Authentication struct {
 }
 
 type TradingAccount struct {
-	ID        string    `json:"id,omitempty"`
-	UserID    string    `json:"user_id,omitempty"`
-	Name      string    `json:"name,omitempty"`
-	Exchange  string    `json:"exchange,omitempty"`
-	IP        string    `json:"ip,omitempty"`
-	Key       string    `json:"key,omitempty"`
+	ID        string    `json:"id,omitempty" validate:"required"`
+	UserID    string    `json:"user_id,omitempty" validate:"required"`
+	Name      string    `json:"name,omitempty" validate:"required"`
+	Exchange  string    `json:"exchange,omitempty" validate:"required"`
+	IP        string    `json:"ip,omitempty" validate:"required"`
+	Key       string    `json:"key,omitempty"  validate:"required"`
 	Secret    string    `json:"secret,omitempty"`
-	Phrase    string    `json:"phrase,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	Phrase    string    `json:"phrase,omitempty" validate:"required"`
+	UpdatedAt time.Time `json:"updated_at,omitempty" validate:"required"`
+	CreatedAt time.Time `json:"created_at,omitempty" validate:"required"`
 }
 
 type TaskHistory struct {
-	ID               string    `json:"id"`
-	TaskID           string    `json:"task_id"`
-	TradingAccountID string    `json:"trading_account_id"`
-	UserID           string    `json:"user_id"`
-	IsSuccess        bool      `json:"is_success"`
-	Log              string    `json:"log"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	CreatedAt        time.Time `json:"created_at"`
+	ID               string    `json:"id" validate:"required"`
+	TaskID           string    `json:"task_id" validate:"required"`
+	TradingAccountID string    `json:"trading_account_id" validate:"required"`
+	UserID           string    `json:"user_id" validate:"required"`
+	IsSuccess        bool      `json:"is_success" validate:"required"`
+	Log              string    `json:"log" validate:"required"`
+	UpdatedAt        time.Time `json:"updated_at" validate:"required"`
+	CreatedAt        time.Time `json:"created_at" validate:"required"`
 }
 
 type StaticIP struct {
