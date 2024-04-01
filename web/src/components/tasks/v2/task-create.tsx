@@ -100,11 +100,11 @@ export default function TaskCreate(
                         <TaskFormFields form={form} tradingAccount={tradingAccount}/>
 
                         <DialogFooter className="gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={() => onCancelAction()}>
-                                {t("common.cancel")}
-                            </Button>
+                            {/*<Button*/}
+                            {/*    variant="outline"*/}
+                            {/*    onClick={() => onCancelAction()}>*/}
+                            {/*    {t("common.cancel")}*/}
+                            {/*</Button>*/}
                             <Spacer/>
                             <Button type="submit">
                                 {t("tasks.form.submit")}
