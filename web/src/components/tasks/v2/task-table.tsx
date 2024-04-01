@@ -7,12 +7,15 @@ import TaskDetail from "@/components/tasks/v2/task-detail";
 import {TaskMoreBtn} from "@/components/tasks/old/more-btn";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {LoadingTableCell} from "@/components/loading-table-cell";
 
 export default function TaskTable(
     {
-        data
+        data,
+        isLoading
     }: {
         data?: V1TaskIndexResponse
+        isLoading: boolean
     }
 ) {
     const {t} = useTranslation();
@@ -66,7 +69,8 @@ export default function TaskTable(
                 </TableHeader>
                 <TableBody>
                     {
-                        data?.selected_tasks?.map((task) => (
+                        isLoading && <LoadingTableCell colSpan={7}/>
+                        || data?.selected_tasks?.map((task) => (
                             <TableRow key={task.id}>
                                 <TableCell>{task.symbol}</TableCell>
                                 <TableCell>
