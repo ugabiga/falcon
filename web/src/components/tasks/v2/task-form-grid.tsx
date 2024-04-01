@@ -20,7 +20,7 @@ export function TaskFormBuyingGridFields(
     const {t} = useTranslation();
 
     return <>
-        <SeparationHeader name={"매수 그리드 설정"}/>
+        <SeparationHeader name={t("tasks.form.buying-grid.title")}/>
 
         <FormField
             control={form.control}

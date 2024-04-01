@@ -100,7 +100,12 @@ export default function TaskDetail(
 
                         <TaskFormFields form={form} tradingAccount={tradingAccount}/>
 
-                        <DialogFooter>
+                        <DialogFooter className="w-full flex gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setOpenDialog(false)}>
+                                {t("common.cancel")}
+                            </Button>
                             <TaskDelete task={task} onDelete={onCompleteAction}/>
                             <Spacer/>
                             <Button type="submit">

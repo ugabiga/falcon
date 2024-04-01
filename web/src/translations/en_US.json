@@ -155,5 +155,8 @@
   "tasks.form.grid.delete_previous_orders": "Delete Previous Orders",
   "tasks.form.grid.delete_previous_orders.description": "If checked, previous orders will be deleted before placing new orders.",
   "tasks.trading_accounts.empty": "No Trading Accounts found, please add a trading account first",
-  "tasks.detail.btn": "Detail"
+  "tasks.detail.btn": "Detail",
+  "tasks.form.basic.title": "Basic Settings",
+  "tasks.form.buying-grid.title": "Buying Grid Settings",
+  "common.cancel": "Cancel"
 }
