@@ -256,7 +256,11 @@ export function TaskFormFields(
                                 {
                                     DAYS.map((inputValues) => {
                                         return (
-                                            <ToggleGroupItem value={inputValues.value} key={inputValues.value}>
+                                            <ToggleGroupItem
+                                                className="hover:bg-inherit"
+                                                value={inputValues.value}
+                                                key={inputValues.value}
+                                            >
                                                 {t("common.days." + inputValues.label)}
                                             </ToggleGroupItem>
                                         )
@@ -293,7 +297,8 @@ export function TaskFormFields(
                             >
                                 {HOURS.map((v) => {
                                     return <ToggleGroupItem
-                                        key={v}
+                                        className="hover:bg-inherit"
+                                        key={v.toString()}
                                         value={v.toString()}
                                     >
                                         {v.toString().padStart(2, "0") + ":00"}
