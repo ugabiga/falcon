@@ -85,7 +85,7 @@ export default function Tasks() {
                 <TaskTable data={data} isLoading={isLoading}/>
             </div>
             <div className="block md:hidden mt-6">
-                <TaskCards data={data}/>
+                <TaskCards data={data} isLoading={isLoading}/>
             </div>
             {/*{*/}
             {/*    isLoading*/}

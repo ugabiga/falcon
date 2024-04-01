@@ -1,21 +1,22 @@
 import {V1TaskIndexResponse} from "@/api/model";
 import {useTranslation} from "@/lib/i18n";
-import {Card, CardContent, CardHeader} from "@/components/ui/card";
+import {Card, CardContent, CardFooter, CardHeader} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
-import {convertNumberToCryptoSize} from "@/lib/number";
 import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/cron-parser";
 import Spacer from "@/components/spacer";
-import {TableCell} from "@/components/ui/table";
 import TaskDetail from "@/components/tasks/v2/task-detail";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
+import {LoadingCard} from "@/components/loading-card";
 
 export default function TaskCards(
     {
-        data
+        data,
+        isLoading
     }: {
         data?: V1TaskIndexResponse
+        isLoading: boolean
     }
 ) {
     const {t} = useTranslation();
@@ -49,11 +50,11 @@ export default function TaskCards(
         })
     }
 
-
     return (
         <div className="space-y-2">
             {
-                data?.selected_tasks?.map((task) => (
+                isLoading && <LoadingCard/>
+                || data?.selected_tasks?.map((task) => (
                     <Card key={task.id}>
                         <CardContent className="grid gap-5 pt-4">
                             <div className="col-span-2">
