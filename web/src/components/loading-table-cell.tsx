@@ -28,7 +28,7 @@ export function LoadingTableCell({colSpan}: { colSpan: number }) {
         <TableRow>
             <TableCell colSpan={colSpan} className="text-center">
                 <div className="w-full flex flex-col justify-center items-center">
-                    <Icons.spinner className="h-4 w-4 animate-spin"/>
+                    <Icons.spinner className="h-8 w-8 animate-spin"/>
                 </div>
             </TableCell>
         </TableRow>
