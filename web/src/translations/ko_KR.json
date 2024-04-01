@@ -155,5 +155,8 @@
   "tasks.form.grid.delete_previous_orders": "이전 주문 삭제 여부",
   "tasks.form.grid.delete_previous_orders.description": "실행시 이전 주문을 삭제할지 설정하세요",
   "tasks.trading_accounts.empty": "거래 계정이 없습니다. 먼저 거래 계정을 추가하세요",
-  "tasks.detail.btn": "자세히 보기"
+  "tasks.detail.btn": "자세히 보기",
+  "tasks.form.basic.title": "기본 정보",
+  "tasks.form.buying-grid.title": "매수 그리드 설정",
+  "common.cancel": "취소"
 }

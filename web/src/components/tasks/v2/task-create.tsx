@@ -17,6 +17,7 @@ import {translatedError} from "@/lib/error";
 import {useSendRefreshSignal} from "@/lib/use-refresh";
 import {ModelTradingAccount} from "@/api/model";
 import {parseParamsFromData} from "@/lib/task-params";
+import Spacer from "@/components/spacer";
 
 export default function TaskCreate(
     {
@@ -43,9 +44,6 @@ export default function TaskCreate(
             return
         }
 
-        console.log(data)
-        // return
-
         createTask({
             variables: {
                 tradingAccountID: tradingAccount.id,
@@ -62,12 +60,21 @@ export default function TaskCreate(
                 tradingAccountID: tradingAccount.id,
                 taskType: data.type
             })
-            setOpenDialog(false)
-            form.reset()
-            sendRefresh(RefreshTarget.Task)
+            onCompleteAction()
         }).catch((e) => {
             errorToast(translatedError(t, e.message))
         })
+    }
+
+    function onCompleteAction() {
+        setOpenDialog(false)
+        form.reset()
+        sendRefresh(RefreshTarget.Task)
+    }
+
+    function onCancelAction() {
+        setOpenDialog(false)
+        form.reset()
     }
 
     return (
@@ -92,8 +99,14 @@ export default function TaskCreate(
 
                         <TaskFormFields form={form} tradingAccount={tradingAccount}/>
 
-                        <DialogFooter>
-                            <Button type="submit" className={"mt-6"}>
+                        <DialogFooter className="gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => onCancelAction()}>
+                                {t("common.cancel")}
+                            </Button>
+                            <Spacer/>
+                            <Button type="submit">
                                 {t("tasks.form.submit")}
                             </Button>
                         </DialogFooter>

@@ -98,7 +98,7 @@ export function TaskFormFields(
     }
 
     return <>
-        <SeparationHeader name={"Basic Information"}/>
+        <SeparationHeader name={t("tasks.form.basic.title")}/>
 
         <FormField
             control={form.control}
