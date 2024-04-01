@@ -9,7 +9,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import {errorToast} from "@/components/toast";
-import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/components/tasks/form";
+import {parseParamsFromData, TaskForm, TaskFromSchema} from "@/components/tasks/old/form";
 import {useTranslation} from "react-i18next";
 import {refreshTask} from "@/store/refresherSlice";
 import {TaskType} from "@/lib/model";

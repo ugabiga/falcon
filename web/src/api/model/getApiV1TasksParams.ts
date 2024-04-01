@@ -11,4 +11,8 @@ export type GetApiV1TasksParams = {
  * Trading account ID
  */
 trading_account_id?: string;
+/**
+ * Limit
+ */
+limit?: number;
 };

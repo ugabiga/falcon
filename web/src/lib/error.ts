@@ -1,6 +1,9 @@
 import {TFunction} from "i18next";
 
-export function transformErrorMessage(message: string) {
+export function transformErrorMessage(message?: string) {
+    if (!message) {
+        return "An unknown error occurred."
+    }
 
     if (message === "Failed to fetch") {
         return "Failed to connect to the server. Please try again later."

@@ -36,6 +36,7 @@ func (h TaskHandler) SetRoutes(e *echo.Group) {
 //	@Produce		json
 //	@Security		Bearer
 //	@Param			trading_account_id	query		string	false	"Trading account ID"
+//	@Param			limit				query		int		false	"Limit"
 //	@Success		200					{object}	TaskIndexResponse
 //	@Failure		400					{object}	handler.APIError
 //	@Router			/api/v1/tasks [get]

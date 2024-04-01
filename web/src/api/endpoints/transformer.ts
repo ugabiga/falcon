@@ -6,7 +6,6 @@
  * OpenAPI spec version: 1.0
  */
 import {
-  useInfiniteQuery,
   useMutation,
   useQuery,
   useSuspenseInfiniteQuery,
@@ -17,8 +16,6 @@ import type {
   MutationFunction,
   QueryFunction,
   QueryKey,
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
   UseMutationOptions,
   UseQueryOptions,
   UseQueryResult,
@@ -67,46 +64,6 @@ export const getGetApiV1TasksQueryKey = (params?: GetApiV1TasksParams,) => {
     }
 
     
-export const getGetApiV1TasksInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>, GetApiV1TasksParams['limit']>, TError = ErrorType<HandlerAPIError>>(params?: GetApiV1TasksParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiV1TasksQueryKey(params);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']> = ({ signal, pageParam }) => getApiV1Tasks({...params, limit: pageParam || params?.['limit']}, requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']> & { queryKey: QueryKey }
-}
-
-export type GetApiV1TasksInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1Tasks>>>
-export type GetApiV1TasksInfiniteQueryError = ErrorType<HandlerAPIError>
-
-/**
- * @summary Get user tasks
- */
-export const useGetApiV1TasksInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>, GetApiV1TasksParams['limit']>, TError = ErrorType<HandlerAPIError>>(
- params?: GetApiV1TasksParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
-
-  const queryOptions = getGetApiV1TasksInfiniteQueryOptions(params,options)
-
-  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
 export const getGetApiV1TasksQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1Tasks>>, TError = ErrorType<HandlerAPIError>>(params?: GetApiV1TasksParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -122,7 +79,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1TasksQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1Tasks>>>
@@ -162,7 +119,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1TasksSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1Tasks>>>
@@ -187,7 +144,7 @@ export const useGetApiV1TasksSuspense = <TData = Awaited<ReturnType<typeof getAp
 
 
 
-export const getGetApiV1TasksSuspenseInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>, GetApiV1TasksParams['limit']>, TError = ErrorType<HandlerAPIError>>(params?: GetApiV1TasksParams, options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']>>, request?: SecondParameter<typeof customInstance>}
+export const getGetApiV1TasksSuspenseInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>>, TError = ErrorType<HandlerAPIError>>(params?: GetApiV1TasksParams, options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -196,13 +153,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']> = ({ signal, pageParam }) => getApiV1Tasks({...params, limit: pageParam || params?.['limit']}, requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1Tasks>>> = ({ signal }) => getApiV1Tasks(params, requestOptions, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1TasksSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1Tasks>>>
@@ -211,8 +168,8 @@ export type GetApiV1TasksSuspenseInfiniteQueryError = ErrorType<HandlerAPIError>
 /**
  * @summary Get user tasks
  */
-export const useGetApiV1TasksSuspenseInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>, GetApiV1TasksParams['limit']>, TError = ErrorType<HandlerAPIError>>(
- params?: GetApiV1TasksParams, options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData, Awaited<ReturnType<typeof getApiV1Tasks>>, QueryKey, GetApiV1TasksParams['limit']>>, request?: SecondParameter<typeof customInstance>}
+export const useGetApiV1TasksSuspenseInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1Tasks>>>, TError = ErrorType<HandlerAPIError>>(
+ params?: GetApiV1TasksParams, options?: { query?:Partial<UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1Tasks>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 
   ):  UseSuspenseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
 
@@ -250,46 +207,6 @@ export const getGetApiV1UsersMeQueryKey = () => {
     }
 
     
-export const getGetApiV1UsersMeInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiV1UsersMeQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiV1UsersMe>>> = ({ signal }) => getApiV1UsersMe(requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetApiV1UsersMeInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
-export type GetApiV1UsersMeInfiniteQueryError = ErrorType<HandlerAPIError>
-
-/**
- * @summary Get user profile
- */
-export const useGetApiV1UsersMeInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getApiV1UsersMe>>>, TError = ErrorType<HandlerAPIError>>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
-
-  const queryOptions = getGetApiV1UsersMeInfiniteQueryOptions(options)
-
-  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
 export const getGetApiV1UsersMeQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -305,7 +222,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1UsersMeQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
@@ -345,7 +262,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1UsersMeSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
@@ -385,7 +302,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetApiV1UsersMeSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
@@ -487,46 +404,6 @@ export const getGetAuthProtectedQueryKey = () => {
     }
 
     
-export const getGetAuthProtectedInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof getAuthProtected>>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetAuthProtectedQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getAuthProtected>>> = ({ signal }) => getAuthProtected(requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetAuthProtectedInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthProtected>>>
-export type GetAuthProtectedInfiniteQueryError = ErrorType<HandlerAPIError>
-
-/**
- * @summary Protected
- */
-export const useGetAuthProtectedInfinite = <TData = InfiniteData<Awaited<ReturnType<typeof getAuthProtected>>>, TError = ErrorType<HandlerAPIError>>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey } => {
-
-  const queryOptions = getGetAuthProtectedInfiniteQueryOptions(options)
-
-  const query = useInfiniteQuery(queryOptions) as  UseInfiniteQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
 export const getGetAuthProtectedQueryOptions = <TData = Awaited<ReturnType<typeof getAuthProtected>>, TError = ErrorType<HandlerAPIError>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -542,7 +419,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetAuthProtectedQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthProtected>>>
@@ -582,7 +459,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetAuthProtectedSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthProtected>>>
@@ -622,7 +499,7 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn,   retry: 0, staleTime: 10000,  ...queryOptions} as UseSuspenseInfiniteQueryOptions<Awaited<ReturnType<typeof getAuthProtected>>, TError, TData> & { queryKey: QueryKey }
 }
 
 export type GetAuthProtectedSuspenseInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof getAuthProtected>>>
