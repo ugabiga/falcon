@@ -3,7 +3,7 @@ import {TradingAccount} from "@/graph/generated/generated";
 import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/cron-parser";
 import {useTranslation} from "react-i18next";
 import {convertNumberToCryptoSize} from "@/lib/number";
-import {TaskMoreBtn} from "@/components/tasks/more-btn";
+import {TaskMoreBtn} from "@/components/tasks/old/more-btn";
 
 export function TaskTable(
     {

@@ -13,7 +13,7 @@ import {
     TaskFromSchema,
     TaskGridInnerParams,
     TaskGridParams
-} from "@/components/tasks/form";
+} from "@/components/tasks/old/form";
 import {parseCronExpression} from "@/lib/cron-parser";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";

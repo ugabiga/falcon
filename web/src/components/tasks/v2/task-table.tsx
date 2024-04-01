@@ -4,7 +4,7 @@ import {convertDayOfWeek, convertHours, convertToNextExecutionTime} from "@/lib/
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import React from "react";
 import TaskDetail from "@/components/tasks/v2/task-detail";
-import {TaskMoreBtn} from "@/components/tasks/more-btn";
+import {TaskMoreBtn} from "@/components/tasks/old/more-btn";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 

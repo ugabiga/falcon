@@ -159,6 +159,10 @@ paths:
         in: query
         name: trading_account_id
         type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:

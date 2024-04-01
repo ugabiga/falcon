@@ -44,6 +44,12 @@ const docTemplate = `{
                         "description": "Trading account ID",
                         "name": "trading_account_id",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {

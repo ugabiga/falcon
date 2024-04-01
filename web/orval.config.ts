@@ -17,8 +17,12 @@ export default defineConfig({
                     useQuery: true,
                     useSuspenseQuery: true,
                     useSuspenseInfiniteQuery: true,
-                    useInfinite: true,
-                    useInfiniteQueryParam: 'limit',
+                    // useInfinite: true,
+                    // useInfiniteQueryParam: 'limit',
+                    options: {
+                        retry: 0,
+                        staleTime: 10000,
+                    },
                 },
             }
         },

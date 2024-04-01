@@ -2,7 +2,7 @@ import {z} from "zod";
 import {TaskFromSchema} from "@/components/tasks/v2/task-form";
 import {TaskType} from "@/lib/model";
 import {Task} from "@/graph/generated/generated";
-import {TaskGridInnerParams} from "@/components/tasks/form";
+import {TaskGridInnerParams} from "@/components/tasks/old/form";
 import {ModelTask} from "@/api/model";
 
 export interface TaskGridInputParams {
