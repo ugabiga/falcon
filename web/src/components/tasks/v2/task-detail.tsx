@@ -54,6 +54,7 @@ export default function TaskDetail(
     const [updateTask] = useMutation(UpdateTaskDocument)
 
     function onSubmit(data: z.infer<typeof TaskFromSchema>) {
+
         updateTask({
             variables: {
                 tradingAccountID: task.trading_account_id!,
@@ -61,8 +62,8 @@ export default function TaskDetail(
                 currency: data.currency,
                 size: Number(data.size),
                 symbol: data.symbol,
-                days: data.hours.join(','),
-                hours: data.days.join(','),
+                days: data.days.join(','),
+                hours: data.hours.join(','),
                 type: data.type,
                 isActive: data.isActive,
                 params: parseParamsFromData(data)
@@ -101,11 +102,11 @@ export default function TaskDetail(
                         <TaskFormFields form={form} tradingAccount={tradingAccount}/>
 
                         <DialogFooter className="w-full flex gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={() => setOpenDialog(false)}>
-                                {t("common.cancel")}
-                            </Button>
+                            {/*<Button*/}
+                            {/*    variant="outline"*/}
+                            {/*    onClick={() => setOpenDialog(false)}>*/}
+                            {/*    {t("common.cancel")}*/}
+                            {/*</Button>*/}
                             <TaskDelete task={task} onDelete={onCompleteAction}/>
                             <Spacer/>
                             <Button type="submit">
