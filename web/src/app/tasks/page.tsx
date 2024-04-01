@@ -15,6 +15,7 @@ import {Error} from "@/components/rest-error";
 import {useSearchParams} from "next/navigation";
 import {refreshTask} from "@/store/taskSlice";
 import {useAppSelector} from "@/store";
+import {Loading} from "@/components/loading";
 
 export default function Tasks() {
     const {t} = useTranslation()
@@ -69,7 +70,6 @@ export default function Tasks() {
 
             {/* Selector */}
             <div className={"mt-6 w-full flex space-x-2"}>
-
                 <div>
                     <TradingAccountSelector data={data}/>
                 </div>
@@ -81,13 +81,18 @@ export default function Tasks() {
                 </div>
             </div>
 
-            {/* Table */}
             <div className="hidden md:block">
-                <TaskTable data={data}/>
+                <TaskTable data={data} isLoading={isLoading}/>
             </div>
             <div className="block md:hidden mt-6">
                 <TaskCards data={data}/>
             </div>
+            {/*{*/}
+            {/*    isLoading*/}
+            {/*    && <Loading/>*/}
+            {/*    || <>*/}
+            {/*    </>*/}
+            {/*}*/}
 
         </main>
     )
