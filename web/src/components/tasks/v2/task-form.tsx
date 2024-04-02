@@ -46,6 +46,8 @@ const DAYS = [
 ]
 
 export const TaskFromSchema = z.object({
+    isActive: z
+        .boolean(),
     type: z.nativeEnum(TaskType),
     currency: z.string(),
     size: z.string()
@@ -57,7 +59,6 @@ export const TaskFromSchema = z.object({
     hours: z.array(
         z.string().regex(/^\d+$/, "Priority must be a number"),
     ),
-    isActive: z.boolean(),
     grid: z.object({
         gap_percent: z.string({})
             .regex(/^\d+\.?\d*$/, "Gap percent must be a number"),
