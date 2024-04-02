@@ -1,27 +1,25 @@
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {useTranslation} from "react-i18next";
-import {Form} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";
 import * as z from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {convertStringToTaskType} from "@/lib/model";
 import {TaskFormFields, TaskFromSchema} from "@/components/tasks/v2/task-form";
-import {useAppDispatch} from "@/store";
 import {useMutation} from "@apollo/client";
-import {CreateTaskDocument, UpdateTaskDocument} from "@/graph/generated/generated";
+import {UpdateTaskDocument} from "@/graph/generated/generated";
 import {useSendRefreshSignal} from "@/lib/use-refresh";
 import {ModelTask, ModelTradingAccount} from "@/api/model";
 import {parseCronExpression} from "@/lib/cron-parser";
-import {capture} from "@/lib/posthog";
 import {RefreshTarget} from "@/store/refresherSlice";
 import {errorToast} from "@/components/toast";
 import {translatedError} from "@/lib/error";
 import TaskDelete from "@/components/tasks/v2/task-delete";
 import Spacer from "@/components/spacer";
 import {parseParamsFromData, parseParamsFromTask} from "@/lib/task-params";
-import Link from "next/link";
+import {Checkbox} from "@/components/ui/checkbox";
 
 export default function TaskDetail(
     {
@@ -98,6 +96,41 @@ export default function TaskDetail(
                                 {t("tasks.form.edit.title")} ({task.id})
                             </DialogTitle>
                         </DialogHeader>
+
+                        <FormField
+                            control={form.control}
+                            name="isActive"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>
+                                        {t("tasks.form.is_active")}
+                                    </FormLabel>
+
+                                    <FormControl>
+                                        <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                            <div className="items-center flex space-x-2">
+                                                <Checkbox
+                                                    id="isActive"
+                                                    checked={field.value}
+                                                    onCheckedChange={(value) => {
+                                                        field.onChange(value)
+                                                    }}
+                                                />
+                                                <label
+                                                    htmlFor="isActive"
+                                                    className="text-sm flex-grow font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                                >
+                                                    {t("tasks.form.is_active.desc")}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </FormControl>
+
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
 
                         <TaskFormFields form={form} tradingAccount={tradingAccount}/>
 
